@@ -113,6 +113,36 @@ fun GameRoomScreen(
     val placedMiners by viewModel.placedMinerItems.collectAsState()
     val roomState by viewModel.gameRoomState.collectAsState()
 
+    GameRoomScreenContent(
+        user = user,
+        minerItems = minerItems,
+        placedMiners = placedMiners,
+        roomState = roomState,
+        onClaimMining = { viewModel.claimGameMiningPoints() },
+        onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
+        onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
+        onFinishGame = { score -> viewModel.finishMiniGame(score) },
+        onNavigateToMissions = onNavigateToMissions,
+        onBack = onBack,
+        currentLanguage = currentLanguage
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GameRoomScreenContent(
+    user: UserEntity?,
+    minerItems: List<GameMinerItemEntity>,
+    placedMiners: List<GameMinerItemEntity>,
+    roomState: GameRoomStateEntity?,
+    onClaimMining: () -> Unit,
+    onToggleMinerSlot: (String, Int) -> Unit,
+    onBuyGameMinerItem: (String) -> Unit,
+    onFinishGame: (Int) -> Unit,
+    onNavigateToMissions: () -> Unit,
+    onBack: () -> Unit,
+    currentLanguage: AppLanguage
+) {
     var activeTab by remember { mutableIntStateOf(0) } // 0: Ruang Rak, 1: Toko Item, 2: Mini-Game
     var selectedItemToBuy by remember { mutableStateOf<GameMinerItemEntity?>(null) }
     var slotToAssignItem by remember { mutableStateOf<Int?>(null) }
@@ -255,8 +285,8 @@ fun GameRoomScreen(
                         generationRatePerMin = generationRatePerMin,
                         liveUnclaimedPoints = liveUnclaimedPoints,
                         roomState = roomState,
-                        onClaimMining = { viewModel.claimGameMiningPoints() },
-                        onUnplaceMiner = { minerId, slot -> viewModel.toggleMinerSlot(minerId, slot) },
+                        onClaimMining = onClaimMining,
+                        onUnplaceMiner = { minerId, slot -> onToggleMinerSlot(minerId, slot) },
                         onOpenShop = { activeTab = 1 },
                         onOpenAssignSlotModal = { slot -> slotToAssignItem = slot },
                         onOpenMiniGame = { activeTab = 2 }
@@ -274,7 +304,7 @@ fun GameRoomScreen(
                 2 -> {
                     // TAB 2: MINI-GAME ARCADE
                     MiniGameArcadeTab(
-                        onFinishGame = { score -> viewModel.finishMiniGame(score) },
+                        onFinishGame = { score -> onFinishGame(score) },
                         highScore = roomState?.miniGameHighScore ?: 0
                     )
                 }
@@ -344,7 +374,7 @@ fun GameRoomScreen(
                 val canAfford = (user?.points ?: 0) >= item.pricePoints
                 Button(
                     onClick = {
-                        viewModel.buyGameMinerItem(item.id)
+                        onBuyGameMinerItem(item.id)
                         selectedItemToBuy = null
                     },
                     enabled = canAfford,
@@ -405,7 +435,7 @@ fun GameRoomScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        viewModel.toggleMinerSlot(miner.id, targetSlot)
+                                        onToggleMinerSlot(miner.id, targetSlot)
                                         slotToAssignItem = null
                                     }
                             ) {
@@ -421,7 +451,7 @@ fun GameRoomScreen(
                                     }
                                     Button(
                                         onClick = {
-                                            viewModel.toggleMinerSlot(miner.id, targetSlot)
+                                            onToggleMinerSlot(miner.id, targetSlot)
                                             slotToAssignItem = null
                                         },
                                         colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
@@ -457,6 +487,7 @@ fun GameRoomScreen(
         )
     }
 }
+
 
 // -------------------------------------------------------------
 // TAB 0: RUANG RAK MINING (ROLLERCOIN RACK ROOM)
