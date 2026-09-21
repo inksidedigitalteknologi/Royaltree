@@ -54,15 +54,32 @@ import com.example.ui.components.AdBannerCard
 import com.example.ui.components.SAMPLE_BANNER_ADS
 import com.example.viewmodel.AffiliateViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppOffersScreen(
     viewModel: AffiliateViewModel,
     modifier: Modifier = Modifier
 ) {
     val adsList by viewModel.appDownloadAds.collectAsState()
-    var selectedCategory by remember { mutableStateOf("Semua") }
 
+    AppOffersScreenContent(
+        adsList = adsList,
+        onClaimBannerBonus = { id, name, coins -> viewModel.claimBannerAdBonus(id, name, coins) },
+        onDownloadApp = { viewModel.downloadApp(it) },
+        onClaimAppReward = { viewModel.claimAppDownloadReward(it) },
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppOffersScreenContent(
+    adsList: List<AppDownloadAdEntity>,
+    onClaimBannerBonus: (String, String, Int) -> Unit,
+    onDownloadApp: (String) -> Unit,
+    onClaimAppReward: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var selectedCategory by remember { mutableStateOf("Semua") }
     val categories = listOf("Semua", "E-Wallet", "Belanja", "Finansial", "Game", "Hiburan")
 
     val filteredAds = if (selectedCategory == "Semua") {
@@ -102,7 +119,7 @@ fun AppOffersScreen(
             AdBannerCard(
                 banner = featuredBanner,
                 onClaimReward = { banner ->
-                    viewModel.claimBannerAdBonus(banner.id, banner.sponsorName, banner.rewardCoins)
+                    onClaimBannerBonus(banner.id, banner.sponsorName, banner.rewardCoins)
                 }
             )
         }
@@ -153,8 +170,8 @@ fun AppOffersScreen(
         items(filteredAds, key = { it.id }) { ad ->
             AppOfferCard(
                 ad = ad,
-                onDownload = { viewModel.downloadApp(ad.id) },
-                onClaimReward = { viewModel.claimAppDownloadReward(ad.id) }
+                onDownload = { onDownloadApp(ad.id) },
+                onClaimReward = { onClaimAppReward(ad.id) }
             )
         }
 
@@ -172,7 +189,7 @@ fun AppOffersScreen(
                 AdBannerCard(
                     banner = secondBanner,
                     onClaimReward = { banner ->
-                        viewModel.claimBannerAdBonus(banner.id, banner.sponsorName, banner.rewardCoins)
+                        onClaimBannerBonus(banner.id, banner.sponsorName, banner.rewardCoins)
                     }
                 )
             }
@@ -183,6 +200,7 @@ fun AppOffersScreen(
         }
     }
 }
+
 
 @Composable
 fun AppOfferCard(

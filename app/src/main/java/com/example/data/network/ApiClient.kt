@@ -20,7 +20,7 @@ object ApiClient {
     private const val KEY_BASE_URL = "portal_base_url"
     private const val KEY_API_KEY = "portal_api_key"
 
-    const val DEFAULT_BASE_URL = "http://10.0.2.2:3000/api/v1/"
+    const val DEFAULT_BASE_URL = "http://45.41.204.21:5000/api/v1/"
     const val DEFAULT_API_KEY = "rt_secret_portal_key_2026"
 
     private var currentBaseUrl: String = DEFAULT_BASE_URL

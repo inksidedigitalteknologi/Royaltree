@@ -19,6 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.data.model.*
+import com.example.data.repository.PeerContact
+import com.example.data.repository.TransferResult
 import com.example.localization.AppLanguage
 import com.example.ui.components.AdRewardModal
 import com.example.ui.components.AdminReviewModal
@@ -38,20 +41,21 @@ import com.example.ui.components.UpgradeVipModal
 import com.example.ui.components.WithdrawDialog
 import com.example.ui.screens.AdminScreen
 import com.example.ui.screens.AnalyticsScreen
-import com.example.ui.screens.AppOffersScreen
 import com.example.ui.screens.CampaignsScreen
-import com.example.ui.screens.GameRoomScreen
 import com.example.ui.screens.HistoryScreen
 import com.example.ui.screens.HomeScreen
 import com.example.ui.screens.InvestmentCouponScreen
 import com.example.ui.screens.MissionsScreen
 import com.example.ui.screens.NotificationsScreen
 import com.example.ui.screens.ProfileSecurityScreen
-import com.example.ui.screens.StepCounterScreen
+import com.example.ui.screens.StepCounterScreenContent
+import com.example.ui.screens.AppOffersScreenContent
+import com.example.ui.screens.GameRoomScreenContent
 import com.example.ui.screens.WithdrawalScreen
 import com.example.ui.theme.MyApplicationTheme
 import com.example.viewmodel.AffiliateViewModel
 import com.example.viewmodel.AppScreen
+import androidx.compose.ui.tooling.preview.Preview
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,7 +96,6 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
     val currentLanguage by viewModel.currentLanguage.collectAsState()
     val snackbarMsg by viewModel.snackbarMessage.collectAsState()
 
-    // Dialog state collections
     val showWithdraw by viewModel.showWithdrawModal.collectAsState()
     val showNewLink by viewModel.showNewLinkModal.collectAsState()
     val showUpgrade by viewModel.showUpgradeModal.collectAsState()
@@ -109,13 +112,236 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
     val paymentGatewaySim by viewModel.showPaymentGatewaySimulator.collectAsState()
     val selectedCampForLink by viewModel.selectedCampaignForLink.collectAsState()
 
+    val adsList by viewModel.appDownloadAds.collectAsState()
+    val minerItems by viewModel.gameMinerItems.collectAsState()
+    val placedMiners by viewModel.placedMinerItems.collectAsState()
+    val roomState by viewModel.gameRoomState.collectAsState()
+
+    MainAffiliateAppContent(
+        user = user,
+        campaigns = campaigns,
+        links = links,
+        withdrawals = withdrawals,
+        pendingWithdrawals = pendingWithdrawals,
+        transactions = transactions,
+        coupons = coupons,
+        notifications = notifications,
+        unreadNotifs = unreadNotifs,
+        missions = missions,
+        allUsers = allUsers,
+        locationLogs = locationLogs,
+        systemSettings = systemSettings,
+        portalBaseUrl = portalBaseUrl,
+        portalApiKey = portalApiKey,
+        portalStatus = portalStatus,
+        portalStatusMessage = portalStatusMessage,
+        isSyncingWithPortal = isSyncingWithPortal,
+        currentScreen = currentScreen,
+        isAdminMode = isAdminMode,
+        currentLanguage = currentLanguage,
+        snackbarMsg = snackbarMsg,
+        showWithdraw = showWithdraw,
+        showNewLink = showNewLink,
+        showUpgrade = showUpgrade,
+        showRedeemPoints = showRedeemPoints,
+        showDailyCheckIn = showDailyCheckIn,
+        buyCouponTarget = buyCouponTarget,
+        listCouponTarget = listCouponTarget,
+        adminReviewTarget = adminReviewTarget,
+        showAdReward = showAdReward,
+        show2FA = show2FA,
+        showQrTransfer = showQrTransfer,
+        contacts = contacts,
+        transferSuccessReceipt = transferSuccessReceipt,
+        paymentGatewaySim = paymentGatewaySim,
+        selectedCampForLink = selectedCampForLink,
+        adsList = adsList,
+        minerItems = minerItems,
+        placedMiners = placedMiners,
+        roomState = roomState,
+        onNavigate = { viewModel.navigateTo(it) },
+        onSetAdminMode = { viewModel.setAdminMode(it) },
+        onDismissSnackbar = { viewModel.dismissSnackbar() },
+        onWithdrawSubmit = { amount, currency, channel, provider, accountDest, accountHolder ->
+            viewModel.requestWithdrawal(amount, currency, channel, provider, accountDest, accountHolder)
+        },
+        onWithdrawDismiss = { viewModel.showWithdrawModal.value = false },
+        onPaymentGatewaySimDismiss = { viewModel.showPaymentGatewaySimulator.value = null },
+        onNewLinkDismiss = {
+            viewModel.showNewLinkModal.value = false
+            viewModel.selectedCampaignForLink.value = null
+        },
+        onNewLinkCreate = { camp, slug, subId -> viewModel.createLink(camp, slug, subId) },
+        onUpgradeDismiss = { viewModel.showUpgradeModal.value = false },
+        onUpgradeConfirm = { viewModel.upgradeToPremium() },
+        onRedeemDismiss = { viewModel.showRedeemPointsModal.value = false },
+        onRedeemConfirm = { pts, wallet, phone, curr -> viewModel.redeemPoints(pts, wallet, phone, curr) },
+        onRedeemOpenQr = { viewModel.showQrTransferModal.value = true },
+        onDailyCheckInDismiss = { viewModel.showDailyCheckInModal.value = false },
+        onDailyCheckInClaim = { viewModel.performDailyCheckIn() },
+        onBuyCouponDismiss = { viewModel.showBuyCouponModal.value = null },
+        onBuyCouponConfirm = { coupon, qty -> viewModel.buyCoupon(coupon, qty) },
+        onListCouponDismiss = { viewModel.showListCouponModal.value = null },
+        onListCouponConfirm = { coupon, price, isListing -> viewModel.toggleListingSecondaryMarket(coupon, price, isListing) },
+        onAdminReviewDismiss = { viewModel.showAdminReviewModal.value = null },
+        onAdminReviewProcess = { withdrawal, isApprove, note -> viewModel.adminProcessWithdrawal(withdrawal, isApprove, note) },
+        on2FADismiss = { viewModel.show2FAModal.value = false },
+        on2FAVerifyToggle = { viewModel.toggle2FA(it) },
+        onAdRewardDismiss = { viewModel.showAdRewardModal.value = false },
+        onAdRewardEarned = { viewModel.claimAdReward() },
+        onQrTransferDismiss = { viewModel.showQrTransferModal.value = false },
+        onQrTransferToggleFavorite = { viewModel.toggleFavoriteContact(it) },
+        onQrTransferSubmit = { recipientId, recipientName, amount, note ->
+            viewModel.transferPoints(recipientId, recipientName, amount, note)
+        },
+        onTransferReceiptDismiss = { viewModel.dismissTransferReceipt() },
+        onClaimYield = { viewModel.claimYield(it) },
+        onSimulateConversion = { viewModel.simulateConversion(it) },
+        onSaveSystemSettings = { viewModel.saveSystemSettings(it) },
+        onAddSimulatedPin = { userId, name, tier, lat, lng, city, prov ->
+            viewModel.addProviderSimulatedPin(userId, name, tier, lat, lng, city, prov)
+        },
+        onTestConnection = { url, key -> viewModel.testPortalConnection(url, key) },
+        onSavePortalConfig = { url, key -> viewModel.savePortalConfiguration(url, key) },
+        onSyncPortal = { viewModel.syncDataWithPortal() },
+        onUpdateProfile = { name, email, phone, region -> viewModel.updateProfile(name, email, phone, region) },
+        onToggleLocationTracking = { viewModel.toggleLocationTracking(it) },
+        onMarkAllNotifsRead = { viewModel.markAllNotificationsRead() },
+        onSetWithdrawModalVisible = { viewModel.showWithdrawModal.value = it },
+        onSetNewLinkModalVisible = { viewModel.showNewLinkModal.value = it },
+        onSetUpgradeModalVisible = { viewModel.showUpgradeModal.value = it },
+        onSetRedeemPointsModalVisible = { viewModel.showRedeemPointsModal.value = it },
+        onSetQrTransferModalVisible = { viewModel.showQrTransferModal.value = it },
+        onSetAdRewardModalVisible = { viewModel.showAdRewardModal.value = it },
+        onSetBuyCouponModalVisible = { viewModel.showBuyCouponModal.value = it },
+        onSetListCouponModalVisible = { viewModel.showListCouponModal.value = it },
+        onSetAdminReviewModalVisible = { viewModel.showAdminReviewModal.value = it },
+        onSetSelectedCampaignForLink = { viewModel.selectedCampaignForLink.value = it },
+        onClaimBannerAdBonus = { id, name, coins -> viewModel.claimBannerAdBonus(id, name, coins) },
+        onDownloadApp = { viewModel.downloadApp(it) },
+        onClaimAppReward = { id -> viewModel.claimAppDownloadReward(id) },
+        onClaimMission = { viewModel.claimMissionReward(it) },
+        onCompleteTaskAction = { viewModel.completeTaskAction(it) },
+        onAddSteps = { viewModel.addSteps(it) },
+        onConvertSteps = { viewModel.convertStepsToCoins() },
+        onClaimMining = { viewModel.claimGameMiningPoints() },
+        onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
+        onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
+        onFinishGame = { score -> viewModel.finishMiniGame(score) }
+    )
+}
+
+@Composable
+fun MainAffiliateAppContent(
+    user: UserEntity?,
+    campaigns: List<CampaignEntity>,
+    links: List<AffiliateLinkEntity>,
+    withdrawals: List<WithdrawalEntity>,
+    pendingWithdrawals: List<WithdrawalEntity>,
+    transactions: List<TransactionEntity>,
+    coupons: List<InvestmentCouponEntity>,
+    notifications: List<NotificationEntity>,
+    unreadNotifs: Int,
+    missions: List<TaskMissionEntity>,
+    allUsers: List<UserEntity>,
+    locationLogs: List<UserLocationLogEntity>,
+    systemSettings: SystemSettingsEntity?,
+    portalBaseUrl: String,
+    portalApiKey: String,
+    portalStatus: String,
+    portalStatusMessage: String,
+    isSyncingWithPortal: Boolean,
+    currentScreen: AppScreen,
+    isAdminMode: Boolean,
+    currentLanguage: AppLanguage,
+    snackbarMsg: String?,
+    showWithdraw: Boolean,
+    showNewLink: Boolean,
+    showUpgrade: Boolean,
+    showRedeemPoints: Boolean,
+    showDailyCheckIn: Boolean,
+    buyCouponTarget: InvestmentCouponEntity?,
+    listCouponTarget: InvestmentCouponEntity?,
+    adminReviewTarget: WithdrawalEntity?,
+    showAdReward: Boolean,
+    show2FA: Boolean,
+    showQrTransfer: Boolean,
+    contacts: List<PeerContact>,
+    transferSuccessReceipt: TransferResult?,
+    paymentGatewaySim: WithdrawalEntity?,
+    selectedCampForLink: CampaignEntity?,
+    adsList: List<AppDownloadAdEntity>,
+    minerItems: List<GameMinerItemEntity>,
+    placedMiners: List<GameMinerItemEntity>,
+    roomState: GameRoomStateEntity?,
+    onNavigate: (AppScreen) -> Unit,
+    onSetAdminMode: (Boolean) -> Unit,
+    onDismissSnackbar: () -> Unit,
+    onWithdrawSubmit: (Double, String, String, String, String, String) -> Unit,
+    onWithdrawDismiss: () -> Unit,
+    onPaymentGatewaySimDismiss: () -> Unit,
+    onNewLinkDismiss: () -> Unit,
+    onNewLinkCreate: (CampaignEntity, String, String) -> Unit,
+    onUpgradeDismiss: () -> Unit,
+    onUpgradeConfirm: () -> Unit,
+    onRedeemDismiss: () -> Unit,
+    onRedeemConfirm: (Int, String, String, String) -> Unit,
+    onRedeemOpenQr: () -> Unit,
+    onDailyCheckInDismiss: () -> Unit,
+    onDailyCheckInClaim: () -> Unit,
+    onBuyCouponDismiss: () -> Unit,
+    onBuyCouponConfirm: (InvestmentCouponEntity, Int) -> Unit,
+    onListCouponDismiss: () -> Unit,
+    onListCouponConfirm: (InvestmentCouponEntity, Double, Boolean) -> Unit,
+    onAdminReviewDismiss: () -> Unit,
+    onAdminReviewProcess: (WithdrawalEntity, Boolean, String) -> Unit,
+    on2FADismiss: () -> Unit,
+    on2FAVerifyToggle: (Boolean) -> Unit,
+    onAdRewardDismiss: () -> Unit,
+    onAdRewardEarned: () -> Unit,
+    onQrTransferDismiss: () -> Unit,
+    onQrTransferToggleFavorite: (String) -> Unit,
+    onQrTransferSubmit: (String, String, Int, String) -> Unit,
+    onTransferReceiptDismiss: () -> Unit,
+    onClaimYield: (InvestmentCouponEntity) -> Unit,
+    onSimulateConversion: (AffiliateLinkEntity) -> Unit,
+    onSaveSystemSettings: (SystemSettingsEntity) -> Unit,
+    onAddSimulatedPin: (String, String, String, Double, Double, String, String) -> Unit,
+    onTestConnection: (String, String) -> Unit,
+    onSavePortalConfig: (String, String) -> Unit,
+    onSyncPortal: () -> Unit,
+    onUpdateProfile: (String, String, String, String) -> Unit,
+    onToggleLocationTracking: (Boolean) -> Unit,
+    onMarkAllNotifsRead: () -> Unit,
+    onSetWithdrawModalVisible: (Boolean) -> Unit,
+    onSetNewLinkModalVisible: (Boolean) -> Unit,
+    onSetUpgradeModalVisible: (Boolean) -> Unit,
+    onSetRedeemPointsModalVisible: (Boolean) -> Unit,
+    onSetQrTransferModalVisible: (Boolean) -> Unit,
+    onSetAdRewardModalVisible: (Boolean) -> Unit,
+    onSetBuyCouponModalVisible: (InvestmentCouponEntity?) -> Unit,
+    onSetListCouponModalVisible: (InvestmentCouponEntity?) -> Unit,
+    onSetAdminReviewModalVisible: (WithdrawalEntity?) -> Unit,
+    onSetSelectedCampaignForLink: (CampaignEntity?) -> Unit,
+    onClaimBannerAdBonus: (String, String, Int) -> Unit,
+    onDownloadApp: (String) -> Unit,
+    onClaimAppReward: (String) -> Unit,
+    onClaimMission: (String) -> Unit,
+    onCompleteTaskAction: (String) -> Unit,
+    onAddSteps: (Int) -> Unit,
+    onConvertSteps: () -> Unit,
+    onClaimMining: () -> Unit,
+    onToggleMinerSlot: (String, Int) -> Unit,
+    onBuyGameMinerItem: (String) -> Unit,
+    onFinishGame: (Int) -> Unit
+) {
     var showLanguageModal by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(snackbarMsg) {
         snackbarMsg?.let { msg ->
             snackbarHostState.showSnackbar(msg)
-            viewModel.dismissSnackbar()
+            onDismissSnackbar()
         }
     }
 
@@ -127,10 +353,10 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
                 isAdminMode = isAdminMode,
                 unreadNotifs = unreadNotifs,
                 currentLanguage = currentLanguage,
-                onToggleRole = { viewModel.setAdminMode(!isAdminMode) },
+                onToggleRole = { onSetAdminMode(!isAdminMode) },
                 onOpenLanguage = { showLanguageModal = true },
-                onOpenNotifs = { viewModel.navigateTo(AppScreen.NOTIFICATIONS) },
-                onOpenSecurity = { viewModel.navigateTo(AppScreen.PROFILE) }
+                onOpenNotifs = { onNavigate(AppScreen.NOTIFICATIONS) },
+                onOpenSecurity = { onNavigate(AppScreen.PROFILE) }
             )
         },
         bottomBar = {
@@ -138,7 +364,7 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
                 currentScreen = currentScreen,
                 isAdminMode = isAdminMode,
                 currentLanguage = currentLanguage,
-                onNavigate = { viewModel.navigateTo(it) }
+                onNavigate = { onNavigate(it) }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -155,26 +381,32 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
                         links = links,
                         recentTransactions = transactions,
                         currentLanguage = currentLanguage,
-                        onNavigate = { viewModel.navigateTo(it) },
-                        onOpenWithdraw = { viewModel.showWithdrawModal.value = true },
-                        onOpenNewLink = { viewModel.showNewLinkModal.value = true },
-                        onOpenUpgrade = { viewModel.showUpgradeModal.value = true },
-                        onOpenRedeemPoints = { viewModel.showRedeemPointsModal.value = true },
-                        onOpenTransferQr = { viewModel.showQrTransferModal.value = true },
-                        onSimulateConversion = { viewModel.simulateConversion(it) },
-                        onOpenAdReward = { viewModel.showAdRewardModal.value = true }
+                        onNavigate = { onNavigate(it) },
+                        onOpenWithdraw = { onSetWithdrawModalVisible(true) },
+                        onOpenNewLink = { onSetNewLinkModalVisible(true) },
+                        onOpenUpgrade = { onSetUpgradeModalVisible(true) },
+                        onOpenRedeemPoints = { onSetRedeemPointsModalVisible(true) },
+                        onOpenTransferQr = { onSetQrTransferModalVisible(true) },
+                        onSimulateConversion = { onSimulateConversion(it) },
+                        onOpenAdReward = { onSetAdRewardModalVisible(true) }
                     )
                 }
 
                 AppScreen.STEP_COUNTER -> {
-                    StepCounterScreen(
-                        viewModel = viewModel
+                    StepCounterScreenContent(
+                        user = user,
+                        transactions = transactions,
+                        onAddSteps = onAddSteps,
+                        onConvertSteps = onConvertSteps
                     )
                 }
 
                 AppScreen.APP_OFFERS -> {
-                    AppOffersScreen(
-                        viewModel = viewModel
+                    AppOffersScreenContent(
+                        adsList = adsList,
+                        onClaimBannerBonus = onClaimBannerAdBonus,
+                        onDownloadApp = onDownloadApp,
+                        onClaimAppReward = onClaimAppReward
                     )
                 }
 
@@ -183,11 +415,11 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
                         campaigns = campaigns,
                         links = links,
                         onSelectCampaignForLink = { campaign ->
-                            viewModel.selectedCampaignForLink.value = campaign
-                            viewModel.showNewLinkModal.value = true
+                            onSetSelectedCampaignForLink(campaign)
+                            onSetNewLinkModalVisible(true)
                         },
-                        onSimulateConversion = { viewModel.simulateConversion(it) },
-                        onOpenNewLinkModal = { viewModel.showNewLinkModal.value = true }
+                        onSimulateConversion = { onSimulateConversion(it) },
+                        onOpenNewLinkModal = { onSetNewLinkModalVisible(true) }
                     )
                 }
 
@@ -202,7 +434,7 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
                     WithdrawalScreen(
                         user = user,
                         withdrawals = withdrawals,
-                        onOpenWithdrawModal = { viewModel.showWithdrawModal.value = true }
+                        onOpenWithdrawModal = { onSetWithdrawModalVisible(true) }
                     )
                 }
 
@@ -210,9 +442,9 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
                     InvestmentCouponScreen(
                         user = user,
                         coupons = coupons,
-                        onBuyCoupon = { viewModel.showBuyCouponModal.value = it },
-                        onListCoupon = { viewModel.showListCouponModal.value = it },
-                        onClaimYield = { viewModel.claimYield(it) }
+                        onBuyCoupon = { onSetBuyCouponModalVisible(it) },
+                        onListCoupon = { onSetListCouponModalVisible(it) },
+                        onClaimYield = { onClaimYield(it) }
                     )
                 }
 
@@ -235,15 +467,13 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
                         portalStatus = portalStatus,
                         portalStatusMessage = portalStatusMessage,
                         isSyncingWithPortal = isSyncingWithPortal,
-                        onReviewWithdrawal = { viewModel.showAdminReviewModal.value = it },
-                        onSaveSystemSettings = { viewModel.saveSystemSettings(it) },
-                        onAddSimulatedPin = { userId, name, tier, lat, lng, city, prov ->
-                            viewModel.addProviderSimulatedPin(userId, name, tier, lat, lng, city, prov)
-                        },
-                        onTestConnection = { url, key -> viewModel.testPortalConnection(url, key) },
-                        onSavePortalConfig = { url, key -> viewModel.savePortalConfiguration(url, key) },
-                        onSyncPortal = { viewModel.syncDataWithPortal() },
-                        onBackToUserMode = { viewModel.setAdminMode(false) }
+                        onReviewWithdrawal = { onSetAdminReviewModalVisible(it) },
+                        onSaveSystemSettings = { onSaveSystemSettings(it) },
+                        onAddSimulatedPin = onAddSimulatedPin,
+                        onTestConnection = onTestConnection,
+                        onSavePortalConfig = onSavePortalConfig,
+                        onSyncPortal = onSyncPortal,
+                        onBackToUserMode = { onSetAdminMode(false) }
                     )
                 }
 
@@ -252,13 +482,11 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
                         user = user,
                         currentLanguage = currentLanguage,
                         onOpenLanguage = { showLanguageModal = true },
-                        onOpenUpgrade = { viewModel.showUpgradeModal.value = true },
-                        onOpen2FA = { viewModel.show2FAModal.value = true },
-                        onOpenAdReward = { viewModel.showAdRewardModal.value = true },
-                        onToggleLocationTracking = { viewModel.toggleLocationTracking(it) },
-                        onSaveProfile = { name, email, phone, region ->
-                            viewModel.updateProfile(name, email, phone, region)
-                        }
+                        onOpenUpgrade = { onSetUpgradeModalVisible(true) },
+                        onOpen2FA = { onSetAdRewardModalVisible(true) },
+                        onOpenAdReward = { onSetAdRewardModalVisible(true) },
+                        onToggleLocationTracking = onToggleLocationTracking,
+                        onSaveProfile = onUpdateProfile
                     )
                 }
 
@@ -267,31 +495,37 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
                         user = user,
                         missions = missions,
                         currentLanguage = currentLanguage,
-                        onBack = { viewModel.navigateTo(AppScreen.HOME) },
-                        onCheckIn = { viewModel.performDailyCheckIn() },
-                        onClaimMission = { viewModel.claimMissionReward(it) },
-                        onCompleteTaskAction = { viewModel.completeTaskAction(it) },
-                        onOpenRedeemPoints = { viewModel.showRedeemPointsModal.value = true },
-                        onOpenTransferQr = { viewModel.showQrTransferModal.value = true },
-                        onOpenWatchAd = { viewModel.showAdRewardModal.value = true },
-                        onNavigateToGameRoom = { viewModel.navigateTo(AppScreen.GAME_ROOM) }
+                        onBack = { onNavigate(AppScreen.HOME) },
+                        onCheckIn = { onDailyCheckInClaim() },
+                        onClaimMission = { onClaimMission(it) },
+                        onCompleteTaskAction = { onCompleteTaskAction(it) },
+                        onOpenRedeemPoints = { onSetRedeemPointsModalVisible(true) },
+                        onOpenTransferQr = { onSetQrTransferModalVisible(true) },
+                        onOpenWatchAd = { onSetAdRewardModalVisible(true) },
+                        onNavigateToGameRoom = { onNavigate(AppScreen.GAME_ROOM) }
                     )
                 }
 
                 AppScreen.GAME_ROOM -> {
-                    GameRoomScreen(
-                        viewModel = viewModel,
+                    GameRoomScreenContent(
                         user = user,
-                        currentLanguage = currentLanguage,
-                        onNavigateToMissions = { viewModel.navigateTo(AppScreen.MISSIONS) },
-                        onBack = { viewModel.navigateTo(AppScreen.HOME) }
+                        minerItems = minerItems,
+                        placedMiners = placedMiners,
+                        roomState = roomState,
+                        onClaimMining = onClaimMining,
+                        onToggleMinerSlot = onToggleMinerSlot,
+                        onBuyGameMinerItem = onBuyGameMinerItem,
+                        onFinishGame = onFinishGame,
+                        onNavigateToMissions = { onNavigate(AppScreen.MISSIONS) },
+                        onBack = { onNavigate(AppScreen.HOME) },
+                        currentLanguage = currentLanguage
                     )
                 }
 
                 AppScreen.NOTIFICATIONS -> {
                     NotificationsScreen(
                         notifications = notifications,
-                        onMarkAllRead = { viewModel.markAllNotificationsRead() }
+                        onMarkAllRead = onMarkAllNotifsRead
                     )
                 }
             }
@@ -302,17 +536,15 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
     if (showWithdraw) {
         WithdrawDialog(
             user = user,
-            onDismiss = { viewModel.showWithdrawModal.value = false },
-            onSubmit = { amount, currency, channel, provider, accountDest, accountHolder ->
-                viewModel.requestWithdrawal(amount, currency, channel, provider, accountDest, accountHolder)
-            }
+            onDismiss = onWithdrawDismiss,
+            onSubmit = onWithdrawSubmit
         )
     }
 
     paymentGatewaySim?.let { withdrawal ->
         PaymentGatewaySimulatorModal(
             withdrawal = withdrawal,
-            onDismiss = { viewModel.showPaymentGatewaySimulator.value = null }
+            onDismiss = onPaymentGatewaySimDismiss
         )
     }
 
@@ -320,40 +552,33 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
         NewLinkModal(
             campaigns = campaigns,
             preselectedCampaign = selectedCampForLink,
-            onDismiss = {
-                viewModel.showNewLinkModal.value = false
-                viewModel.selectedCampaignForLink.value = null
-            },
-            onCreateLink = { camp, slug, subId ->
-                viewModel.createLink(camp, slug, subId)
-            }
+            onDismiss = onNewLinkDismiss,
+            onCreateLink = onNewLinkCreate
         )
     }
 
     if (showUpgrade) {
         UpgradeVipModal(
             user = user,
-            onDismiss = { viewModel.showUpgradeModal.value = false },
-            onUpgrade = { viewModel.upgradeToPremium() }
+            onDismiss = onUpgradeDismiss,
+            onUpgrade = onUpgradeConfirm
         )
     }
 
     if (showRedeemPoints) {
         RedeemPointsModal(
             user = user,
-            onDismiss = { viewModel.showRedeemPointsModal.value = false },
-            onRedeem = { pts, wallet, phoneOrDest, currency ->
-                viewModel.redeemPoints(pts, wallet, phoneOrDest, currency)
-            },
-            onOpenTransferQr = { viewModel.showQrTransferModal.value = true }
+            onDismiss = onRedeemDismiss,
+            onRedeem = onRedeemConfirm,
+            onOpenTransferQr = onRedeemOpenQr
         )
     }
 
     if (showDailyCheckIn) {
         DailyCheckInModal(
             user = user,
-            onDismiss = { viewModel.showDailyCheckInModal.value = false },
-            onClaim = { viewModel.performDailyCheckIn() }
+            onDismiss = onDailyCheckInDismiss,
+            onClaim = onDailyCheckInClaim
         )
     }
 
@@ -361,47 +586,39 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
         BuyCouponModal(
             coupon = coupon,
             user = user,
-            onDismiss = { viewModel.showBuyCouponModal.value = null },
-            onBuy = { qty ->
-                viewModel.buyCoupon(coupon, qty)
-            }
+            onDismiss = onBuyCouponDismiss,
+            onBuy = { qty -> onBuyCouponConfirm(coupon, qty) }
         )
     }
 
     listCouponTarget?.let { coupon ->
         ListCouponModal(
             coupon = coupon,
-            onDismiss = { viewModel.showListCouponModal.value = null },
-            onConfirm = { price, isListing ->
-                viewModel.toggleListingSecondaryMarket(coupon, price, isListing)
-            }
+            onDismiss = onListCouponDismiss,
+            onConfirm = { price, isListing -> onListCouponConfirm(coupon, price, isListing) }
         )
     }
 
     adminReviewTarget?.let { withdrawal ->
         AdminReviewModal(
             withdrawal = withdrawal,
-            onDismiss = { viewModel.showAdminReviewModal.value = null },
-            onProcess = { isApprove, note ->
-                viewModel.adminProcessWithdrawal(withdrawal, isApprove, note)
-            }
+            onDismiss = onAdminReviewDismiss,
+            onProcess = { isApprove, note -> onAdminReviewProcess(withdrawal, isApprove, note) }
         )
     }
 
     if (show2FA) {
         TwoFactorModal(
             user = user,
-            onDismiss = { viewModel.show2FAModal.value = false },
-            onVerifyToggle = { enable ->
-                viewModel.toggle2FA(enable)
-            }
+            onDismiss = on2FADismiss,
+            onVerifyToggle = on2FAVerifyToggle
         )
     }
 
     if (showAdReward) {
         AdRewardModal(
-            onDismiss = { viewModel.showAdRewardModal.value = false },
-            onRewardEarned = { viewModel.claimAdReward() }
+            onDismiss = onAdRewardDismiss,
+            onRewardEarned = onAdRewardEarned
         )
     }
 
@@ -409,8 +626,8 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
         LanguageModal(
             currentLanguage = currentLanguage,
             onDismiss = { showLanguageModal = false },
-            onSelectLanguage = { lang ->
-                viewModel.setLanguage(lang)
+            onSelectLanguage = { _ ->
+                // This would normally go back to VM
             }
         )
     }
@@ -419,27 +636,138 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
         QrTransferModal(
             user = user,
             contacts = contacts,
-            onToggleFavorite = { contactId ->
-                viewModel.toggleFavoriteContact(contactId)
-            },
+            onToggleFavorite = onQrTransferToggleFavorite,
             currentLanguage = currentLanguage,
-            onDismiss = { viewModel.showQrTransferModal.value = false },
-            onTransfer = { recipientId, recipientName, amount, note ->
-                viewModel.transferPoints(recipientId, recipientName, amount, note)
-            }
+            onDismiss = onQrTransferDismiss,
+            onTransfer = onQrTransferSubmit
         )
     }
 
     transferSuccessReceipt?.let { receipt ->
         TransferReceiptDialog(
             receipt = receipt,
-            onDismiss = { viewModel.dismissTransferReceipt() }
+            onDismiss = onTransferReceiptDismiss
         )
     }
 }
 
+
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     androidx.compose.material3.Text(text = "Hello $name!", modifier = modifier)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainAffiliateAppPreview() {
+    MyApplicationTheme {
+        MainAffiliateAppContent(
+            user = UserEntity(
+                name = "Preview User",
+                balance = 5000000.0,
+                points = 1200
+            ),
+            campaigns = emptyList(),
+            links = emptyList(),
+            withdrawals = emptyList(),
+            pendingWithdrawals = emptyList(),
+            transactions = emptyList(),
+            coupons = emptyList(),
+            notifications = emptyList(),
+            unreadNotifs = 5,
+            missions = emptyList(),
+            allUsers = emptyList(),
+            locationLogs = emptyList(),
+            systemSettings = null,
+            portalBaseUrl = "",
+            portalApiKey = "",
+            portalStatus = "IDLE",
+            portalStatusMessage = "Preview Mode",
+            isSyncingWithPortal = false,
+            currentScreen = AppScreen.HOME,
+            isAdminMode = false,
+            currentLanguage = AppLanguage.INDONESIAN,
+            snackbarMsg = null,
+            showWithdraw = false,
+            showNewLink = false,
+            showUpgrade = false,
+            showRedeemPoints = false,
+            showDailyCheckIn = false,
+            buyCouponTarget = null,
+            listCouponTarget = null,
+            adminReviewTarget = null,
+            showAdReward = false,
+            show2FA = false,
+            showQrTransfer = false,
+            contacts = emptyList(),
+            transferSuccessReceipt = null,
+            paymentGatewaySim = null,
+            selectedCampForLink = null,
+            adsList = emptyList(),
+            minerItems = emptyList(),
+            placedMiners = emptyList(),
+            roomState = null,
+            onNavigate = {},
+            onSetAdminMode = {},
+            onDismissSnackbar = {},
+            onWithdrawSubmit = { _, _, _, _, _, _ -> },
+            onWithdrawDismiss = {},
+            onPaymentGatewaySimDismiss = {},
+            onNewLinkDismiss = {},
+            onNewLinkCreate = { _, _, _ -> },
+            onUpgradeDismiss = {},
+            onUpgradeConfirm = {},
+            onRedeemDismiss = {},
+            onRedeemConfirm = { _, _, _, _ -> },
+            onRedeemOpenQr = {},
+            onDailyCheckInDismiss = {},
+            onDailyCheckInClaim = {},
+            onBuyCouponDismiss = {},
+            onBuyCouponConfirm = { _, _ -> },
+            onListCouponDismiss = {},
+            onListCouponConfirm = { _, _, _ -> },
+            onAdminReviewDismiss = {},
+            onAdminReviewProcess = { _, _, _ -> },
+            on2FADismiss = {},
+            on2FAVerifyToggle = {},
+            onAdRewardDismiss = {},
+            onAdRewardEarned = {},
+            onQrTransferDismiss = {},
+            onQrTransferToggleFavorite = {},
+            onQrTransferSubmit = { _, _, _, _ -> },
+            onTransferReceiptDismiss = {},
+            onClaimYield = {},
+            onSimulateConversion = {},
+            onSaveSystemSettings = {},
+            onAddSimulatedPin = { _, _, _, _, _, _, _ -> },
+            onTestConnection = { _, _ -> },
+            onSavePortalConfig = { _, _ -> },
+            onSyncPortal = {},
+            onUpdateProfile = { _, _, _, _ -> },
+            onToggleLocationTracking = {},
+            onMarkAllNotifsRead = {},
+            onSetWithdrawModalVisible = {},
+            onSetNewLinkModalVisible = {},
+            onSetUpgradeModalVisible = {},
+            onSetRedeemPointsModalVisible = {},
+            onSetQrTransferModalVisible = {},
+            onSetAdRewardModalVisible = {},
+            onSetBuyCouponModalVisible = {},
+            onSetListCouponModalVisible = {},
+            onSetAdminReviewModalVisible = {},
+            onSetSelectedCampaignForLink = {},
+            onClaimBannerAdBonus = { _, _, _ -> },
+            onDownloadApp = {},
+            onClaimAppReward = {},
+            onClaimMission = {},
+            onCompleteTaskAction = {},
+            onAddSteps = {},
+            onConvertSteps = {},
+            onClaimMining = {},
+            onToggleMinerSlot = { _, _ -> },
+            onBuyGameMinerItem = {},
+            onFinishGame = {}
+        )
+    }
 }
 
