@@ -1,0 +1,6 @@
+{
+  "name": "Royaltree",
+  "description": "Royaltree Indonesia - Aplikasi penghasil cuan & poin dari komisi, pedometer, misi engagement (like, subscribe, view, tonton video, melayari web), serta Ruang Game RollerCoin dengan rak mining penghasil poin pasif.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
