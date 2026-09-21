@@ -105,7 +105,7 @@ fun AdminScreen(
     allWithdrawals: List<WithdrawalEntity>,
     locationLogs: List<UserLocationLogEntity> = emptyList(),
     systemSettings: SystemSettingsEntity? = null,
-    portalBaseUrl: String = "http://10.0.2.2:3000/api/v1/",
+    portalBaseUrl: String = "http://45.41.204.21:5000/api/v1/",
     portalApiKey: String = "rt_secret_portal_key_2026",
     portalStatus: String = "IDLE",
     portalStatusMessage: String = "Belum diuji",

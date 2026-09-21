@@ -64,11 +64,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.data.model.TransactionEntity
 import com.example.data.model.UserEntity
 import com.example.sensor.StepSensorHelper
 import com.example.viewmodel.AffiliateViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StepCounterScreen(
     viewModel: AffiliateViewModel,
@@ -90,6 +90,24 @@ fun StepCounterScreen(
         }
     }
 
+    StepCounterScreenContent(
+        user = user,
+        transactions = transactions,
+        onAddSteps = { viewModel.addSteps(it) },
+        onConvertSteps = { viewModel.convertStepsToCoins() },
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun StepCounterScreenContent(
+    user: UserEntity?,
+    transactions: List<TransactionEntity>,
+    onAddSteps: (Int) -> Unit,
+    onConvertSteps: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val todaySteps = user?.todaySteps ?: 0
     val unclaimedSteps = user?.unclaimedSteps ?: 0
     val goal = user?.dailyStepGoal ?: 5000
@@ -362,7 +380,7 @@ fun StepCounterScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Button(
-                        onClick = { viewModel.convertStepsToCoins() },
+                        onClick = { onConvertSteps() },
                         enabled = unclaimedSteps >= 100,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF10B981),
@@ -427,21 +445,21 @@ fun StepCounterScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         OutlinedButton(
-                            onClick = { viewModel.addSteps(100) },
+                            onClick = { onAddSteps(100) },
                             shape = RoundedCornerShape(10.dp),
                             modifier = Modifier.weight(1f)
                         ) {
                             Text("+100", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                         }
                         OutlinedButton(
-                            onClick = { viewModel.addSteps(250) },
+                            onClick = { onAddSteps(250) },
                             shape = RoundedCornerShape(10.dp),
                             modifier = Modifier.weight(1f)
                         ) {
                             Text("+250", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                         }
                         OutlinedButton(
-                            onClick = { viewModel.addSteps(500) },
+                            onClick = { onAddSteps(500) },
                             shape = RoundedCornerShape(10.dp),
                             modifier = Modifier.weight(1f)
                         ) {
@@ -518,6 +536,7 @@ fun StepCounterScreen(
         }
     }
 }
+
 
 @Composable
 fun MetricBadge(
