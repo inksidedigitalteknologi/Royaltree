@@ -221,7 +221,7 @@ fun RegisterScreen(
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickableNoRipple { onNavigateLogin() },
+                    .clickable { onNavigateLogin() },
                 textAlign = TextAlign.Center
             )
         }
@@ -230,15 +230,4 @@ fun RegisterScreen(
     }
 }
 
-@Composable
-private fun Modifier.clickableNoRipple(onClick: () -> Unit): Modifier {
-    return this.then(
-        androidx.compose.foundation.clickable(
-            interactionSource = androidx.compose.runtime.remember {
-                androidx.compose.foundation.interaction.MutableInteractionSource()
-            },
-            indication = null,
-            onClick = onClick
-        )
-    )
-}
+
