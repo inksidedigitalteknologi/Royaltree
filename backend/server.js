@@ -383,6 +383,8 @@ app.delete('/api/v1/withdrawals/:id', authenticateToken, async (req, res) => {
         if (!doc.exists) return res.status(404).json({ success: false, message: 'Penarikan tidak ditemukan.' });
         await docRef.delete();
         res.json({ success: true, message: 'Penarikan dihapus.' });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
 
 // PUT Withdrawal (Update)
 app.put('/api/v1/withdrawals/:id', authenticateToken, async (req, res) => {
@@ -393,8 +395,6 @@ app.put('/api/v1/withdrawals/:id', authenticateToken, async (req, res) => {
         await docRef.update(req.body);
         const updated = await docRef.get();
         res.json({ success: true, message: 'Penarikan diupdate.', data: { id: updated.id, ...updated.data() } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
-});
     } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 app.listen(PORT, () => {
