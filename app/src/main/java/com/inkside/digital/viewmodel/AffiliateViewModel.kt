@@ -655,3 +655,75 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+
+    fun loadWithdrawalsFromBackend() {
+        viewModelScope.launch {
+            ApiClient.getWithdrawals().onSuccess { response ->
+                if (response.success) {
+                    response.data.forEach { wd ->
+                        repository.syncWithdrawalsFromBackend(listOf(
+                            WithdrawalEntity(
+                                id = wd.id, userId = wd.userId, amount = wd.amount,
+                                currency = wd.currency, channelType = wd.channelType,
+                                providerName = wd.providerName,
+                                accountDestination = wd.accountDestination,
+                                accountHolderName = wd.accountHolderName,
+                                status = wd.status, fee = wd.fee, netAmount = wd.netAmount,
+                                txRef = wd.txRef
+                            )
+                        ))
+                    }
+                }
+            }
+        }
+    }
+
+    fun loadAnalyticsFromBackend() {
+        viewModelScope.launch {
+            val currentUser = user.value ?: return@launch
+            ApiClient.getAnalyticsSummary(currentUser.id).onSuccess { response ->
+                response.data?.let { data ->
+                    repository.updateUserFromBackend(
+                        userId = data.userId, name = "", email = "",
+                        tier = data.tier, balance = data.balance,
+                        points = data.points, todaySteps = data.todaySteps
+                    )
+                }
+            }
+        }
+    }
+
+    fun loadProfileFromBackend() {
+        viewModelScope.launch {
+            val currentUser = user.value ?: return@launch
+            ApiClient.getProfile(currentUser.id).onSuccess { response ->
+                response.data?.let { profile ->
+                    repository.updateUserFromBackend(
+                        userId = profile.id, name = profile.name, email = profile.email,
+                        tier = profile.tier, balance = profile.balance,
+                        points = profile.points, todaySteps = profile.todaySteps
+                    )
+                }
+            }
+        }
+    }
+
+    fun spinWheelFromBackend() {
+        viewModelScope.launch {
+            val currentUser = user.value ?: return@launch
+            ApiClient.spinWheel(currentUser.id).onSuccess { response ->
+                if (response.success) {
+                    response.data?.let { spin ->
+                        val current = user.value ?: return@launch
+                        repository.updateUserFromBackend(
+                            userId = current.id, name = "", email = "",
+                            tier = current.tier, balance = current.balance,
+                            points = current.points + spin.pointsWon,
+                            todaySteps = current.todaySteps
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
