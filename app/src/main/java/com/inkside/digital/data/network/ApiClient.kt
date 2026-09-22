@@ -15,6 +15,8 @@ import com.inkside.digital.data.network.model.ApiSpinResponse
 import com.inkside.digital.data.network.model.ApiProfileResponse
 import com.inkside.digital.data.network.model.ApiWithdrawalListResponse
 import com.inkside.digital.data.network.model.ApiWithdrawalRequest
+import com.inkside.digital.data.network.model.ApiCampaignListResponse
+import com.inkside.digital.data.network.model.ApiMissionListResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
@@ -185,5 +187,12 @@ object ApiClient {
     }
     suspend fun createWithdrawal(req: ApiWithdrawalRequest, token: String = currentApiKey): Result<ApiGenericResponse> = withContext(Dispatchers.IO) {
         try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.createWithdrawal(b, req)) } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun getCampaigns(token: String = currentApiKey): Result<ApiCampaignListResponse> = withContext(Dispatchers.IO) {
+        try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.getCampaigns(b)) } catch (e: Exception) { Result.failure(e) }
+    }
+    suspend fun getMissions(token: String = currentApiKey): Result<ApiMissionListResponse> = withContext(Dispatchers.IO) {
+        try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.getMissions(b)) } catch (e: Exception) { Result.failure(e) }
     }
 }

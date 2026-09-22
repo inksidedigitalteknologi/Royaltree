@@ -204,3 +204,39 @@ data class ApiWithdrawalRequest(
     @Json(name = "netAmount") val netAmount: Double = 0.0,
     @Json(name = "txRef") val txRef: String = ""
 )
+
+@JsonClass(generateAdapter = true)
+data class ApiCampaignListResponse(
+    @Json(name = "success") val success: Boolean = true,
+    @Json(name = "total") val total: Int = 0,
+    @Json(name = "data") val data: List<CampaignItem> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class CampaignItem(
+    @Json(name = "id") val id: String = "",
+    @Json(name = "title") val title: String = "",
+    @Json(name = "category") val category: String = "",
+    @Json(name = "merchantName") val merchantName: String = "",
+    @Json(name = "commissionDisplay") val commissionDisplay: String = "",
+    @Json(name = "baseCommissionRate") val baseCommissionRate: Double = 0.0,
+    @Json(name = "status") val status: String = "ACTIVE"
+)
+
+@JsonClass(generateAdapter = true)
+data class ApiMissionListResponse(
+    @Json(name = "success") val success: Boolean = true,
+    @Json(name = "total") val total: Int = 0,
+    @Json(name = "data") val data: List<MissionItem> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class MissionItem(
+    @Json(name = "id") val id: String = "",
+    @Json(name = "title") val title: String = "",
+    @Json(name = "category") val category: String = "",
+    @Json(name = "rtpReward") val rtpReward: Int = 0,
+    @Json(name = "targetPlatform") val targetPlatform: String = "",
+    @Json(name = "durationSeconds") val durationSeconds: Int = 0,
+    @Json(name = "actionUrl") val actionUrl: String = ""
+)

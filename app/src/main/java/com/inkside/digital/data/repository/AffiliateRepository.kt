@@ -1369,3 +1369,20 @@ data class TransferResult(
             ))
         }
 }
+
+    // ============ SYNC DARI BACKEND ============
+    suspend fun syncCampaignsFromBackend(campaigns: List<CampaignEntity>) = withContext(Dispatchers.IO) {
+        campaigns.forEach { dao.insertCampaign(it) }
+    }
+
+    suspend fun syncMissionsFromBackend(missions: List<TaskMissionEntity>) = withContext(Dispatchers.IO) {
+        missions.forEach { dao.insertMission(it) }
+    }
+
+    suspend fun syncWithdrawalsFromBackend(withdrawals: List<WithdrawalEntity>) = withContext(Dispatchers.IO) {
+        withdrawals.forEach { dao.insertWithdrawal(it) }
+    }
+
+    suspend fun syncTransactionsFromBackend(transactions: List<TransactionEntity>) = withContext(Dispatchers.IO) {
+        transactions.forEach { dao.insertTransaction(it) }
+    }

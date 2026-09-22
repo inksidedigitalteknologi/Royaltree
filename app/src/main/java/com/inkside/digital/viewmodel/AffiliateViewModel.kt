@@ -6,10 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.inkside.digital.data.database.AppDatabase
 import com.inkside.digital.data.model.AffiliateLinkEntity
 import com.inkside.digital.data.model.CampaignEntity
+import com.inkside.digital.data.model.TaskMissionEntity
 import com.inkside.digital.data.model.InvestmentCouponEntity
 import com.inkside.digital.data.model.NotificationEntity
 import com.inkside.digital.data.model.SystemSettingsEntity
-import com.inkside.digital.data.model.TaskMissionEntity
 import com.inkside.digital.data.model.TransactionEntity
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.data.model.UserLocationLogEntity
@@ -611,8 +611,47 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         points = profile.points,
                         todaySteps = profile.todaySteps
                     )
+
+    // ============ SYNC DARI BACKEND ============
+    fun loadCampaignsFromBackend() {
+        viewModelScope.launch {
+            ApiClient.getCampaigns().onSuccess { response ->
+                if (response.success) {
+                    response.data.forEach { item ->
+                        repository.syncCampaignsFromBackend(listOf(
+                            CampaignEntity(
+                                id = item.id, title = item.title, category = item.category,
+                                merchantName = item.merchantName,
+                                commissionDisplay = item.commissionDisplay,
+                                payoutType = "CPS", baseCommissionRate = item.baseCommissionRate,
+                                clicksCount = 0, conversionsCount = 0, totalEarned = 0.0,
+                                status = item.status
+                            )
+                        ))
+                    }
                 }
             }
         }
     }
-}
+
+    fun loadMissionsFromBackend() {
+        viewModelScope.launch {
+            ApiClient.getMissions().onSuccess { response ->
+                if (response.success) {
+                    response.data.forEach { item ->
+                        repository.syncMissionsFromBackend(listOf(
+                            TaskMissionEntity(
+                                id = item.id, title = item.title, description = "",
+                                rtpReward = item.rtpReward, type = "ENGAGEMENT_MISSION",
+                                category = item.category, currentProgress = 0, maxProgress = 1,
+                                isCompleted = false, isClaimed = false, iconKey = "star",
+                                targetPlatform = item.targetPlatform,
+                                durationSeconds = item.durationSeconds,
+                                actionUrl = item.actionUrl
+                            )
+                        ))
+                    }
+                }
+            }
+        }
+    }
