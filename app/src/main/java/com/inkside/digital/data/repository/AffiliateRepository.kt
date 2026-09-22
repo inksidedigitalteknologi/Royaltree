@@ -1347,3 +1347,25 @@ data class TransferResult(
     val note: String = ""
 )
 
+
+    suspend fun updateUserFromBackend(
+        userId: String,
+        name: String,
+        email: String,
+        tier: String,
+        balance: Double,
+        points: Int,
+        todaySteps: Int
+    ) = withContext(Dispatchers.IO) {
+        val existing = dao.getUserSync(userId)
+        if (existing != null) {
+            dao.updateUser(existing.copy(
+                name = name.ifBlank { existing.name },
+                email = email.ifBlank { existing.email },
+                tier = tier.ifBlank { existing.tier },
+                balance = balance,
+                points = points,
+                todaySteps = todaySteps
+            ))
+        }
+}
