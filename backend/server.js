@@ -397,6 +397,509 @@ app.put('/api/v1/withdrawals/:id', authenticateToken, async (req, res) => {
         res.json({ success: true, message: 'Penarikan diupdate.', data: { id: updated.id, ...updated.data() } });
     } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
+
+// ============ STEP COUNTER ============
+
+app.post('/api/v1/steps/sync', authenticateToken, async (req, res) => {
+    try {
+        const { userId, steps, date } = req.body;
+        if (!userId || steps === undefined) {
+            return res.status(400).json({ success: false, message: 'userId dan steps wajib diisi.' });
+        }
+        const today = date || new Date().toISOString().split('T')[0];
+        const docId = `${userId}_${today}`;
+        const docRef = db.collection('step_logs').doc(docId);
+        const doc = await docRef.get();
+        if (doc.exists) {
+            const existing = doc.data().steps || 0;
+            await docRef.update({ steps: existing + parseInt(steps), updatedAt: new Date().toISOString() });
+        } else {
+            await docRef.set({ userId, date: today, steps: parseInt(steps), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+        }
+        const userRef = db.collection('users').doc(userId);
+        const userDoc = await userRef.get();
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            const totalSteps = (userData.todaySteps || 0) + parseInt(steps);
+            await userRef.update({ todaySteps: totalSteps, updatedAt: new Date().toISOString() });
+        }
+        const updated = await docRef.get();
+        res.json({ success: true, message: 'Langkah berhasil disimpan.', data: { id: updated.id, ...updated.data() } });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.get('/api/v1/steps/today/:userId', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const today = new Date().toISOString().split('T')[0];
+        const docId = `${userId}_${today}`;
+        const doc = await db.collection('step_logs').doc(docId).get();
+        if (!doc.exists) {
+            return res.json({ success: true, data: { userId, date: today, steps: 0 } });
+        }
+        res.json({ success: true, data: { id: doc.id, ...doc.data() } });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.get('/api/v1/steps/history/:userId', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const limit = parseInt(req.query.limit) || 30;
+        const snapshot = await db.collection('step_logs')
+            .where('userId', '==', userId)
+            .orderBy('date', 'desc')
+            .limit(limit)
+            .get();
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.json({ success: true, total: result.length, data: result });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.get('/api/v1/steps/leaderboard', authenticateToken, async (req, res) => {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const snapshot = await db.collection('step_logs')
+            .where('date', '==', today)
+            .orderBy('steps', 'desc')
+            .limit(20)
+            .get();
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.json({ success: true, total: result.length, data: result });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// ============ HISTORY ============
+
+app.get('/api/v1/history/:userId', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const limit = parseInt(req.query.limit) || 50;
+        const snapshot = await db.collection('transactions')
+            .where('userId', '==', userId)
+            .orderBy('timestamp', 'desc')
+            .limit(limit)
+            .get();
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.json({ success: true, total: result.length, data: result });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.get('/api/v1/history/:userId/type/:type', authenticateToken, async (req, res) => {
+    try {
+        const { userId, type } = req.params;
+        const limit = parseInt(req.query.limit) || 50;
+        const snapshot = await db.collection('transactions')
+            .where('userId', '==', userId)
+            .where('type', '==', type)
+            .orderBy('timestamp', 'desc')
+            .limit(limit)
+            .get();
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.json({ success: true, type, total: result.length, data: result });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.post('/api/v1/history', authenticateToken, async (req, res) => {
+    try {
+        const { userId, type, amount, description, referenceId } = req.body;
+        if (!userId || !type) {
+            return res.status(400).json({ success: false, message: 'userId dan type wajib diisi.' });
+        }
+        const newTx = {
+            userId, type, amount: parseFloat(amount) || 0,
+            description: description || '', referenceId: referenceId || null,
+            timestamp: Date.now(), createdAt: new Date().toISOString()
+        };
+        const docRef = await db.collection('transactions').add(newTx);
+        res.status(201).json({ success: true, message: 'Transaksi ditambahkan.', data: { id: docRef.id, ...newTx } });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.get('/api/v1/point-transactions/:userId', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const limit = parseInt(req.query.limit) || 50;
+        const snapshot = await db.collection('point_transactions')
+            .where('userId', '==', userId)
+            .orderBy('timestamp', 'desc')
+            .limit(limit)
+            .get();
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.json({ success: true, total: result.length, data: result });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.post('/api/v1/point-transactions', authenticateToken, async (req, res) => {
+    try {
+        const { userId, points, action, referenceId } = req.body;
+        if (!userId || points === undefined) {
+            return res.status(400).json({ success: false, message: 'userId dan points wajib diisi.' });
+        }
+        const newPt = {
+            userId, points: parseInt(points), action: action || 'UNKNOWN',
+            referenceId: referenceId || null, timestamp: Date.now(),
+            createdAt: new Date().toISOString()
+        };
+        const docRef = await db.collection('point_transactions').add(newPt);
+        const userRef = db.collection('users').doc(userId);
+        const userDoc = await userRef.get();
+        if (userDoc.exists) {
+            const currentPoints = userDoc.data().points || 0;
+            await userRef.update({ points: currentPoints + parseInt(points), updatedAt: new Date().toISOString() });
+        }
+        res.status(201).json({ success: true, message: 'Poin ditambahkan.', data: { id: docRef.id, ...newPt } });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// ============ ANALYTICS ============
+
+app.get('/api/v1/analytics/:userId/summary', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const userDoc = await db.collection('users').doc(userId).get();
+        if (!userDoc.exists) {
+            return res.status(404).json({ success: false, message: 'User tidak ditemukan.' });
+        }
+        const user = userDoc.data();
+        const txSnapshot = await db.collection('transactions')
+            .where('userId', '==', userId)
+            .get();
+        let totalCommission = 0;
+        let totalWithdrawal = 0;
+        txSnapshot.docs.forEach(doc => {
+            const d = doc.data();
+            if (d.type === 'COMMISSION' || d.type === 'REFERRAL') totalCommission += d.amount || 0;
+            if (d.type === 'WITHDRAWAL') totalWithdrawal += d.amount || 0;
+        });
+        res.json({
+            success: true,
+            data: {
+                userId,
+                balance: user.balance || 0,
+                points: user.points || 0,
+                tier: user.tier || 'FREE',
+                todaySteps: user.todaySteps || 0,
+                totalCommission,
+                totalWithdrawal,
+                netEarnings: totalCommission - totalWithdrawal
+            }
+        });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.get('/api/v1/analytics/:userId/earnings', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const days = parseInt(req.query.days) || 30;
+        const since = Date.now() - (days * 24 * 60 * 60 * 1000);
+        const snapshot = await db.collection('transactions')
+            .where('userId', '==', userId)
+            .where('timestamp', '>=', since)
+            .get();
+        const earnings = {};
+        snapshot.docs.forEach(doc => {
+            const d = doc.data();
+            const date = new Date(d.timestamp).toISOString().split('T')[0];
+            if (!earnings[date]) earnings[date] = 0;
+            if (d.type === 'COMMISSION' || d.type === 'REFERRAL') {
+                earnings[date] += d.amount || 0;
+            }
+        });
+        const chartData = Object.entries(earnings).map(([date, amount]) => ({ date, amount })).sort((a, b) => a.date.localeCompare(b.date));
+        res.json({ success: true, days, total: chartData.length, data: chartData });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.get('/api/v1/analytics/:userId/referrals', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const snapshot = await db.collection('users')
+            .where('referredBy', '==', userId)
+            .get();
+        const referrals = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const activeReferrals = referrals.filter(r => (r.points || 0) > 0).length;
+        res.json({
+            success: true,
+            data: {
+                totalReferrals: referrals.length,
+                activeReferrals,
+                referrals: referrals.map(r => ({ id: r.id, name: r.name, tier: r.tier, points: r.points, joinedAt: r.createdAt }))
+            }
+        });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.get('/api/v1/analytics/global', authenticateToken, async (req, res) => {
+    try {
+        const [usersSnap, wdSnap, campSnap, misSnap] = await Promise.all([
+            db.collection('users').get(),
+            db.collection('withdrawals').get(),
+            db.collection('campaigns').get(),
+            db.collection('missions').get()
+        ]);
+        let totalBalance = 0, totalPoints = 0;
+        usersSnap.docs.forEach(doc => {
+            const d = doc.data();
+            totalBalance += d.balance || 0;
+            totalPoints += d.points || 0;
+        });
+        let totalWithdrawalAmount = 0, pendingWithdrawals = 0;
+        wdSnap.docs.forEach(doc => {
+            const d = doc.data();
+            totalWithdrawalAmount += d.amount || 0;
+            if (d.status === 'PENDING') pendingWithdrawals++;
+        });
+        res.json({
+            success: true,
+            data: {
+                totalUsers: usersSnap.size,
+                totalBalance,
+                totalPoints,
+                totalWithdrawals: wdSnap.size,
+                totalWithdrawalAmount,
+                pendingWithdrawals,
+                totalCampaigns: campSnap.size,
+                totalMissions: misSnap.size
+            }
+        });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// ============ NOTIFICATIONS ============
+
+app.get('/api/v1/notifications/:userId', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const limit = parseInt(req.query.limit) || 50;
+        const snapshot = await db.collection('notifications')
+            .where('userId', '==', userId)
+            .orderBy('timestamp', 'desc')
+            .limit(limit)
+            .get();
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.json({ success: true, total: result.length, data: result });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.get('/api/v1/notifications/:userId/unread', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const snapshot = await db.collection('notifications')
+            .where('userId', '==', userId)
+            .where('read', '==', false)
+            .get();
+        res.json({ success: true, unread: snapshot.size });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.post('/api/v1/notifications', authenticateToken, async (req, res) => {
+    try {
+        const { userId, title, message, type, referenceId } = req.body;
+        if (!userId || !title) {
+            return res.status(400).json({ success: false, message: 'userId dan title wajib diisi.' });
+        }
+        const newNotif = {
+            userId, title, message: message || '', type: type || 'INFO',
+            referenceId: referenceId || null, read: false,
+            timestamp: Date.now(), createdAt: new Date().toISOString()
+        };
+        const docRef = await db.collection('notifications').add(newNotif);
+        res.status(201).json({ success: true, message: 'Notifikasi dikirim.', data: { id: docRef.id, ...newNotif } });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.put('/api/v1/notifications/:id/read', authenticateToken, async (req, res) => {
+    try {
+        const docRef = db.collection('notifications').doc(req.params.id);
+        const doc = await docRef.get();
+        if (!doc.exists) return res.status(404).json({ success: false, message: 'Notifikasi tidak ditemukan.' });
+        await docRef.update({ read: true, readAt: new Date().toISOString() });
+        const updated = await docRef.get();
+        res.json({ success: true, message: 'Notifikasi ditandai sudah dibaca.', data: { id: updated.id, ...updated.data() } });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.put('/api/v1/notifications/:userId/read-all', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const snapshot = await db.collection('notifications')
+            .where('userId', '==', userId)
+            .where('read', '==', false)
+            .get();
+        const batch = db.batch();
+        snapshot.docs.forEach(doc => {
+            batch.update(doc.ref, { read: true, readAt: new Date().toISOString() });
+        });
+        await batch.commit();
+        res.json({ success: true, message: `${snapshot.size} notifikasi ditandai sudah dibaca.` });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.delete('/api/v1/notifications/:id', authenticateToken, async (req, res) => {
+    try {
+        const docRef = db.collection('notifications').doc(req.params.id);
+        const doc = await docRef.get();
+        if (!doc.exists) return res.status(404).json({ success: false, message: 'Notifikasi tidak ditemukan.' });
+        await docRef.delete();
+        res.json({ success: true, message: 'Notifikasi dihapus.' });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// ============ GAME ROOM ============
+
+app.post('/api/v1/games/spin', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.body;
+        if (!userId) return res.status(400).json({ success: false, message: 'userId wajib diisi.' });
+        const prizes = [
+            { label: '10 Poin', points: 10, weight: 40 },
+            { label: '25 Poin', points: 25, weight: 30 },
+            { label: '50 Poin', points: 50, weight: 15 },
+            { label: '100 Poin', points: 100, weight: 10 },
+            { label: '500 Poin', points: 500, weight: 4 },
+            { label: 'Jackpot 1000 Poin', points: 1000, weight: 1 }
+        ];
+        const totalWeight = prizes.reduce((s, p) => s + p.weight, 0);
+        let random = Math.random() * totalWeight;
+        let selected = prizes[0];
+        for (const p of prizes) {
+            if (random < p.weight) { selected = p; break; }
+            random -= p.weight;
+        }
+        const gameLog = {
+            userId, gameType: 'SPIN', result: selected.label,
+            pointsWon: selected.points, timestamp: Date.now(),
+            createdAt: new Date().toISOString()
+        };
+        const docRef = await db.collection('game_logs').add(gameLog);
+        const userRef = db.collection('users').doc(userId);
+        const userDoc = await userRef.get();
+        if (userDoc.exists) {
+            const currentPoints = userDoc.data().points || 0;
+            await userRef.update({ points: currentPoints + selected.points, updatedAt: new Date().toISOString() });
+        }
+        res.json({ success: true, message: `Selamat! Anda mendapat ${selected.label}`, data: { id: docRef.id, ...gameLog } });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.post('/api/v1/games/quiz/submit', authenticateToken, async (req, res) => {
+    try {
+        const { userId, quizId, answer, correctAnswer, rewardPoints } = req.body;
+        if (!userId || !quizId) return res.status(400).json({ success: false, message: 'userId dan quizId wajib diisi.' });
+        const isCorrect = answer === correctAnswer;
+        const pointsWon = isCorrect ? (rewardPoints || 50) : 0;
+        const gameLog = {
+            userId, gameType: 'QUIZ', quizId, answer, isCorrect,
+            pointsWon, timestamp: Date.now(), createdAt: new Date().toISOString()
+        };
+        const docRef = await db.collection('game_logs').add(gameLog);
+        if (pointsWon > 0) {
+            const userRef = db.collection('users').doc(userId);
+            const userDoc = await userRef.get();
+            if (userDoc.exists) {
+                await userRef.update({ points: (userDoc.data().points || 0) + pointsWon, updatedAt: new Date().toISOString() });
+            }
+        }
+        res.json({ success: true, isCorrect, pointsWon, message: isCorrect ? `Benar! +${pointsWon} poin` : 'Salah, coba lagi!', data: { id: docRef.id, ...gameLog } });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.get('/api/v1/games/history/:userId', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const limit = parseInt(req.query.limit) || 30;
+        const snapshot = await db.collection('game_logs')
+            .where('userId', '==', userId)
+            .orderBy('timestamp', 'desc')
+            .limit(limit)
+            .get();
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.json({ success: true, total: result.length, data: result });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.get('/api/v1/games/leaderboard', authenticateToken, async (req, res) => {
+    try {
+        const snapshot = await db.collection('game_logs').orderBy('pointsWon', 'desc').limit(20).get();
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.json({ success: true, total: result.length, data: result });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// ============ PROFILE SECURITY ============
+
+app.get('/api/v1/profile/:userId', authenticateToken, async (req, res) => {
+    try {
+        const doc = await db.collection('users').doc(req.params.userId).get();
+        if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan.' });
+        const u = doc.data();
+        delete u.pin; delete u.password;
+        res.json({ success: true, data: { id: doc.id, ...u } });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.put('/api/v1/profile/:userId/update', authenticateToken, async (req, res) => {
+    try {
+        const docRef = db.collection('users').doc(req.params.userId);
+        const doc = await docRef.get();
+        if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan.' });
+        const allowed = ['name', 'email', 'phone', 'city', 'avatarEmoji'];
+        const updateData = {};
+        allowed.forEach(k => { if (req.body[k] !== undefined) updateData[k] = req.body[k]; });
+        updateData.updatedAt = new Date().toISOString();
+        await docRef.update(updateData);
+        const updated = await docRef.get();
+        res.json({ success: true, message: 'Profil diupdate.', data: { id: updated.id, ...updated.data() } });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.put('/api/v1/profile/:userId/change-pin', authenticateToken, async (req, res) => {
+    try {
+        const { oldPin, newPin } = req.body;
+        if (!newPin || newPin.length < 4) return res.status(400).json({ success: false, message: 'PIN baru minimal 4 digit.' });
+        const docRef = db.collection('users').doc(req.params.userId);
+        const doc = await docRef.get();
+        if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan.' });
+        const userData = doc.data();
+        if (userData.pin && userData.pin !== oldPin) {
+            return res.status(403).json({ success: false, message: 'PIN lama salah.' });
+        }
+        await docRef.update({ pin: newPin, pinUpdatedAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+        await db.collection('security_logs').add({
+            userId: req.params.userId, action: 'CHANGE_PIN',
+            timestamp: Date.now(), createdAt: new Date().toISOString()
+        });
+        res.json({ success: true, message: 'PIN berhasil diubah.' });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.post('/api/v1/profile/:userId/verify-pin', authenticateToken, async (req, res) => {
+    try {
+        const { pin } = req.body;
+        const doc = await db.collection('users').doc(req.params.userId).get();
+        if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan.' });
+        const userData = doc.data();
+        const isValid = !userData.pin || userData.pin === pin;
+        await db.collection('security_logs').add({
+            userId: req.params.userId, action: isValid ? 'VERIFY_PIN_SUCCESS' : 'VERIFY_PIN_FAILED',
+            timestamp: Date.now(), createdAt: new Date().toISOString()
+        });
+        res.json({ success: true, isValid });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.get('/api/v1/profile/:userId/security-log', authenticateToken, async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 30;
+        const snapshot = await db.collection('security_logs')
+            .where('userId', '==', req.params.userId)
+            .orderBy('timestamp', 'desc')
+            .limit(limit)
+            .get();
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.json({ success: true, total: result.length, data: result });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
 app.listen(PORT, () => {
     console.log(`====================================================`);
     console.log(` Royaltree Portal API Server aktif di port ${PORT}`);
