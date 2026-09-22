@@ -12,30 +12,18 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const admin = require('firebase-admin');
+const { admin, db } = require('./config/firebase');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-
-// Serve admin panel
-app.use('/admin', express.static('/root/Royaltree/admin'));
 app.use(express.json());
+app.use('/api/v1/auth', authRoutes);
 
 // Serve admin panel
 app.use('/admin', express.static('/root/Royaltree/admin'));
-
-// -------------------------------------------------------------
-// INISIALISASI FIREBASE ADMIN SDK
-// -------------------------------------------------------------
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.applicationDefault()
-    });
-}
-
-const db = admin.firestore();
 
 // Kunci Otentikasi Admin Portal
 const API_SECRET_KEY = process.env.ROYALTREE_API_KEY || "rt_secret_portal_key_2026";
