@@ -60,4 +60,51 @@ interface RoyaltreeApiService {
         @Header("Authorization") token: String,
         @Path("userId") userId: String
     ): ApiUnreadResponse
+
+    // Analytics
+    @GET("analytics/{userId}/summary")
+    suspend fun getAnalyticsSummary(
+        @Header("Authorization") token: String,
+        @Path("userId") userId: String
+    ): ApiAnalyticsSummaryResponse
+
+    // Games
+    @POST("games/spin")
+    suspend fun spinWheel(
+        @Header("Authorization") token: String,
+        @Body request: SpinRequest
+    ): ApiSpinResponse
+
+    // Profile
+    @GET("profile/{userId}")
+    suspend fun getProfile(
+        @Header("Authorization") token: String,
+        @Path("userId") userId: String
+    ): ApiProfileResponse
+
+    @PUT("profile/{userId}/update")
+    suspend fun updateProfile(
+        @Header("Authorization") token: String,
+        @Path("userId") userId: String,
+        @Body body: Map<String, String>
+    ): ApiGenericResponse
+
+    @PUT("profile/{userId}/change-pin")
+    suspend fun changePin(
+        @Header("Authorization") token: String,
+        @Path("userId") userId: String,
+        @Body body: Map<String, String>
+    ): ApiGenericResponse
+
+    // Withdrawals
+    @GET("withdrawals")
+    suspend fun getWithdrawals(
+        @Header("Authorization") token: String
+    ): ApiWithdrawalListResponse
+
+    @POST("withdrawals")
+    suspend fun createWithdrawal(
+        @Header("Authorization") token: String,
+        @Body body: ApiWithdrawalRequest
+    ): ApiGenericResponse
 }

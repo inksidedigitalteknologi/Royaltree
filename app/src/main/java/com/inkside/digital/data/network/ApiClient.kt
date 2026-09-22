@@ -9,6 +9,12 @@ import com.inkside.digital.data.network.model.ApiGenericResponse
 import com.inkside.digital.data.network.model.ApiHistoryResponse
 import com.inkside.digital.data.network.model.ApiNotificationListResponse
 import com.inkside.digital.data.network.model.ApiUnreadResponse
+import com.inkside.digital.data.network.model.ApiAnalyticsSummaryResponse
+import com.inkside.digital.data.network.model.SpinRequest
+import com.inkside.digital.data.network.model.ApiSpinResponse
+import com.inkside.digital.data.network.model.ApiProfileResponse
+import com.inkside.digital.data.network.model.ApiWithdrawalListResponse
+import com.inkside.digital.data.network.model.ApiWithdrawalRequest
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
@@ -157,5 +163,27 @@ object ApiClient {
             val bearer = if (token.startsWith("Bearer ")) token else "Bearer $token"
             Result.success(apiService.getUnreadCount(bearer, userId))
         } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun getAnalyticsSummary(userId: String, token: String = currentApiKey): Result<ApiAnalyticsSummaryResponse> = withContext(Dispatchers.IO) {
+        try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.getAnalyticsSummary(b, userId)) } catch (e: Exception) { Result.failure(e) }
+    }
+    suspend fun spinWheel(userId: String, token: String = currentApiKey): Result<ApiSpinResponse> = withContext(Dispatchers.IO) {
+        try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.spinWheel(b, SpinRequest(userId))) } catch (e: Exception) { Result.failure(e) }
+    }
+    suspend fun getProfile(userId: String, token: String = currentApiKey): Result<ApiProfileResponse> = withContext(Dispatchers.IO) {
+        try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.getProfile(b, userId)) } catch (e: Exception) { Result.failure(e) }
+    }
+    suspend fun updateProfile(userId: String, body: Map<String, String>, token: String = currentApiKey): Result<ApiGenericResponse> = withContext(Dispatchers.IO) {
+        try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.updateProfile(b, userId, body)) } catch (e: Exception) { Result.failure(e) }
+    }
+    suspend fun changePin(userId: String, body: Map<String, String>, token: String = currentApiKey): Result<ApiGenericResponse> = withContext(Dispatchers.IO) {
+        try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.changePin(b, userId, body)) } catch (e: Exception) { Result.failure(e) }
+    }
+    suspend fun getWithdrawals(token: String = currentApiKey): Result<ApiWithdrawalListResponse> = withContext(Dispatchers.IO) {
+        try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.getWithdrawals(b)) } catch (e: Exception) { Result.failure(e) }
+    }
+    suspend fun createWithdrawal(req: ApiWithdrawalRequest, token: String = currentApiKey): Result<ApiGenericResponse> = withContext(Dispatchers.IO) {
+        try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.createWithdrawal(b, req)) } catch (e: Exception) { Result.failure(e) }
     }
 }
