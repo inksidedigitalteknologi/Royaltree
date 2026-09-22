@@ -5,6 +5,7 @@ import com.inkside.digital.data.network.model.ApiGenericResponse
 import com.inkside.digital.data.network.model.ApiHealthResponse
 import com.inkside.digital.data.network.model.ApiUserSyncRequest
 import com.inkside.digital.data.network.model.ApiUserSyncResponse
+import com.inkside.digital.data.network.model.StepSyncRequest
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -25,6 +26,12 @@ interface RoyaltreeApiService {
         @Header("Authorization") token: String,
         @Body request: ApiUserSyncRequest
     ): ApiUserSyncResponse
+
+    @POST("steps/sync")
+    suspend fun syncSteps(
+        @Header("Authorization") token: String,
+        @Body request: StepSyncRequest
+    ): ApiGenericResponse
 
     @PUT("withdrawals/{id}/status")
     suspend fun updateWithdrawalStatus(
