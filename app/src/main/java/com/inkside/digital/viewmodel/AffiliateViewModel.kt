@@ -612,6 +612,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         todaySteps = profile.todaySteps
                     )
 
+            }
+        }
+    }
+    }
+
     // ============ SYNC DARI BACKEND ============
     fun loadCampaignsFromBackend() {
         viewModelScope.launch {

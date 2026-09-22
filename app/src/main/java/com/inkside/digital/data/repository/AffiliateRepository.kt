@@ -1332,8 +1332,6 @@ class AffiliateRepository(private val dao: AppDao) {
 
         Result.success(Pair(bonusPoints, boostGhs))
     }
-}
-
 data class TransferResult(
     val transferId: String,
     val senderPointsRemaining: Int,
@@ -1386,3 +1384,4 @@ data class TransferResult(
     suspend fun syncTransactionsFromBackend(transactions: List<TransactionEntity>) = withContext(Dispatchers.IO) {
         transactions.forEach { dao.insertTransaction(it) }
     }
+}
