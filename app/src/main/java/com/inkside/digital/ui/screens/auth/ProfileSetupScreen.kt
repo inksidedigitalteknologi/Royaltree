@@ -153,7 +153,7 @@ fun ProfileSetupScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
-                    .clickableNoRipple { onLogout() },
+                    .clickable { onLogout() },
                 textAlign = TextAlign.Center
             )
         }
@@ -162,15 +162,4 @@ fun ProfileSetupScreen(
     }
 }
 
-@Composable
-private fun Modifier.clickableNoRipple(onClick: () -> Unit): Modifier {
-    return this.then(
-        androidx.compose.foundation.clickable(
-            interactionSource = androidx.compose.runtime.remember {
-                androidx.compose.foundation.interaction.MutableInteractionSource()
-            },
-            indication = null,
-            onClick = onClick
-        )
-    )
-}
+
