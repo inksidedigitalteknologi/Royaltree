@@ -282,4 +282,18 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     fun clearSuccess() {
         _successMessage.value = null
     }
+
+    // ============ NAVIGASI ============
+
+    fun navigateToRegister() {
+        _errorMessage.value = null
+        _successMessage.value = null
+        _currentScreen.value = AuthScreen.REGISTER
+    }
+
+    fun navigateToLogin() {
+        _errorMessage.value = null
+        _successMessage.value = null
+        _currentScreen.value = AuthScreen.LOGIN
+    }
 }

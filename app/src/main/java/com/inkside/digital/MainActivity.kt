@@ -53,6 +53,13 @@ import com.inkside.digital.ui.screens.AppOffersScreenContent
 import com.inkside.digital.ui.screens.GameRoomScreenContent
 import com.inkside.digital.ui.screens.WithdrawalScreen
 import com.inkside.digital.ui.theme.MyApplicationTheme
+import com.inkside.digital.ui.screens.auth.AuthScreen
+import com.inkside.digital.ui.screens.auth.AuthViewModel
+import com.inkside.digital.ui.screens.auth.LoginScreen
+import com.inkside.digital.ui.screens.auth.ProfileSetupScreen
+import com.inkside.digital.ui.screens.auth.RegisterScreen
+import com.inkside.digital.ui.screens.auth.SplashScreen
+import com.inkside.digital.ui.screens.auth.VerifyEmailScreen
 import com.inkside.digital.viewmodel.AffiliateViewModel
 import com.inkside.digital.viewmodel.AppScreen
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,8 +70,87 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyApplicationTheme {
-                MainAffiliateApp()
+                RootNav()
             }
+        }
+    }
+}
+
+@Composable
+fun RootNav(
+    authViewModel: AuthViewModel = viewModel(),
+    affiliateViewModel: AffiliateViewModel = viewModel()
+) {
+    val authScreen by authViewModel.currentScreen.collectAsState()
+    val currentUser by authViewModel.currentUser.collectAsState()
+    val isLoading by authViewModel.isLoading.collectAsState()
+    val errorMessage by authViewModel.errorMessage.collectAsState()
+    val successMessage by authViewModel.successMessage.collectAsState()
+
+    when (authScreen) {
+        AuthScreen.SPLASH -> {
+            SplashScreen()
+        }
+
+        AuthScreen.LOGIN -> {
+            LoginScreen(
+                isLoading = isLoading,
+                errorMessage = errorMessage,
+                onLoginEmail = { email, password ->
+                    authViewModel.loginWithEmail(email, password)
+                },
+                onLoginGoogle = { idToken ->
+                    authViewModel.loginWithGoogle(idToken)
+                },
+                onNavigateRegister = {
+                    authViewModel.navigateToRegister()
+                }
+            )
+        }
+
+        AuthScreen.REGISTER -> {
+            RegisterScreen(
+                isLoading = isLoading,
+                errorMessage = errorMessage,
+                successMessage = successMessage,
+                onRegisterEmail = { email, password, name ->
+                    authViewModel.registerWithEmail(email, password, name)
+                },
+                onRegisterGoogle = { idToken ->
+                    authViewModel.loginWithGoogle(idToken)
+                },
+                onNavigateLogin = {
+                    authViewModel.navigateToLogin()
+                }
+            )
+        }
+
+        AuthScreen.VERIFY_EMAIL -> {
+            VerifyEmailScreen(
+                email = currentUser?.email,
+                isLoading = isLoading,
+                errorMessage = errorMessage,
+                successMessage = successMessage,
+                onResendEmail = { authViewModel.resendVerificationEmail() },
+                onCheckVerified = { authViewModel.checkEmailVerified() },
+                onLogout = { authViewModel.logout() }
+            )
+        }
+
+        AuthScreen.PROFILE_SETUP -> {
+            ProfileSetupScreen(
+                defaultName = currentUser?.displayName ?: "",
+                isLoading = isLoading,
+                errorMessage = errorMessage,
+                onSave = { name, phone, city, referralCode ->
+                    authViewModel.saveProfileSetup(name, phone, city, referralCode)
+                },
+                onLogout = { authViewModel.logout() }
+            )
+        }
+
+        AuthScreen.HOME -> {
+            MainAffiliateApp(viewModel = affiliateViewModel)
         }
     }
 }
