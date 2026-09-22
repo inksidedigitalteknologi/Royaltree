@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royaltree Admin Panel</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a1a; }
+  .header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 100; }
+  .header h1 { font-size: 20px; display: flex; align-items: center; gap: 8px; }
+  .header-actions { display: flex; gap: 8px; }
+  .container { max-width: 1400px; margin: 24px auto; padding: 0 16px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .stat { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); transition: transform 0.2s; }
+  .stat:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .stat .num { font-size: 32px; font-weight: 700; color: #1a73e8; }
+  .stat .label { font-size: 13px; color: #666; margin-top: 4px; }
+  .stat .icon { font-size: 24px; margin-bottom: 8px; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; background: white; padding: 6px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .tab { padding: 10px 20px; background: transparent; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; color: #555; transition: all 0.2s; }
+  .tab:hover { background: #f0f2f5; }
+  .tab.active { background: #1a73e8; color: white; }
+  .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .card-header h2 { font-size: 18px; color: #1a1a1a; }
+  .search-box { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; width: 250px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+  th { background: #fafbfc; font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  tr:hover { background: #f8f9fa; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #e6f4ea; color: #137333; }
+  .badge-yellow { background: #fef7e0; color: #b06000; }
+  .badge-red { background: #fce8e6; color: #c5221f; }
+  .badge-blue { background: #e8f0fe; color: #1a73e8; }
+  .badge-gray { background: #f0f0f0; color: #666; }
+  .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-primary { background: #1a73e8; color: white; }
+  .btn-primary:hover { background: #1557b0; }
+  .btn-success { background: #137333; color: white; }
+  .btn-success:hover { background: #0d5c28; }
+  .btn-danger { background: #c5221f; color: white; }
+  .btn-danger:hover { background: #a01b18; }
+  .btn-secondary { background: #f0f2f5; color: #333; }
+  .btn-secondary:hover { background: #e0e2e5; }
+  .loading { text-align: center; padding: 40px; color: #999; }
+  .notification { position: fixed; top: 80px; right: 24px; padding: 14px 20px; border-radius: 8px; color: white; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 2000; display: none; animation: slideIn 0.3s; }
+  @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  .notification.success { background: #137333; }
+  .notification.error { background: #c5221f; }
+  .notification.info { background: #1a73e8; }
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 16px; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: white; border-radius: 12px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .modal-header { padding: 20px 24px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+  .modal-header h3 { font-size: 18px; color: #1a1a1a; }
+  .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; line-height: 1; }
+  .modal-close:hover { color: #333; }
+  .modal-body { padding: 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid #f0f0f0; display: flex; gap: 8px; justify-content: flex-end; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #333; }
+  .form-group label .required { color: #c5221f; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: inherit; transition: border 0.2s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #1a73e8; box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+  .form-group input:disabled { background: #f5f5f5; color: #999; cursor: not-allowed; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+  @media (max-width: 768px) {
+    .header h1 { font-size: 16px; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .search-box { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🌳 Royaltree Admin Panel</h1>
+  <div class="header-actions">
+    <button class="btn btn-secondary" onclick="loadAll()">🔄 Refresh</button>
+  </div>
+</div>
+<div class="container">
+  <div class="stats" id="stats"></div>
+  <div class="tabs">
+    <button class="tab active" data-tab="users" onclick="switchTab('users')">👥 Users</button>
+    <button class="tab" data-tab="withdrawals" onclick="switchTab('withdrawals')">💰 Withdrawals</button>
+    <button class="tab" data-tab="campaigns" onclick="switchTab('campaigns')">📢 Campaigns</button>
+    <button class="tab" data-tab="missions" onclick="switchTab('missions')">🎯 Missions</button>
+    <button class="tab" data-tab="config" onclick="switchTab('config')">⚙️ Config</button>
+  </div>
+  <div class="card" id="content">
+    <div class="loading">Memuat data...</div>
+  </div>
+</div>
+<div class="notification" id="notification"></div>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Form</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+      <button class="btn btn-primary" onclick="submitForm()" id="modalSubmit">Simpan</button>
+    </div>
+  </div>
+</div>
+<script>
+// ============ CONFIG ============
+const API_BASE = window.location.origin + '/api/v1';
+const API_KEY = 'rt_secret_portal_key_2026';
+let currentTab = 'users';
+let editingItem = null;
+let editingCollection = null;
+
+// ============ API HELPER ============
+async function api(path, method = 'GET', body = null, auth = false) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (auth) headers['Authorization'] = 'Bearer ' + API_KEY;
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+  try {
+    const res = await fetch(API_BASE + path, opts);
+    return await res.json();
+  } catch (e) {
+    return { success: false, message: 'Network error: ' + e.message };
+  }
+}
+
+// ============ NOTIFICATION ============
+function notify(msg, type = 'success') {
+  const el = document.getElementById('notification');
+  el.textContent = msg;
+  el.className = 'notification ' + type;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 3500);
+}
+
+// ============ FORMAT HELPERS ============
+function formatRupiah(n) {
+  return 'Rp ' + (n || 0).toLocaleString('id-ID');
+}
+
+function formatDate(ts) {
+  if (!ts) return '-';
+  const d = new Date(typeof ts === 'number' ? ts : ts);
+  return d.toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function statusBadge(status) {
+  const map = {
+    'PAID': 'badge-green', 'APPROVED': 'badge-blue', 'PENDING': 'badge-yellow',
+    'REJECTED': 'badge-red', 'ACTIVE': 'badge-green', 'INACTIVE': 'badge-gray'
+  };
+  const cls = map[status] || 'badge-gray';
+  return `<span class="badge ${cls}">${status || '-'}</span>`;
+}
+
+// ============ STATS ============
+async function loadStats() {
+  try {
+    const [users, withdrawals, campaigns, missions] = await Promise.all([
+      api('/users', 'GET', null, true),
+      api('/withdrawals', 'GET', null, true),
+      api('/campaigns'),
+      api('/missions')
+    ]);
+    const pendingWd = (withdrawals.data || []).filter(w => w.status === 'PENDING').length;
+    const totalBalance = (users.data || []).reduce((s, u) => s + (u.balance || 0), 0);
+    document.getElementById('stats').innerHTML = `
+      <div class="stat"><div class="icon">👥</div><div class="num">${users.total || 0}</div><div class="label">Total Users</div></div>
+      <div class="stat"><div class="icon">💰</div><div class="num">${withdrawals.total || 0}</div><div class="label">Withdrawals (${pendingWd} pending)</div></div>
+      <div class="stat"><div class="icon">📢</div><div class="num">${campaigns.total || 0}</div><div class="label">Campaigns</div></div>
+      <div class="stat"><div class="icon">🎯</div><div class="num">${missions.total || 0}</div><div class="label">Missions</div></div>
+      <div class="stat"><div class="icon">💵</div><div class="num">${formatRupiah(totalBalance)}</div><div class="label">Total Balance</div></div>
+    `;
+  } catch (e) {
+    notify('Gagal memuat statistik: ' + e.message, 'error');
+  }
+}
+
+// ============ TAB SWITCHING ============
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  document.getElementById('content').innerHTML = '<div class="loading">Memuat data...</div>';
+  if (tab === 'users') loadUsers();
+  else if (tab === 'withdrawals') loadWithdrawals();
+  else if (tab === 'campaigns') loadCampaigns();
+  else if (tab === 'missions') loadMissions();
+  else if (tab === 'config') loadConfig();
+}
+
+function loadAll() {
+  loadStats();
+  switchTab(currentTab);
+}
+
+// ============ MODAL ============
+function openModal(title, collection, item, fields) {
+  editingItem = item;
+  editingCollection = collection;
+  document.getElementById('modalTitle').textContent = title;
+  let html = '';
+  fields.forEach(f => {
+    const val = item && item[f.name] !== undefined ? item[f.name] : (f.default || '');
+    const req = f.required ? '<span class="required">*</span>' : '';
+    const disabled = f.disabled ? 'disabled' : '';
+    html += `<div class="form-group"><label>${f.label} ${req}</label>`;
+    if (f.type === 'select') {
+      html += `<select id="f_${f.name}" ${disabled}>`;
+      f.options.forEach(o => {
+        const ov = typeof o === 'object' ? o.value : o;
+        const ol = typeof o === 'object' ? o.label : o;
+        html += `<option value="${ov}" ${val == ov ? 'selected' : ''}>${ol}</option>`;
+      });
+      html += '</select>';
+    } else if (f.type === 'textarea') {
+      html += `<textarea id="f_${f.name}" rows="3" ${disabled}>${val}</textarea>`;
+    } else {
+      html += `<input type="${f.type}" id="f_${f.name}" value="${val}" ${disabled}>`;
+    }
+    html += '</div>';
+  });
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  editingItem = null;
+  editingCollection = null;
+}
+
+async function submitForm() {
+  const fields = document.querySelectorAll('#modalBody input, #modalBody select, #modalBody textarea');
+  const body = {};
+  fields.forEach(f => {
+    const name = f.id.replace('f_', '');
+    if (f.type === 'number') body[name] = parseFloat(f.value) || 0;
+    else body[name] = f.value;
+  });
+  const btn = document.getElementById('modalSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Menyimpan...';
+  let data;
+  if (editingItem) {
+    data = await api('/' + editingCollection + '/' + editingItem.id, 'PUT', body, true);
+  } else {
+    if (editingCollection === 'users') data = await api('/users/sync', 'POST', body, true);
+    else data = await api('/' + editingCollection, 'POST', body, true);
+  }
+  btn.disabled = false;
+  btn.textContent = 'Simpan';
+  if (data.success) {
+    notify('Berhasil disimpan!', 'success');
+    closeModal();
+    loadAll();
+  } else {
+    notify(data.message || 'Gagal menyimpan.', 'error');
+  }
+}
+
+// ============ DELETE ============
+async function deleteItem(collection, id) {
+  if (!confirm(`Yakin hapus ${collection} dengan ID "${id}"? Tindakan ini tidak bisa dibatalkan.`)) return;
+  const data = await api('/' + collection + '/' + id, 'DELETE', null, true);
+  if (data.success) {
+    notify('Berhasil dihapus!', 'success');
+    loadAll();
+  } else {
+    notify(data.message || 'Gagal menghapus.', 'error');
+  }
+}
+
+// ============ USERS ============
+let usersData = [];
+
+async function loadUsers() {
+  const data = await api('/users', 'GET', null, true);
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  usersData = data.data || [];
+  let html = `
+    <div class="card-header">
+      <h2>👥 Users (${usersData.length})</h2>
+      <div style="display:flex;gap:8px;">
+        <input class="search-box" placeholder="Cari user..." oninput="filterUsers(this.value)" id="userSearch">
+        <button class="btn btn-primary" onclick="openUserModal()">+ Tambah User</button>
+      </div>
+    </div>
+    <table id="usersTable">
+      <thead><tr>
+        <th>ID</th><th>Nama</th><th>Email</th><th>Tier</th><th>Points</th><th>Balance</th><th>Updated</th><th>Aksi</th>
+      </tr></thead>
+      <tbody>`;
+  usersData.forEach(u => {
+    const badge = u.tier === 'VIP' ? 'badge-blue' : 'badge-green';
+    html += `<tr>
+      <td><code>${u.id}</code></td>
+      <td>${u.name || '-'}</td>
+      <td>${u.email || '-'}</td>
+      <td><span class="badge ${badge}">${u.tier || 'FREE'}</span></td>
+      <td>${u.points || 0}</td>
+      <td>${formatRupiah(u.balance)}</td>
+      <td>${formatDate(u.updatedAt)}</td>
+      <td>
+        <button class="btn btn-sm btn-primary" onclick="editUser('${u.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteItem('users','${u.id}')">Hapus</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function filterUsers(q) {
+  const rows = document.querySelectorAll('#usersTable tbody tr');
+  q = q.toLowerCase();
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function openUserModal() {
+  openModal('Tambah User', 'users', null, [
+    { name: 'id', label: 'ID User', type: 'text', required: true },
+    { name: 'name', label: 'Nama', type: 'text' },
+    { name: 'email', label: 'Email', type: 'email' },
+    { name: 'phone', label: 'Telepon', type: 'text' },
+    { name: 'tier', label: 'Tier', type: 'select', options: ['FREE', 'VIP'] },
+    { name: 'points', label: 'Points', type: 'number', default: 0 },
+    { name: 'balance', label: 'Balance', type: 'number', default: 0 },
+    { name: 'referralCode', label: 'Kode Referral', type: 'text' },
+    { name: 'city', label: 'Kota', type: 'text' }
+  ]);
+}
+
+function editUser(id) {
+  const u = usersData.find(x => x.id === id);
+  if (!u) return;
+  openModal('Edit User: ' + id, 'users', u, [
+    { name: 'id', label: 'ID User', type: 'text', disabled: true },
+    { name: 'name', label: 'Nama', type: 'text' },
+    { name: 'email', label: 'Email', type: 'email' },
+    { name: 'phone', label: 'Telepon', type: 'text' },
+    { name: 'tier', label: 'Tier', type: 'select', options: ['FREE', 'VIP'] },
+    { name: 'points', label: 'Points', type: 'number' },
+    { name: 'balance', label: 'Balance', type: 'number' },
+    { name: 'referralCode', label: 'Kode Referral', type: 'text' },
+    { name: 'city', label: 'Kota', type: 'text' }
+  ]);
+}
+
+// ============ WITHDRAWALS ============
+let withdrawalsData = [];
+
+async function loadWithdrawals() {
+  const data = await api('/withdrawals', 'GET', null, true);
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  withdrawalsData = data.data || [];
+  const pending = withdrawalsData.filter(w => w.status === 'PENDING').length;
+  let html = `
+    <div class="card-header">
+      <h2>💰 Withdrawals (${withdrawalsData.length}) — ${pending} pending</h2>
+      <div style="display:flex;gap:8px;">
+        <input class="search-box" placeholder="Cari withdrawal..." oninput="filterWithdrawals(this.value)" id="wdSearch">
+        <button class="btn btn-primary" onclick="openWithdrawalModal()">+ Tambah</button>
+      </div>
+    </div>
+    <table id="wdTable">
+      <thead><tr>
+        <th>ID</th><th>User</th><th>Amount</th><th>Channel</th><th>Provider</th><th>Status</th><th>Diminta</th><th>Aksi</th>
+      </tr></thead>
+      <tbody>`;
+  withdrawalsData.forEach(w => {
+    html += `<tr>
+      <td><code>${w.id}</code></td>
+      <td>${w.userName || w.userId}</td>
+      <td><b>${formatRupiah(w.amount)}</b></td>
+      <td>${w.channelType || '-'}</td>
+      <td>${w.providerName || '-'}</td>
+      <td>${statusBadge(w.status)}</td>
+      <td>${formatDate(w.requestedAt)}</td>
+      <td>
+        ${w.status === 'PENDING' ? `
+          <button class="btn btn-sm btn-success" onclick="updateWd('${w.id}','PAID')">✓ Paid</button>
+          <button class="btn btn-sm btn-danger" onclick="updateWd('${w.id}','REJECTED')">✗ Reject</button>
+        ` : ''}
+        <button class="btn btn-sm btn-primary" onclick="editWithdrawal('${w.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteItem('withdrawals','${w.id}')">Hapus</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function filterWithdrawals(q) {
+  const rows = document.querySelectorAll('#wdTable tbody tr');
+  q = q.toLowerCase();
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+async function updateWd(id, status) {
+  const notes = prompt(`Catatan admin untuk ${id} (opsional):`, '');
+  if (notes === null) return;
+  const data = await api('/withdrawals/' + id + '/status', 'PUT', { status, adminNotes: notes || 'Diubah via Admin Panel' }, true);
+  if (data.success) { notify('Status diupdate ke ' + status, 'success'); loadAll(); }
+  else notify(data.message || 'Gagal update.', 'error');
+}
+
+function openWithdrawalModal() {
+  openModal('Tambah Withdrawal', 'withdrawals', null, [
+    { name: 'id', label: 'ID Withdrawal', type: 'text', required: true },
+    { name: 'userId', label: 'User ID', type: 'text', required: true },
+    { name: 'userName', label: 'Nama User', type: 'text' },
+    { name: 'amount', label: 'Amount (Rp)', type: 'number', required: true },
+    { name: 'currency', label: 'Currency', type: 'select', options: ['IDR', 'USD'] },
+    { name: 'channelType', label: 'Channel', type: 'select', options: ['E_WALLET', 'BANK', 'CRYPTO'] },
+    { name: 'providerName', label: 'Provider', type: 'text' },
+    { name: 'accountDestination', label: 'No. Tujuan', type: 'text' },
+    { name: 'accountHolderName', label: 'Nama Pemilik', type: 'text' },
+    { name: 'status', label: 'Status', type: 'select', options: ['PENDING', 'APPROVED', 'PAID', 'REJECTED'] },
+    { name: 'fee', label: 'Fee', type: 'number', default: 0 },
+    { name: 'netAmount', label: 'Net Amount', type: 'number', default: 0 },
+    { name: 'txRef', label: 'Tx Reference', type: 'text' }
+  ]);
+}
+
+function editWithdrawal(id) {
+  const w = withdrawalsData.find(x => x.id === id);
+  if (!w) return;
+  openModal('Edit Withdrawal: ' + id, 'withdrawals', w, [
+    { name: 'id', label: 'ID', type: 'text', disabled: true },
+    { name: 'userId', label: 'User ID', type: 'text' },
+    { name: 'userName', label: 'Nama User', type: 'text' },
+    { name: 'amount', label: 'Amount (Rp)', type: 'number' },
+    { name: 'currency', label: 'Currency', type: 'select', options: ['IDR', 'USD'] },
+    { name: 'channelType', label: 'Channel', type: 'select', options: ['E_WALLET', 'BANK', 'CRYPTO'] },
+    { name: 'providerName', label: 'Provider', type: 'text' },
+    { name: 'accountDestination', label: 'No. Tujuan', type: 'text' },
+    { name: 'accountHolderName', label: 'Nama Pemilik', type: 'text' },
+    { name: 'status', label: 'Status', type: 'select', options: ['PENDING', 'APPROVED', 'PAID', 'REJECTED'] },
+    { name: 'fee', label: 'Fee', type: 'number' },
+    { name: 'netAmount', label: 'Net Amount', type: 'number' },
+    { name: 'txRef', label: 'Tx Reference', type: 'text' },
+    { name: 'adminNotes', label: 'Catatan Admin', type: 'textarea' }
+  ]);
+}
+
+// ============ CAMPAIGNS ============
+let campaignsData = [];
+
+async function loadCampaigns() {
+  const data = await api('/campaigns');
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  campaignsData = data.data || [];
+  let html = `
+    <div class="card-header">
+      <h2>📢 Campaigns (${campaignsData.length})</h2>
+      <div style="display:flex;gap:8px;">
+        <input class="search-box" placeholder="Cari campaign..." oninput="filterCampaigns(this.value)" id="campSearch">
+        <button class="btn btn-primary" onclick="openCampaignModal()">+ Tambah Campaign</button>
+      </div>
+    </div>
+    <table id="campTable">
+      <thead><tr>
+        <th>ID</th><th>Judul</th><th>Kategori</th><th>Merchant</th><th>Komisi</th><th>Status</th><th>Aksi</th>
+      </tr></thead>
+      <tbody>`;
+  campaignsData.forEach(c => {
+    html += `<tr>
+      <td><code>${c.id}</code></td>
+      <td>${c.title || '-'}</td>
+      <td>${c.category || '-'}</td>
+      <td>${c.merchantName || '-'}</td>
+      <td>${c.commissionDisplay || '-'}</td>
+      <td>${statusBadge(c.status)}</td>
+      <td>
+        <button class="btn btn-sm btn-primary" onclick="editCampaign('${c.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteItem('campaigns','${c.id}')">Hapus</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function filterCampaigns(q) {
+  const rows = document.querySelectorAll('#campTable tbody tr');
+  q = q.toLowerCase();
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function openCampaignModal() {
+  openModal('Tambah Campaign', 'campaigns', null, [
+    { name: 'id', label: 'ID Campaign', type: 'text', required: true },
+    { name: 'title', label: 'Judul', type: 'text', required: true },
+    { name: 'category', label: 'Kategori', type: 'text' },
+    { name: 'merchantName', label: 'Merchant', type: 'text' },
+    { name: 'commissionDisplay', label: 'Komisi (tampilan)', type: 'text' },
+    { name: 'payoutType', label: 'Payout Type', type: 'select', options: ['CPS', 'CPC', 'CPA', 'CPM'] },
+    { name: 'baseCommissionRate', label: 'Rate Komisi (%)', type: 'number', default: 0 },
+    { name: 'status', label: 'Status', type: 'select', options: ['ACTIVE', 'INACTIVE'] }
+  ]);
+}
+
+function editCampaign(id) {
+  const c = campaignsData.find(x => x.id === id);
+  if (!c) return;
+  openModal('Edit Campaign: ' + id, 'campaigns', c, [
+    { name: 'id', label: 'ID', type: 'text', disabled: true },
+    { name: 'title', label: 'Judul', type: 'text' },
+    { name: 'category', label: 'Kategori', type: 'text' },
+    { name: 'merchantName', label: 'Merchant', type: 'text' },
+    { name: 'commissionDisplay', label: 'Komisi (tampilan)', type: 'text' },
+    { name: 'payoutType', label: 'Payout Type', type: 'select', options: ['CPS', 'CPC', 'CPA', 'CPM'] },
+    { name: 'baseCommissionRate', label: 'Rate Komisi (%)', type: 'number' },
+    { name: 'status', label: 'Status', type: 'select', options: ['ACTIVE', 'INACTIVE'] }
+  ]);
+}
+
+// ============ MISSIONS ============
+let missionsData = [];
+
+async function loadMissions() {
+  const data = await api('/missions');
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  missionsData = data.data || [];
+  let html = `
+    <div class="card-header">
+      <h2>🎯 Missions (${missionsData.length})</h2>
+      <div style="display:flex;gap:8px;">
+        <input class="search-box" placeholder="Cari misi..." oninput="filterMissions(this.value)" id="misSearch">
+        <button class="btn btn-primary" onclick="openMissionModal()">+ Tambah Mission</button>
+      </div>
+    </div>
+    <table id="misTable">
+      <thead><tr>
+        <th>ID</th><th>Judul</th><th>Kategori</th><th>Reward</th><th>Platform</th><th>Durasi</th><th>Aksi</th>
+      </tr></thead>
+      <tbody>`;
+  missionsData.forEach(m => {
+    html += `<tr>
+      <td><code>${m.id}</code></td>
+      <td>${m.title || '-'}</td>
+      <td>${m.category || '-'}</td>
+      <td><b>${m.rtpReward || 0}</b> pts</td>
+      <td>${m.targetPlatform || '-'}</td>
+      <td>${m.durationSeconds || 0}s</td>
+      <td>
+        <button class="btn btn-sm btn-primary" onclick="editMission('${m.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteItem('missions','${m.id}')">Hapus</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function filterMissions(q) {
+  const rows = document.querySelectorAll('#misTable tbody tr');
+  q = q.toLowerCase();
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function openMissionModal() {
+  openModal('Tambah Mission', 'missions', null, [
+    { name: 'id', label: 'ID Mission', type: 'text', required: true },
+    { name: 'title', label: 'Judul', type: 'text', required: true },
+    { name: 'category', label: 'Kategori', type: 'text' },
+    { name: 'rtpReward', label: 'Reward (points)', type: 'number', default: 0 },
+    { name: 'type', label: 'Tipe', type: 'select', options: ['ENGAGEMENT_MISSION', 'DAILY_TASK', 'WEEKLY_TASK'] },
+    { name: 'targetPlatform', label: 'Platform', type: 'text' },
+    { name: 'durationSeconds', label: 'Durasi (detik)', type: 'number', default: 10 },
+    { name: 'actionUrl', label: 'URL Aksi', type: 'text' }
+  ]);
+}
+
+function editMission(id) {
+  const m = missionsData.find(x => x.id === id);
+  if (!m) return;
+  openModal('Edit Mission: ' + id, 'missions', m, [
+    { name: 'id', label: 'ID', type: 'text', disabled: true },
+    { name: 'title', label: 'Judul', type: 'text' },
+    { name: 'category', label: 'Kategori', type: 'text' },
+    { name: 'rtpReward', label: 'Reward (points)', type: 'number' },
+    { name: 'type', label: 'Tipe', type: 'select', options: ['ENGAGEMENT_MISSION', 'DAILY_TASK', 'WEEKLY_TASK'] },
+    { name: 'targetPlatform', label: 'Platform', type: 'text' },
+    { name: 'durationSeconds', label: 'Durasi (detik)', type: 'number' },
+    { name: 'actionUrl', label: 'URL Aksi', type: 'text' }
+  ]);
+}
+
+// ============ CONFIG ============
+let configData = {};
+
+async function loadConfig() {
+  const data = await api('/config');
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  configData = data.data || {};
+  let html = `
+    <div class="card-header">
+      <h2>⚙️ Konfigurasi Sistem</h2>
+      <button class="btn btn-primary" onclick="saveConfig()">💾 Simpan Perubahan</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Mode Maintenance</label>
+        <select id="cfg_maintenanceMode">
+          <option value="false" ${!configData.maintenanceMode ? 'selected' : ''}>OFF</option>
+          <option value="true" ${configData.maintenanceMode ? 'selected' : ''}>ON</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Server Version</label>
+        <input type="text" id="cfg_serverVersion" value="${configData.serverVersion || ''}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Min Withdrawal E-Wallet (Rp)</label>
+        <input type="number" id="cfg_minWithdrawalEWallet" value="${configData.minWithdrawalEWallet || 0}">
+      </div>
+      <div class="form-group">
+        <label>Min Withdrawal Bank (Rp)</label>
+        <input type="number" id="cfg_minWithdrawalBank" value="${configData.minWithdrawalBank || 0}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Min Withdrawal Crypto (Rp)</label>
+        <input type="number" id="cfg_minWithdrawalCrypto" value="${configData.minWithdrawalCrypto || 0}">
+      </div>
+      <div class="form-group">
+        <label>Points per USD</label>
+        <input type="number" id="cfg_pointsPerUsdRate" value="${configData.pointsPerUsdRate || 0}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Komisi Tier FREE (%)</label>
+        <input type="number" id="cfg_freeTierCommissionRate" value="${configData.freeTierCommissionRate || 0}">
+      </div>
+      <div class="form-group">
+        <label>Komisi Tier VIP (%)</label>
+        <input type="number" id="cfg_vipTierCommissionRate" value="${configData.vipTierCommissionRate || 0}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>IDR per 100 Points</label>
+        <input type="number" id="cfg_idrPerHundredPoints" value="${configData.idrPerHundredPoints || 0}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Pengumuman</label>
+      <textarea id="cfg_announcement" rows="3">${configData.announcement || ''}</textarea>
+    </div>
+  `;
+  document.getElementById('content').innerHTML = html;
+}
+
+async function saveConfig() {
+  const body = {
+    maintenanceMode: document.getElementById('cfg_maintenanceMode').value === 'true',
+    serverVersion: document.getElementById('cfg_serverVersion').value,
+    minWithdrawalEWallet: parseFloat(document.getElementById('cfg_minWithdrawalEWallet').value) || 0,
+    minWithdrawalBank: parseFloat(document.getElementById('cfg_minWithdrawalBank').value) || 0,
+    minWithdrawalCrypto: parseFloat(document.getElementById('cfg_minWithdrawalCrypto').value) || 0,
+    pointsPerUsdRate: parseFloat(document.getElementById('cfg_pointsPerUsdRate').value) || 0,
+    freeTierCommissionRate: parseFloat(document.getElementById('cfg_freeTierCommissionRate').value) || 0,
+    vipTierCommissionRate: parseFloat(document.getElementById('cfg_vipTierCommissionRate').value) || 0,
+    idrPerHundredPoints: parseFloat(document.getElementById('cfg_idrPerHundredPoints').value) || 0,
+    announcement: document.getElementById('cfg_announcement').value
+  };
+  const data = await api('/config', 'PUT', body, true);
+  if (data.success) { notify('Konfigurasi disimpan!', 'success'); loadAll(); }
+  else notify(data.message || 'Gagal simpan.', 'error');
+}
+
+// ============ INIT ============
+document.addEventListener('DOMContentLoaded', () => {
+  loadAll();
+});
+
+// Tutup modal jika klik overlay
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'modalOverlay') closeModal();
+});
+
+// Tutup modal dengan ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>
