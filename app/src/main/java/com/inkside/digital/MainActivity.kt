@@ -453,6 +453,7 @@ fun MainAffiliateAppContent(
                 }
 
                 AppScreen.HISTORY -> {
+    LaunchedEffect(Unit) { viewModel.refreshUserFromBackend() }
                     LaunchedEffect(Unit) { onLoadHistory() }
                     HistoryScreen(
                         transactions = transactions

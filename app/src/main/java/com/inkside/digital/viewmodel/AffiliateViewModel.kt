@@ -596,4 +596,23 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+
+    fun refreshUserFromBackend() {
+        viewModelScope.launch {
+            val currentUser = user.value ?: return@launch
+            ApiClient.getProfile(currentUser.id).onSuccess { response ->
+                response.data?.let { profile ->
+                    repository.updateUserFromBackend(
+                        userId = profile.id,
+                        name = profile.name,
+                        email = profile.email,
+                        tier = profile.tier,
+                        balance = profile.balance,
+                        points = profile.points,
+                        todaySteps = profile.todaySteps
+                    )
+                }
+            }
+        }
+    }
 }
