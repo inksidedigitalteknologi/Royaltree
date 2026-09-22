@@ -105,3 +105,102 @@ data class ApiUnreadResponse(
     @Json(name = "success") val success: Boolean = true,
     @Json(name = "unread") val unread: Int = 0
 )
+
+@JsonClass(generateAdapter = true)
+data class ApiAnalyticsSummaryResponse(
+    @Json(name = "success") val success: Boolean = true,
+    @Json(name = "data") val data: AnalyticsSummaryData? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class AnalyticsSummaryData(
+    @Json(name = "userId") val userId: String = "",
+    @Json(name = "balance") val balance: Double = 0.0,
+    @Json(name = "points") val points: Int = 0,
+    @Json(name = "tier") val tier: String = "FREE",
+    @Json(name = "todaySteps") val todaySteps: Int = 0,
+    @Json(name = "totalCommission") val totalCommission: Double = 0.0,
+    @Json(name = "totalWithdrawal") val totalWithdrawal: Double = 0.0,
+    @Json(name = "netEarnings") val netEarnings: Double = 0.0
+)
+
+@JsonClass(generateAdapter = true)
+data class SpinRequest(
+    @Json(name = "userId") val userId: String
+)
+
+@JsonClass(generateAdapter = true)
+data class ApiSpinResponse(
+    @Json(name = "success") val success: Boolean = true,
+    @Json(name = "message") val message: String = "",
+    @Json(name = "data") val data: SpinData? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class SpinData(
+    @Json(name = "id") val id: String = "",
+    @Json(name = "userId") val userId: String = "",
+    @Json(name = "gameType") val gameType: String = "SPIN",
+    @Json(name = "result") val result: String = "",
+    @Json(name = "pointsWon") val pointsWon: Int = 0,
+    @Json(name = "timestamp") val timestamp: Long = 0L
+)
+
+@JsonClass(generateAdapter = true)
+data class ApiProfileResponse(
+    @Json(name = "success") val success: Boolean = true,
+    @Json(name = "data") val data: ProfileData? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class ProfileData(
+    @Json(name = "id") val id: String = "",
+    @Json(name = "name") val name: String = "",
+    @Json(name = "email") val email: String = "",
+    @Json(name = "phone") val phone: String = "",
+    @Json(name = "city") val city: String = "",
+    @Json(name = "tier") val tier: String = "FREE",
+    @Json(name = "balance") val balance: Double = 0.0,
+    @Json(name = "points") val points: Int = 0,
+    @Json(name = "todaySteps") val todaySteps: Int = 0
+)
+
+@JsonClass(generateAdapter = true)
+data class ApiWithdrawalListResponse(
+    @Json(name = "success") val success: Boolean = true,
+    @Json(name = "total") val total: Int = 0,
+    @Json(name = "data") val data: List<WithdrawalData> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class WithdrawalData(
+    @Json(name = "id") val id: String = "",
+    @Json(name = "userId") val userId: String = "",
+    @Json(name = "userName") val userName: String = "",
+    @Json(name = "amount") val amount: Double = 0.0,
+    @Json(name = "currency") val currency: String = "IDR",
+    @Json(name = "channelType") val channelType: String = "E_WALLET",
+    @Json(name = "providerName") val providerName: String = "",
+    @Json(name = "accountDestination") val accountDestination: String = "",
+    @Json(name = "status") val status: String = "PENDING",
+    @Json(name = "fee") val fee: Double = 0.0,
+    @Json(name = "netAmount") val netAmount: Double = 0.0,
+    @Json(name = "requestedAt") val requestedAt: Long = 0L
+)
+
+@JsonClass(generateAdapter = true)
+data class ApiWithdrawalRequest(
+    @Json(name = "id") val id: String,
+    @Json(name = "userId") val userId: String,
+    @Json(name = "userName") val userName: String,
+    @Json(name = "amount") val amount: Double,
+    @Json(name = "currency") val currency: String = "IDR",
+    @Json(name = "channelType") val channelType: String = "E_WALLET",
+    @Json(name = "providerName") val providerName: String,
+    @Json(name = "accountDestination") val accountDestination: String,
+    @Json(name = "accountHolderName") val accountHolderName: String,
+    @Json(name = "status") val status: String = "PENDING",
+    @Json(name = "fee") val fee: Double = 0.0,
+    @Json(name = "netAmount") val netAmount: Double = 0.0,
+    @Json(name = "txRef") val txRef: String = ""
+)
