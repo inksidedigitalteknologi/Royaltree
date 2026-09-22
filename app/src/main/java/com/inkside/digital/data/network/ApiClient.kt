@@ -22,10 +22,14 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
+import org.json.JSONObject
 
 object ApiClient {
 
@@ -195,5 +199,41 @@ object ApiClient {
     }
     suspend fun getMissions(token: String = currentApiKey): Result<ApiMissionListResponse> = withContext(Dispatchers.IO) {
         try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.getMissions(b)) } catch (e: Exception) { Result.failure(e) }
+    }
+
+    // ============ AUTH (Firebase) ============
+
+    private val JSON_MEDIA = "application/json; charset=utf-8".toMediaType()
+
+    suspend fun syncFirebaseUser(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val response: ResponseBody = apiService.syncFirebaseUser(requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getMyProfile(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response: ResponseBody = apiService.getMyProfile()
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun linkReferral(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val response: ResponseBody = apiService.linkReferral(requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
