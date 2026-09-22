@@ -1332,20 +1332,6 @@ class AffiliateRepository(private val dao: AppDao) {
 
         Result.success(Pair(bonusPoints, boostGhs))
     }
-data class TransferResult(
-    val transferId: String,
-    val senderPointsRemaining: Int,
-    val sentPoints: Int,
-    val adminFee: Int,
-    val netPointsReceived: Int,
-    val recipientName: String,
-    val recipientIdentifier: String,
-    val timestamp: Long,
-    val securitySignature: String = "",
-    val note: String = ""
-)
-
-
     suspend fun updateUserFromBackend(
         userId: String,
         name: String,
@@ -1385,3 +1371,18 @@ data class TransferResult(
         transactions.forEach { dao.insertTransaction(it) }
     }
 }
+
+data class TransferResult(
+    val transferId: String,
+    val senderPointsRemaining: Int,
+    val sentPoints: Int,
+    val adminFee: Int,
+    val netPointsReceived: Int,
+    val recipientName: String,
+    val recipientIdentifier: String,
+    val timestamp: Long,
+    val securitySignature: String = "",
+    val note: String = ""
+)
+
+
