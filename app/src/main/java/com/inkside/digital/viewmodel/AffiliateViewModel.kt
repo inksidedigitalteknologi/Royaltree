@@ -565,4 +565,35 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             showSnackbar("Pin pengguna baru ditambahkan di $city!")
         }
     }
+
+    // ============ HISTORY & NOTIFICATIONS ============
+    private val _historyItems = MutableStateFlow<List<com.inkside.digital.data.network.model.HistoryItem>>(emptyList())
+    val historyItems: StateFlow<List<com.inkside.digital.data.network.model.HistoryItem>> = _historyItems.asStateFlow()
+
+    private val _notificationItems = MutableStateFlow<List<com.inkside.digital.data.network.model.NotificationItem>>(emptyList())
+    val notificationItems: StateFlow<List<com.inkside.digital.data.network.model.NotificationItem>> = _notificationItems.asStateFlow()
+
+    private val _unreadCountRemote = MutableStateFlow(0)
+    val unreadCountRemote: StateFlow<Int> = _unreadCountRemote.asStateFlow()
+
+    fun loadHistory() {
+        viewModelScope.launch {
+            val currentUser = user.value ?: return@launch
+            ApiClient.getHistory(currentUser.id).onSuccess { response ->
+                if (response.success) _historyItems.value = response.data
+            }.onFailure { /* offline, pakai data lokal */ }
+        }
+    }
+
+    fun loadNotifications() {
+        viewModelScope.launch {
+            val currentUser = user.value ?: return@launch
+            ApiClient.getNotifications(currentUser.id).onSuccess { response ->
+                if (response.success) _notificationItems.value = response.data
+            }.onFailure { /* offline */ }
+            ApiClient.getUnreadCount(currentUser.id).onSuccess { response ->
+                if (response.success) _unreadCountRemote.value = response.unread
+            }
+        }
+    }
 }

@@ -6,6 +6,9 @@ import com.inkside.digital.data.network.model.ApiUserSyncRequest
 import com.inkside.digital.data.network.model.ApiUserSyncResponse
 import com.inkside.digital.data.network.model.StepSyncRequest
 import com.inkside.digital.data.network.model.ApiGenericResponse
+import com.inkside.digital.data.network.model.ApiHistoryResponse
+import com.inkside.digital.data.network.model.ApiNotificationListResponse
+import com.inkside.digital.data.network.model.ApiUnreadResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
@@ -124,5 +127,35 @@ object ApiClient {
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    suspend fun getHistory(
+        userId: String,
+        token: String = currentApiKey
+    ): Result<ApiHistoryResponse> = withContext(Dispatchers.IO) {
+        try {
+            val bearer = if (token.startsWith("Bearer ")) token else "Bearer $token"
+            Result.success(apiService.getHistory(bearer, userId))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun getNotifications(
+        userId: String,
+        token: String = currentApiKey
+    ): Result<ApiNotificationListResponse> = withContext(Dispatchers.IO) {
+        try {
+            val bearer = if (token.startsWith("Bearer ")) token else "Bearer $token"
+            Result.success(apiService.getNotifications(bearer, userId))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun getUnreadCount(
+        userId: String,
+        token: String = currentApiKey
+    ): Result<ApiUnreadResponse> = withContext(Dispatchers.IO) {
+        try {
+            val bearer = if (token.startsWith("Bearer ")) token else "Bearer $token"
+            Result.success(apiService.getUnreadCount(bearer, userId))
+        } catch (e: Exception) { Result.failure(e) }
     }
 }

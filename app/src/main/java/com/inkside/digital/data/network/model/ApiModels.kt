@@ -64,3 +64,44 @@ data class StepSyncRequest(
     @Json(name = "userId") val userId: String,
     @Json(name = "steps") val steps: Int
 )
+
+@JsonClass(generateAdapter = true)
+data class ApiHistoryResponse(
+    @Json(name = "success") val success: Boolean = true,
+    @Json(name = "total") val total: Int = 0,
+    @Json(name = "data") val data: List<HistoryItem> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class HistoryItem(
+    @Json(name = "id") val id: String = "",
+    @Json(name = "userId") val userId: String = "",
+    @Json(name = "type") val type: String = "",
+    @Json(name = "amount") val amount: Double = 0.0,
+    @Json(name = "description") val description: String = "",
+    @Json(name = "timestamp") val timestamp: Long = 0L
+)
+
+@JsonClass(generateAdapter = true)
+data class ApiNotificationListResponse(
+    @Json(name = "success") val success: Boolean = true,
+    @Json(name = "total") val total: Int = 0,
+    @Json(name = "data") val data: List<NotificationItem> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class NotificationItem(
+    @Json(name = "id") val id: String = "",
+    @Json(name = "userId") val userId: String = "",
+    @Json(name = "title") val title: String = "",
+    @Json(name = "message") val message: String = "",
+    @Json(name = "type") val type: String = "INFO",
+    @Json(name = "read") val read: Boolean = false,
+    @Json(name = "timestamp") val timestamp: Long = 0L
+)
+
+@JsonClass(generateAdapter = true)
+data class ApiUnreadResponse(
+    @Json(name = "success") val success: Boolean = true,
+    @Json(name = "unread") val unread: Int = 0
+)

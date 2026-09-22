@@ -6,6 +6,9 @@ import com.inkside.digital.data.network.model.ApiHealthResponse
 import com.inkside.digital.data.network.model.ApiUserSyncRequest
 import com.inkside.digital.data.network.model.ApiUserSyncResponse
 import com.inkside.digital.data.network.model.StepSyncRequest
+import com.inkside.digital.data.network.model.ApiHistoryResponse
+import com.inkside.digital.data.network.model.ApiNotificationListResponse
+import com.inkside.digital.data.network.model.ApiUnreadResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -39,4 +42,22 @@ interface RoyaltreeApiService {
         @Path("id") id: String,
         @Body body: Map<String, String>
     ): ApiGenericResponse
+
+    @GET("history/{userId}")
+    suspend fun getHistory(
+        @Header("Authorization") token: String,
+        @Path("userId") userId: String
+    ): ApiHistoryResponse
+
+    @GET("notifications/{userId}")
+    suspend fun getNotifications(
+        @Header("Authorization") token: String,
+        @Path("userId") userId: String
+    ): ApiNotificationListResponse
+
+    @GET("notifications/{userId}/unread")
+    suspend fun getUnreadCount(
+        @Header("Authorization") token: String,
+        @Path("userId") userId: String
+    ): ApiUnreadResponse
 }
