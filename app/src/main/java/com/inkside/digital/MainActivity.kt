@@ -207,6 +207,8 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
         onUpdateProfile = { name, email, phone, region -> viewModel.updateProfile(name, email, phone, region) },
         onToggleLocationTracking = { viewModel.toggleLocationTracking(it) },
         onMarkAllNotifsRead = { viewModel.markAllNotificationsRead() },
+        onLoadHistory = { viewModel.loadHistory() },
+        onLoadNotifications = { viewModel.loadNotifications() },
         onSetWithdrawModalVisible = { viewModel.showWithdrawModal.value = it },
         onSetNewLinkModalVisible = { viewModel.showNewLinkModal.value = it },
         onSetUpgradeModalVisible = { viewModel.showUpgradeModal.value = it },
@@ -313,6 +315,8 @@ fun MainAffiliateAppContent(
     onUpdateProfile: (String, String, String, String) -> Unit,
     onToggleLocationTracking: (Boolean) -> Unit,
     onMarkAllNotifsRead: () -> Unit,
+    onLoadHistory: () -> Unit,
+    onLoadNotifications: () -> Unit,
     onSetWithdrawModalVisible: (Boolean) -> Unit,
     onSetNewLinkModalVisible: (Boolean) -> Unit,
     onSetUpgradeModalVisible: (Boolean) -> Unit,
@@ -449,6 +453,7 @@ fun MainAffiliateAppContent(
                 }
 
                 AppScreen.HISTORY -> {
+                    LaunchedEffect(Unit) { onLoadHistory() }
                     HistoryScreen(
                         transactions = transactions
                     )
@@ -523,6 +528,7 @@ fun MainAffiliateAppContent(
                 }
 
                 AppScreen.NOTIFICATIONS -> {
+                    LaunchedEffect(Unit) { onLoadNotifications() }
                     NotificationsScreen(
                         notifications = notifications,
                         onMarkAllRead = onMarkAllNotifsRead
