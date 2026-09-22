@@ -23,14 +23,8 @@ import com.inkside.digital.data.network.model.ApiWithdrawalListResponse
 import com.inkside.digital.data.network.model.ApiWithdrawalRequest
 import com.inkside.digital.data.network.model.ApiCampaignListResponse
 import com.inkside.digital.data.network.model.ApiMissionListResponse
-import com.inkside.digital.data.network.model.ApiAnalyticsSummaryResponse
-import com.inkside.digital.data.network.model.SpinRequest
-import com.inkside.digital.data.network.model.ApiSpinResponse
-import com.inkside.digital.data.network.model.ApiProfileResponse
-import com.inkside.digital.data.network.model.ApiWithdrawalListResponse
-import com.inkside.digital.data.network.model.ApiWithdrawalRequest
-import com.inkside.digital.data.network.model.ApiCampaignListResponse
-import com.inkside.digital.data.network.model.ApiMissionListResponse
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
 
 interface RoyaltreeApiService {
 
@@ -133,4 +127,18 @@ interface RoyaltreeApiService {
     suspend fun getMissions(
         @Header("Authorization") token: String
     ): ApiMissionListResponse
+
+    // ============ AUTH (Firebase) ============
+    @POST("auth/sync")
+    suspend fun syncFirebaseUser(
+        @Body body: RequestBody
+    ): ResponseBody
+
+    @GET("auth/me")
+    suspend fun getMyProfile(): ResponseBody
+
+    @POST("auth/link-referral")
+    suspend fun linkReferral(
+        @Body body: RequestBody
+    ): ResponseBody
 }
