@@ -4,6 +4,8 @@ import android.content.Context
 import com.inkside.digital.data.network.model.ApiHealthResponse
 import com.inkside.digital.data.network.model.ApiUserSyncRequest
 import com.inkside.digital.data.network.model.ApiUserSyncResponse
+import com.inkside.digital.data.network.model.StepSyncRequest
+import com.inkside.digital.data.network.model.ApiGenericResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +22,7 @@ object ApiClient {
     private const val KEY_BASE_URL = "portal_base_url"
     private const val KEY_API_KEY = "portal_api_key"
 
-    const val DEFAULT_BASE_URL = "http://45.41.204.21:5000/api/v1/"
+    const val DEFAULT_BASE_URL = "http://45.41.204.21:3000/api/v1/"
     const val DEFAULT_API_KEY = "rt_secret_portal_key_2026"
 
     private var currentBaseUrl: String = DEFAULT_BASE_URL
@@ -91,6 +93,20 @@ object ApiClient {
             val tempRetrofit = buildRetrofit(testUrl)
             val tempService = tempRetrofit.create(RoyaltreeApiService::class.java)
             val response = tempService.checkHealth()
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun syncStepsToPortal(
+        userId: String,
+        steps: Int,
+        token: String = currentApiKey
+    ): Result<ApiGenericResponse> = withContext(Dispatchers.IO) {
+        try {
+            val bearer = if (token.startsWith("Bearer ")) token else "Bearer $token"
+            val response = apiService.syncSteps(bearer, StepSyncRequest(userId, steps))
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)

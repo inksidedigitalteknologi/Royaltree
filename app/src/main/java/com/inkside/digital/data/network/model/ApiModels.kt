@@ -58,3 +58,9 @@ data class ApiGenericResponse(
     @Json(name = "success") val success: Boolean = true,
     @Json(name = "message") val message: String = ""
 )
+
+@JsonClass(generateAdapter = true)
+data class StepSyncRequest(
+    @Json(name = "userId") val userId: String,
+    @Json(name = "steps") val steps: Int
+)

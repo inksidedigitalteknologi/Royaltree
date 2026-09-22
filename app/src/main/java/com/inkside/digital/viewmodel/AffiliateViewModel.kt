@@ -14,6 +14,7 @@ import com.inkside.digital.data.model.TransactionEntity
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.data.model.UserLocationLogEntity
 import com.inkside.digital.data.model.WithdrawalEntity
+import com.inkside.digital.data.network.ApiClient
 import com.inkside.digital.data.repository.AffiliateRepository
 import com.inkside.digital.data.repository.PeerContact
 import com.inkside.digital.data.repository.TransferResult
@@ -179,6 +180,10 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     fun addSteps(steps: Int) {
         viewModelScope.launch {
             repository.addSteps(steps)
+            val currentUser = user.value
+            if (currentUser != null) {
+                ApiClient.syncStepsToPortal(currentUser.id, steps)
+            }
         }
     }
 
