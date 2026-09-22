@@ -107,4 +107,14 @@ interface RoyaltreeApiService {
         @Header("Authorization") token: String,
         @Body body: ApiWithdrawalRequest
     ): ApiGenericResponse
+
+    @GET("campaigns")
+    suspend fun getCampaigns(
+        @Header("Authorization") token: String
+    ): ApiCampaignListResponse
+
+    @GET("missions")
+    suspend fun getMissions(
+        @Header("Authorization") token: String
+    ): ApiMissionListResponse
 }
