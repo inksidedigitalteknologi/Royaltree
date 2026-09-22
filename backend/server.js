@@ -900,6 +900,67 @@ app.get('/api/v1/profile/:userId/security-log', authenticateToken, async (req, r
         res.json({ success: true, total: result.length, data: result });
     } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
+
+// ============ ADMIN AUTHENTICATION ============
+
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'royaltree_admin_2026';
+const activeSessions = new Map(); // token -> { createdAt, expiresAt }
+
+function generateToken() {
+    return 'adm_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+}
+
+// POST /admin/login - Login admin
+app.post('/api/v1/admin/login', async (req, res) => {
+    try {
+        const { password } = req.body;
+        if (!password) {
+            return res.status(400).json({ success: false, message: 'Password wajib diisi.' });
+        }
+        if (password !== ADMIN_PASSWORD) {
+            return res.status(401).json({ success: false, message: 'Password salah.' });
+        }
+        const token = generateToken();
+        const expiresAt = Date.now() + (24 * 60 * 60 * 1000); // 24 jam
+        activeSessions.set(token, { createdAt: Date.now(), expiresAt });
+        res.json({ success: true, message: 'Login berhasil.', token, expiresAt });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// POST /admin/logout - Logout admin
+app.post('/api/v1/admin/logout', (req, res) => {
+    const token = req.headers['x-admin-token'];
+    if (token) activeSessions.delete(token);
+    res.json({ success: true, message: 'Logout berhasil.' });
+});
+
+// GET /admin/verify - Cek token masih valid
+app.get('/api/v1/admin/verify', (req, res) => {
+    const token = req.headers['x-admin-token'];
+    if (!token || !activeSessions.has(token)) {
+        return res.status(401).json({ success: false, message: 'Token tidak valid.' });
+    }
+    const session = activeSessions.get(token);
+    if (Date.now() > session.expiresAt) {
+        activeSessions.delete(token);
+        return res.status(401).json({ success: false, message: 'Token kadaluarsa.' });
+    }
+    res.json({ success: true, message: 'Token valid.' });
+});
+
+// Middleware untuk endpoint admin (opsional, bisa dipakai nanti)
+function requireAdmin(req, res, next) {
+    const token = req.headers['x-admin-token'];
+    if (!token || !activeSessions.has(token)) {
+        return res.status(401).json({ success: false, message: 'Akses ditolak. Login dulu.' });
+    }
+    const session = activeSessions.get(token);
+    if (Date.now() > session.expiresAt) {
+        activeSessions.delete(token);
+        return res.status(401).json({ success: false, message: 'Token kadaluarsa.' });
+    }
+    next();
+}
 app.listen(PORT, () => {
     console.log(`====================================================`);
     console.log(` Royaltree Portal API Server aktif di port ${PORT}`);
