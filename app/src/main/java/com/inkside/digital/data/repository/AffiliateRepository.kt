@@ -1356,11 +1356,11 @@ class AffiliateRepository(private val dao: AppDao) {
 
     // ============ SYNC DARI BACKEND ============
     suspend fun syncCampaignsFromBackend(campaigns: List<CampaignEntity>) = withContext(Dispatchers.IO) {
-        campaigns.forEach { dao.insertCampaign(it) }
+        campaigns.forEach { dao.insertCampaigns(listOf(it)) }
     }
 
     suspend fun syncMissionsFromBackend(missions: List<TaskMissionEntity>) = withContext(Dispatchers.IO) {
-        missions.forEach { dao.insertMission(it) }
+        missions.forEach { dao.insertMissions(listOf(it)) }
     }
 
     suspend fun syncWithdrawalsFromBackend(withdrawals: List<WithdrawalEntity>) = withContext(Dispatchers.IO) {

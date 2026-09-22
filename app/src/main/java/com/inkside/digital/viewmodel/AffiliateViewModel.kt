@@ -672,9 +672,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                                 currency = wd.currency, channelType = wd.channelType,
                                 providerName = wd.providerName,
                                 accountDestination = wd.accountDestination,
-                                accountHolderName = wd.accountHolderName,
+                                accountHolderName = "",
                                 status = wd.status, fee = wd.fee, netAmount = wd.netAmount,
-                                txRef = wd.txRef
+                                txRef = ""
                             )
                         ))
                     }
