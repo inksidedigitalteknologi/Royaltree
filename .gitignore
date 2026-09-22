@@ -26,3 +26,8 @@ app/google-services.json
 backend/service-account.json
 backend/.env
 backend/node_modules/
+
+# Backup files
+*.backup
+*.bak
+admin/*.backup
