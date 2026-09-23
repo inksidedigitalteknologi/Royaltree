@@ -49,7 +49,7 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun MyApplicationTheme(
-    darkTheme: Boolean = true, // default to sleek fintech dark theme
+    darkTheme: Boolean = false, // default light, di-override dari AppThemePreferences
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {

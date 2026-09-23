@@ -18,10 +18,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.inkside.digital.data.model.*
-import com.inkside.digital.data.preferences.AppThemePreferences
 import com.inkside.digital.data.repository.PeerContact
 import com.inkside.digital.data.repository.TransferResult
 import com.inkside.digital.localization.AppLanguage
@@ -52,7 +50,6 @@ import com.inkside.digital.ui.screens.SettingsScreen
 import com.inkside.digital.ui.screens.FaqScreen
 import kotlinx.coroutines.launch
 import com.inkside.digital.ui.screens.AdminScreen
-import com.inkside.digital.ui.screens.InboxScreen
 import com.inkside.digital.ui.screens.AnalyticsScreen
 import com.inkside.digital.ui.screens.CampaignsScreen
 import com.inkside.digital.ui.screens.HistoryScreen
@@ -82,11 +79,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        AppThemePreferences.init(this)   // Load dark mode & bahasa
         setContent {
-            MyApplicationTheme(
-                darkTheme = AppThemePreferences.isDarkMode
-            ) {
+            MyApplicationTheme {
                 RootNav()
             }
         }
@@ -471,7 +465,6 @@ fun MainAffiliateAppContent(
     onFinishGame: (Int) -> Unit,
     onLogout: () -> Unit = {}
 ) {
-    val context = LocalContext.current
     var showLanguageModal by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -505,17 +498,14 @@ fun MainAffiliateAppContent(
         topBar = {
             AppTopBar(
                 user = user,
+                isAdminMode = isAdminMode,
                 unreadNotifs = unreadNotifs,
                 currentLanguage = currentLanguage,
-                isDarkMode = AppThemePreferences.isDarkMode,
                 onOpenDrawer = { coroutineScope.launch { drawerState.open() } },
-                onToggleDarkMode = {
-                    val ctx = context
-                    AppThemePreferences.setDarkMode(ctx, !AppThemePreferences.isDarkMode)
-                },
+                onToggleRole = { onSetAdminMode(!isAdminMode) },
                 onOpenLanguage = { showLanguageModal = true },
-                onOpenInbox = { onNavigate(AppScreen.INBOX) },
-                onOpenNotifs = { onNavigate(AppScreen.NOTIFICATIONS) }
+                onOpenNotifs = { onNavigate(AppScreen.NOTIFICATIONS) },
+                onOpenSecurity = { onNavigate(AppScreen.PROFILE) }
             )
         },
         bottomBar = {
@@ -695,13 +685,6 @@ fun MainAffiliateAppContent(
 
                 AppScreen.FAQ -> {
                     FaqScreen()
-                }
-
-                AppScreen.INBOX -> {
-                    InboxScreen(
-                        currentLanguage = currentLanguage,
-                        onBack = { onNavigate(AppScreen.HOME) }
-                    )
                 }
 
                 AppScreen.NOTIFICATIONS -> {

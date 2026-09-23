@@ -78,40 +78,43 @@ import com.inkside.digital.ui.theme.EmeraldPrimary
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.ui.theme.PurpleSecondary
 import com.inkside.digital.viewmodel.AppScreen
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Email
 
 @Composable
 fun AppTopBar(
     user: UserEntity?,
-    isAdminMode: Boolean,
     unreadNotifs: Int,
     currentLanguage: AppLanguage,
+    isDarkMode: Boolean,
     onOpenDrawer: () -> Unit,
-    onToggleRole: () -> Unit,
+    onToggleDarkMode: () -> Unit,
     onOpenLanguage: () -> Unit,
-    onOpenNotifs: () -> Unit,
-    onOpenSecurity: () -> Unit
+    onOpenInbox: () -> Unit,
+    onOpenNotifs: () -> Unit
 ) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 4.dp,
-        modifier = Modifier.fillMaxWidth()
+        tonalElevation = 2.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = 12.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // App Branding & VIP Badge
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Tombol Hamburger
+            // LEFT: Hamburger + Logo + Tier
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(
                     onClick = onOpenDrawer,
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(40.dp)
                         .testTag("hamburger_button")
                 ) {
                     Icon(
@@ -121,12 +124,12 @@ fun AppTopBar(
                     )
                 }
 
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(2.dp))
 
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
-                        .clip(RoundedCornerShape(10.dp))
+                        .size(34.dp)
+                        .clip(RoundedCornerShape(9.dp))
                         .background(
                             Brush.linearGradient(
                                 listOf(ElectricBlue, EmeraldLight)
@@ -138,11 +141,11 @@ fun AppTopBar(
                         imageVector = Icons.Default.MonetizationOn,
                         contentDescription = "Logo",
                         tint = Color.White,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(20.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -150,118 +153,92 @@ fun AppTopBar(
                             text = "Royaltree",
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp
+                                fontSize = 16.sp
                             ),
                             color = MaterialTheme.colorScheme.onSurface
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(5.dp))
                         if (user?.tier == "PREMIUM") {
                             Box(
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(6.dp))
+                                    .clip(RoundedCornerShape(5.dp))
                                     .background(GoldVip)
-                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                                    .padding(horizontal = 5.dp, vertical = 1.dp)
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        imageVector = Icons.Default.Star,
-                                        contentDescription = "VIP",
-                                        tint = Color.Black,
-                                        modifier = Modifier.size(11.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(2.dp))
-                                    Text(
-                                        text = "VIP",
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.Black,
-                                        color = Color.Black
-                                    )
-                                }
+                                Text(
+                                    text = "VIP",
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Black,
+                                    color = Color.Black
+                                )
                             }
                         } else {
                             Box(
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(6.dp))
+                                    .clip(RoundedCornerShape(5.dp))
                                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                                    .padding(horizontal = 5.dp, vertical = 1.dp)
                             ) {
                                 Text(
                                     text = "FREE",
-                                    fontSize = 10.sp,
+                                    fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
                     }
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Encrypted",
-                            tint = EmeraldLight,
-                            modifier = Modifier.size(11.dp)
-                        )
-                        Spacer(modifier = Modifier.width(3.dp))
-                        Text(
-                            text = "E2E Encrypted • 2FA",
-                            fontSize = 10.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    Text(
+                        text = "E2E Encrypted • 2FA",
+                        fontSize = 9.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
 
-            // Right Actions: Role Switcher Pill + Language + Notif
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Role Toggle Pill: User vs Admin
-                Box(
+            // RIGHT: Dark mode + Language + Inbox + Notif
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // Dark Mode Toggle
+                IconButton(
+                    onClick = onToggleDarkMode,
                     modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(
-                            if (isAdminMode) PurpleSecondary.copy(alpha = 0.2f)
-                            else EmeraldPrimary.copy(alpha = 0.15f)
-                        )
-                        .clickable { onToggleRole() }
-                        .padding(horizontal = 10.dp, vertical = 5.dp)
-                        .testTag("role_switcher_pill"),
-                    contentAlignment = Alignment.Center
+                        .size(36.dp)
+                        .testTag("dark_mode_button")
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = if (isAdminMode) Icons.Default.AdminPanelSettings else Icons.Default.Person,
-                            contentDescription = "Role Mode",
-                            tint = if (isAdminMode) PurpleSecondary else EmeraldLight,
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = if (isAdminMode) "ADMIN" else "USER",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = if (isAdminMode) PurpleSecondary else EmeraldLight
-                        )
-                    }
+                    Icon(
+                        imageVector = if (isDarkMode) Icons.Default.LightMode else Icons.Default.DarkMode,
+                        contentDescription = "Theme",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
 
-                Spacer(modifier = Modifier.width(6.dp))
-
-                // Language Selector
+                // Language
                 IconButton(
                     onClick = onOpenLanguage,
                     modifier = Modifier
                         .size(36.dp)
                         .testTag("language_button")
                 ) {
-                    Text(
-                        text = currentLanguage.flag,
-                        fontSize = 18.sp
+                    Text(text = currentLanguage.flag, fontSize = 18.sp)
+                }
+
+                // Inbox
+                IconButton(
+                    onClick = onOpenInbox,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .testTag("inbox_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Email,
+                        contentDescription = "Inbox",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
 
-                // Push Notifications with Badge
+                // Notifications
                 IconButton(
                     onClick = onOpenNotifs,
                     modifier = Modifier
