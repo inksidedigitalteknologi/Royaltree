@@ -38,6 +38,9 @@ enum class AppScreen {
     INVEST,
     HISTORY,
     ADMIN,
+    REFERRAL,
+    SETTINGS,
+    FAQ,
     PROFILE,
     NOTIFICATIONS
 }
