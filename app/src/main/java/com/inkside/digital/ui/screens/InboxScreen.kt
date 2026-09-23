@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 
 data class InboxMessage(
     val id: String,
@@ -77,7 +78,7 @@ fun InboxScreen(
                         )
                     )
                     Text(
-                        text = "Pesan dari admin & tim support",
+                        text = LanguageManager.translate("inbox_subtitle", currentLanguage, "Messages from admin"),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -110,14 +111,14 @@ fun InboxScreen(
                         }
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "Belum ada pesan",
+                            text = LanguageManager.translate("inbox_empty", currentLanguage, "No messages yet"),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Pesan dari admin akan muncul di sini",
+                            text = LanguageManager.translate("common_empty_desc", currentLanguage, "Messages will appear here"),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

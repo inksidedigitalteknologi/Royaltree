@@ -33,11 +33,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 
 data class FaqItem(val q: String, val a: String)
 
 @Composable
-fun FaqScreen() {
+fun FaqScreen(currentLanguage: AppLanguage) {
     val faqs = listOf(
         FaqItem("Bagaimana cara mendapatkan poin?", "Poin didapat dari langkah kaki, menyelesaikan misi, bermain game, dan mengundang teman."),
         FaqItem("Kapan saya bisa melakukan penarikan?", "Minimal saldo Rp 50.000 untuk e-wallet, Rp 100.000 untuk bank. Verifikasi email wajib."),
@@ -55,7 +57,7 @@ fun FaqScreen() {
 
         item {
             Column {
-                Text("Bantuan", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
+                Text(LanguageManager.translate("faq_title", currentLanguage, "Help"), style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
                 Text("Pertanyaan umum & dukungan", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
@@ -72,7 +74,7 @@ fun FaqScreen() {
                     Text("Masih butuh bantuan?", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     Text("Hubungi tim support kami", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.height(12.dp))
-                    Button(onClick = { }) { Text("Hubungi Support") }
+                    Button(onClick = { }) { Text(LanguageManager.translate("faq_contact_support", currentLanguage, "Contact Support")) }
                 }
             }
         }

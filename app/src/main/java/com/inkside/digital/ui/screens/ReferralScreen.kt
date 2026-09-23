@@ -40,9 +40,11 @@ import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 
 @Composable
-fun ReferralScreen(user: UserEntity?) {
+fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
     val context = LocalContext.current
     val referralCode = user?.referralCode ?: "RT0001"
 
@@ -56,22 +58,22 @@ fun ReferralScreen(user: UserEntity?) {
 
         item {
             Column {
-                Text("Undang Teman", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
-                Text("Dapatkan komisi pasif 5% (Tier 1) dan 2% (Tier 2)", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(LanguageManager.translate("referral_title", currentLanguage, "Invite Friends"), style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
+                Text(LanguageManager.translate("referral_subtitle", currentLanguage, "Get 5% passive commission"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
         item {
             Card(shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Kode Referral Anda", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(LanguageManager.translate("referral_your_code", currentLanguage, "Your Referral Code"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                         Text(referralCode, fontSize = 24.sp, fontWeight = FontWeight.Black, fontFamily = FontFamily.Monospace, color = ElectricBlue)
                         IconButton(onClick = {
                             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                             clipboard.setPrimaryClip(ClipData.newPlainText("Referral", referralCode))
-                            Toast.makeText(context, "Kode disalin!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, LanguageManager.translate("referral_copied", currentLanguage, "Code copied!"), Toast.LENGTH_SHORT).show()
                         }) {
                             Icon(Icons.Default.ContentCopy, "Copy", tint = EmeraldLight)
                         }
@@ -91,7 +93,7 @@ fun ReferralScreen(user: UserEntity?) {
                     ) {
                         Icon(Icons.Default.Share, null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Bagikan ke Teman", fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("referral_share", currentLanguage, "Share"), fontWeight = FontWeight.Bold)
                     }
                 }
             }

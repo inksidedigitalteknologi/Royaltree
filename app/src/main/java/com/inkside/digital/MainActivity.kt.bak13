@@ -686,24 +686,22 @@ fun MainAffiliateAppContent(
                 }
 
                 AppScreen.REFERRAL -> {
-                    ReferralScreen(user = user, currentLanguage = currentLanguage)
+                    ReferralScreen(user = user)
                 }
 
                 AppScreen.SETTINGS -> {
                     SettingsScreen(
-                        currentLanguage = currentLanguage,
                         onOpenLanguage = { showLanguageModal = true },
                         onLogout = { onLogout() }
                     )
                 }
 
                 AppScreen.FAQ -> {
-                    FaqScreen(currentLanguage = currentLanguage)
+                    FaqScreen()
                 }
 
                 AppScreen.DAILY_CHECK_IN -> {
                     DailyCheckInScreen(
-                        currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.HOME) },
                         onClaimCheckIn = { /* TODO: panggil ViewModel */ },
                         onWatchAdForRecovery = { /* TODO */ },

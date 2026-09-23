@@ -39,9 +39,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 
 @Composable
 fun SettingsScreen(
+    currentLanguage: AppLanguage,
     onOpenLanguage: () -> Unit,
     onLogout: () -> Unit
 ) {
@@ -58,24 +61,24 @@ fun SettingsScreen(
 
         item {
             Column {
-                Text("Pengaturan", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
-                Text("Sesuaikan aplikasi sesuai preferensi kamu", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(LanguageManager.translate("settings_title", currentLanguage, "Settings"), style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
+                Text(LanguageManager.translate("settings_subtitle", currentLanguage, "Customize the app"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
         item { SectionHeader("Preferensi") }
 
-        item { SettingRow(Icons.Default.Language, "Bahasa", "Pilih bahasa aplikasi", onOpenLanguage) }
-        item { SettingSwitch(Icons.Default.Notifications, "Notifikasi", "Aktifkan notifikasi push", notifEnabled) { notifEnabled = it } }
-        item { SettingSwitch(Icons.Default.LocationOn, "Pelacakan Lokasi", "Izinkan akses lokasi untuk analitik", locationEnabled) { locationEnabled = it } }
-        item { SettingSwitch(Icons.Default.DarkMode, "Mode Gelap", "Gunakan tema gelap", darkModeEnabled) { darkModeEnabled = it } }
+        item { SettingRow(Icons.Default.Language, LanguageManager.translate("settings_language", currentLanguage, "Language"), "Pilih bahasa aplikasi", onOpenLanguage) }
+        item { SettingSwitch(Icons.Default.Notifications, LanguageManager.translate("settings_notifications", currentLanguage, "Notifications"), "Aktifkan notifikasi push", notifEnabled) { notifEnabled = it } }
+        item { SettingSwitch(Icons.Default.LocationOn, LanguageManager.translate("settings_location", currentLanguage, "Location"), "Izinkan akses lokasi", locationEnabled) { locationEnabled = it } }
+        item { SettingSwitch(Icons.Default.DarkMode, LanguageManager.translate("settings_dark_mode", currentLanguage, "Dark Mode"), "Gunakan tema gelap", darkModeEnabled) { darkModeEnabled = it } }
 
         item { SectionHeader("Keamanan") }
-        item { SettingRow(Icons.Default.Security, "Keamanan Akun", "2FA, PIN, dan enkripsi", { }) }
+        item { SettingRow(Icons.Default.Security, LanguageManager.translate("settings_security", currentLanguage, "Account Security"), "2FA, PIN, dan enkripsi", { }) }
 
         item { SectionHeader("Informasi") }
-        item { SettingRow(Icons.Default.Policy, "Kebijakan Privasi", "Baca kebijakan privasi kami", { }) }
-        item { SettingRow(Icons.Default.Info, "Tentang Royaltree", "Versi 1.0.0", { }) }
+        item { SettingRow(Icons.Default.Policy, LanguageManager.translate("settings_privacy", currentLanguage, "Privacy Policy"), "Baca kebijakan privasi", { }) }
+        item { SettingRow(Icons.Default.Info, LanguageManager.translate("settings_about", currentLanguage, "About Royaltree"), "Versi 1.0.0", { }) }
 
         item { Spacer(modifier = Modifier.height(8.dp)) }
 
@@ -88,8 +91,8 @@ fun SettingsScreen(
                 Row(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.ExitToApp, "Logout", tint = MaterialTheme.colorScheme.error)
                     Column(modifier = Modifier.padding(start = 16.dp)) {
-                        Text("Keluar", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.error)
-                        Text("Keluar dari akun Royaltree", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("settings_logout", currentLanguage, "Logout"), fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.error)
+                        Text(LanguageManager.translate("settings_logout_desc", currentLanguage, "Sign out"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -101,15 +104,15 @@ fun SettingsScreen(
     if (showLogoutDialog) {
         AlertDialog(
             onDismissRequest = { showLogoutDialog = false },
-            title = { Text("Keluar dari Akun?") },
-            text = { Text("Anda yakin ingin keluar dari Royaltree?") },
+            title = { Text(LanguageManager.translate("settings_logout", currentLanguage, "Logout") + "?") },
+            text = { Text(LanguageManager.translate("settings_logout_confirm", currentLanguage, "Are you sure?")) },
             confirmButton = {
                 TextButton(onClick = { showLogoutDialog = false; onLogout() }) {
-                    Text("Keluar", color = MaterialTheme.colorScheme.error)
+                    Text(LanguageManager.translate("settings_logout", currentLanguage, "Logout"), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showLogoutDialog = false }) { Text("Batal") }
+                TextButton(onClick = { showLogoutDialog = false }) { Text(LanguageManager.translate("common_cancel", currentLanguage, "Cancel")) }
             }
         )
     }
