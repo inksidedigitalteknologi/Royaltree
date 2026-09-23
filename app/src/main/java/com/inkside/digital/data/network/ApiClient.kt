@@ -236,4 +236,59 @@ object ApiClient {
             Result.failure(e)
         }
     }
+
+    // ============ ADS REWARD ============
+
+    suspend fun rewardAd(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val response: ResponseBody = apiService.rewardAd(requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getDailyStatus(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response: ResponseBody = apiService.getDailyStatus()
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun dailyCheckIn(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response: ResponseBody = apiService.dailyCheckIn()
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun recoverDay(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val response: ResponseBody = apiService.recoverDay(requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getAdStatus(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response: ResponseBody = apiService.getAdStatus()
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
+
