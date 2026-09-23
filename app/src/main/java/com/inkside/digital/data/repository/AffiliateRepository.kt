@@ -40,20 +40,14 @@ class AffiliateRepository(private val dao: AppDao) {
     private val transferMutex = Mutex()
     private var lastTransferTimestamp: Long = 0L
 
-    private val _activeUserId = MutableStateFlow("user_001")
+    private val _activeUserId = MutableStateFlow("")  // Diisi dari Firebase UID setelah login
     val activeUserId: Flow<String> = _activeUserId.asStateFlow()
 
     fun switchUser(userId: String) {
         _activeUserId.value = userId
     }
 
-    private val _contacts = MutableStateFlow<List<PeerContact>>(
-        listOf(
-            PeerContact("user_002", "Siti Rahmawati", "@siti_rtp", "SITI2024", "👩‍💼", "Affiliate Gold", isFavorite = true),
-            PeerContact("user_003", "Budi Santoso", "@budi_affiliate", "BUDI99", "👨‍💻", "Top Referrer", isFavorite = true),
-            PeerContact("user_004", "Dewi Lestari", "@dewi_vip", "DEWI77", "👑", "VIP Partner", isFavorite = true),
-            PeerContact("user_005", "Rian Pratama", "@rian_pratama", "RIAN88", "⚡", "Member Aktif", isFavorite = false)
-        )
+    private val _contacts = MutableStateFlow<List<PeerContact>>(emptyList())
     )
     val contacts: Flow<List<PeerContact>> = _contacts.asStateFlow()
 
@@ -85,30 +79,8 @@ class AffiliateRepository(private val dao: AppDao) {
     val placedMinerItems: Flow<List<com.inkside.digital.data.model.GameMinerItemEntity>> = dao.getPlacedMinerItems()
     val gameRoomState: Flow<com.inkside.digital.data.model.GameRoomStateEntity?> = dao.getGameRoomState()
 
-    suspend fun ensureDefaultUser() = withContext(Dispatchers.IO) {
-        val current = dao.getUserSync()
-        if (current == null) {
-            dao.insertUser(
-                UserEntity(
-                    id = "user_001",
-                    name = "Hendra Wijaya",
-                    email = "hendra.affiliate@gmail.com",
-                    phone = "+62 812-3456-7890",
-                    tier = "FREE",
-                    commissionRateMultiplier = 1.0,
-                    balance = 3850000.0,
-                    pendingBalance = 500000.0,
-                    totalPaidOut = 8400000.0,
-                    points = 2450,
-                    is2FAEnabled = true,
-                    regionZone = "ID",
-                    referralCode = "PRO8892",
-                    referredCount = 18,
-                    referralEarnings = 540000.0
-                )
-            )
-        }
-    }
+    // ensureDefaultUser() dihapus — tidak ada data dummy.
+    // User di-load dari backend setelah login Firebase.
 
     suspend fun requestWithdrawal(
         amount: Double,

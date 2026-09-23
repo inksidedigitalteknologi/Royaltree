@@ -1548,7 +1548,7 @@ fun AdRewardModal(
             ),
             EligibleAdVariation(
                 id = "ad_tokopedia_official",
-                sponsorName = "Tokopedia Official Electronics Fest",
+                sponsorName = "Sponsor",
                 category = "E-Commerce & Gadget Resmi",
                 headline = "Promo Super Gadget Smartphone & Tablet Kerja",
                 tagLine = "Garansi Resmi Distributor 100% Original",

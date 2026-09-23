@@ -294,13 +294,13 @@ fun ProfileSecurityScreen(
                         ) {
                             Column {
                                 Text("Kode Referral Anda:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text(user?.referralCode ?: "AFFL-VIP-77", fontWeight = FontWeight.Black, fontSize = 15.sp, fontFamily = FontFamily.Monospace, color = ElectricBlue)
+                                Text(user?.referralCode ?: "-", fontWeight = FontWeight.Black, fontSize = 15.sp, fontFamily = FontFamily.Monospace, color = ElectricBlue)
                             }
 
                             IconButton(
                                 onClick = {
                                     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                    val clip = ClipData.newPlainText("Referral", user?.referralCode ?: "AFFL-VIP-77")
+                                    val clip = ClipData.newPlainText("Referral", user?.referralCode ?: "-")
                                     clipboard.setPrimaryClip(clip)
                                     Toast.makeText(context, "Kode referral disalin!", Toast.LENGTH_SHORT).show()
                                 }

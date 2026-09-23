@@ -5,10 +5,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "users")
 data class UserEntity(
-    @PrimaryKey val id: String = "user_001",
-    val name: String = "Hendra Wijaya",
-    val email: String = "hendra.affiliate@gmail.com",
-    val phone: String = "+62 812-3456-7890",
+    @PrimaryKey val id: String,
+    val name: String,
+    val email: String = "",
+    val phone: String = "",
     val tier: String = "FREE", // FREE or PREMIUM
     val commissionRateMultiplier: Double = 1.0, // 1.0 for Free (12%), 2.5 for Premium (30%)
     val balance: Double = 4750000.0, // IDR
@@ -19,7 +19,7 @@ data class UserEntity(
     val twoFactorSecret: String = "JBSWY3DPEHPK3PXP",
     val encryptionKeyHash: String = "AES-256-GCM#e8f2...9b1a",
     val regionZone: String = "ID", // ID, GLOBAL, US, EU
-    val referralCode: String = "PRO8892",
+    val referralCode: String = "",
     val referredCount: Int = 24,
     val referralEarnings: Double = 640000.0,
     val checkInStreak: Int = 3,
