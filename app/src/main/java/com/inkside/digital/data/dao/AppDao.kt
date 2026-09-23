@@ -22,13 +22,13 @@ import kotlinx.coroutines.flow.Flow
 interface AppDao {
     // User
     @Query("SELECT * FROM users WHERE id = :id LIMIT 1")
-    fun getUser(id: String = "user_001"): Flow<UserEntity?>
+    fun getUser(id: String): Flow<UserEntity?>
 
     @Query("SELECT * FROM users")
     fun getAllUsers(): Flow<List<UserEntity>>
 
     @Query("SELECT * FROM users WHERE id = :id LIMIT 1")
-    suspend fun getUserSync(id: String = "user_001"): UserEntity?
+    suspend fun getUserSync(id: String): UserEntity?
 
     @Query("SELECT * FROM users")
     suspend fun getAllUsersSync(): List<UserEntity>

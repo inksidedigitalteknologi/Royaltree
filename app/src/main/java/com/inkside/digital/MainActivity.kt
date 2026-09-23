@@ -174,6 +174,10 @@ fun RootNav(
         }
 
         AuthScreen.HOME -> {
+            // Load semua data dari backend saat masuk HOME
+            androidx.compose.runtime.LaunchedEffect(Unit) {
+                affiliateViewModel.loadAllFromBackend()
+            }
             MainAffiliateApp(
                 viewModel = affiliateViewModel,
                 onLogout = { authViewModel.logout() }
@@ -187,6 +191,10 @@ fun MainAffiliateApp(
     viewModel: AffiliateViewModel = viewModel(),
     onLogout: () -> Unit = {}
 ) {
+    // Refresh user dari backend saat app dibuka
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.loadUserFromBackend()
+    }
     val user by viewModel.user.collectAsState()
     val campaigns by viewModel.campaigns.collectAsState()
     val links by viewModel.links.collectAsState()

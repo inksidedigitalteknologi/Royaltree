@@ -317,7 +317,7 @@ fun CameraScannerView(
             ) {
                 OutlinedButton(
                     onClick = {
-                        onQrDetected("royaltree:pay?userId=user_002&name=Siti+Rahmawati&code=SITI2024&phone=%2B6281398765432&amount=100")
+                        // onQrDetected contoh dihapus
                     },
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF34D399)),
                     shape = RoundedCornerShape(12.dp),

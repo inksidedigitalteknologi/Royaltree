@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import com.google.firebase.auth.FirebaseAuth
 
 enum class AppScreen {
     HOME,
@@ -52,8 +53,14 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     init {
         val database = AppDatabase.getDatabase(application, viewModelScope)
         repository = AffiliateRepository(database.appDao())
+        // Tidak ada seed data dummy — user di-load dari backend.
+        // Set active user ID dari Firebase Auth
         viewModelScope.launch {
-            repository.ensureDefaultUser()
+            val firebaseUid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+            if (firebaseUid != null) {
+                repository.switchUser(firebaseUid)
+                loadUserFromBackend()
+            }
         }
         com.inkside.digital.data.network.ApiClient.init(application)
     }
@@ -172,7 +179,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     val activeUserId: StateFlow<String> = repository.activeUserId
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "user_001")
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
     fun switchUser(userId: String) {
         repository.switchUser(userId)
@@ -734,4 +741,143 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+
+    // ============ LOAD DARI BACKEND (Firestore) ============
+
+    /**
+     * Load user dari backend berdasarkan Firebase UID.
+     * Data disimpan ke Room DB -> UI auto-update.
+     */
+    fun loadUserFromBackend() {
+        viewModelScope.launch {
+            try {
+                val firebaseUid = FirebaseAuth.getInstance().currentUser?.uid
+                if (firebaseUid == null) {
+                    android.util.Log.w("AffiliateViewModel", "Firebase UID null — belum login")
+                    return@launch
+                }
+
+                // Pastikan active user ID = Firebase UID
+                repository.switchUser(firebaseUid)
+
+                // Ambil dari backend
+                val result = ApiClient.getMyProfile()
+                result.onSuccess { json ->
+                    try {
+                        if (!json.optBoolean("success", false)) {
+                            android.util.Log.w("AffiliateViewModel", "Backend: user tidak ditemukan")
+                            return@onSuccess
+                        }
+                        val data = json.optJSONObject("data") ?: return@onSuccess
+
+                        repository.updateUserFromBackend(
+                            userId = firebaseUid,
+                            name = data.optString("name", ""),
+                            email = data.optString("email", ""),
+                            tier = data.optString("tier", "FREE"),
+                            balance = data.optDouble("balance", 0.0),
+                            points = data.optInt("points", 0),
+                            todaySteps = data.optInt("todaySteps", 0)
+                        )
+                        android.util.Log.d("AffiliateViewModel", "✅ User loaded from backend")
+                    } catch (e: Exception) {
+                        android.util.Log.e("AffiliateViewModel", "Parse user error: ${e.message}")
+                    }
+                }.onFailure {
+                    android.util.Log.w("AffiliateViewModel", "Gagal load user: ${it.message}")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("AffiliateViewModel", "loadUserFromBackend error: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Sync user ke backend (kalau belum ada di Firestore).
+     */
+    fun syncUserToBackend() {
+        viewModelScope.launch {
+            try {
+                val firebaseUser = FirebaseAuth.getInstance().currentUser ?: return@launch
+                val body = org.json.JSONObject().apply {
+                    put("name", firebaseUser.displayName ?: "User Baru")
+                }
+                ApiClient.syncFirebaseUser(body).onSuccess {
+                    android.util.Log.d("AffiliateViewModel", "✅ User synced to backend")
+                    loadUserFromBackend()
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("AffiliateViewModel", "syncUserToBackend error: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Load campaigns dari backend.
+     */
+    fun loadCampaignsFromBackendV2() {
+        viewModelScope.launch {
+            ApiClient.getCampaigns().onSuccess { response ->
+                if (response.success) {
+                    val entities = response.data.map { item ->
+                        com.inkside.digital.data.model.CampaignEntity(
+                            id = item.id,
+                            title = item.title,
+                            category = item.category,
+                            merchantName = item.merchantName,
+                            commissionDisplay = item.commissionDisplay,
+                            payoutType = "CPS",
+                            baseCommissionRate = item.baseCommissionRate,
+                            clicksCount = 0,
+                            conversionsCount = 0,
+                            totalEarned = 0.0,
+                            status = item.status
+                        )
+                    }
+                    repository.syncCampaignsFromBackend(entities)
+                }
+            }
+        }
+    }
+
+    /**
+     * Load missions dari backend.
+     */
+    fun loadMissionsFromBackendV2() {
+        viewModelScope.launch {
+            ApiClient.getMissions().onSuccess { response ->
+                if (response.success) {
+                    val entities = response.data.map { item ->
+                        com.inkside.digital.data.model.TaskMissionEntity(
+                            id = item.id,
+                            title = item.title,
+                            description = "",
+                            rtpReward = item.rtpReward,
+                            type = "ENGAGEMENT_MISSION",
+                            category = item.category,
+                            currentProgress = 0,
+                            maxProgress = 1,
+                            isCompleted = false,
+                            isClaimed = false,
+                            iconKey = "star",
+                            targetPlatform = item.targetPlatform,
+                            durationSeconds = item.durationSeconds,
+                            actionUrl = item.actionUrl
+                        )
+                    }
+                    repository.syncMissionsFromBackend(entities)
+                }
+            }
+        }
+    }
+
+    /**
+     * Load semua data dari backend — user + campaigns + missions.
+     */
+    fun loadAllFromBackend() {
+        loadUserFromBackend()
+        loadCampaignsFromBackendV2()
+        loadMissionsFromBackendV2()
+    }
+
 }

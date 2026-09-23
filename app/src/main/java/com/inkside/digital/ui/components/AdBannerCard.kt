@@ -46,7 +46,7 @@ import com.inkside.digital.data.model.AdBannerItem
 val SAMPLE_BANNER_ADS = listOf(
     AdBannerItem(
         id = "banner_tokopedia",
-        sponsorName = "Tokopedia",
+        sponsorName = "Sponsor",
         title = "Promo Waktu Indonesia Belanja (WIB)",
         subtitle = "Diskon hingga 90% & Bebas Ongkir ke seluruh kota!",
         ctaText = "Klaim +25 Koin",
@@ -56,8 +56,8 @@ val SAMPLE_BANNER_ADS = listOf(
     ),
     AdBannerItem(
         id = "banner_shopee",
-        sponsorName = "Shopee",
-        title = "Shopee Garansi Tepat Waktu",
+        sponsorName = "Sponsor",
+        title = "Promo Spesial",
         subtitle = "Pasti sampai tepat waktu atau dapat voucher kompensasi!",
         ctaText = "Klaim +20 Koin",
         bannerEmoji = "🛍️",

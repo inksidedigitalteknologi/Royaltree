@@ -772,7 +772,7 @@ fun QrTransferModal(
                     }
                 } else {
                     // TAB 1: TERIMA RTP (TAMPILKAN QR SAYA & SPLIT BILL)
-                    val myUserId = user?.id ?: "user_001"
+                    val myUserId = user?.id ?: ""
                     val myName = user?.name ?: "Pengguna Royaltree"
                     val myRefCode = user?.referralCode ?: "PRO8892"
 
