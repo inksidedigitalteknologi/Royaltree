@@ -88,4 +88,17 @@ class AuthManager(private val context: Context) {
             null
         }
     }
+
+    /**
+     * Kirim email reset password via Firebase
+     */
+    suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
+        return try {
+            auth.sendPasswordResetEmail(email).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("AuthManager", "Reset password error: \${e.message}")
+            Result.failure(e)
+        }
+    }
 }

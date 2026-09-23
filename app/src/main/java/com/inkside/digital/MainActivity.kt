@@ -65,6 +65,7 @@ import com.inkside.digital.ui.screens.WithdrawalScreen
 import com.inkside.digital.ui.theme.MyApplicationTheme
 import com.inkside.digital.ui.screens.auth.AuthScreen
 import com.inkside.digital.ui.screens.auth.AuthViewModel
+import com.inkside.digital.ui.screens.auth.ForgotPasswordScreen
 import com.inkside.digital.ui.screens.auth.LoginScreen
 import com.inkside.digital.ui.screens.auth.ProfileSetupScreen
 import com.inkside.digital.ui.screens.auth.RegisterScreen
@@ -114,6 +115,9 @@ fun RootNav(
                 },
                 onNavigateRegister = {
                     authViewModel.navigateToRegister()
+                },
+                onNavigateForgotPassword = {
+                    authViewModel.navigateToForgotPassword()
                 }
             )
         }
@@ -132,6 +136,16 @@ fun RootNav(
                 onNavigateLogin = {
                     authViewModel.navigateToLogin()
                 }
+            )
+        }
+
+        AuthScreen.FORGOT_PASSWORD -> {
+            ForgotPasswordScreen(
+                isLoading = isLoading,
+                errorMessage = errorMessage,
+                successMessage = successMessage,
+                onSendReset = { email -> authViewModel.resetPassword(email) },
+                onNavigateBack = { authViewModel.navigateToLogin() }
             )
         }
 
