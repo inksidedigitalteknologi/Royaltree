@@ -54,7 +54,6 @@ import com.inkside.digital.ui.screens.FaqScreen
 import kotlinx.coroutines.launch
 import com.inkside.digital.ui.screens.AdminScreen
 import com.inkside.digital.ui.screens.InboxScreen
-import com.inkside.digital.ui.screens.DailyCheckInScreen
 import com.inkside.digital.ui.screens.AnalyticsScreen
 import com.inkside.digital.ui.screens.CampaignsScreen
 import com.inkside.digital.ui.screens.HistoryScreen
@@ -698,20 +697,6 @@ fun MainAffiliateAppContent(
 
                 AppScreen.FAQ -> {
                     FaqScreen()
-                }
-
-                AppScreen.DAILY_CHECK_IN -> {
-                    DailyCheckInScreen(
-                        onBack = { onNavigate(AppScreen.HOME) },
-                        onClaimCheckIn = { /* TODO: panggil ViewModel */ },
-                        onWatchAdForRecovery = { /* TODO */ },
-                        onPayPointsForRecovery = { /* TODO */ },
-                        streak = 0,
-                        checkedInToday = false,
-                        isLoading = false,
-                        errorMessage = null,
-                        successMessage = null
-                    )
                 }
 
                 AppScreen.INBOX -> {
