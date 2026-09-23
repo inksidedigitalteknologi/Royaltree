@@ -21,6 +21,7 @@ enum class AuthScreen {
     REGISTER,
     VERIFY_EMAIL,
     PROFILE_SETUP,
+    FORGOT_PASSWORD,
     HOME
 }
 
@@ -295,5 +296,28 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _errorMessage.value = null
         _successMessage.value = null
         _currentScreen.value = AuthScreen.LOGIN
+    }
+
+    fun navigateToForgotPassword() {
+        _errorMessage.value = null
+        _successMessage.value = null
+        _currentScreen.value = AuthScreen.FORGOT_PASSWORD
+    }
+
+    // ============ RESET PASSWORD ============
+
+    fun resetPassword(email: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorMessage.value = null
+
+            val result = authManager.sendPasswordResetEmail(email)
+            if (result.isSuccess) {
+                _successMessage.value = "Link reset password telah dikirim ke email kamu."
+            } else {
+                _errorMessage.value = result.exceptionOrNull()?.message ?: "Gagal kirim email reset"
+            }
+            _isLoading.value = false
+        }
     }
 }
