@@ -210,7 +210,7 @@ object LanguageManager {
             AppLanguage.CHINESE to "全球所有国家和地区用户享受相同的 RTP 积分购买力（100 RTP = 1.00 美元）与即时兑现标准。",
             AppLanguage.ARABIC to "تحمل نقاط رويالتري (RTP) نفس القيمة المتساوية في جميع أنحاء العالم لجميع المستخدمين.",
             AppLanguage.JAPANESE to "Royaltree Point (RTP) は世界中どこから利用しても価値は均一（100 RTP = $1.00 USD）。グローバル標準レートで即時換金可能です。"
-        )
+        ),
 
         // ============ HOME ============
         "home_welcome" to mapOf(
@@ -451,7 +451,7 @@ object LanguageManager {
             AppLanguage.ARABIC to "حفظ",
             AppLanguage.JAPANESE to "保存"
         ),
-       nguage.JAPAose" to mapOf(
+        "common_close" to mapOf(
             AppLanguage.INDONESIAN to "Tutup",
             AppLanguage.ENGLISH to "Close",
             AppLanguage.SPANISH to "Cerrar",
