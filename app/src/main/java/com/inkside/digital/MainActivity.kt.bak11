@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.inkside.digital.data.model.*
 import com.inkside.digital.data.preferences.AppThemePreferences
-import com.inkside.digital.data.ads.AdManager
 import com.inkside.digital.data.repository.PeerContact
 import com.inkside.digital.data.repository.TransferResult
 import com.inkside.digital.localization.AppLanguage
@@ -84,7 +83,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         AppThemePreferences.init(this)   // Load dark mode & bahasa
-        AdManager.init(this)              // Init AdMob SDK
         setContent {
             MyApplicationTheme(
                 darkTheme = AppThemePreferences.isDarkMode

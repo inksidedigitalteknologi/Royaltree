@@ -141,4 +141,22 @@ interface RoyaltreeApiService {
     suspend fun linkReferral(
         @Body body: RequestBody
     ): ResponseBody
+
+    // ============ DAILY CHECK-IN ============
+    @GET("daily/status")
+    suspend fun getDailyStatus(): ResponseBody
+
+    @POST("daily/check-in")
+    suspend fun dailyCheckIn(): ResponseBody
+
+    @POST("daily/recover-day")
+    suspend fun recoverDay(@Body body: RequestBody): ResponseBody
+
+    // ============ ADS ============
+    @GET("ads/status")
+    suspend fun getAdStatus(): ResponseBody
+
+    @POST("ads/reward")
+    suspend fun rewardAd(@Body body: RequestBody): ResponseBody
 }
+
