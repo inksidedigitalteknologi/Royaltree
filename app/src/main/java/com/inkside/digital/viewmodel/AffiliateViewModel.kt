@@ -43,6 +43,7 @@ enum class AppScreen {
     SETTINGS,
     FAQ,
     INBOX,
+    DAILY_CHECK_IN,
     PROFILE,
     NOTIFICATIONS
 }
