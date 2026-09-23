@@ -48,10 +48,13 @@ import com.inkside.digital.ui.components.RecoveryDialog
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import java.util.Calendar
 
 @Composable
 fun DailyCheckInScreen(
+    currentLanguage: AppLanguage,
     onBack: () -> Unit,
     onClaimCheckIn: () -> Unit,
     onWatchAdForRecovery: (date: String) -> Unit,
@@ -90,11 +93,11 @@ fun DailyCheckInScreen(
                 }
                 Column {
                     Text(
-                        text = "Login Harian",
+                        text = LanguageManager.translate("daily_title", currentLanguage, "Daily Check-In"),
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp)
                     )
                     Text(
-                        text = "Klaim hadiah setiap hari",
+                        text = LanguageManager.translate("daily_subtitle", currentLanguage, "Claim daily rewards"),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -123,7 +126,7 @@ fun DailyCheckInScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            Text("Streak Kamu", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("daily_streak", currentLanguage, "Your Streak"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(
                                 "$streak hari",
                                 fontSize = 20.sp,
@@ -150,7 +153,7 @@ fun DailyCheckInScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "💡 Weekend (Sabtu/Minggu) = hadiah lebih besar!",
+                    text = "💡 " + LanguageManager.translate("daily_weekend_info", currentLanguage, "Weekend = bigger rewards!"),
                     fontSize = 12.sp,
                     color = ElectricBlue,
                     modifier = Modifier.padding(12.dp)
@@ -266,7 +269,7 @@ fun DailyCheckInScreen(
                 ) {
                     Icon(Icons.Default.CardGiftcard, null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("KLAIM HADIAH HARI INI", fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("daily_claim", currentLanguage, "CLAIM TODAY'S REWARD"), fontWeight = FontWeight.Bold)
                 }
             } else {
                 Card(
@@ -282,7 +285,7 @@ fun DailyCheckInScreen(
                         Text("✅", fontSize = 20.sp)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Kamu sudah check-in hari ini. Kembali besok!",
+                            text = LanguageManager.translate("daily_claimed", currentLanguage, "You've checked in today!"),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = EmeraldLight
