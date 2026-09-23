@@ -42,6 +42,7 @@ enum class AppScreen {
     REFERRAL,
     SETTINGS,
     FAQ,
+    INBOX,
     PROFILE,
     NOTIFICATIONS
 }
