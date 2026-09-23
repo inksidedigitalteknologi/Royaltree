@@ -28,7 +28,7 @@ object AdConfig {
     const val AD_LOAD_TIMEOUT_SECONDS = 15
 
     // Test device ID (untuk development — biar tidak kena ban)
-    val TEST_DEVICE_IDS = listOf(
+    val TEST_DEVICE_IDS: List<String> = listOf(
         // Tambah device ID kamu di sini (dari logcat)
         // Format: "33BE2250B43518CCDA7DE426D04EE231"
     )

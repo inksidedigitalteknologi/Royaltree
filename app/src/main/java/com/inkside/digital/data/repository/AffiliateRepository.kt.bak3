@@ -48,6 +48,7 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     private val _contacts = MutableStateFlow<List<PeerContact>>(emptyList())
+    )
     val contacts: Flow<List<PeerContact>> = _contacts.asStateFlow()
 
     fun toggleFavoriteContact(contactId: String) {
@@ -89,7 +90,7 @@ class AffiliateRepository(private val dao: AppDao) {
         accountDestination: String,
         accountHolderName: String
     ): Result<WithdrawalEntity> = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext Result.failure(Exception("Pengguna tidak ditemukan"))
+        val user = dao.getUserSync() ?: return@withContext Result.failure(Exception("Pengguna tidak ditemukan"))
 
         // Minimum threshold check
         val minLimit = when (channelType) {
@@ -171,7 +172,7 @@ class AffiliateRepository(private val dao: AppDao) {
 
     // Admin action: Approve & Mark Paid (manual payout validation)
     suspend fun adminApproveWithdrawal(withdrawalId: String, adminNotes: String = "Disetujui & telah ditransfer via Gateway") = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext
+        val user = dao.getUserSync() ?: return@withContext
         val withdrawals = dao.getAllWithdrawals()
         // Find withdrawal
         // Since we need to update this specific withdrawal:
@@ -197,7 +198,7 @@ class AffiliateRepository(private val dao: AppDao) {
         newStatus: String, // PAID or REJECTED
         note: String
     ) = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext
+        val user = dao.getUserSync() ?: return@withContext
         val isApprove = newStatus == "PAID"
 
         val updatedWd = withdrawal.copy(
@@ -292,7 +293,7 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun simulateLiveConversion(link: AffiliateLinkEntity) = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext
+        val user = dao.getUserSync() ?: return@withContext
         val baseCommission = 85000.0 * user.commissionRateMultiplier
         val isPremium = user.tier == "PREMIUM"
         val actualEarned = if (isPremium) baseCommission * 1.5 else baseCommission
@@ -341,7 +342,7 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun upgradeToPremium(): Result<String> = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext Result.failure(Exception("User tidak ditemukan"))
+        val user = dao.getUserSync() ?: return@withContext Result.failure(Exception("User tidak ditemukan"))
         val upgradeCost = 250000.0 // IDR
 
         if (user.balance < upgradeCost) {
@@ -388,7 +389,7 @@ class AffiliateRepository(private val dao: AppDao) {
         phone: String,
         payoutCurrency: String = "USD"
     ): Result<Double> = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext Result.failure(Exception("User not found"))
+        val user = dao.getUserSync() ?: return@withContext Result.failure(Exception("User not found"))
         if (pointsToRedeem > user.points) {
             return@withContext Result.failure(Exception("Poin tidak mencukupi"))
         }
@@ -431,7 +432,7 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun buyInvestmentCoupon(coupon: InvestmentCouponEntity, quantity: Int = 1): Result<String> = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext Result.failure(Exception("User not found"))
+        val user = dao.getUserSync() ?: return@withContext Result.failure(Exception("User not found"))
         val totalCost = coupon.unitPrice * quantity
 
         if (user.balance < totalCost) {
@@ -497,7 +498,7 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun claimCouponYield(coupon: InvestmentCouponEntity): Result<Double> = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext Result.failure(Exception("User not found"))
+        val user = dao.getUserSync() ?: return@withContext Result.failure(Exception("User not found"))
         if (coupon.ownedUnits <= 0) {
             return@withContext Result.failure(Exception("Anda belum memiliki kupon pada proyek ini"))
         }
@@ -543,7 +544,7 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun earnAdPoints(): Int = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext 0
+        val user = dao.getUserSync() ?: return@withContext 0
         val bonus = 50
         val updated = user.copy(points = user.points + bonus)
         dao.updateUser(updated)
@@ -581,7 +582,7 @@ class AffiliateRepository(private val dao: AppDao) {
         phone: String,
         regionZone: String
     ) = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext
+        val user = dao.getUserSync() ?: return@withContext
         val updated = user.copy(
             name = name,
             email = email,
@@ -598,7 +599,7 @@ class AffiliateRepository(private val dao: AppDao) {
         province: String,
         accuracyMeters: Float = 10f
     ) = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext
+        val user = dao.getUserSync() ?: return@withContext
         val now = System.currentTimeMillis()
         val updatedUser = user.copy(
             latitude = lat,
@@ -626,7 +627,7 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun toggleUserLocationTracking(allowed: Boolean) = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext
+        val user = dao.getUserSync() ?: return@withContext
         dao.updateUser(user.copy(isLocationTrackingAllowed = allowed))
     }
 
@@ -668,7 +669,7 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun toggle2FA(enable: Boolean) = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext
+        val user = dao.getUserSync() ?: return@withContext
         val updated = user.copy(is2FAEnabled = enable)
         dao.updateUser(updated)
 
@@ -688,7 +689,7 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun performDailyCheckIn(): Result<Pair<Int, Int>> = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext Result.failure(Exception("User tidak ditemukan"))
+        val user = dao.getUserSync() ?: return@withContext Result.failure(Exception("User tidak ditemukan"))
         val now = System.currentTimeMillis()
         val todayEpochDay = now / 86400000L
         val lastEpochDay = user.lastCheckInDate / 86400000L
@@ -749,7 +750,7 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun claimMissionReward(missionId: String): Result<Int> = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext Result.failure(Exception("User tidak ditemukan"))
+        val user = dao.getUserSync() ?: return@withContext Result.failure(Exception("User tidak ditemukan"))
         val mission = dao.getMissionById(missionId) ?: return@withContext Result.failure(Exception("Misi tidak ditemukan"))
 
         if (!mission.isCompleted) {

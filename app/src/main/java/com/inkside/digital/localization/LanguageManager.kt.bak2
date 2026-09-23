@@ -609,14 +609,4 @@ object LanguageManager {
     fun getString(key: String, language: AppLanguage): String {
         return translations[key]?.get(language) ?: translations[key]?.get(AppLanguage.INDONESIAN) ?: key
     }
-
-    /**
-     * Ambil terjemahan untuk key + bahasa.
-     * @param key Kunci terjemahan
-     * @param language Bahasa target
-     * @param fallback Fallback kalau key tidak ditemukan
-     */
-    fun translate(key: String, language: AppLanguage, fallback: String = key): String {
-        return translations[key]?.get(language) ?: fallback
-    }
 }
