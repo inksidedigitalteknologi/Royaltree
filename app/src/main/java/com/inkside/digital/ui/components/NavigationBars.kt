@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Park
@@ -84,6 +85,7 @@ fun AppTopBar(
     isAdminMode: Boolean,
     unreadNotifs: Int,
     currentLanguage: AppLanguage,
+    onOpenDrawer: () -> Unit,
     onToggleRole: () -> Unit,
     onOpenLanguage: () -> Unit,
     onOpenNotifs: () -> Unit,
@@ -105,6 +107,22 @@ fun AppTopBar(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Tombol Hamburger
+                IconButton(
+                    onClick = onOpenDrawer,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .testTag("hamburger_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = "Menu",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(4.dp))
+
                 Box(
                     modifier = Modifier
                         .size(38.dp)

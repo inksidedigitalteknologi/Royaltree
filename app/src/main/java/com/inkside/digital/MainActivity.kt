@@ -39,6 +39,16 @@ import com.inkside.digital.ui.components.TransferReceiptDialog
 import com.inkside.digital.ui.components.TwoFactorModal
 import com.inkside.digital.ui.components.UpgradeVipModal
 import com.inkside.digital.ui.components.WithdrawDialog
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.rememberCoroutineScope
+import com.inkside.digital.ui.components.AppDrawer
+import com.inkside.digital.ui.screens.ReferralScreen
+import com.inkside.digital.ui.screens.SettingsScreen
+import com.inkside.digital.ui.screens.FaqScreen
+import kotlinx.coroutines.launch
 import com.inkside.digital.ui.screens.AdminScreen
 import com.inkside.digital.ui.screens.AnalyticsScreen
 import com.inkside.digital.ui.screens.CampaignsScreen
@@ -150,13 +160,19 @@ fun RootNav(
         }
 
         AuthScreen.HOME -> {
-            MainAffiliateApp(viewModel = affiliateViewModel)
+            MainAffiliateApp(
+                viewModel = affiliateViewModel,
+                onLogout = { authViewModel.logout() }
+            )
         }
     }
 }
 
 @Composable
-fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
+fun MainAffiliateApp(
+    viewModel: AffiliateViewModel = viewModel(),
+    onLogout: () -> Unit = {}
+) {
     val user by viewModel.user.collectAsState()
     val campaigns by viewModel.campaigns.collectAsState()
     val links by viewModel.links.collectAsState()
@@ -315,7 +331,8 @@ fun MainAffiliateApp(viewModel: AffiliateViewModel = viewModel()) {
         onClaimMining = { viewModel.claimGameMiningPoints() },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
-        onFinishGame = { score -> viewModel.finishMiniGame(score) }
+        onFinishGame = { score -> viewModel.finishMiniGame(score) },
+        onLogout = onLogout
     )
 }
 
@@ -423,10 +440,13 @@ fun MainAffiliateAppContent(
     onClaimMining: () -> Unit,
     onToggleMinerSlot: (String, Int) -> Unit,
     onBuyGameMinerItem: (String) -> Unit,
-    onFinishGame: (Int) -> Unit
+    onFinishGame: (Int) -> Unit,
+    onLogout: () -> Unit = {}
 ) {
     var showLanguageModal by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(snackbarMsg) {
         snackbarMsg?.let { msg ->
@@ -435,6 +455,22 @@ fun MainAffiliateAppContent(
         }
     }
 
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                AppDrawer(
+                    user = user,
+                    isAdminMode = isAdminMode,
+                    currentScreen = currentScreen,
+                    onNavigate = { screen -> onNavigate(screen) },
+                    onToggleRole = { onSetAdminMode(!isAdminMode) },
+                    onCloseDrawer = { coroutineScope.launch { drawerState.close() } },
+                    onLogout = onLogout
+                )
+            }
+        }
+    ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -443,6 +479,7 @@ fun MainAffiliateAppContent(
                 isAdminMode = isAdminMode,
                 unreadNotifs = unreadNotifs,
                 currentLanguage = currentLanguage,
+                onOpenDrawer = { coroutineScope.launch { drawerState.open() } },
                 onToggleRole = { onSetAdminMode(!isAdminMode) },
                 onOpenLanguage = { showLanguageModal = true },
                 onOpenNotifs = { onNavigate(AppScreen.NOTIFICATIONS) },
@@ -613,6 +650,21 @@ fun MainAffiliateAppContent(
                     )
                 }
 
+                AppScreen.REFERRAL -> {
+                    ReferralScreen(user = user)
+                }
+
+                AppScreen.SETTINGS -> {
+                    SettingsScreen(
+                        onOpenLanguage = { showLanguageModal = true },
+                        onLogout = { onLogout() }
+                    )
+                }
+
+                AppScreen.FAQ -> {
+                    FaqScreen()
+                }
+
                 AppScreen.NOTIFICATIONS -> {
                     LaunchedEffect(Unit) { onLoadNotifications() }
                     NotificationsScreen(
@@ -623,6 +675,7 @@ fun MainAffiliateAppContent(
             }
         }
     }
+    }  // penutup ModalNavigationDrawer
 
     // Modal Overlays
     if (showWithdraw) {
