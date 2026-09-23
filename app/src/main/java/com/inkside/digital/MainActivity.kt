@@ -866,6 +866,7 @@ fun MainAffiliateAppPreview() {
     MyApplicationTheme {
         MainAffiliateAppContent(
             user = UserEntity(
+                id = "preview_user",
                 name = "Preview User",
                 balance = 5000000.0,
                 points = 1200

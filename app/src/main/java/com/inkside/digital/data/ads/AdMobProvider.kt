@@ -46,14 +46,15 @@ object AdMobProvider {
      */
     suspend fun loadRewardedAd(context: Context, userId: String? = null): Result<Unit> {
         return suspendCancellableCoroutine { continuation ->
-            val adRequestBuilder = AdRequest.Builder()
-
-            // Test device ID (development)
-            AdConfig.TEST_DEVICE_IDS.forEach { deviceId ->
-                adRequestBuilder.addTestDevice(deviceId)
+            // Set test device IDs di request configuration
+            if (AdConfig.TEST_DEVICE_IDS.isNotEmpty()) {
+                val config = com.google.android.gms.ads.RequestConfiguration.Builder()
+                    .setTestDeviceIds(AdConfig.TEST_DEVICE_IDS)
+                    .build()
+                MobileAds.setRequestConfiguration(config)
             }
 
-            val adRequest = adRequestBuilder.build()
+            val adRequest = AdRequest.Builder().build()
 
             RewardedAd.load(
                 context,
