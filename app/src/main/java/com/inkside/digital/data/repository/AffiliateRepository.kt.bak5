@@ -1314,7 +1314,6 @@ class AffiliateRepository(private val dao: AppDao) {
     ) = withContext(Dispatchers.IO) {
         val existing = dao.getUserSync(userId)
         if (existing != null) {
-            // User sudah ada -> UPDATE
             dao.updateUser(existing.copy(
                 name = name.ifBlank { existing.name },
                 email = email.ifBlank { existing.email },
@@ -1323,23 +1322,8 @@ class AffiliateRepository(private val dao: AppDao) {
                 points = points,
                 todaySteps = todaySteps
             ))
-        } else {
-            // User belum ada -> INSERT baru
-            dao.insertUser(
-                com.inkside.digital.data.model.UserEntity(
-                    id = userId,
-                    name = name.ifBlank { "User Baru" },
-                    email = email,
-                    phone = "",
-                    tier = tier.ifBlank { "FREE" },
-                    balance = balance,
-                    points = points,
-                    todaySteps = todaySteps,
-                    referralCode = "RT" + userId.takeLast(6).uppercase()
-                )
-            )
         }
-    }
+}
 
     // ============ SYNC DARI BACKEND ============
     suspend fun syncCampaignsFromBackend(campaigns: List<CampaignEntity>) = withContext(Dispatchers.IO) {
