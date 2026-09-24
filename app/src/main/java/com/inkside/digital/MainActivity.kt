@@ -127,6 +127,10 @@ fun RootNav(
     }
 
     when (authScreen) {
+        AuthScreen.ONBOARDING -> {
+            // Sudah ditangani di atas (isOnboarded check)
+        }
+
         AuthScreen.SPLASH -> {
             SplashScreen()
         }
