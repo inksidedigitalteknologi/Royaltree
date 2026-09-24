@@ -67,6 +67,20 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         com.inkside.digital.data.network.ApiClient.init(application)
     }
 
+    /**
+     * Panggil ulang untuk refresh user dari Firebase + backend.
+     * Dipakai saat app dibuka dari background.
+     */
+    fun syncFirebaseUser() {
+        viewModelScope.launch {
+            val firebaseUid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+            if (firebaseUid != null) {
+                repository.switchUser(firebaseUid)
+                loadUserFromBackend()
+            }
+        }
+    }
+
     // Portal Integration States
     val portalBaseUrl = MutableStateFlow(com.inkside.digital.data.network.ApiClient.getStoredBaseUrl(application))
     val portalApiKey = MutableStateFlow(com.inkside.digital.data.network.ApiClient.getStoredApiKey(application))
@@ -256,7 +270,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     private val _isAdminMode = MutableStateFlow(false)
     val isAdminMode: StateFlow<Boolean> = _isAdminMode.asStateFlow()
 
-    private val _currentLanguage = MutableStateFlow(AppLanguage.INDONESIAN)
+    private val _currentLanguage = MutableStateFlow(
+        com.inkside.digital.data.preferences.AppThemePreferences.currentLanguage
+    )
     val currentLanguage: StateFlow<AppLanguage> = _currentLanguage.asStateFlow()
 
     private val _snackbarMessage = MutableStateFlow<String?>(null)
@@ -294,6 +310,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun setLanguage(lang: AppLanguage) {
         _currentLanguage.value = lang
+        // Simpan ke SharedPreferences biar persist
+        val ctx = getApplication<android.app.Application>()
+        com.inkside.digital.data.preferences.AppThemePreferences.setLanguage(ctx, lang)
         showSnackbar("Bahasa diubah ke ${lang.displayName} ${lang.flag}")
     }
 

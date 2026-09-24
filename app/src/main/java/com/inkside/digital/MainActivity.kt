@@ -101,6 +101,11 @@ fun RootNav(
     authViewModel: AuthViewModel = viewModel(),
     affiliateViewModel: AffiliateViewModel = viewModel()
 ) {
+    // Sync user dari Firebase saat app dibuka
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        affiliateViewModel.syncFirebaseUser()
+    }
+
     val authScreen by authViewModel.currentScreen.collectAsState()
     val currentUser by authViewModel.currentUser.collectAsState()
     val isLoading by authViewModel.isLoading.collectAsState()
