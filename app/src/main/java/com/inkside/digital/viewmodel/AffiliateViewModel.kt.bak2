@@ -310,9 +310,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun setLanguage(lang: AppLanguage) {
         _currentLanguage.value = lang
-        // Simpan ke SharedPreferences biar persist
-        val ctx = getApplication<android.app.Application>()
-        com.inkside.digital.data.preferences.AppThemePreferences.setLanguage(ctx, lang)
         showSnackbar("Bahasa diubah ke ${lang.displayName} ${lang.flag}")
     }
 
