@@ -1,7 +1,6 @@
 package com.inkside.digital.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,362 +13,370 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.AccountBalanceWallet
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.CurrencyBitcoin
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.HourglassEmpty
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MonetizationOn
-import androidx.compose.material.icons.filled.ReceiptLong
-import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.data.model.WithdrawalEntity
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
-import com.inkside.digital.ui.theme.EmeraldPrimary
 import com.inkside.digital.ui.theme.GoldVip
-import com.inkside.digital.ui.theme.PurpleSecondary
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun WithdrawalScreen(
     user: UserEntity?,
     withdrawals: List<WithdrawalEntity>,
-    onOpenWithdrawModal: () -> Unit
+    onSubmitWithdrawal: (amount: Double, channelType: String, providerName: String, accountDestination: String, accountHolderName: String) -> Unit
 ) {
-    val pendingList = withdrawals.filter { it.status == "PENDING" }
-    val historyList = withdrawals.filter { it.status != "PENDING" }
+    var amount by remember { mutableStateOf("") }
+    var channelType by remember { mutableStateOf("E_WALLET") }
+    var providerName by remember { mutableStateOf("GoPay") }
+    var accountDestination by remember { mutableStateOf("") }
+    var accountHolderName by remember { mutableStateOf("") }
+    var showConfirmDialog by remember { mutableStateOf(false) }
+    var showChannelDropdown by remember { mutableStateOf(false) }
+    var showProviderDropdown by remember { mutableStateOf(false) }
+
+    val balance = user?.balance ?: 0.0
+    val minAmount = if (channelType == "E_WALLET") 50000.0 else 100000.0
+
+    val providers = if (channelType == "E_WALLET") {
+        listOf("GoPay", "DANA", "OVO", "ShopeePay", "LinkAja")
+    } else {
+        listOf("BCA", "Mandiri", "BNI", "BRI", "CIMB Niaga")
+    }
+
+    val amountValue = amount.toDoubleOrNull() ?: 0.0
+    val canSubmit = amountValue >= minAmount && amountValue <= balance &&
+                    accountDestination.isNotBlank() && accountHolderName.isNotBlank()
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        item { Spacer(modifier = Modifier.height(10.dp)) }
+        item { Spacer(modifier = Modifier.height(8.dp)) }
 
-        // Header Title
+        // Header
         item {
             Column {
-                Text(
-                    text = "Pusat Penarikan Saldo (Payout)",
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-                )
-                Text(
-                    text = "Cairkan komisi ke Rekening Bank, Dompet Kripto USDT, atau E-Wallet",
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Text("💰 Penarikan", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
+                Text("Tarik saldo ke rekening atau e-wallet kamu", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
-        // Available Balance Card
+        // Saldo Card
         item {
             Card(
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = EmeraldLight.copy(alpha = 0.15f)),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            Brush.linearGradient(
-                                listOf(Color(0xFF0F172A), Color(0xFF1E293B))
-                            )
-                        )
-                        .padding(20.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Icon(Icons.Default.MonetizationOn, null, tint = EmeraldLight, modifier = Modifier.size(28.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
                     Column {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column {
-                                Text("Saldo Komisi Siap Cair", fontSize = 11.sp, color = Color(0xFF94A3B8))
-                                Text(
-                                    text = "Rp ${String.format("%,.0f", user?.balance ?: 0.0)}",
-                                    fontSize = 26.sp,
-                                    fontWeight = FontWeight.Black,
-                                    color = EmeraldLight
-                                )
-                            }
-
-                            Button(
-                                onClick = onOpenWithdrawModal,
-                                colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.testTag("btn_open_withdraw_modal")
-                            ) {
-                                Icon(imageVector = Icons.Default.MonetizationOn, contentDescription = null, modifier = Modifier.size(16.dp))
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text("Tarik Sekarang", fontWeight = FontWeight.Bold)
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(14.dp))
-
-                        // Minimum Threshold Indicator Bar
-                        Surface(
-                            color = Color(0xFF334155).copy(alpha = 0.6f),
-                            shape = RoundedCornerShape(10.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(imageVector = Icons.Default.Lock, contentDescription = null, tint = EmeraldLight, modifier = Modifier.size(14.dp))
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Batas Min: E-Wallet 50k • Bank 100k • Kripto 250k", fontSize = 10.sp, color = Color.White)
-                                }
-                                Text("Bebas Biaya (VIP)", fontSize = 10.sp, color = GoldVip, fontWeight = FontWeight.Bold)
-                            }
-                        }
+                        Text("Saldo Tersedia", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            "Rp " + String.format("%,.0f", balance).replace(",", "."),
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Black,
+                            color = EmeraldLight
+                        )
                     }
                 }
             }
         }
 
-        // Multi-Channel Payment Methods Showcase
+        // Form Card
         item {
             Card(
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Jalur Pembayaran Resmi Yang Didukung", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                    Text("📝 Form Penarikan", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Jumlah
+                    OutlinedTextField(
+                        value = amount,
+                        onValueChange = { amount = it.filter { c -> c.isDigit() } },
+                        label = { Text("Jumlah (min Rp " + String.format("%,.0f", minAmount).replace(",", ".") + ")") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    // Channel Dropdown
+                    Box {
+                        OutlinedTextField(
+                            value = if (channelType == "E_WALLET") "E-Wallet" else "Bank Transfer",
+                            onValueChange = {},
+                            label = { Text("Channel") },
+                            readOnly = true,
+                            trailingIcon = {
+                                Icon(Icons.Default.ArrowDropDown, null, modifier = Modifier.size(24.dp))
+                            },
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.CenterEnd
+                        ) {
+                            TextButton(onClick = { showChannelDropdown = true }) {
+                                Text("", fontSize = 1.sp)
+                            }
+                        }
+                        DropdownMenu(
+                            expanded = showChannelDropdown,
+                            onDismissRequest = { showChannelDropdown = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("E-Wallet (min Rp 50.000)") },
+                                onClick = {
+                                    channelType = "E_WALLET"
+                                    providerName = "GoPay"
+                                    showChannelDropdown = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Bank Transfer (min Rp 100.000)") },
+                                onClick = {
+                                    channelType = "BANK"
+                                    providerName = "BCA"
+                                    showChannelDropdown = false
+                                }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Provider Dropdown
+                    Box {
+                        OutlinedTextField(
+                            value = providerName,
+                            onValueChange = {},
+                            label = { Text("Provider") },
+                            readOnly = true,
+                            trailingIcon = {
+                                Icon(Icons.Default.ArrowDropDown, null, modifier = Modifier.size(24.dp))
+                            },
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.CenterEnd
+                        ) {
+                            TextButton(onClick = { showProviderDropdown = true }) {
+                                Text("", fontSize = 1.sp)
+                            }
+                        }
+                        DropdownMenu(
+                            expanded = showProviderDropdown,
+                            onDismissRequest = { showProviderDropdown = false }
+                        ) {
+                            providers.forEach { provider ->
+                                DropdownMenuItem(
+                                    text = { Text(provider) },
+                                    onClick = {
+                                        providerName = provider
+                                        showProviderDropdown = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // No. Rekening
+                    OutlinedTextField(
+                        value = accountDestination,
+                        onValueChange = { accountDestination = it },
+                        label = { Text("Nomor Rekening / HP") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Nama Pemilik
+                    OutlinedTextField(
+                        value = accountHolderName,
+                        onValueChange = { accountHolderName = it },
+                        label = { Text("Nama Pemilik Rekening") },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = { showConfirmDialog = true },
+                        enabled = canSubmit,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = EmeraldLight,
+                            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                        ),
+                        modifier = Modifier.fillMaxWidth().height(50.dp)
                     ) {
-                        PaymentChannelPill(
-                            name = "Bank Lokal",
-                            desc = "BCA, Mandiri, BRI, BNI",
-                            icon = Icons.Default.AccountBalance,
-                            color = ElectricBlue,
-                            modifier = Modifier.weight(1f)
-                        )
-                        PaymentChannelPill(
-                            name = "Kripto Global",
-                            desc = "USDT (TRC20), BTC, ETH",
-                            icon = Icons.Default.CurrencyBitcoin,
-                            color = GoldVip,
-                            modifier = Modifier.weight(1f)
-                        )
-                        PaymentChannelPill(
-                            name = "E-Wallet",
-                            desc = "GoPay, OVO, Dana, PayPal",
-                            icon = Icons.Default.AccountBalanceWallet,
-                            color = EmeraldLight,
-                            modifier = Modifier.weight(1f)
-                        )
+                        Text("💸 AJUKAN PENARIKAN", fontWeight = FontWeight.Bold)
                     }
                 }
             }
         }
 
-        // Active Pending Payouts Section
-        if (pendingList.isNotEmpty()) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(imageVector = Icons.Default.HourglassEmpty, contentDescription = null, tint = GoldVip, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("Menunggu Review & Validasi Admin (${pendingList.size})", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                }
-            }
-
-            items(pendingList) { item ->
-                WithdrawalStatusCard(withdrawal = item)
-            }
-        }
-
-        // Completed Payout History
+        // Riwayat
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(imageVector = Icons.Default.ReceiptLong, contentDescription = null, tint = EmeraldLight, modifier = Modifier.size(16.dp))
-                Spacer(modifier = Modifier.width(6.dp))
-                Text("Riwayat Penarikan Selesai", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            }
+            Text("📜 Riwayat Penarikan", fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 8.dp))
         }
 
-        if (historyList.isEmpty()) {
+        if (withdrawals.isEmpty()) {
             item {
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(14.dp),
+                Card(
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text("Belum Ada Riwayat Penarikan", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
+                    Text(
+                        "Belum ada riwayat penarikan",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         } else {
-            items(historyList) { item ->
-                WithdrawalStatusCard(withdrawal = item)
+            items(withdrawals.size) { index ->
+                val w = withdrawals[index]
+                Card(
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = if (w.status == "PENDING") Icons.Default.HourglassEmpty else Icons.Default.AccountBalance,
+                            contentDescription = null,
+                            tint = if (w.status == "PENDING") GoldVip else EmeraldLight,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(w.id, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text(
+                                "Rp " + String.format("%,.0f", w.amount).replace(",", ".") + " → " + w.providerName,
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Text(
+                            w.status,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (w.status == "PENDING") GoldVip else EmeraldLight
+                        )
+                    }
+                }
             }
         }
 
         item { Spacer(modifier = Modifier.height(24.dp)) }
     }
-}
 
-@Composable
-fun PaymentChannelPill(
-    name: String,
-    desc: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    color: Color,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        color = color.copy(alpha = 0.1f),
-        shape = RoundedCornerShape(12.dp),
-        modifier = modifier
-    ) {
-        Column(
-            modifier = Modifier.padding(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(imageVector = icon, contentDescription = null, tint = color, modifier = Modifier.size(22.dp))
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(name, fontWeight = FontWeight.Bold, fontSize = 11.sp, color = color)
-            Text(desc, fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
-        }
-    }
-}
-
-@Composable
-fun WithdrawalStatusCard(withdrawal: WithdrawalEntity) {
-    val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
-    val dateStr = sdf.format(Date(withdrawal.requestedAt))
-
-    val (statusColor, statusBg, statusText) = when (withdrawal.status) {
-        "PAID" -> Triple(EmeraldLight, EmeraldLight.copy(alpha = 0.15f), "BERHASIL DICAIRKAN")
-        "PENDING" -> Triple(GoldVip, GoldVip.copy(alpha = 0.15f), "MENUNGGU REVIEW ADMIN")
-        else -> Triple(Color(0xFFEF4444), Color(0xFFEF4444).copy(alpha = 0.15f), "DITOLAK")
-    }
-
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+    // Dialog Konfirmasi
+    if (showConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showConfirmDialog = false },
+            title = { Text("Konfirmasi Penarikan") },
+            text = {
                 Column {
-                    Text(withdrawal.providerName, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    Text(
-                        text = "Ref: ${withdrawal.txRef} • $dateStr",
-                        fontSize = 10.sp,
-                        fontFamily = FontFamily.Monospace,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(statusBg)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = statusText,
-                        fontSize = 9.sp,
-                        fontWeight = FontWeight.Black,
-                        color = statusColor
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Surface(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.padding(10.dp)) {
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Tujuan Transfer:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("${withdrawal.accountHolderName} (${withdrawal.accountDestination})", fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
-                    }
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Nominal Kotor:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("Rp ${String.format("%,.0f", withdrawal.amount)}", fontSize = 11.sp)
-                    }
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Biaya Layanan:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("Rp ${String.format("%,.0f", withdrawal.fee)}", fontSize = 11.sp)
-                    }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Total Bersih Diterima:", fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                        Text("Rp ${String.format("%,.0f", withdrawal.netAmount)}", fontSize = 13.sp, fontWeight = FontWeight.Black, color = EmeraldLight)
+                    Text("Pastikan data sudah benar:", fontSize = 12.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Jumlah: Rp " + String.format("%,.0f", amountValue).replace(",", "."), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text("Channel: " + (if (channelType == "E_WALLET") "E-Wallet" else "Bank"), fontSize = 12.sp)
+                    Text("Provider: $providerName", fontSize = 12.sp)
+                    Text("No. Rekening: $accountDestination", fontSize = 12.sp)
+                    Text("Nama Pemilik: $accountHolderName", fontSize = 12.sp)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Box(
+                        modifier = Modifier.fillMaxWidth()
+                            .background(Color(0xFFEF4444).copy(alpha = 0.1f), RoundedCornerShape(8.dp))
+                            .padding(10.dp)
+                    ) {
+                        Text(
+                            "⚠️ Kesalahan pengisian data bukan tanggung jawab kami. Pastikan data sudah benar.",
+                            fontSize = 10.sp,
+                            color = Color(0xFFEF4444),
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    onSubmitWithdrawal(amountValue, channelType, providerName, accountDestination, accountHolderName)
+                    showConfirmDialog = false
+                    amount = ""
+                    accountDestination = ""
+                    accountHolderName = ""
+                }) {
+                    Text("Ya, Ajukan", color = EmeraldLight, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showConfirmDialog = false }) {
+                    Text("Batal")
+                }
             }
-
-            if (withdrawal.adminNotes.isNotBlank()) {
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = "Catatan Admin: ${withdrawal.adminNotes}",
-                    fontSize = 10.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
+        )
     }
 }

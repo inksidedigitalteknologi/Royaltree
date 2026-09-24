@@ -603,7 +603,9 @@ fun MainAffiliateAppContent(
                     WithdrawalScreen(
                         user = user,
                         withdrawals = withdrawals,
-                        onOpenWithdrawModal = { onSetWithdrawModalVisible(true) }
+                        onSubmitWithdrawal = { amount, channelType, providerName, accountDestination, accountHolderName ->
+                            onWithdrawSubmit(amount, channelType, providerName, accountDestination, accountHolderName, "")
+                        }
                     )
                 }
 
