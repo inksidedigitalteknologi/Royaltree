@@ -205,9 +205,11 @@ fun MainAffiliateApp(
     viewModel: AffiliateViewModel = viewModel(),
     onLogout: () -> Unit = {}
 ) {
-    // Refresh user dari backend saat app dibuka
+    // Refresh semua data dari backend saat app dibuka
     androidx.compose.runtime.LaunchedEffect(Unit) {
         viewModel.loadUserFromBackend()
+        viewModel.loadCampaignsFromBackendV2()
+        viewModel.loadMissionsFromBackendV2()
     }
     val user by viewModel.user.collectAsState()
     val campaigns by viewModel.campaigns.collectAsState()
