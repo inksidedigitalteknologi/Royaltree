@@ -54,6 +54,7 @@ import com.inkside.digital.ui.screens.FaqScreen
 import kotlinx.coroutines.launch
 import com.inkside.digital.ui.screens.AdminScreen
 import com.inkside.digital.ui.screens.InboxScreen
+import com.inkside.digital.ui.screens.OnboardingScreen
 import com.inkside.digital.ui.screens.DailyCheckInScreen
 import com.inkside.digital.ui.screens.AnalyticsScreen
 import com.inkside.digital.ui.screens.CampaignsScreen
@@ -62,7 +63,7 @@ import com.inkside.digital.ui.screens.HomeScreen
 import com.inkside.digital.ui.screens.InvestmentCouponScreen
 import com.inkside.digital.ui.screens.MissionsScreen
 import com.inkside.digital.ui.screens.NotificationsScreen
-import com.inkside.digital.ui.screens.ProfileSecurityScreen
+import com.inkside.digital.ui.screens.ProfileScreen
 import com.inkside.digital.ui.screens.StepCounterScreenContent
 import com.inkside.digital.ui.screens.AppOffersScreenContent
 import com.inkside.digital.ui.screens.GameRoomScreenContent
@@ -111,6 +112,19 @@ fun RootNav(
     val isLoading by authViewModel.isLoading.collectAsState()
     val errorMessage by authViewModel.errorMessage.collectAsState()
     val successMessage by authViewModel.successMessage.collectAsState()
+
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val isOnboarded = com.inkside.digital.data.preferences.AppThemePreferences.isOnboarded
+
+    if (!isOnboarded) {
+        // Tampil onboarding pertama kali
+        OnboardingScreen(
+            onFinish = {
+                com.inkside.digital.data.preferences.AppThemePreferences.setOnboarded(context, true)
+            }
+        )
+        return
+    }
 
     when (authScreen) {
         AuthScreen.SPLASH -> {
@@ -650,15 +664,14 @@ fun MainAffiliateAppContent(
                 }
 
                 AppScreen.PROFILE -> {
-                    ProfileSecurityScreen(
+                    ProfileScreen(
                         user = user,
                         currentLanguage = currentLanguage,
                         onOpenLanguage = { showLanguageModal = true },
-                        onOpenUpgrade = { onSetUpgradeModalVisible(true) },
-                        onOpen2FA = { onSetAdRewardModalVisible(true) },
-                        onOpenAdReward = { onSetAdRewardModalVisible(true) },
-                        onToggleLocationTracking = onToggleLocationTracking,
-                        onSaveProfile = onUpdateProfile
+                        onSaveProfile = { name, email, phone ->
+                            onUpdateProfile(name, email, phone, "")
+                        },
+                        onLogout = { onLogout() }
                     )
                 }
 
@@ -702,7 +715,10 @@ fun MainAffiliateAppContent(
                     SettingsScreen(
                         currentLanguage = currentLanguage,
                         onOpenLanguage = { showLanguageModal = true },
-                        onLogout = { onLogout() }
+                        onLogout = { onLogout() },
+                        onToggleDarkMode = { enabled ->
+                            AppThemePreferences.setDarkMode(context, enabled)
+                        }
                     )
                 }
 

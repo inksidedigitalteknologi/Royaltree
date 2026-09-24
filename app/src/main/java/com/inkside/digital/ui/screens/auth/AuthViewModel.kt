@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
  * State untuk navigasi auth
  */
 enum class AuthScreen {
+    ONBOARDING,
     SPLASH,
     LOGIN,
     REGISTER,
