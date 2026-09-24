@@ -46,11 +46,13 @@ import com.inkside.digital.localization.LanguageManager
 fun SettingsScreen(
     currentLanguage: AppLanguage,
     onOpenLanguage: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onToggleDarkMode: (Boolean) -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     var notifEnabled by remember { mutableStateOf(true) }
     var locationEnabled by remember { mutableStateOf(true) }
-    var darkModeEnabled by remember { mutableStateOf(false) }
+    val darkModeEnabled = com.inkside.digital.data.preferences.AppThemePreferences.isDarkMode
     var showLogoutDialog by remember { mutableStateOf(false) }
 
     LazyColumn(
@@ -71,7 +73,9 @@ fun SettingsScreen(
         item { SettingRow(Icons.Default.Language, LanguageManager.translate("settings_language", currentLanguage, "Language"), "Pilih bahasa aplikasi", onOpenLanguage) }
         item { SettingSwitch(Icons.Default.Notifications, LanguageManager.translate("settings_notifications", currentLanguage, "Notifications"), "Aktifkan notifikasi push", notifEnabled) { notifEnabled = it } }
         item { SettingSwitch(Icons.Default.LocationOn, LanguageManager.translate("settings_location", currentLanguage, "Location"), "Izinkan akses lokasi", locationEnabled) { locationEnabled = it } }
-        item { SettingSwitch(Icons.Default.DarkMode, LanguageManager.translate("settings_dark_mode", currentLanguage, "Dark Mode"), "Gunakan tema gelap", darkModeEnabled) { darkModeEnabled = it } }
+        item { SettingSwitch(Icons.Default.DarkMode, LanguageManager.translate("settings_dark_mode", currentLanguage, "Dark Mode"), "Gunakan tema gelap", darkModeEnabled) { 
+            onToggleDarkMode(it)
+        } }
 
         item { SectionHeader("Keamanan") }
         item { SettingRow(Icons.Default.Security, LanguageManager.translate("settings_security", currentLanguage, "Account Security"), "2FA, PIN, dan enkripsi", { }) }

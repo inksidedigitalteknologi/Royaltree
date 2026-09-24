@@ -54,7 +54,6 @@ import com.inkside.digital.ui.screens.FaqScreen
 import kotlinx.coroutines.launch
 import com.inkside.digital.ui.screens.AdminScreen
 import com.inkside.digital.ui.screens.InboxScreen
-import com.inkside.digital.ui.screens.OnboardingScreen
 import com.inkside.digital.ui.screens.DailyCheckInScreen
 import com.inkside.digital.ui.screens.AnalyticsScreen
 import com.inkside.digital.ui.screens.CampaignsScreen
@@ -112,19 +111,6 @@ fun RootNav(
     val isLoading by authViewModel.isLoading.collectAsState()
     val errorMessage by authViewModel.errorMessage.collectAsState()
     val successMessage by authViewModel.successMessage.collectAsState()
-
-    val context = androidx.compose.ui.platform.LocalContext.current
-    val isOnboarded = com.inkside.digital.data.preferences.AppThemePreferences.isOnboarded
-
-    if (!isOnboarded) {
-        // Tampil onboarding pertama kali
-        OnboardingScreen(
-            onFinish = {
-                com.inkside.digital.data.preferences.AppThemePreferences.setOnboarded(context, true)
-            }
-        )
-        return
-    }
 
     when (authScreen) {
         AuthScreen.SPLASH -> {
