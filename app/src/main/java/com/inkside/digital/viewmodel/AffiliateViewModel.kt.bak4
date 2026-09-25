@@ -505,8 +505,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             )
 
             ApiClient.updateProfile(currentUser.id, body)
-                .onSuccess { response ->
-                    if (response.success) {
+                .onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
                         // Update Room dengan data dari backend
                         repository.updateUserFromBackend(
                             userId = currentUser.id,
@@ -519,7 +519,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         )
                         showSnackbar("✅ Profil berhasil disimpan")
                     } else {
-                        showSnackbar("❌ Gagal: " + (response.message ?: "Unknown error"))
+                        showSnackbar("❌ Gagal: " + json.optString("message", "Unknown error"))
                     }
                 }
                 .onFailure { error ->

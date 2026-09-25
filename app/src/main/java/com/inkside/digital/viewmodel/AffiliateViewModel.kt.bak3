@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import com.google.firebase.auth.FirebaseAuth
 
 enum class AppScreen {
@@ -487,44 +486,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun updateProfile(name: String, email: String, phone: String, region: String) {
         viewModelScope.launch {
-            val currentUser = user.value
-            if (currentUser == null) {
-                showSnackbar("User tidak ditemukan")
-                return@launch
-            }
-
-            // 1. Update Room DB (biar UI langsung berubah)
             repository.updateUserProfile(name, email, phone, region)
-
-            // 2. Kirim ke backend
-            val body = mapOf(
-                "name" to name,
-                "email" to email,
-                "phone" to phone,
-                "city" to region
-            )
-
-            ApiClient.updateProfile(currentUser.id, body)
-                .onSuccess { response ->
-                    if (response.success) {
-                        // Update Room dengan data dari backend
-                        repository.updateUserFromBackend(
-                            userId = currentUser.id,
-                            name = name,
-                            email = email,
-                            tier = currentUser.tier,
-                            balance = currentUser.balance,
-                            points = currentUser.points,
-                            todaySteps = currentUser.todaySteps
-                        )
-                        showSnackbar("✅ Profil berhasil disimpan")
-                    } else {
-                        showSnackbar("❌ Gagal: " + (response.message ?: "Unknown error"))
-                    }
-                }
-                .onFailure { error ->
-                    showSnackbar("❌ Gagal simpan: " + (error.message ?: "Network error"))
-                }
+            showSnackbar("Profil berhasil diperbarui!")
         }
     }
 
