@@ -290,5 +290,32 @@ object ApiClient {
             Result.failure(e)
         }
     }
+
+    // ============ MISSIONS ============
+
+    suspend fun completeMission(missionId: String, userId: String): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().apply { put("userId", userId) }
+            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val response: ResponseBody = apiService.completeMission(missionId, requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun claimMission(missionId: String, userId: String): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().apply { put("userId", userId) }
+            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val response: ResponseBody = apiService.claimMission(missionId, requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
+
 

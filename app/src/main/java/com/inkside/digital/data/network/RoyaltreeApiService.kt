@@ -158,5 +158,19 @@ interface RoyaltreeApiService {
 
     @POST("ads/reward")
     suspend fun rewardAd(@Body body: RequestBody): ResponseBody
+
+    // ============ MISSIONS ============
+    @POST("missions/{id}/complete")
+    suspend fun completeMission(
+        @Path("id") id: String,
+        @Body body: RequestBody
+    ): ResponseBody
+
+    @POST("missions/{id}/claim")
+    suspend fun claimMission(
+        @Path("id") id: String,
+        @Body body: RequestBody
+    ): ResponseBody
 }
+
 

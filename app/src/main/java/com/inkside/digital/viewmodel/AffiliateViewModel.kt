@@ -611,9 +611,23 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun claimMissionReward(missionId: String) {
         viewModelScope.launch {
+            val currentUser = user.value ?: return@launch
             val res = repository.claimMissionReward(missionId)
             res.onSuccess { reward ->
                 showSnackbar("Berhasil klaim hadiah misi! +$reward RTP 🏆")
+
+                // Kirim ke backend
+                ApiClient.claimMission(missionId, currentUser.id)
+                    .onSuccess { json ->
+                        if (!json.optBoolean("success", false)) {
+                            showSnackbar("Backend: " + json.optString("message", "Gagal"))
+                        } else {
+                            loadUserFromBackend()
+                        }
+                    }
+                    .onFailure { error ->
+                        showSnackbar("Backend error: " + (error.message ?: "Network error"))
+                    }
             }.onFailure {
                 showSnackbar(it.message ?: "Gagal klaim hadiah misi")
             }
@@ -622,9 +636,21 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun completeTaskAction(missionId: String) {
         viewModelScope.launch {
+            val currentUser = user.value ?: return@launch
             val res = repository.completeTaskAction(missionId)
             res.onSuccess { msg ->
                 showSnackbar(msg)
+
+                // Kirim ke backend
+                ApiClient.completeMission(missionId, currentUser.id)
+                    .onSuccess { json ->
+                        if (!json.optBoolean("success", false)) {
+                            showSnackbar("Backend: " + json.optString("message", "Gagal"))
+                        }
+                    }
+                    .onFailure { error ->
+                        showSnackbar("Backend error: " + (error.message ?: "Network error"))
+                    }
             }.onFailure {
                 showSnackbar(it.message ?: "Gagal memproses tugas")
             }
