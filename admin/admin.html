@@ -115,6 +115,9 @@
     <button class="tab" data-tab="campaigns" onclick="switchTab('campaigns')">📢 Campaigns</button>
     <button class="tab" data-tab="missions" onclick="switchTab('missions')">🎯 Missions</button>
     <button class="tab" data-tab="config" onclick="switchTab('config')">⚙️ Config</button>
+    <button class="tab" data-tab="daily" onclick="switchTab('daily')">🎁 Daily Reward</button>
+    <button class="tab" data-tab="ads" onclick="switchTab('ads')">📺 Ad Vendors</button>
+    <button class="tab" data-tab="audit" onclick="switchTab('audit')">📋 Audit Log</button>
   </div>
   <div class="card" id="content">
     <div class="loading">Memuat data...</div>
@@ -213,14 +216,15 @@ async function loadStats() {
 // ============ TAB SWITCHING ============
 function switchTab(tab) {
   currentTab = tab;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
-  document.getElementById('content').innerHTML = '<div class="loading">Memuat data...</div>';
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
   if (tab === 'users') loadUsers();
   else if (tab === 'withdrawals') loadWithdrawals();
   else if (tab === 'campaigns') loadCampaigns();
   else if (tab === 'missions') loadMissions();
   else if (tab === 'config') loadConfig();
+  else if (tab === 'daily') loadDailyConfig();
+  else if (tab === 'ads') loadAdConfig();
+  else if (tab === 'audit') loadAuditLogs();
 }
 
 function loadAll() {
@@ -731,6 +735,167 @@ async function saveConfig() {
   if (data.success) { notify('Konfigurasi disimpan!', 'success'); loadAll(); }
   else notify(data.message || 'Gagal simpan.', 'error');
 }
+
+// ============ DAILY REWARD CONFIG ============
+async function loadDailyConfig() {
+  const data = await api('/admin/daily-config', 'GET', null, true);
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  const cfg = data.data || {};
+  const recovery = cfg.streakRecovery || {};
+  let html = `
+    <div class="card-header">
+      <h2>🎁 Daily Reward Config</h2>
+      <button class="btn btn-primary" onclick="saveDailyConfig()">💾 Simpan</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Weekday Points (Sen-Jum)</label>
+        <input type="number" id="cfg_weekdayPoints" value="${cfg.weekdayPoints || 50}">
+      </div>
+      <div class="form-group">
+        <label>Weekend Points (Sab-Min)</label>
+        <input type="number" id="cfg_weekendPoints" value="${cfg.weekendPoints || 100}">
+      </div>
+    </div>
+    <h3 style="margin-top:20px">Streak Recovery</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Max Hari Dipulihkan</label>
+        <input type="number" id="cfg_maxDaysBack" value="${recovery.maxDaysBack || 7}">
+      </div>
+      <div class="form-group">
+        <label>Max Iklan/Hari</label>
+        <input type="number" id="cfg_maxAdsPerDay" value="${recovery.maxAdsPerDay || 1}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Harga Poin per Hari</label>
+        <input type="number" id="cfg_pointCostPerDay" value="${recovery.pointCostPerDay || 500}">
+      </div>
+      <div class="form-group">
+        <label>Aktifkan Recovery</label>
+        <select id="cfg_recoveryEnabled">
+          <option value="true" ${recovery.enabled ? 'selected' : ''}>ON</option>
+          <option value="false" ${!recovery.enabled ? 'selected' : ''}>OFF</option>
+        </select>
+      </div>
+    </div>
+  `;
+  document.getElementById('content').innerHTML = html;
+}
+
+async function saveDailyConfig() {
+  const body = {
+    weekdayPoints: parseInt(document.getElementById('cfg_weekdayPoints').value),
+    weekendPoints: parseInt(document.getElementById('cfg_weekendPoints').value),
+    streakRecovery: {
+      enabled: document.getElementById('cfg_recoveryEnabled').value === 'true',
+      maxDaysBack: parseInt(document.getElementById('cfg_maxDaysBack').value),
+      maxAdsPerDay: parseInt(document.getElementById('cfg_maxAdsPerDay').value),
+      pointCostPerDay: parseInt(document.getElementById('cfg_pointCostPerDay').value),
+      allowPointRecovery: true,
+      allowAdRecovery: true
+    }
+  };
+  const data = await api('/admin/daily-config', 'PUT', body, true);
+  notify(data.message || 'Config disimpan', data.success ? 'success' : 'error');
+}
+
+// ============ AD VENDORS CONFIG ============
+async function loadAdConfig() {
+  const data = await api('/admin/ad-config', 'GET', null, true);
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  const cfg = data.data || {};
+  const admob = cfg.admob || {};
+  let html = `
+    <div class="card-header">
+      <h2>📺 Ad Vendors Config</h2>
+      <button class="btn btn-primary" onclick="saveAdConfig()">💾 Simpan</button>
+    </div>
+    <div class="form-group">
+      <label>Primary Vendor</label>
+      <select id="cfg_primary">
+        <option value="admob" ${cfg.primary === 'admob' ? 'selected' : ''}>AdMob</option>
+        <option value="unity" ${cfg.primary === 'unity' ? 'selected' : ''}>Unity Ads</option>
+      </select>
+    </div>
+    <h3 style="margin-top:20px">AdMob Config</h3>
+    <div class="form-group">
+      <label>AdMob App ID</label>
+      <input type="text" id="cfg_admobAppId" value="${admob.appId || 'ca-app-pub-5261912953437884~3728027368'}">
+    </div>
+    <div class="form-group">
+      <label>Rewarded Ad Unit ID</label>
+      <input type="text" id="cfg_admobRewardedUnitId" value="${admob.rewardedUnitId || 'ca-app-pub-5261912953437884/9112305270'}">
+    </div>
+    <div class="form-group">
+      <label>Aktifkan AdMob</label>
+      <select id="cfg_admobEnabled">
+        <option value="true" ${admob.enabled ? 'selected' : ''}>ON</option>
+        <option value="false" ${!admob.enabled ? 'selected' : ''}>OFF</option>
+      </select>
+    </div>
+  `;
+  document.getElementById('content').innerHTML = html;
+}
+
+async function saveAdConfig() {
+  const body = {
+    primary: document.getElementById('cfg_primary').value,
+    admob: {
+      enabled: document.getElementById('cfg_admobEnabled').value === 'true',
+      appId: document.getElementById('cfg_admobAppId').value,
+      rewardedUnitId: document.getElementById('cfg_admobRewardedUnitId').value
+    }
+  };
+  const data = await api('/admin/ad-config', 'PUT', body, true);
+  notify(data.message || 'Config disimpan', data.success ? 'success' : 'error');
+}
+
+// ============ AUDIT LOG ============
+async function loadAuditLogs() {
+  const data = await api('/admin/audit-logs?limit=100', 'GET', null, true);
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  const logs = data.data || [];
+  let html = `
+    <div class="card-header">
+      <h2>📋 Audit Log</h2>
+      <span style="color:#888">${logs.length} aktivitas</span>
+    </div>
+  `;
+  if (logs.length === 0) {
+    html += `<div class="empty-state"><div class="icon">📭</div><p>Belum ada aktivitas</p></div>`;
+  } else {
+    html += `<table><thead><tr>
+      <th>Waktu</th><th>User ID</th><th>Aksi</th><th>Detail</th>
+    </tr></thead><tbody>`;
+    logs.forEach(log => {
+      const time = log.timestamp ? new Date(log.timestamp._seconds * 1000).toLocaleString('id-ID') : '-';
+      const userId = log.userId || '-';
+      const action = log.action || '-';
+      const detail = log.points ? `+${log.points} poin` : (log.method || '-');
+      html += `<tr>
+        <td>${time}</td>
+        <td style="font-family:monospace;font-size:11px">${userId.substring(0, 12)}...</td>
+        <td><span class="badge">${action}</span></td>
+        <td>${detail}</td>
+      </tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+  document.getElementById('content').innerHTML = html;
+}
+
 
 // ============ INIT ============
 document.addEventListener('DOMContentLoaded', () => {
