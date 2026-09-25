@@ -347,32 +347,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 showWithdrawModal.value = false
                 showPaymentGatewaySimulator.value = withdrawal
                 showSnackbar("Pengajuan penarikan dana berhasil dikirim ke Admin!")
-
-                // Kirim ke backend
-                val req = com.inkside.digital.data.network.model.ApiWithdrawalRequest(
-                    id = withdrawal.id,
-                    userId = withdrawal.userId,
-                    userName = user.value?.name ?: "",
-                    amount = withdrawal.amount,
-                    currency = withdrawal.currency,
-                    channelType = withdrawal.channelType,
-                    providerName = withdrawal.providerName,
-                    accountDestination = withdrawal.accountDestination,
-                    accountHolderName = withdrawal.accountHolderName,
-                    status = withdrawal.status,
-                    fee = withdrawal.fee,
-                    netAmount = withdrawal.netAmount,
-                    txRef = withdrawal.txRef
-                )
-                ApiClient.createWithdrawal(req)
-                    .onSuccess { response ->
-                        if (!response.success) {
-                            showSnackbar("Backend: " + (response.message ?: "Gagal"))
-                        }
-                    }
-                    .onFailure { error ->
-                        showSnackbar("Backend error: " + (error.message ?: "Network error"))
-                    }
             }.onFailure { error ->
                 showSnackbar("Gagal: ${error.message}")
             }
@@ -464,22 +438,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             val points = repository.earnAdPoints()
             showAdRewardModal.value = false
             showSnackbar("Terima kasih telah menonton! +$points Poin aktivitas didapatkan.")
-
-            // Kirim ke backend
-            val body = org.json.JSONObject().apply {
-                put("vendor", "admob")
-                put("transactionId", java.util.UUID.randomUUID().toString())
-                put("rewardAmount", points)
-            }
-            ApiClient.rewardAd(body)
-                .onSuccess { json ->
-                    if (!json.optBoolean("success", false)) {
-                        showSnackbar("Backend: " + json.optString("message", "Gagal"))
-                    }
-                }
-                .onFailure { error ->
-                    showSnackbar("Backend error: " + (error.message ?: "Network error"))
-                }
         }
     }
 
@@ -591,18 +549,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             res.onSuccess { (reward, streak) ->
                 showDailyCheckInModal.value = false
                 showSnackbar("Check-in Hari ke-$streak Berhasil! +$reward RTP 🌟")
-
-                // Kirim ke backend
-                ApiClient.dailyCheckIn()
-                    .onSuccess { json ->
-                        if (json.optBoolean("success", false)) {
-                            val serverPoints = json.optInt("points", reward)
-                            showSnackbar("Check-in tersimpan! +$serverPoints RTP")
-                        }
-                    }
-                    .onFailure { error ->
-                        showSnackbar("Backend error: " + (error.message ?: "Network error"))
-                    }
             }.onFailure {
                 showSnackbar(it.message ?: "Gagal check-in")
             }
