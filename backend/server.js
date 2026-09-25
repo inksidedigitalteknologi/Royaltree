@@ -369,6 +369,100 @@ app.delete('/api/v1/missions/:id', authenticateToken, async (req, res) => {
     } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
+// ============================================================
+// POST /api/v1/missions/:id/complete
+// User selesaikan misi — update progress
+// ============================================================
+app.post('/api/v1/missions/:id/complete', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const missionId = req.params.id;
+
+        if (!userId) {
+            return res.status(400).json({ success: false, message: 'userId wajib diisi.' });
+        }
+
+        const missionRef = db.collection('missions').doc(missionId);
+        const missionDoc = await missionRef.get();
+
+        if (!missionDoc.exists) {
+            return res.status(404).json({ success: false, message: 'Misi tidak ditemukan.' });
+        }
+
+        // Simpan progress user
+        const progressRef = db.collection('user_missions').doc(`${userId}_${missionId}`);
+        await progressRef.set({
+            userId: userId,
+            missionId: missionId,
+            progress: 1,
+            completed: true,
+            completedAt: admin.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        return res.json({
+            success: true,
+            message: 'Misi berhasil diselesaikan! Klaim hadiah untuk dapat poin.'
+        });
+    } catch (error) {
+        console.error('Complete mission error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// POST /api/v1/missions/:id/claim
+// User klaim hadiah misi — tambah poin
+// ============================================================
+app.post('/api/v1/missions/:id/claim', authenticateToken, async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const missionId = req.params.id;
+
+        if (!userId) {
+            return res.status(400).json({ success: false, message: 'userId wajib diisi.' });
+        }
+
+        const missionDoc = await db.collection('missions').doc(missionId).get();
+
+        if (!missionDoc.exists) {
+            return res.status(404).json({ success: false, message: 'Misi tidak ditemukan.' });
+        }
+
+        const mission = missionDoc.data();
+        const reward = mission.rtpReward || 50;
+
+        // Cek sudah pernah klaim?
+        const claimRef = db.collection('mission_claims').doc(`${userId}_${missionId}`);
+        const claimDoc = await claimRef.get();
+
+        if (claimDoc.exists) {
+            return res.status(400).json({ success: false, message: 'Hadiah misi sudah pernah diklaim.' });
+        }
+
+        // Simpan klaim
+        await claimRef.set({
+            userId: userId,
+            missionId: missionId,
+            reward: reward,
+            claimedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Tambah poin user
+        await db.collection('users').doc(userId).update({
+            points: admin.firestore.FieldValue.increment(reward)
+        });
+
+        return res.json({
+            success: true,
+            message: `Berhasil klaim +${reward} RTP!`,
+            reward: reward
+        });
+    } catch (error) {
+        console.error('Claim mission error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // DELETE Withdrawal
 app.delete('/api/v1/withdrawals/:id', authenticateToken, async (req, res) => {
     try {
