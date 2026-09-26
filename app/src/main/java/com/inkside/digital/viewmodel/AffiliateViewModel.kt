@@ -912,9 +912,13 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             userId = firebaseUid,
                             name = data.optString("name", ""),
                             email = data.optString("email", ""),
+                            phone = data.optString("phone", ""),
                             tier = data.optString("tier", "FREE"),
                             balance = data.optDouble("balance", 0.0),
                             points = data.optInt("points", 0),
+                            referralCode = data.optString("referralCode", ""),
+                            checkInStreak = data.optInt("checkInStreak", 0),
+                            lastCheckInDate = data.optString("lastCheckInDate", ""),
                             todaySteps = data.optInt("todaySteps", 0)
                         )
                         android.util.Log.d("AffiliateViewModel", "✅ User loaded from backend")

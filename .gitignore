@@ -31,3 +31,8 @@ backend/node_modules/
 *.backup
 *.bak
 admin/*.backup
+
+# Backup files
+*.bak
+*.bak2-*
+*.bak-*
