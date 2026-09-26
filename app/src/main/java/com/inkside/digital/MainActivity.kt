@@ -29,6 +29,7 @@ import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.ui.components.AdRewardModal
 import com.inkside.digital.ui.components.AdminReviewModal
 import com.inkside.digital.ui.components.AppBottomNavigationBar
+import com.inkside.digital.ui.components.BannerAdView
 import com.inkside.digital.ui.components.AppTopBar
 import com.inkside.digital.ui.components.BuyCouponModal
 import com.inkside.digital.ui.components.DailyCheckInModal
@@ -549,12 +550,15 @@ fun MainAffiliateAppContent(
             )
         },
         bottomBar = {
-            AppBottomNavigationBar(
-                currentScreen = currentScreen,
-                isAdminMode = isAdminMode,
-                currentLanguage = currentLanguage,
-                onNavigate = { onNavigate(it) }
-            )
+            androidx.compose.foundation.layout.Column {
+                BannerAdView()
+                AppBottomNavigationBar(
+                    currentScreen = currentScreen,
+                    isAdminMode = isAdminMode,
+                    currentLanguage = currentLanguage,
+                    onNavigate = { onNavigate(it) }
+                )
+            }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->

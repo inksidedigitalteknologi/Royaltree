@@ -11,6 +11,9 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.AdListener
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -142,5 +145,31 @@ object AdMobProvider {
      */
     fun reset() {
         rewardedAd = null
+    }
+
+    /**
+     * Buat AdView banner adaptive — untuk ditaruh di Compose via AndroidView.
+     * @param context Context
+     * @param adWidthDp Lebar banner dalam dp (dari BoxWithConstraints)
+     */
+    fun createBannerView(context: Context, adWidthDp: Int): AdView {
+        val adView = AdView(context)
+        adView.setAdSize(
+            AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidthDp)
+        )
+        adView.adUnitId = AdConfig.BANNER_AD_UNIT_ID
+
+        adView.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                Log.d(TAG, "Banner ad loaded")
+            }
+            override fun onAdFailedToLoad(error: LoadAdError) {
+                Log.e(TAG, "Banner failed: ${error.message}")
+            }
+        }
+
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
+        return adView
     }
 }
