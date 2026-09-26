@@ -5,36 +5,34 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "users")
 data class UserEntity(
+    // === Core fields (ada di Firestore) ===
     @PrimaryKey val id: String,
-    val name: String,
+    val name: String = "",
     val email: String = "",
     val phone: String = "",
-    val tier: String = "FREE", // FREE or PREMIUM
-    val commissionRateMultiplier: Double = 1.0, // 1.0 for Free (12%), 2.5 for Premium (30%)
-    val balance: Double = 4750000.0, // IDR
-    val pendingBalance: Double = 820000.0,
-    val totalPaidOut: Double = 12500000.0,
-    val points: Int = 1850,
-    val is2FAEnabled: Boolean = false,
-    val twoFactorSecret: String = "JBSWY3DPEHPK3PXP",
-    val encryptionKeyHash: String = "AES-256-GCM#e8f2...9b1a",
-    val regionZone: String = "ID", // ID, GLOBAL, US, EU
+    val tier: String = "FREE",           // FREE or PREMIUM
+    val balance: Double = 0.0,
+    val points: Int = 0,
     val referralCode: String = "",
-    val referredCount: Int = 24,
-    val referralEarnings: Double = 640000.0,
-    val checkInStreak: Int = 3,
-    val lastCheckInDate: Long = 0L,
-    val latitude: Double = -6.2088, // Jakarta Default
-    val longitude: Double = 106.8456,
-    val locationCity: String = "Jakarta Pusat",
-    val locationProvince: String = "DKI Jakarta",
-    val isLocationTrackingAllowed: Boolean = true,
-    val lastLocationUpdate: Long = System.currentTimeMillis(),
-    val todaySteps: Int = 1840,
-    val unclaimedSteps: Int = 1840,
-    val convertedStepsToday: Int = 0,
+    val checkInStreak: Int = 0,
+    val lastCheckInDate: String = "",    // format: "2026-09-25"
+    val todaySteps: Int = 0,
+
+    // === Local-only fields (fitur UI, tidak di Firestore) ===
+    val pendingBalance: Double = 0.0,
+    val totalPaidOut: Double = 0.0,
     val dailyStepGoal: Int = 5000,
-    val lastStepTimestamp: Long = System.currentTimeMillis()
+    val unclaimedSteps: Int = 0,
+    val isLocationTrackingAllowed: Boolean = true,
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0,
+    val locationCity: String = "",
+    val locationProvince: String = "",
+    val regionZone: String = "ID",
+    val is2FAEnabled: Boolean = false,
+    val twoFactorSecret: String = "",
+    val commissionRateMultiplier: Double = 1.0,
+    val convertedStepsToday: Int = 0
 )
 
 @Entity(tableName = "user_locations")

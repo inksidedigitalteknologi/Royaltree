@@ -1307,20 +1307,28 @@ class AffiliateRepository(private val dao: AppDao) {
         userId: String,
         name: String,
         email: String,
+        phone: String,
         tier: String,
         balance: Double,
         points: Int,
+        referralCode: String,
+        checkInStreak: Int,
+        lastCheckInDate: String,
         todaySteps: Int
     ) = withContext(Dispatchers.IO) {
         val existing = dao.getUserSync(userId)
         if (existing != null) {
-            // User sudah ada -> UPDATE
+            // User sudah ada -> UPDATE (pertahankan field local-only)
             dao.updateUser(existing.copy(
                 name = name.ifBlank { existing.name },
                 email = email.ifBlank { existing.email },
+                phone = phone.ifBlank { existing.phone },
                 tier = tier.ifBlank { existing.tier },
                 balance = balance,
                 points = points,
+                referralCode = referralCode.ifBlank { existing.referralCode },
+                checkInStreak = checkInStreak,
+                lastCheckInDate = lastCheckInDate.ifBlank { existing.lastCheckInDate },
                 todaySteps = todaySteps
             ))
         } else {
@@ -1330,12 +1338,14 @@ class AffiliateRepository(private val dao: AppDao) {
                     id = userId,
                     name = name.ifBlank { "User Baru" },
                     email = email,
-                    phone = "",
+                    phone = phone,
                     tier = tier.ifBlank { "FREE" },
                     balance = balance,
                     points = points,
-                    todaySteps = todaySteps,
-                    referralCode = "RT" + userId.takeLast(6).uppercase()
+                    referralCode = referralCode.ifBlank { "RT" + userId.takeLast(6).uppercase() },
+                    checkInStreak = checkInStreak,
+                    lastCheckInDate = lastCheckInDate,
+                    todaySteps = todaySteps
                 )
             )
         }
