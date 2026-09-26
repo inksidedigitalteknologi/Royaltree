@@ -459,27 +459,21 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun claimAdReward() {
+    /**
+     * Dipanggil oleh MainActivity SETELAH AdManager berhasil klaim reward ke backend.
+     * Backend sudah credit points ke Firestore. Tinggal update Room lokal
+     * supaya UI langsung sinkron.
+     */
+    fun onAdRewardEarned(points: Int) {
         viewModelScope.launch {
-            val points = repository.earnAdPoints()
-            showAdRewardModal.value = false
-            showSnackbar("Terima kasih telah menonton! +$points Poin aktivitas didapatkan.")
-
-            // Kirim ke backend
-            val body = org.json.JSONObject().apply {
-                put("vendor", "admob")
-                put("transactionId", java.util.UUID.randomUUID().toString())
-                put("rewardAmount", points)
+            try {
+                showAdRewardModal.value = false
+                // Refresh user dari backend supaya points di Room sinkron
+                loadUserFromBackend()
+                showSnackbar("🎉 Selamat! +$points RTP dari iklan sponsor!")
+            } catch (e: Exception) {
+                showSnackbar("Reward berhasil, tapi gagal refresh: ${e.message}")
             }
-            ApiClient.rewardAd(body)
-                .onSuccess { json ->
-                    if (!json.optBoolean("success", false)) {
-                        showSnackbar("Backend: " + json.optString("message", "Gagal"))
-                    }
-                }
-                .onFailure { error ->
-                    showSnackbar("Backend error: " + (error.message ?: "Network error"))
-                }
         }
     }
 

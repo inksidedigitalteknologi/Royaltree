@@ -347,7 +347,7 @@ fun MainAffiliateApp(
         on2FADismiss = { viewModel.show2FAModal.value = false },
         on2FAVerifyToggle = { viewModel.toggle2FA(it) },
         onAdRewardDismiss = { viewModel.showAdRewardModal.value = false },
-        onAdRewardEarned = { viewModel.claimAdReward() },
+        onAdRewardEarned = { points -> viewModel.onAdRewardEarned(points) },
         onQrTransferDismiss = { viewModel.showQrTransferModal.value = false },
         onQrTransferToggleFavorite = { viewModel.toggleFavoriteContact(it) },
         onQrTransferSubmit = { recipientId, recipientName, amount, note ->
@@ -461,7 +461,7 @@ fun MainAffiliateAppContent(
     on2FADismiss: () -> Unit,
     on2FAVerifyToggle: (Boolean) -> Unit,
     onAdRewardDismiss: () -> Unit,
-    onAdRewardEarned: () -> Unit,
+    onAdRewardEarned: (Int) -> Unit,
     onQrTransferDismiss: () -> Unit,
     onQrTransferToggleFavorite: (String) -> Unit,
     onQrTransferSubmit: (String, String, Int, String) -> Unit,
@@ -795,11 +795,27 @@ fun MainAffiliateAppContent(
         )
     }
 
-    if (showAdReward) {
-        AdRewardModal(
-            onDismiss = onAdRewardDismiss,
-            onRewardEarned = onAdRewardEarned
-        )
+    // AdMob Rewarded Video — trigger kalau showAdReward = true
+    androidx.compose.runtime.LaunchedEffect(showAdReward) {
+        if (showAdReward) {
+            val activity = (context as? android.app.Activity)
+            if (activity != null) {
+                AdManager.showRewardedAdForReward(
+                    activity = activity,
+                    userId = user?.id ?: "",
+                    onSuccess = { points ->
+                        onAdRewardDismiss()
+                        onAdRewardEarned(points)
+                    },
+                    onFailure = { error ->
+                        android.util.Log.e("MainActivity", "Ad error: $error")
+                        onAdRewardDismiss()
+                    }
+                )
+            } else {
+                onAdRewardDismiss()
+            }
+        }
     }
 
     if (showLanguageModal) {
@@ -913,7 +929,7 @@ fun MainAffiliateAppPreview() {
             on2FADismiss = {},
             on2FAVerifyToggle = {},
             onAdRewardDismiss = {},
-            onAdRewardEarned = {},
+            onAdRewardEarned = { _ -> },
             onQrTransferDismiss = {},
             onQrTransferToggleFavorite = {},
             onQrTransferSubmit = { _, _, _, _ -> },
