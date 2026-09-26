@@ -19,11 +19,44 @@ router.post('/sync', verifyFirebaseToken, async (req, res) => {
         const userRef = db.collection('users').doc(uid);
         const userDoc = await userRef.get();
 
-        // Kalau user sudah ada -> update lastLoginAt, return
+        // Kalau user sudah ada -> update lastLoginAt & auto-fill field baru
         if (userDoc.exists) {
-            await userRef.update({
-                lastLoginAt: admin.firestore.FieldValue.serverTimestamp()
+            const existingData = userDoc.data();
+            
+            // Default field baru (untuk user lama yang belum punya)
+            const defaults = {
+                pendingBalance: 0,
+                totalPaidOut: 0,
+                unclaimedSteps: 0,
+                dailyStepGoal: 5000,
+                isLocationTrackingAllowed: true,
+                latitude: 0,
+                longitude: 0,
+                locationCity: '',
+                locationProvince: '',
+                regionZone: 'ID',
+                is2FAEnabled: false,
+                twoFactorSecret: '',
+                commissionRateMultiplier: 1.0,
+                convertedStepsToday: 0,
+                checkInStreak: 0,
+                lastCheckInDate: ''
+            };
+
+            // Cari field yang belum ada
+            const toFill = {};
+            Object.keys(defaults).forEach(key => {
+                if (existingData[key] === undefined) {
+                    toFill[key] = defaults[key];
+                }
             });
+
+            // Update lastLoginAt + fill missing fields
+            await userRef.update({
+                lastLoginAt: admin.firestore.FieldValue.serverTimestamp(),
+                ...toFill
+            });
+
             const updated = await userRef.get();
             return res.json({
                 success: true,
@@ -37,6 +70,7 @@ router.post('/sync', verifyFirebaseToken, async (req, res) => {
         const generatedRefCode = 'RT' + uid.substring(0, 6).toUpperCase();
 
         const newUser = {
+            // === Core fields ===
             email: email || '',
             name: name || firebaseName || 'User Baru',
             phone: phone || '',
@@ -45,10 +79,28 @@ router.post('/sync', verifyFirebaseToken, async (req, res) => {
             balance: 0,
             points: 0,
             todaySteps: 0,
+            checkInStreak: 0,
+            lastCheckInDate: '',
             referralCode: generatedRefCode,
             referredBy: null,
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            lastLoginAt: admin.firestore.FieldValue.serverTimestamp()
+            lastLoginAt: admin.firestore.FieldValue.serverTimestamp(),
+
+            // === Local-only fields (sync ke Firestore untuk persist) ===
+            pendingBalance: 0,
+            totalPaidOut: 0,
+            unclaimedSteps: 0,
+            dailyStepGoal: 5000,
+            isLocationTrackingAllowed: true,
+            latitude: 0,
+            longitude: 0,
+            locationCity: '',
+            locationProvince: '',
+            regionZone: 'ID',
+            is2FAEnabled: false,
+            twoFactorSecret: '',
+            commissionRateMultiplier: 1.0,
+            convertedStepsToday: 0
         };
 
         // Kalau ada referral code -> validasi & simpan

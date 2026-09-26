@@ -934,7 +934,22 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             referralCode = data.optString("referralCode", ""),
                             checkInStreak = data.optInt("checkInStreak", 0),
                             lastCheckInDate = data.optString("lastCheckInDate", ""),
-                            todaySteps = data.optInt("todaySteps", 0)
+                            todaySteps = data.optInt("todaySteps", 0),
+                            // === 14 field local-only ===
+                            pendingBalance = data.optDouble("pendingBalance", 0.0),
+                            totalPaidOut = data.optDouble("totalPaidOut", 0.0),
+                            unclaimedSteps = data.optInt("unclaimedSteps", 0),
+                            dailyStepGoal = data.optInt("dailyStepGoal", 5000),
+                            isLocationTrackingAllowed = data.optBoolean("isLocationTrackingAllowed", true),
+                            latitude = data.optDouble("latitude", 0.0),
+                            longitude = data.optDouble("longitude", 0.0),
+                            locationCity = data.optString("locationCity", ""),
+                            locationProvince = data.optString("locationProvince", ""),
+                            regionZone = data.optString("regionZone", "ID"),
+                            is2FAEnabled = data.optBoolean("is2FAEnabled", false),
+                            twoFactorSecret = data.optString("twoFactorSecret", ""),
+                            commissionRateMultiplier = data.optDouble("commissionRateMultiplier", 1.0),
+                            convertedStepsToday = data.optInt("convertedStepsToday", 0)
                         )
                         android.util.Log.d("AffiliateViewModel", "✅ User loaded from backend")
                     } catch (e: Exception) {
