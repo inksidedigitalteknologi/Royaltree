@@ -618,7 +618,7 @@ class AffiliateRepository(private val dao: AppDao) {
             cityName = cityName,
             provinceOrRegion = province,
             accuracyMeters = accuracyMeters,
-            timestamp = now,
+            timestamp = System.currentTimeMillis(),
             activityStatus = "ACTIVE"
         )
         dao.insertLocationLog(log)
@@ -733,7 +733,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 amount = GlobalPointsManager.getIdrValue(rewardRtp),
                 isCredit = true,
                 status = "SUCCESS",
-                timestamp = now
+                timestamp = System.currentTimeMillis()
             )
         )
 
@@ -743,7 +743,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 title = "Check-in Berhasil! +$rewardRtp RTP 🎁",
                 message = "Selamat! Anda telah check-in beruntun hari ke-$newStreak di Royaltree.",
                 type = "REWARD",
-                timestamp = now
+                timestamp = System.currentTimeMillis()
             )
         )
 
@@ -777,7 +777,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 amount = GlobalPointsManager.getIdrValue(mission.rtpReward),
                 isCredit = true,
                 status = "SUCCESS",
-                timestamp = now
+                timestamp = System.currentTimeMillis()
             )
         )
 
@@ -787,7 +787,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 title = "Hadiah Misi Diklaim! +${mission.rtpReward} RTP 🏆",
                 message = "Misi '${mission.title}' berhasil diselesaikan dan ${mission.rtpReward} RTP telah ditambahkan!",
                 type = "REWARD",
-                timestamp = now
+                timestamp = System.currentTimeMillis()
             )
         )
 
@@ -864,7 +864,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 senderId = user.id,
                 recipientId = cleanId,
                 amount = pointsAmount,
-                timestamp = now
+                timestamp = System.currentTimeMillis()
             )
 
             // Deduct sender's points (fee is deducted from recipient's balance)
@@ -896,7 +896,7 @@ class AffiliateRepository(private val dao: AppDao) {
                         currency = "IDR",
                         isCredit = true,
                         status = "SUCCESS",
-                        timestamp = now,
+                        timestamp = System.currentTimeMillis(),
                         referenceId = "${user.id}#$signature"
                     )
                 )
@@ -907,7 +907,7 @@ class AffiliateRepository(private val dao: AppDao) {
                         title = "Transfer Masuk Diterima! 📥",
                         message = "Kamu menerima transfer $netReceived RTP dari ${user.name}.",
                         type = "REWARD",
-                        timestamp = now
+                        timestamp = System.currentTimeMillis()
                     )
                 )
             }
@@ -923,7 +923,7 @@ class AffiliateRepository(private val dao: AppDao) {
                     currency = "IDR",
                     isCredit = false,
                     status = "SUCCESS",
-                    timestamp = now,
+                    timestamp = System.currentTimeMillis(),
                     referenceId = "$cleanId#$signature"
                 )
             )
@@ -935,7 +935,7 @@ class AffiliateRepository(private val dao: AppDao) {
                     title = "Transfer RTP Berhasil Dikirim 📤",
                     message = "Berhasil transfer $pointsAmount RTP ke $recipientName ($cleanId). Bersih diterima: $netReceived RTP (Biaya admin $adminFee RTP). Sig: $signature",
                     type = "REWARD",
-                    timestamp = now
+                    timestamp = System.currentTimeMillis()
                 )
             )
 
@@ -974,7 +974,7 @@ class AffiliateRepository(private val dao: AppDao) {
                     netPointsReceived = netReceived,
                     recipientName = recipientName,
                     recipientIdentifier = cleanId,
-                    timestamp = now,
+                    timestamp = System.currentTimeMillis(),
                     securitySignature = signature,
                     note = note
                 )
@@ -1157,7 +1157,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 currency = "POIN",
                 isCredit = true,
                 status = "SUCCESS",
-                timestamp = now
+                timestamp = System.currentTimeMillis()
             )
         )
 
@@ -1167,7 +1167,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 title = "Poin Mining Ruang Game Diklaim! ⛏️",
                 message = "Selamat! +$pointsAwarded Poin berhasil dipanen dari generator rak RollerCoin Anda.",
                 type = "REWARD",
-                timestamp = now
+                timestamp = System.currentTimeMillis()
             )
         )
 
@@ -1218,7 +1218,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 currency = "POIN",
                 isCredit = false,
                 status = "SUCCESS",
-                timestamp = now
+                timestamp = System.currentTimeMillis()
             )
         )
 
@@ -1228,7 +1228,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 title = "Item Baru Terpasang! 🖥️",
                 message = "Item '${item.name}' berhasil dibeli dan ${if (firstEmptySlot != null) "langsung aktif di Slot ${firstEmptySlot + 1}!" else "tersimpan di inventaris rak."}",
                 type = "REWARD",
-                timestamp = now
+                timestamp = System.currentTimeMillis()
             )
         )
 
@@ -1293,7 +1293,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 currency = "POIN",
                 isCredit = true,
                 status = "SUCCESS",
-                timestamp = now
+                timestamp = System.currentTimeMillis()
             )
         )
 

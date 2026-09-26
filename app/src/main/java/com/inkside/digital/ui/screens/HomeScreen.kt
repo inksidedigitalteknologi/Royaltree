@@ -175,8 +175,52 @@ fun HomeScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Stats Strip: Activity Points
-                        Surface(
+                        // Stats Strip: Pending & Paid
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Surface(
+                                color = Color(0xFF1E293B).copy(alpha = 0.7f),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Column(modifier = Modifier.padding(10.dp)) {
+                                    Text(
+                                        text = LanguageManager.getString("pending_balance", currentLanguage),
+                                        fontSize = 10.sp,
+                                        color = Color(0xFF94A3B8)
+                                    )
+                                    Text(
+                                        text = "Rp ${String.format("%,.0f", user?.pendingBalance ?: 0.0)}",
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = GoldVip
+                                    )
+                                }
+                            }
+
+                            Surface(
+                                color = Color(0xFF1E293B).copy(alpha = 0.7f),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Column(modifier = Modifier.padding(10.dp)) {
+                                    Text(
+                                        text = LanguageManager.getString("total_paid", currentLanguage),
+                                        fontSize = 10.sp,
+                                        color = Color(0xFF94A3B8)
+                                    )
+                                    Text(
+                                        text = "Rp ${String.format("%,.0f", user?.totalPaidOut ?: 0.0)}",
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = ElectricBlue
+                                    )
+                                }
+                            }
+
+                            Surface(
                                 color = Color(0xFF1E293B).copy(alpha = 0.7f),
                                 shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier.weight(1f)
