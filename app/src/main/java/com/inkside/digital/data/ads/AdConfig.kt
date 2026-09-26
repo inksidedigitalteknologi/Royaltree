@@ -20,6 +20,11 @@ object AdConfig {
     // PRODUCTION: ganti ke "ca-app-pub-5261912953437884/9112305270"
     const val REWARDED_AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
 
+    // Banner Ad Unit ID (Adaptive Banner)
+    // DEVELOPMENT: pakai Test Ad Unit dari Google
+    // PRODUCTION: ganti ke Ad Unit ID Banner kamu
+    const val BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111"
+
     // Reward default (harus sama dengan backend)
     const val DEFAULT_REWARD_POINTS = 50
 
