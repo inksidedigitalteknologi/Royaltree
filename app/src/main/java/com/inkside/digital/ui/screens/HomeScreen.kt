@@ -180,8 +180,6 @@ fun HomeScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Surface(
-                                color = Color(0xFF1E293B).copy(alpha = 0.7f),
                                 shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier.weight(1f)
                             ) {
@@ -384,8 +382,6 @@ fun HomeScreen(
                     }
 
                     // Transfer QR Button
-                    Surface(
-                        color = Color(0xFF047857),
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier
                             .weight(1f)
@@ -438,8 +434,6 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     // Langkah Cuan (Pedometer)
-                    Surface(
-                        color = Color(0xFF0D9488),
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier
                             .weight(1f)
