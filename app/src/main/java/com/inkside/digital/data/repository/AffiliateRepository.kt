@@ -1315,11 +1315,26 @@ class AffiliateRepository(private val dao: AppDao) {
         referralCode: String,
         checkInStreak: Int,
         lastCheckInDate: String,
-        todaySteps: Int
+        todaySteps: Int,
+        // === 14 field local-only ===
+        pendingBalance: Double = 0.0,
+        totalPaidOut: Double = 0.0,
+        unclaimedSteps: Int = 0,
+        dailyStepGoal: Int = 5000,
+        isLocationTrackingAllowed: Boolean = true,
+        latitude: Double = 0.0,
+        longitude: Double = 0.0,
+        locationCity: String = "",
+        locationProvince: String = "",
+        regionZone: String = "ID",
+        is2FAEnabled: Boolean = false,
+        twoFactorSecret: String = "",
+        commissionRateMultiplier: Double = 1.0,
+        convertedStepsToday: Int = 0
     ) = withContext(Dispatchers.IO) {
         val existing = dao.getUserSync(userId)
         if (existing != null) {
-            // User sudah ada -> UPDATE (pertahankan field local-only)
+            // User sudah ada -> UPDATE (semua field dari backend)
             dao.updateUser(existing.copy(
                 name = name.ifBlank { existing.name },
                 email = email.ifBlank { existing.email },
@@ -1330,7 +1345,21 @@ class AffiliateRepository(private val dao: AppDao) {
                 referralCode = referralCode.ifBlank { existing.referralCode },
                 checkInStreak = checkInStreak,
                 lastCheckInDate = lastCheckInDate.ifBlank { existing.lastCheckInDate },
-                todaySteps = todaySteps
+                todaySteps = todaySteps,
+                pendingBalance = pendingBalance,
+                totalPaidOut = totalPaidOut,
+                unclaimedSteps = unclaimedSteps,
+                dailyStepGoal = dailyStepGoal,
+                isLocationTrackingAllowed = isLocationTrackingAllowed,
+                latitude = latitude,
+                longitude = longitude,
+                locationCity = locationCity,
+                locationProvince = locationProvince,
+                regionZone = regionZone,
+                is2FAEnabled = is2FAEnabled,
+                twoFactorSecret = twoFactorSecret,
+                commissionRateMultiplier = commissionRateMultiplier,
+                convertedStepsToday = convertedStepsToday
             ))
         } else {
             // User belum ada -> INSERT baru
@@ -1346,7 +1375,21 @@ class AffiliateRepository(private val dao: AppDao) {
                     referralCode = referralCode.ifBlank { "RT" + userId.takeLast(6).uppercase() },
                     checkInStreak = checkInStreak,
                     lastCheckInDate = lastCheckInDate,
-                    todaySteps = todaySteps
+                    todaySteps = todaySteps,
+                    pendingBalance = pendingBalance,
+                    totalPaidOut = totalPaidOut,
+                    unclaimedSteps = unclaimedSteps,
+                    dailyStepGoal = dailyStepGoal,
+                    isLocationTrackingAllowed = isLocationTrackingAllowed,
+                    latitude = latitude,
+                    longitude = longitude,
+                    locationCity = locationCity,
+                    locationProvince = locationProvince,
+                    regionZone = regionZone,
+                    is2FAEnabled = is2FAEnabled,
+                    twoFactorSecret = twoFactorSecret,
+                    commissionRateMultiplier = commissionRateMultiplier,
+                    convertedStepsToday = convertedStepsToday
                 )
             )
         }
