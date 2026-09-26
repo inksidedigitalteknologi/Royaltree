@@ -99,22 +99,10 @@ fun AppDrawer(
                 onClick = { onNavigate(AppScreen.MISSIONS); onCloseDrawer() }
             )
             DrawerItem(
-                icon = Icons.Default.SportsEsports,
-                label = "Game Room",
-                selected = currentScreen == AppScreen.GAME_ROOM,
-                onClick = { onNavigate(AppScreen.GAME_ROOM); onCloseDrawer() }
-            )
-            DrawerItem(
                 icon = Icons.Default.CardGiftcard,
                 label = "Login Harian",
                 selected = currentScreen == AppScreen.DAILY_CHECK_IN,
                 onClick = { onNavigate(AppScreen.DAILY_CHECK_IN); onCloseDrawer() }
-            )
-            DrawerItem(
-                icon = Icons.Default.Analytics,
-                label = "Analitik",
-                selected = currentScreen == AppScreen.ANALYTICS,
-                onClick = { onNavigate(AppScreen.ANALYTICS); onCloseDrawer() }
             )
             DrawerItem(
                 icon = Icons.Default.MonetizationOn,

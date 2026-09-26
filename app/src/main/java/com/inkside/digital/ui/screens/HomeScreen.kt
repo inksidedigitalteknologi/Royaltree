@@ -432,62 +432,7 @@ fun HomeScreen(
                     }
                 }
 
-                // Row 2: Langkah Cuan & Unduh App Berhadiah
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    // Langkah Cuan (Pedometer)
-                    Surface(
-                        color = Color(0xFF0D9488),
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable { onNavigate(AppScreen.STEP_COUNTER) }
-                            .testTag("action_step_counter")
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(14.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Icon(imageVector = Icons.Filled.DirectionsWalk, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = "Langkah Kaki",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-                    }
-
-                    // Unduh App & Iklan
-                    Surface(
-                        color = Color(0xFFEA580C),
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable { onNavigate(AppScreen.APP_OFFERS) }
-                            .testTag("action_app_offers")
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(14.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Icon(imageVector = Icons.Filled.CardGiftcard, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = "Unduh App",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-                    }
-                }
-
+                
                 // Row 3: Buat Link & Upgrade VIP
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -616,7 +561,6 @@ fun HomeScreen(
                             Text(text = "Performa 7 Hari Terakhir", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                             Text(text = "+24.8% Konversi dibanding minggu lalu", fontSize = 11.sp, color = EmeraldLight)
                         }
-                        TextButtonNav(text = "Analitik", onClick = { onNavigate(AppScreen.ANALYTICS) })
                     }
 
                     Spacer(modifier = Modifier.height(14.dp))
@@ -728,7 +672,6 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = "Tautan Promosi Teratas", fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                TextButtonNav(text = "Kelola Semua", onClick = { onNavigate(AppScreen.CAMPAIGNS) })
             }
         }
 
