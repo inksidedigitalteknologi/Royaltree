@@ -799,8 +799,8 @@ fun MainAffiliateAppContent(
         LanguageModal(
             currentLanguage = currentLanguage,
             onDismiss = { showLanguageModal = false },
-            onSelectLanguage = { _ ->
-                // This would normally go back to VM
+            onSelectLanguage = { lang ->
+                viewModel.setLanguage(lang)
             }
         )
     }
