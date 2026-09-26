@@ -16,7 +16,9 @@ object AdConfig {
     const val ADMOB_APP_ID = "ca-app-pub-5261912953437884~3728027368"
 
     // Rewarded Video Ad Unit ID
-    const val REWARDED_AD_UNIT_ID = "ca-app-pub-5261912953437884/9112305270"
+    // DEVELOPMENT: pakai Test Ad Unit dari Google (PASTI muncul)
+    // PRODUCTION: ganti ke "ca-app-pub-5261912953437884/9112305270"
+    const val REWARDED_AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
 
     // Reward default (harus sama dengan backend)
     const val DEFAULT_REWARD_POINTS = 50
