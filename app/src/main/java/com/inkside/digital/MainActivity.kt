@@ -297,6 +297,7 @@ fun MainAffiliateApp(
         currentScreen = currentScreen,
         isAdminMode = isAdminMode,
         currentLanguage = currentLanguage,
+        onLanguageChange = { viewModel.setLanguage(it) },
         snackbarMsg = snackbarMsg,
         showWithdraw = showWithdraw,
         showNewLink = showNewLink,
@@ -415,6 +416,7 @@ fun MainAffiliateAppContent(
     currentScreen: AppScreen,
     isAdminMode: Boolean,
     currentLanguage: AppLanguage,
+    onLanguageChange: (AppLanguage) -> Unit,
     snackbarMsg: String?,
     showWithdraw: Boolean,
     showNewLink: Boolean,
@@ -700,6 +702,11 @@ fun MainAffiliateAppContent(
                         onMarkAllRead = onMarkAllNotifsRead
                     )
                 }
+
+                else -> {
+                    // Screen yang dinonaktifkan (tidak ada backend support)
+                    // STEP_COUNTER, APP_OFFERS, CAMPAIGNS, ANALYTICS, INVEST, GAME_ROOM
+                }
             }
         }
     }
@@ -800,7 +807,7 @@ fun MainAffiliateAppContent(
             currentLanguage = currentLanguage,
             onDismiss = { showLanguageModal = false },
             onSelectLanguage = { lang ->
-                viewModel.setLanguage(lang)
+                onLanguageChange(lang)
             }
         )
     }
@@ -861,6 +868,7 @@ fun MainAffiliateAppPreview() {
             currentScreen = AppScreen.HOME,
             isAdminMode = false,
             currentLanguage = AppLanguage.INDONESIAN,
+            onLanguageChange = { },
             snackbarMsg = null,
             showWithdraw = false,
             showNewLink = false,

@@ -296,7 +296,7 @@ fun AppBottomNavigationBar(
             titleKey = "nav_missions",
             selectedIcon = Icons.Filled.TaskAlt,
             unselectedIcon = Icons.Outlined.TaskAlt
-        ),,,
+        ),
         BottomNavItem(
             screen = AppScreen.PROFILE,
             titleKey = "nav_profile",
@@ -311,7 +311,7 @@ fun AppBottomNavigationBar(
             titleKey = "nav_admin",
             selectedIcon = Icons.Filled.AdminPanelSettings,
             unselectedIcon = Icons.Outlined.AdminPanelSettings
-        ),,,
+        ),
         BottomNavItem(
             screen = AppScreen.HOME,
             titleKey = "nav_home",
