@@ -604,8 +604,7 @@ class AffiliateRepository(private val dao: AppDao) {
             latitude = lat,
             longitude = lng,
             locationCity = cityName,
-            locationProvince = province,
-            lastLocationUpdate = now
+            locationProvince = province
         )
         dao.updateUser(updatedUser)
 
@@ -689,15 +688,18 @@ class AffiliateRepository(private val dao: AppDao) {
 
     suspend fun performDailyCheckIn(): Result<Pair<Int, Int>> = withContext(Dispatchers.IO) {
         val user = dao.getUserSync(_activeUserId.value) ?: return@withContext Result.failure(Exception("User tidak ditemukan"))
-        val now = System.currentTimeMillis()
-        val todayEpochDay = now / 86400000L
-        val lastEpochDay = user.lastCheckInDate / 86400000L
+        val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
 
-        if (user.lastCheckInDate > 0 && todayEpochDay == lastEpochDay) {
+        if (user.lastCheckInDate == today) {
             return@withContext Result.failure(Exception("Anda sudah check-in hari ini! Kembali lagi besok untuk mempertahankan streak."))
         }
 
-        val newStreak = if (user.lastCheckInDate > 0 && todayEpochDay - lastEpochDay == 1L) {
+        // Cek apakah kemarin (streak lanjut) atau bukan
+        val calendar = java.util.Calendar.getInstance()
+        calendar.add(java.util.Calendar.DAY_OF_YEAR, -1)
+        val yesterday = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(calendar.time)
+
+        val newStreak = if (user.lastCheckInDate == yesterday) {
             (user.checkInStreak % 7) + 1
         } else {
             1
@@ -707,7 +709,7 @@ class AffiliateRepository(private val dao: AppDao) {
         val updatedUser = user.copy(
             points = user.points + rewardRtp,
             checkInStreak = newStreak,
-            lastCheckInDate = now
+            lastCheckInDate = today
         )
         dao.updateUser(updatedUser)
 
@@ -988,8 +990,7 @@ class AffiliateRepository(private val dao: AppDao) {
         val newUnclaimedSteps = user.unclaimedSteps + steps
         dao.updateUser(user.copy(
             todaySteps = newTodaySteps,
-            unclaimedSteps = newUnclaimedSteps,
-            lastStepTimestamp = System.currentTimeMillis()
+            unclaimedSteps = newUnclaimedSteps
         ))
     }
 
