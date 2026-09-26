@@ -579,43 +579,9 @@ fun MainAffiliateAppContent(
                     )
                 }
 
-                AppScreen.STEP_COUNTER -> {
-                    StepCounterScreenContent(
-                        user = user,
-                        transactions = transactions,
-                        onAddSteps = onAddSteps,
-                        onConvertSteps = onConvertSteps
-                    )
-                }
 
-                AppScreen.APP_OFFERS -> {
-                    AppOffersScreenContent(
-                        adsList = adsList,
-                        onClaimBannerBonus = onClaimBannerAdBonus,
-                        onDownloadApp = onDownloadApp,
-                        onClaimAppReward = onClaimAppReward
-                    )
-                }
 
-                AppScreen.CAMPAIGNS -> {
-                    CampaignsScreen(
-                        campaigns = campaigns,
-                        links = links,
-                        onSelectCampaignForLink = { campaign ->
-                            onSetSelectedCampaignForLink(campaign)
-                            onSetNewLinkModalVisible(true)
-                        },
-                        onSimulateConversion = { onSimulateConversion(it) },
-                        onOpenNewLinkModal = { onSetNewLinkModalVisible(true) }
-                    )
-                }
 
-                AppScreen.ANALYTICS -> {
-                    AnalyticsScreen(
-                        campaigns = campaigns,
-                        links = links
-                    )
-                }
 
                 AppScreen.WITHDRAW -> {
                     WithdrawalScreen(
@@ -627,15 +593,6 @@ fun MainAffiliateAppContent(
                     )
                 }
 
-                AppScreen.INVEST -> {
-                    InvestmentCouponScreen(
-                        user = user,
-                        coupons = coupons,
-                        onBuyCoupon = { onSetBuyCouponModalVisible(it) },
-                        onListCoupon = { onSetListCouponModalVisible(it) },
-                        onClaimYield = { onClaimYield(it) }
-                    )
-                }
 
                 AppScreen.HISTORY -> {
                     LaunchedEffect(Unit) { onLoadHistory() }
@@ -690,26 +647,10 @@ fun MainAffiliateAppContent(
                         onCompleteTaskAction = { onCompleteTaskAction(it) },
                         onOpenRedeemPoints = { onSetRedeemPointsModalVisible(true) },
                         onOpenTransferQr = { onSetQrTransferModalVisible(true) },
-                        onOpenWatchAd = { onSetAdRewardModalVisible(true) },
-                        onNavigateToGameRoom = { onNavigate(AppScreen.GAME_ROOM) }
+                        onOpenWatchAd = { onSetAdRewardModalVisible(true) }
                     )
                 }
 
-                AppScreen.GAME_ROOM -> {
-                    GameRoomScreenContent(
-                        user = user,
-                        minerItems = minerItems,
-                        placedMiners = placedMiners,
-                        roomState = roomState,
-                        onClaimMining = onClaimMining,
-                        onToggleMinerSlot = onToggleMinerSlot,
-                        onBuyGameMinerItem = onBuyGameMinerItem,
-                        onFinishGame = onFinishGame,
-                        onNavigateToMissions = { onNavigate(AppScreen.MISSIONS) },
-                        onBack = { onNavigate(AppScreen.HOME) },
-                        currentLanguage = currentLanguage
-                    )
-                }
 
                 AppScreen.REFERRAL -> {
                     ReferralScreen(user = user, currentLanguage = currentLanguage)

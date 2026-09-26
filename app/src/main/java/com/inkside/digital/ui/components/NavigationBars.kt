@@ -296,19 +296,7 @@ fun AppBottomNavigationBar(
             titleKey = "nav_missions",
             selectedIcon = Icons.Filled.TaskAlt,
             unselectedIcon = Icons.Outlined.TaskAlt
-        ),
-        BottomNavItem(
-            screen = AppScreen.GAME_ROOM,
-            titleKey = "nav_game",
-            selectedIcon = Icons.Filled.SportsEsports,
-            unselectedIcon = Icons.Outlined.SportsEsports
-        ),
-        BottomNavItem(
-            screen = AppScreen.APP_OFFERS,
-            titleKey = "nav_ads",
-            selectedIcon = Icons.Filled.CardGiftcard,
-            unselectedIcon = Icons.Outlined.CardGiftcard
-        ),
+        ),,,
         BottomNavItem(
             screen = AppScreen.PROFILE,
             titleKey = "nav_profile",
@@ -323,19 +311,7 @@ fun AppBottomNavigationBar(
             titleKey = "nav_admin",
             selectedIcon = Icons.Filled.AdminPanelSettings,
             unselectedIcon = Icons.Outlined.AdminPanelSettings
-        ),
-        BottomNavItem(
-            screen = AppScreen.ANALYTICS,
-            titleKey = "nav_analytics",
-            selectedIcon = Icons.Filled.Analytics,
-            unselectedIcon = Icons.Outlined.Analytics
-        ),
-        BottomNavItem(
-            screen = AppScreen.INVEST,
-            titleKey = "secondary_market",
-            selectedIcon = Icons.Filled.Savings,
-            unselectedIcon = Icons.Outlined.Savings
-        ),
+        ),,,
         BottomNavItem(
             screen = AppScreen.HOME,
             titleKey = "nav_home",
