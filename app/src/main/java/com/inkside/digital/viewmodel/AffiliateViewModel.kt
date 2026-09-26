@@ -554,9 +554,13 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             userId = currentUser.id,
                             name = name,
                             email = email,
+                            phone = currentUser.phone,
                             tier = currentUser.tier,
                             balance = currentUser.balance,
                             points = currentUser.points,
+                            referralCode = currentUser.referralCode,
+                            checkInStreak = currentUser.checkInStreak,
+                            lastCheckInDate = currentUser.lastCheckInDate,
                             todaySteps = currentUser.todaySteps
                         )
                         showSnackbar("✅ Profil berhasil disimpan")
@@ -754,9 +758,13 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         userId = profile.id,
                         name = profile.name,
                         email = profile.email,
+                        phone = "",
                         tier = profile.tier,
                         balance = profile.balance,
                         points = profile.points,
+                        referralCode = "",
+                        checkInStreak = 0,
+                        lastCheckInDate = "",
                         todaySteps = profile.todaySteps
                     )
 
@@ -837,9 +845,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             ApiClient.getAnalyticsSummary(currentUser.id).onSuccess { response ->
                 response.data?.let { data ->
                     repository.updateUserFromBackend(
-                        userId = data.userId, name = "", email = "",
+                        userId = data.userId, name = "", email = "", phone = "",
                         tier = data.tier, balance = data.balance,
-                        points = data.points, todaySteps = data.todaySteps
+                        points = data.points,
+                        referralCode = "", checkInStreak = 0, lastCheckInDate = "",
+                        todaySteps = data.todaySteps
                     )
                 }
             }
@@ -852,9 +862,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             ApiClient.getProfile(currentUser.id).onSuccess { response ->
                 response.data?.let { profile ->
                     repository.updateUserFromBackend(
-                        userId = profile.id, name = profile.name, email = profile.email,
+                        userId = profile.id, name = profile.name, email = profile.email, phone = "",
                         tier = profile.tier, balance = profile.balance,
-                        points = profile.points, todaySteps = profile.todaySteps
+                        points = profile.points,
+                        referralCode = "", checkInStreak = 0, lastCheckInDate = "",
+                        todaySteps = profile.todaySteps
                     )
                 }
             }
@@ -869,9 +881,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     response.data?.let { spin ->
                         val current = user.value ?: return@launch
                         repository.updateUserFromBackend(
-                            userId = current.id, name = "", email = "",
+                            userId = current.id, name = "", email = "", phone = "",
                             tier = current.tier, balance = current.balance,
                             points = current.points + spin.pointsWon,
+                            referralCode = current.referralCode,
+                            checkInStreak = current.checkInStreak,
+                            lastCheckInDate = current.lastCheckInDate,
                             todaySteps = current.todaySteps
                         )
                     }

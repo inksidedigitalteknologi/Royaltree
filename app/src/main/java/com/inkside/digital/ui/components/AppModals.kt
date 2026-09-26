@@ -2151,9 +2151,8 @@ fun DailyCheckInModal(
 ) {
     val streakDay = user?.checkInStreak ?: 1
     val isCheckedInToday = remember(user?.lastCheckInDate) {
-        val lastDay = (user?.lastCheckInDate ?: 0L) / 86400000L
-        val today = System.currentTimeMillis() / 86400000L
-        (user?.lastCheckInDate ?: 0L) > 0 && lastDay == today
+        val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
+        user?.lastCheckInDate == today
     }
     val currentReward = GlobalPointsManager.getLoginRewardForStreak(streakDay)
 
