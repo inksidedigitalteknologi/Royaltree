@@ -16,7 +16,12 @@ const MAX_ADS_PER_DAY = 10;
 
 // ==== Reward random 2-5 RTP per iklan ====
 function getRandomReward() {
-    return Math.floor(Math.random() * 4) + 2;   // 2, 3, 4, 5
+    // Weighted: 2=40%, 3=30%, 4=20%, 5=10%
+    const roll = Math.random() * 100;
+    if (roll < 40) return 2;
+    if (roll < 70) return 3;
+    if (roll < 90) return 4;
+    return 5;
 }
 
 // ============================================================
