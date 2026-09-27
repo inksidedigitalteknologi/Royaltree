@@ -20,7 +20,8 @@ object WidgetUpdater {
         streak: String
     ) = withContext(Dispatchers.IO) {
         try {
-            val glanceId = androidx.glance.appwidget.GlanceAppWidgetManager.getGlanceIds(
+            val glanceManager = androidx.glance.appwidget.GlanceAppWidgetManager(context)
+            val glanceId = glanceManager.getGlanceIds(
                 RoyaltreeWidget::class.java
             ).firstOrNull() ?: return@withContext
 
