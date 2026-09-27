@@ -75,12 +75,12 @@ async function checkFraud(req, res, next) {
         const isAdReward = endpoint.includes('/ads/reward');
 
         if (isAdReward) {
-            // 4a. Wajib ada device ID untuk endpoint reward
+            // 4a. Device ID — opsional (validasi hanya kalau ada)
             const deviceId = req.headers['x-device-id'];
-            if (!deviceId || deviceId.length < 5) {
+            if (deviceId && deviceId.length > 0 && deviceId.length < 5) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Device ID tidak valid. Update aplikasi Anda.'
+                    message: 'Device ID tidak valid.'
                 });
             }
 
