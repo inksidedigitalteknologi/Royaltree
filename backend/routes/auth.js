@@ -16,8 +16,68 @@ router.post('/sync', verifyFirebaseToken, async (req, res) => {
         const { uid, email, name: firebaseName } = req.firebaseUser;
         const { name, phone, city, referralCode } = req.body;
 
+        // ==== Normalize email & phone ====
+        const normalizedEmail = (email || '').trim().toLowerCase();
+        const normalizedPhone = (phone || '').trim().replace(/[\s\-]/g, '');
+
+        // ==== Validasi HP wajib ====
+        if (!normalizedPhone || normalizedPhone.length < 9) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nomor HP wajib diisi (minimal 9 digit).'
+            });
+        }
+
         const userRef = db.collection('users').doc(uid);
         const userDoc = await userRef.get();
+
+        // ==== Cek duplikat email (hanya untuk user BARU) ====
+        if (!userDoc.exists && normalizedEmail) {
+            const emailCheck = await db.collection('users')
+                .where('email', '==', normalizedEmail)
+                .limit(1)
+                .get();
+
+            if (!emailCheck.empty) {
+                // Log fraud attempt
+                await db.collection('audit_logs').add({
+                    userId: uid,
+                    action: 'DUPLICATE_EMAIL',
+                    email: normalizedEmail,
+                    existingUserId: emailCheck.docs[0].id,
+                    timestamp: admin.firestore.FieldValue.serverTimestamp()
+                });
+
+                return res.status(409).json({
+                    success: false,
+                    message: 'Email sudah terdaftar dengan akun lain. Gunakan email lain.'
+                });
+            }
+        }
+
+        // ==== Cek duplikat HP (hanya untuk user BARU) ====
+        if (!userDoc.exists && normalizedPhone) {
+            const phoneCheck = await db.collection('users')
+                .where('phone', '==', normalizedPhone)
+                .limit(1)
+                .get();
+
+            if (!phoneCheck.empty) {
+                // Log fraud attempt
+                await db.collection('audit_logs').add({
+                    userId: uid,
+                    action: 'DUPLICATE_PHONE',
+                    phone: normalizedPhone,
+                    existingUserId: phoneCheck.docs[0].id,
+                    timestamp: admin.firestore.FieldValue.serverTimestamp()
+                });
+
+                return res.status(409).json({
+                    success: false,
+                    message: 'Nomor HP sudah terdaftar dengan akun lain. Gunakan nomor lain.'
+                });
+            }
+        }
 
         // Kalau user sudah ada -> update lastLoginAt & auto-fill field baru
         if (userDoc.exists) {
@@ -71,9 +131,9 @@ router.post('/sync', verifyFirebaseToken, async (req, res) => {
 
         const newUser = {
             // === Core fields ===
-            email: email || '',
+            email: normalizedEmail,
             name: name || firebaseName || 'User Baru',
-            phone: phone || '',
+            phone: normalizedPhone,
             city: city || '',
             tier: 'FREE',
             balance: 0,
