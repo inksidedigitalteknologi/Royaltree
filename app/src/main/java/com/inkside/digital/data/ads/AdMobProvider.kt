@@ -80,10 +80,24 @@ object AdMobProvider {
                     }
 
                     override fun onAdFailedToLoad(error: LoadAdError) {
-                        Log.e(TAG, "Ad failed to load: ${error.message}")
+                        Log.e(TAG, "Ad failed to load: code=${error.code}, msg=${error.message}")
                         rewardedAd = null
+
+                        val userMsg = when (error.code) {
+                            AdRequest.ERROR_CODE_NO_FILL ->
+                                "Iklan tidak dapat dimuat. Matikan AdGuard/AdBlock DNS untuk mendapat reward."
+                            AdRequest.ERROR_CODE_NETWORK_ERROR ->
+                                "Koneksi internet bermasalah. Periksa jaringan Anda."
+                            AdRequest.ERROR_CODE_INTERNAL_ERROR ->
+                                "Layanan iklan sedang gangguan. Coba lagi nanti."
+                            AdRequest.ERROR_CODE_INVALID_REQUEST ->
+                                "Konfigurasi iklan bermasalah. Hubungi support."
+                            else ->
+                                "Iklan gagal dimuat. Coba lagi nanti."
+                        }
+
                         if (continuation.isActive) {
-                            continuation.resume(Result.failure(Exception(error.message)))
+                            continuation.resume(Result.failure(Exception(userMsg)))
                         }
                     }
                 }
@@ -107,7 +121,7 @@ object AdMobProvider {
         val ad = rewardedAd
         if (ad == null) {
             Log.e(TAG, "Rewarded ad belum di-load")
-            onAdFailed("Iklan belum siap. Coba lagi.")
+            onAdFailed("Iklan belum siap. Tunggu beberapa detik lalu coba lagi.")
             return
         }
 
@@ -119,9 +133,9 @@ object AdMobProvider {
             }
 
             override fun onAdFailedToShowFullScreenContent(error: AdError) {
-                Log.e(TAG, "Ad failed to show: ${error.message}")
+                Log.e(TAG, "Ad failed to show: code=${error.code}, msg=${error.message}")
                 rewardedAd = null
-                onAdFailed(error.message)
+                onAdFailed("Iklan gagal tampil. Coba lagi nanti.")
             }
 
             override fun onAdShowedFullScreenContent() {
