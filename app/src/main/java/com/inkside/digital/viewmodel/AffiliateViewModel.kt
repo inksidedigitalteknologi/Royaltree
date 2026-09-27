@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import com.google.firebase.auth.FirebaseAuth
+import com.inkside.digital.widget.WidgetUpdater
 
 enum class AppScreen {
     HOME,
@@ -470,6 +471,13 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 showAdRewardModal.value = false
                 // Refresh user dari backend supaya points di Room sinkron
                 loadUserFromBackend()
+                // Update widget dengan data terbaru
+                user.value?.let { u ->
+                    WidgetUpdater.updateFromUser(
+                        getApplication(),
+                        u.name, u.balance, u.points, u.checkInStreak
+                    )
+                }
                 showSnackbar("🎉 Selamat! +$points RTP dari iklan sponsor!")
             } catch (e: Exception) {
                 showSnackbar("Reward berhasil, tapi gagal refresh: ${e.message}")
@@ -590,12 +598,22 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 showDailyCheckInModal.value = false
                 showSnackbar("Check-in Hari ke-$streak Berhasil! +$reward RTP 🌟")
 
+                // Update widget
+                user.value?.let { u ->
+                    WidgetUpdater.updateFromUser(
+                        getApplication(),
+                        u.name, u.balance, u.points + reward, streak
+                    )
+                }
+
                 // Kirim ke backend
                 ApiClient.dailyCheckIn()
                     .onSuccess { json ->
                         if (json.optBoolean("success", false)) {
                             val serverPoints = json.optInt("points", reward)
                             showSnackbar("Check-in tersimpan! +$serverPoints RTP")
+                            // Refresh user + update widget
+                            loadUserFromBackend()
                         }
                     }
                     .onFailure { error ->
@@ -946,6 +964,14 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             convertedStepsToday = data.optInt("convertedStepsToday", 0)
                         )
                         android.util.Log.d("AffiliateViewModel", "✅ User loaded from backend")
+
+                        // Update widget setelah user sync
+                        user.value?.let { u ->
+                            WidgetUpdater.updateFromUser(
+                                getApplication(),
+                                u.name, u.balance, u.points, u.checkInStreak
+                            )
+                        }
                     } catch (e: Exception) {
                         android.util.Log.e("AffiliateViewModel", "Parse user error: ${e.message}")
                     }
