@@ -36,6 +36,12 @@ class AuthInterceptor : Interceptor {
             }
         }
 
+        if (token != null) {
+            Log.d("AuthInterceptor", "Token length: ${token.length}, prefix: ${token.take(20)}")
+        } else {
+            Log.w("AuthInterceptor", "Token NULL — user mungkin belum login Firebase")
+        }
+
         val newRequest = if (token != null) {
             originalRequest.newBuilder()
                 .header("Authorization", "Bearer $token")
