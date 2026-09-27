@@ -244,4 +244,50 @@ router.post('/link-referral', verifyFirebaseToken, async (req, res) => {
     }
 });
 
+
+
+// -------------------------------------------------------------
+// GET /api/v1/auth/referral-stats
+// Hitung jumlah referral & total earning
+// -------------------------------------------------------------
+router.get('/referral-stats', verifyFirebaseToken, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+
+        // Hitung user yang referredBy = uid
+        const snapshot = await db.collection('users')
+            .where('referredBy', '==', uid)
+            .get();
+
+        const referredCount = snapshot.size;
+        let totalEarning = 0;
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.referralEarning) {
+                totalEarning += data.referralEarning;
+            }
+        });
+
+        // Update user doc dengan referredCount
+        await db.collection('users').doc(uid).update({
+            referredCount: referredCount
+        });
+
+        return res.json({
+            success: true,
+            data: {
+                referredCount: referredCount,
+                referralEarnings: totalEarning
+            }
+        });
+    } catch (error) {
+        console.error('Error in /auth/referral-stats:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Gagal ambil data referral: ' + error.message
+        });
+    }
+});
+
 module.exports = router;
