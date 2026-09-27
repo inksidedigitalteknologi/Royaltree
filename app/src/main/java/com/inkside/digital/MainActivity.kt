@@ -814,6 +814,12 @@ fun MainAffiliateAppContent(
                     onFailure = { error ->
                         android.util.Log.e("MainActivity", "Ad error: $error")
                         onAdRewardDismiss()
+                        // Tampilkan pesan error ke user via snackbar
+                        android.widget.Toast.makeText(
+                            context,
+                            error,
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
                     }
                 )
             } else {
