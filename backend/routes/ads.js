@@ -6,13 +6,18 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const crypto = require('crypto');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
-const { checkFraud } = require('../middleware/antiFraud');
+const { checkFraud, adCooldown } = require('../middleware/antiFraud');
 
 const db = admin.firestore();
 
 // Reward per video (bisa diubah admin)
-const DEFAULT_REWARD_POINTS = 50;
+const DEFAULT_REWARD_POINTS = 50;   // legacy fallback
 const MAX_ADS_PER_DAY = 10;
+
+// ==== Reward random 2-5 RTP per iklan ====
+function getRandomReward() {
+    return Math.floor(Math.random() * 4) + 2;   // 2, 3, 4, 5
+}
 
 // ============================================================
 // GET /api/v1/ads/config
@@ -112,36 +117,47 @@ router.post('/reward', verifyFirebaseToken, checkFraud, async (req, res) => {
             });
         }
 
+        // Generate random reward 2-5 RTP
+        const rewardPoints = getRandomReward();
+
         // Simpan transaksi
         await txRef.set({
             userId: uid,
             type: 'REWARD_AD',
             vendor: vendor,
-            points: DEFAULT_REWARD_POINTS,
+            points: rewardPoints,
             timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
 
-        // Update user
+        // Update user + recentAdTimestamps
+        const now = Date.now();
+        const recentAds = (userData.recentAdTimestamps || []).filter(ts => now - ts < 300000);
+        recentAds.push(now);
+
         await userRef.update({
-            points: admin.firestore.FieldValue.increment(DEFAULT_REWARD_POINTS),
+            points: admin.firestore.FieldValue.increment(rewardPoints),
             todayAdsWatched: todayAdsWatched + 1,
-            lastAdDate: today
+            lastAdDate: today,
+            recentAdTimestamps: recentAds
         });
+
+        // Set cooldown 30 detik
+        adCooldown.set(uid, now);
 
         // Audit log
         await db.collection('audit_logs').add({
             userId: uid,
             action: 'REWARD_AD',
             vendor: vendor,
-            points: DEFAULT_REWARD_POINTS,
+            points: rewardPoints,
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
             ip: req.ip || 'unknown'
         });
 
         return res.json({
             success: true,
-            message: `+${DEFAULT_REWARD_POINTS} poin dari video!`,
-            points: DEFAULT_REWARD_POINTS,
+            message: `+${rewardPoints} poin dari video!`,
+            points: rewardPoints,
             todayAdsWatched: todayAdsWatched + 1
         });
 
