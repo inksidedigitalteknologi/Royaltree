@@ -1,3 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Royaltree</string>
+    <string name="widget_description">Widget Royaltree — lihat saldo, poin, dan streak</string>
+    <string name="widget_title">Royaltree</string>
+    <string name="widget_balance">Saldo</string>
+    <string name="widget_points">Poin</string>
+    <string name="widget_streak">Streak</string>
+    <string name="widget_check_in">Check-In</string>
 </resources>
