@@ -27,7 +27,7 @@ object AdManager {
         // 1. Load ad
         val loadResult = AdMobProvider.loadRewardedAd(activity, userId)
         if (loadResult.isFailure) {
-            onFailure("Gagal load iklan: ${loadResult.exceptionOrNull()?.message}")
+            onFailure("[1] Gagal load iklan: ${loadResult.exceptionOrNull()?.message}")
             return
         }
 
@@ -40,6 +40,9 @@ object AdManager {
                 // 3. Kirim ke backend (background)
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
+                        withContext(Dispatchers.Main) {
+                            // Placeholder — akan di-replace oleh callback sebenarnya
+                        }
                         val transactionId = UUID.randomUUID().toString()
                         val body = JSONObject().apply {
                             put("vendor", "admob")
