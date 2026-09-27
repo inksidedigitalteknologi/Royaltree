@@ -471,12 +471,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 showAdRewardModal.value = false
                 // Refresh user dari backend supaya points di Room sinkron
                 loadUserFromBackend()
-                // Update widget dengan data terbaru
+                // Update widget dengan data terbaru dari Room
                 user.value?.let { u ->
-                    WidgetUpdater.updateFromUser(
-                        getApplication(),
-                        u.name, u.balance, u.points, u.checkInStreak
-                    )
+                    WidgetUpdater.refreshFromRoom(getApplication(), u.id)
                 }
                 showSnackbar("🎉 Selamat! +$points RTP dari iklan sponsor!")
             } catch (e: Exception) {
@@ -600,10 +597,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
                 // Update widget
                 user.value?.let { u ->
-                    WidgetUpdater.updateFromUser(
-                        getApplication(),
-                        u.name, u.balance, u.points + reward, streak
-                    )
+                    WidgetUpdater.refreshFromRoom(getApplication(), u.id)
                 }
 
                 // Kirim ke backend
@@ -967,10 +961,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
                         // Update widget setelah user sync
                         user.value?.let { u ->
-                            WidgetUpdater.updateFromUser(
-                                getApplication(),
-                                u.name, u.balance, u.points, u.checkInStreak
-                            )
+                            WidgetUpdater.refreshFromRoom(getApplication(), u.id)
                         }
                     } catch (e: Exception) {
                         android.util.Log.e("AffiliateViewModel", "Parse user error: ${e.message}")
