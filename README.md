@@ -1,22 +1,162 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# 🌳 Royaltree
 
-# Run and deploy your AI Studio app
+Aplikasi affiliasi & rewards berbasis Android dengan backend Node.js + Firestore.
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/86c074a1-1539-4006-8c1e-0ae3b53c6a62
+## 📚 Dokumentasi
 
-## Run Locally
+| Dokumen | Deskripsi |
+|---|---|
+| **[ARCHITECTURE.md](ARCHITECTURE.md)** | Arsitektur sistem, diagram Mermaid, alur data |
+| **[backend/ENDPOINTS.md](backend/ENDPOINTS.md)** | Spesifikasi API endpoint backend |
 
-**Prerequisites:**  [Android Studio](https://developer.android.com/studio)
+---
+
+## ✨ Fitur Utama
+
+| Fitur | Deskripsi |
+|---|---|
+| 💰 **Rewards** | Daily check-in, missions, referral |
+| 📢 **AdMob Rewarded** | Tonton iklan, dapat RTP |
+| 📊 **Banner Ads** | Adaptive banner di semua screen |
+| 💸 **Withdrawal** | Tarik saldo ke e-wallet / bank |
+| 🌍 **Multi-language** | 6 bahasa (ID, EN, ES, ZH, AR, JA) |
+| 🔥 **Firebase** | Auth + Firestore realtime sync |
+| 📱 **Step Counter** | Konversi langkah jadi poin |
+
+---
+
+## 🛠️ Tech Stack
+
+**Android**
+- Kotlin + Jetpack Compose
+- Room Database (v6)
+- Retrofit + OkHttp
+- Firebase Auth + Firestore
+- AdMob (Rewarded + Banner)
+
+**Backend**
+- Node.js + Express
+- Firebase Admin SDK
+- PM2 (production)
+
+**Database**
+- Cloud Firestore
+
+---
+
+## 📂 Struktur Proyek
+Royaltree/
+├── app/ → Android app (Kotlin + Compose)
+├── backend/ → Node.js + Express API
+├── admin/ → Admin panel (static)
+└── ARCHITECTURE.md
 
 
-1. Open Android Studio
-2. Select **Open** and choose the directory containing this project
-3. Allow Android Studio to fix any incompatibilities as it imports the project.
-4. Create a file named `.env` in the project directory and set `GEMINI_API_KEY` in that file to your Gemini API key (see `.env.example` for an example)
-5. Remove this line from the app's `build.gradle.kts` file: `signingConfig = signingConfigs.getByName("debugConfig")`
-6. Run the app on an emulator or physical device
-7. If you have already published your app in AI Studio, please [request upload key reset](https://support.google.com/googleplay/android-developer/answer/9842756#zippy=%2Crequest-an-upload-key-reset) in Google Play Console.
+
+Detail lengkap: lihat **[ARCHITECTURE.md](ARCHITECTURE.md)**
+
+---
+
+## 🚀 Setup Development
+
+### Android
+
+1. Buka **Android Studio**
+2. `File → Open` → pilih folder `Royaltree`
+3. Tunggu Gradle Sync selesai
+4. Pastikan file `app/google-services.json` ada (Firebase config)
+5. `Build → Rebuild Project`
+6. `Run` (▶️)
+
+### Backend
+
+```bash
+cd backend
+npm install
+node server.js
+Atau pakai PM2:
+
+bash
+pm2 start server.js --name royaltree-api
+Server jalan di http://localhost:3000
+
+Firebase
+Buka Firebase Console
+
+Buat project baru → tambah Android app (com.inkside.digital)
+
+Download google-services.json → taruh di app/
+
+Enable Authentication (Email/Password)
+
+Enable Cloud Firestore (production mode)
+
+Deploy backend → hubungkan ke Firestore
+
+🚦 Status Fitur
+Fitur	Status
+Core (Home, Profile, Missions)	✅ Active
+Firestore sync	✅ Active
+AdMob Rewarded	✅ Active
+AdMob Banner	✅ Active
+Multi-language	✅ Active
+Withdrawal	✅ Active
+Analytics / Campaigns / Game Room	⚠️ Disabled
+Step Counter	⚠️ Disabled
+App Offers / Invest / Profile Security	⚠️ Disabled
+Catatan: Screen "Disabled" masih ada di codebase, tapi tombol navigasinya disembunyikan karena backend belum support. Detail: lihat ARCHITECTURE.md.
+
+📄 Lisensi
+Internal project — Inkside Digital Teknologi.
+
+📞 Kontak
+GitHub: inksidedigitalteknologi
+
+Email: (tambahkan email tim)
+
+Last updated: 2026-09-27
+
+
+
+---
+
+## 📌 Cara Edit di GitHub
+
+**1️⃣** Buka:
+https://github.com/inksidedigitalteknologi/Royaltree/blob/main/README.md
+
+
+
+**2️⃣** Klik ikon **pensil** (✏️) → "Edit this file"
+
+**3️⃣** **Ctrl+A** → **Delete** (hapus semua isi lama)
+
+**4️⃣** **Paste** kode di atas
+
+**5️⃣** Scroll bawah → **Commit changes**
+
+**6️⃣** Pesan commit:
+docs: rewrite README — dokumentasi proyek Royaltree
+
+
+
+**7️⃣** Klik **Commit changes**
+
+---
+
+## 📌 Setelah Commit
+
+README baru akan tampil di halaman utama repo, dengan:
+- ✅ Link ke `ARCHITECTURE.md` dan `ENDPOINTS.md`
+- ✅ Tabel fitur dengan emoji
+- ✅ Panduan setup Android + Backend + Firebase
+- ✅ Status fitur (active vs disabled)
+
+---
+
+## 📌 Cek Hasil
+
+Buka:
+https://github.com/inksidedigitalteknologi/Royaltree
