@@ -14,6 +14,7 @@ data class UserEntity(
     val balance: Double = 0.0,
     val points: Int = 0,
     val referralCode: String = "",
+    val referredCount: Int = 0,
     val checkInStreak: Int = 0,
     val lastCheckInDate: String = "",    // format: "2026-09-25"
     val todaySteps: Int = 0,

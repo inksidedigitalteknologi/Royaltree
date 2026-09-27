@@ -48,6 +48,7 @@ import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.viewmodel.AppScreen
+import com.inkside.digital.ui.components.BannerAdView
 
 // ==== Color Palette (Mewah & Elegan) ====
 private val DarkNavy = Color(0xFF0A0E1A)
@@ -195,6 +196,11 @@ fun HomeScreen(
                     }
                 }
             }
+        }
+
+        // ==== 2b. Banner AdMob ====
+        item {
+            BannerAdView()
         }
 
         // ==== 3. Stats Row ====

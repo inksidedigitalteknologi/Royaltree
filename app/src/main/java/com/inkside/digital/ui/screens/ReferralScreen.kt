@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.ui.theme.ElectricBlue
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.Surface
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.localization.AppLanguage
@@ -47,6 +49,7 @@ import com.inkside.digital.localization.LanguageManager
 fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
     val context = LocalContext.current
     val referralCode = user?.referralCode ?: "RT0001"
+    val referredCount = user?.referredCount ?: 0
 
     LazyColumn(
         modifier = Modifier
@@ -123,9 +126,34 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
         item {
             Card(shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Teman yang Diundang", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Teman yang Diundang", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Surface(
+                            color = if (referredCount > 0) EmeraldLight.copy(alpha = 0.2f) else Color.Gray.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = "$referredCount orang",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (referredCount > 0) EmeraldLight else Color.Gray,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("Belum ada teman yang diundang. Ayo bagikan kode kamu!", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        text = if (referredCount > 0)
+                            "🎉 Hebat! Anda sudah mengundang $referredCount teman. Komisi 5% akan masuk otomatis."
+                        else
+                            "Belum ada teman yang diundang. Ayo bagikan kode kamu!",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }

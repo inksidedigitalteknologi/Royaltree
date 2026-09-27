@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import com.inkside.digital.ui.components.BannerAdView
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -295,6 +296,11 @@ fun MissionsScreen(
                         }
                     }
                 }
+            }
+
+            // ==== Banner AdMob ====
+            item {
+                BannerAdView()
             }
 
             // Daily Check-in Streak Section

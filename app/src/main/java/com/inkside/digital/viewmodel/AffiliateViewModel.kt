@@ -938,6 +938,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             balance = data.optDouble("balance", 0.0),
                             points = data.optInt("points", 0),
                             referralCode = data.optString("referralCode", ""),
+                            referredCount = data.optInt("referredCount", 0),
                             checkInStreak = data.optInt("checkInStreak", 0),
                             lastCheckInDate = data.optString("lastCheckInDate", ""),
                             todaySteps = data.optInt("todaySteps", 0),
