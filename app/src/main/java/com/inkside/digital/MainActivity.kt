@@ -658,7 +658,6 @@ fun MainAffiliateAppContent(
                         missions = missions,
                         currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.HOME) },
-                        onCheckIn = { onDailyCheckInClaim() },
                         onClaimMission = { onClaimMission(it) },
                         onCompleteTaskAction = { onCompleteTaskAction(it) },
                         onOpenRedeemPoints = { onSetRedeemPointsModalVisible(true) },
