@@ -67,6 +67,8 @@ import com.inkside.digital.ui.screens.ProfileScreen
 import com.inkside.digital.ui.screens.StepCounterScreenContent
 import com.inkside.digital.ui.screens.AppOffersScreenContent
 import com.inkside.digital.ui.screens.GameRoomScreenContent
+import com.inkside.digital.ui.screens.GameHubScreen
+import com.inkside.digital.ui.screens.LeaderboardScreen
 import com.inkside.digital.ui.screens.WithdrawalScreen
 import com.inkside.digital.ui.theme.MyApplicationTheme
 import com.inkside.digital.ui.screens.auth.AuthScreen
@@ -729,6 +731,15 @@ fun MainAffiliateAppContent(
                     // STEP_COUNTER, APP_OFFERS, CAMPAIGNS, ANALYTICS, INVEST
 
                 AppScreen.GAME_ROOM -> {
+                    GameHubScreen(
+                        user = user,
+                        currentLanguage = currentLanguage,
+                        onNavigate = { onNavigate(it) },
+                        onBack = { onNavigate(AppScreen.HOME) }
+                    )
+                }
+
+                AppScreen.GAME_MINING -> {
                     GameRoomScreenContent(
                         user = user,
                         minerItems = minerItems,
@@ -739,8 +750,26 @@ fun MainAffiliateAppContent(
                         onBuyGameMinerItem = onBuyGameMinerItem,
                         onFinishGame = onFinishGame,
                         onNavigateToMissions = { onNavigate(AppScreen.MISSIONS) },
-                        onBack = { onNavigate(AppScreen.HOME) },
+                        onBack = { onNavigate(AppScreen.GAME_ROOM) },
                         currentLanguage = currentLanguage
+                    )
+                }
+
+                AppScreen.LEADERBOARD -> {
+                    LeaderboardScreen(
+                        currentLanguage = currentLanguage,
+                        currentUserId = user?.id,
+                        onBack = { onNavigate(AppScreen.GAME_ROOM) }
+                    )
+                }
+
+                AppScreen.GAME_COIN_RUSH -> {
+                    // Placeholder — Coming Soon
+                    GameHubScreen(
+                        user = user,
+                        currentLanguage = currentLanguage,
+                        onNavigate = { onNavigate(it) },
+                        onBack = { onNavigate(AppScreen.GAME_ROOM) }
                     )
                 }
                 }
