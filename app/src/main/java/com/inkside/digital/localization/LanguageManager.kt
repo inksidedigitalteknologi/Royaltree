@@ -188,12 +188,12 @@ object LanguageManager {
             AppLanguage.JAPANESE to "2要素認証 & 暗号化"
         ),
         "sponsor_ad_title" to mapOf(
-            AppLanguage.INDONESIAN to "Tonton Iklan Sponsor (+50 RTP)",
-            AppLanguage.ENGLISH to "Watch Sponsor Ad (+50 RTP)",
-            AppLanguage.SPANISH to "Ver Anuncio Patrocinado (+50 RTP)",
-            AppLanguage.CHINESE to "观看赞助广告 (+50 RTP)",
-            AppLanguage.ARABIC to "مشاهدة إعلان (+50 RTP)",
-            AppLanguage.JAPANESE to "スポンサー広告を視聴 (+50 RTP)"
+            AppLanguage.INDONESIAN to "Tonton Iklan Sponsor (+2-5 RTP)",
+            AppLanguage.ENGLISH to "Watch Sponsor Ad (+2-5 RTP)",
+            AppLanguage.SPANISH to "Ver Anuncio Patrocinado (+2-5 RTP)",
+            AppLanguage.CHINESE to "观看赞助广告 (+2-5 RTP)",
+            AppLanguage.ARABIC to "مشاهدة إعلان (+2-5 RTP)",
+            AppLanguage.JAPANESE to "スポンサー広告を視聴 (+2-5 RTP)"
         ),
         "global_points_standard" to mapOf(
             AppLanguage.INDONESIAN to "🌍 Standar Nilai RTP Global: 100 RTP = $1.00 USD / USDT",

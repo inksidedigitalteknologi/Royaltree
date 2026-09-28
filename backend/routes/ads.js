@@ -63,12 +63,17 @@ router.get('/status', verifyFirebaseToken, async (req, res) => {
             ? (userData.todayAdsWatched || 0)
             : 0;
 
+        const remaining = Math.max(0, MAX_ADS_PER_DAY - todayAdsWatched);
+        const canWatch = remaining > 0;
+
         return res.json({
             success: true,
             data: {
                 todayAdsWatched: todayAdsWatched,
                 maxAdsPerDay: MAX_ADS_PER_DAY,
-                remaining: Math.max(0, MAX_ADS_PER_DAY - todayAdsWatched),
+                remaining: remaining,
+                canWatch: canWatch,
+                reason: canWatch ? 'ok' : 'limit',
                 rewardPerVideo: DEFAULT_REWARD_POINTS
             }
         });

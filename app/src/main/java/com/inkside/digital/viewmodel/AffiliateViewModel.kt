@@ -50,6 +50,16 @@ enum class AppScreen {
     NOTIFICATIONS
 }
 
+// ==== Ad Button State ====
+enum class AdButtonState {
+    LOADING,        // sedang cek / load
+    READY,          // siap nonton
+    LOADING_AD,     // iklan sedang di-load
+    NO_AD,          // iklan tidak tersedia
+    LIMIT,          // limit harian habis
+    COOLDOWN        // tunggu 30 detik
+}
+
 class AffiliateViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: AffiliateRepository
@@ -277,6 +287,19 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     )
     val currentLanguage: StateFlow<AppLanguage> = _currentLanguage.asStateFlow()
 
+    // ==== Ad Button State ====
+    private val _adButtonState = MutableStateFlow(AdButtonState.LOADING)
+    val adButtonState: StateFlow<AdButtonState> = _adButtonState.asStateFlow()
+
+    private val _todayAdsWatched = MutableStateFlow(0)
+    val todayAdsWatched: StateFlow<Int> = _todayAdsWatched.asStateFlow()
+
+    private val _maxAdsPerDay = MutableStateFlow(10)
+    val maxAdsPerDay: StateFlow<Int> = _maxAdsPerDay.asStateFlow()
+
+    private var lastAdTimestamp: Long = 0
+    private val COOLDOWN_MS = 30_000L
+
     private val _snackbarMessage = MutableStateFlow<String?>(null)
     val snackbarMessage: StateFlow<String?> = _snackbarMessage.asStateFlow()
 
@@ -320,6 +343,84 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun showSnackbar(message: String) {
         _snackbarMessage.value = message
+    }
+
+    /**
+     * Refresh status tombol iklan — cek limit dari backend + AdMob state + cooldown.
+     */
+    fun refreshAdButtonState() {
+        viewModelScope.launch {
+            // 1. Cek cooldown lokal
+            val now = System.currentTimeMillis()
+            if (now - lastAdTimestamp < COOLDOWN_MS) {
+                _adButtonState.value = AdButtonState.COOLDOWN
+                return@launch
+            }
+
+            // 2. Fetch status dari backend
+            _adButtonState.value = AdButtonState.LOADING
+            ApiClient.getAdStatus().onSuccess { json ->
+                if (json.optBoolean("success", false)) {
+                    val data = json.optJSONObject("data") ?: return@onSuccess
+                    val today = data.optInt("todayAdsWatched", 0)
+                    val max = data.optInt("maxAdsPerDay", 10)
+                    val canWatch = data.optBoolean("canWatch", true)
+
+                    _todayAdsWatched.value = today
+                    _maxAdsPerDay.value = max
+
+                    if (!canWatch) {
+                        _adButtonState.value = AdButtonState.LIMIT
+                        return@onSuccess
+                    }
+
+                    // 3. Cek AdMob state
+                    val adState = com.inkside.digital.data.ads.AdMobProvider.adState.value
+                    _adButtonState.value = when (adState) {
+                        true -> AdButtonState.READY
+                        false -> AdButtonState.NO_AD
+                        null -> AdButtonState.LOADING_AD
+                    }
+                }
+            }.onFailure {
+                // Kalau backend gagal, cek AdMob saja
+                val adState = com.inkside.digital.data.ads.AdMobProvider.adState.value
+                _adButtonState.value = when (adState) {
+                    true -> AdButtonState.READY
+                    false -> AdButtonState.NO_AD
+                    null -> AdButtonState.LOADING_AD
+                }
+            }
+        }
+    }
+
+    /**
+     * Pre-load iklan + refresh state. Panggil saat HomeScreen masuk.
+     */
+    fun preloadAdForHome() {
+        viewModelScope.launch {
+            // 1. Load iklan di background
+            val ctx = getApplication<Application>()
+            com.inkside.digital.data.ads.AdMobProvider.loadRewardedAd(ctx, null)
+
+            // 2. Refresh state
+            refreshAdButtonState()
+        }
+    }
+
+    /**
+     * Retry manual — dipanggil kalau user tekan "Coba Lagi".
+     */
+    fun retryAdLoad() {
+        preloadAdForHome()
+    }
+
+    /**
+     * Panggil setelah user selesai nonton iklan — update cooldown + state.
+     */
+    fun onAdWatched() {
+        lastAdTimestamp = System.currentTimeMillis()
+        refreshAdButtonState()
     }
 
     fun dismissSnackbar() {
@@ -475,6 +576,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 user.value?.let { u ->
                     WidgetUpdater.refreshFromRoom(getApplication(), u.id)
                 }
+                // Update cooldown + state tombol
+                onAdWatched()
                 showSnackbar("🎉 Selamat! +$points RTP dari iklan sponsor!")
             } catch (e: Exception) {
                 showSnackbar("Reward berhasil, tapi gagal refresh: ${e.message}")

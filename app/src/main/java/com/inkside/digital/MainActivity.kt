@@ -29,7 +29,6 @@ import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.ui.components.AdRewardModal
 import com.inkside.digital.ui.components.AdminReviewModal
 import com.inkside.digital.ui.components.AppBottomNavigationBar
-import com.inkside.digital.ui.components.BannerAdView
 import com.inkside.digital.ui.components.AppTopBar
 import com.inkside.digital.ui.components.BuyCouponModal
 import com.inkside.digital.ui.components.DailyCheckInModal
@@ -253,6 +252,14 @@ fun MainAffiliateApp(
     val currentScreen by viewModel.currentScreen.collectAsState()
     val isAdminMode by viewModel.isAdminMode.collectAsState()
     val currentLanguage by viewModel.currentLanguage.collectAsState()
+    val adButtonState by viewModel.adButtonState.collectAsState()
+
+    // Preload ad + refresh state saat HomeScreen dibuka
+    androidx.compose.runtime.LaunchedEffect(currentScreen) {
+        if (currentScreen == AppScreen.HOME) {
+            viewModel.preloadAdForHome()
+        }
+    }
     val snackbarMsg by viewModel.snackbarMessage.collectAsState()
 
     val showWithdraw by viewModel.showWithdrawModal.collectAsState()
@@ -298,6 +305,8 @@ fun MainAffiliateApp(
         currentScreen = currentScreen,
         isAdminMode = isAdminMode,
         currentLanguage = currentLanguage,
+        adButtonState = adButtonState,
+        onRetryAdLoad = { viewModel.retryAdLoad() },
         onLanguageChange = { viewModel.setLanguage(it) },
         snackbarMsg = snackbarMsg,
         showWithdraw = showWithdraw,
@@ -417,6 +426,8 @@ fun MainAffiliateAppContent(
     currentScreen: AppScreen,
     isAdminMode: Boolean,
     currentLanguage: AppLanguage,
+    adButtonState: com.inkside.digital.viewmodel.AdButtonState = com.inkside.digital.viewmodel.AdButtonState.LOADING,
+    onRetryAdLoad: () -> Unit = {},
     onLanguageChange: (AppLanguage) -> Unit,
     snackbarMsg: String?,
     showWithdraw: Boolean,
@@ -550,15 +561,12 @@ fun MainAffiliateAppContent(
             )
         },
         bottomBar = {
-            androidx.compose.foundation.layout.Column {
-                BannerAdView()
-                AppBottomNavigationBar(
-                    currentScreen = currentScreen,
-                    isAdminMode = isAdminMode,
-                    currentLanguage = currentLanguage,
-                    onNavigate = { onNavigate(it) }
-                )
-            }
+            AppBottomNavigationBar(
+                currentScreen = currentScreen,
+                isAdminMode = isAdminMode,
+                currentLanguage = currentLanguage,
+                onNavigate = { onNavigate(it) }
+            )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
@@ -581,7 +589,9 @@ fun MainAffiliateAppContent(
                         onOpenRedeemPoints = { onSetRedeemPointsModalVisible(true) },
                         onOpenTransferQr = { onSetQrTransferModalVisible(true) },
                         onSimulateConversion = { onSimulateConversion(it) },
-                        onOpenAdReward = { onSetAdRewardModalVisible(true) }
+                        onOpenAdReward = { onSetAdRewardModalVisible(true) },
+                        adButtonState = adButtonState,
+                        onRetryAdLoad = onRetryAdLoad
                     )
                 }
 
