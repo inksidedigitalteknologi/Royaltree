@@ -722,6 +722,44 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    /**
+     * Check-in WAJIB nonton iklan dulu.
+     * Dipanggil SETELAH AdMob callback onUserEarnedReward.
+     */
+    fun performDailyCheckInWithAd(transactionId: String, vendor: String) {
+        viewModelScope.launch {
+            try {
+                showDailyCheckInModal.value = false
+
+                val body = org.json.JSONObject().apply {
+                    put("transactionId", transactionId)
+                    put("vendor", vendor)
+                }
+
+                ApiClient.dailyCheckInWithAd(body)
+                    .onSuccess { json ->
+                        if (json.optBoolean("success", false)) {
+                            val points = json.optInt("points", 0)
+                            val streak = json.optInt("streak", 0)
+                            showSnackbar("🎉 Check-in hari ke-$streak! +$points RTP")
+                            // Refresh user + widget
+                            loadUserFromBackend()
+                            user.value?.let { u ->
+                                WidgetUpdater.refreshFromRoom(getApplication(), u.id)
+                            }
+                        } else {
+                            showSnackbar(json.optString("message", "Gagal check-in"))
+                        }
+                    }
+                    .onFailure { error ->
+                        showSnackbar("Error check-in: ${error.message ?: "Network error"}")
+                    }
+            } catch (e: Exception) {
+                showSnackbar("Error: ${e.message}")
+            }
+        }
+    }
+
     fun claimMissionReward(missionId: String) {
         viewModelScope.launch {
             val currentUser = user.value ?: return@launch

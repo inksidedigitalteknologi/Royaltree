@@ -36,6 +36,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import com.inkside.digital.ui.components.CalendarDayItem
 import com.inkside.digital.ui.components.DayStatus
 import com.inkside.digital.ui.components.RecoveryDialog
+import com.inkside.digital.data.ads.AdMobProvider
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
@@ -58,6 +62,7 @@ fun DailyCheckInScreen(
     currentLanguage: AppLanguage,
     onBack: () -> Unit,
     onClaimCheckIn: () -> Unit,
+    onWatchAdAndClaim: (transactionId: String, vendor: String) -> Unit = { _, _ -> },
     onWatchAdForRecovery: (date: String) -> Unit,
     onPayPointsForRecovery: (date: String) -> Unit,
     streak: Int,
@@ -263,14 +268,40 @@ fun DailyCheckInScreen(
                 }
             } else if (!checkedInToday) {
                 Button(
-                    onClick = onClaimCheckIn,
+                    onClick = {
+                        val activity = context as? Activity
+                        if (activity == null) {
+                            onClaimCheckIn()
+                            return@Button
+                        }
+                        // Trigger iklan dulu
+                        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                            val loadResult = AdMobProvider.loadRewardedAd(activity, null)
+                            if (loadResult.isFailure) {
+                                onClaimCheckIn()
+                                return@launch
+                            }
+                            AdMobProvider.showRewardedAd(
+                                activity = activity,
+                                onRewardEarned = { _, _ ->
+                                    val txId = java.util.UUID.randomUUID().toString()
+                                    onWatchAdAndClaim(txId, "admob")
+                                },
+                                onAdDismissed = {},
+                                onAdFailed = {
+                                    // Kalau gagal, pakai fallback check-in biasa
+                                    onClaimCheckIn()
+                                }
+                            )
+                        }
+                    },
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = EmeraldLight),
                     modifier = Modifier.fillMaxWidth().height(52.dp)
                 ) {
                     Icon(Icons.Default.CardGiftcard, null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(LanguageManager.translate("daily_claim", currentLanguage, "CLAIM TODAY'S REWARD"), fontWeight = FontWeight.Bold)
+                    Text("Tonton Iklan & Check-In", fontWeight = FontWeight.Bold)
                 }
             } else {
                 Card(

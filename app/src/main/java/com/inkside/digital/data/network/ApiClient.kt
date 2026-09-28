@@ -280,6 +280,17 @@ object ApiClient {
         }
     }
 
+    suspend fun dailyCheckInWithAd(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val response: ResponseBody = apiService.dailyCheckInWithAd(requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun recoverDay(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
