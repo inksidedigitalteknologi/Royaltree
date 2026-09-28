@@ -348,6 +348,7 @@ fun MainAffiliateApp(
         onRedeemOpenQr = { viewModel.showQrTransferModal.value = true },
         onDailyCheckInDismiss = { viewModel.showDailyCheckInModal.value = false },
         onDailyCheckInClaim = { viewModel.performDailyCheckIn() },
+        onDailyCheckInWithAd = { txId, vendor -> viewModel.performDailyCheckInWithAd(txId, vendor) },
         onBuyCouponDismiss = { viewModel.showBuyCouponModal.value = null },
         onBuyCouponConfirm = { coupon, qty -> viewModel.buyCoupon(coupon, qty) },
         onListCouponDismiss = { viewModel.showListCouponModal.value = null },
@@ -464,6 +465,7 @@ fun MainAffiliateAppContent(
     onRedeemOpenQr: () -> Unit,
     onDailyCheckInDismiss: () -> Unit,
     onDailyCheckInClaim: () -> Unit,
+    onDailyCheckInWithAd: (String, String) -> Unit = { _, _ -> },
     onBuyCouponDismiss: () -> Unit,
     onBuyCouponConfirm: (InvestmentCouponEntity, Int) -> Unit,
     onListCouponDismiss: () -> Unit,
@@ -687,14 +689,20 @@ fun MainAffiliateAppContent(
                 }
 
                 AppScreen.DAILY_CHECK_IN -> {
+                    val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
+                    val isCheckedInToday = user?.lastCheckInDate == today
+
                     DailyCheckInScreen(
                         currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.HOME) },
-                        onClaimCheckIn = { /* TODO: panggil ViewModel */ },
+                        onClaimCheckIn = { onDailyCheckInClaim() },
+                        onWatchAdAndClaim = { txId, vendor ->
+                            onDailyCheckInWithAd(txId, vendor)
+                        },
                         onWatchAdForRecovery = { /* TODO */ },
                         onPayPointsForRecovery = { /* TODO */ },
-                        streak = 0,
-                        checkedInToday = false,
+                        streak = user?.checkInStreak ?: 0,
+                        checkedInToday = isCheckedInToday,
                         isLoading = false,
                         errorMessage = null,
                         successMessage = null

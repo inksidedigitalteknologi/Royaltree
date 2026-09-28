@@ -149,6 +149,9 @@ interface RoyaltreeApiService {
     @POST("daily/check-in")
     suspend fun dailyCheckIn(): ResponseBody
 
+    @POST("daily/check-in-with-ad")
+    suspend fun dailyCheckInWithAd(@Body body: RequestBody): ResponseBody
+
     @POST("daily/recover-day")
     suspend fun recoverDay(@Body body: RequestBody): ResponseBody
 
