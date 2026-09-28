@@ -1421,6 +1421,10 @@ class AffiliateRepository(private val dao: AppDao) {
      * Sync game state dari backend — parse & simpan ke Room.
      * @param json Response dari GET /game/state
      */
+    suspend fun getGameMinerItemByIdSync(itemId: String): com.inkside.digital.data.model.GameMinerItemEntity? = withContext(Dispatchers.IO) {
+        dao.getGameMinerItemById(itemId)
+    }
+
     suspend fun syncGameStateFromBackend(json: org.json.JSONObject) = withContext(Dispatchers.IO) {
         try {
             val data = json.optJSONObject("data") ?: return@withContext
