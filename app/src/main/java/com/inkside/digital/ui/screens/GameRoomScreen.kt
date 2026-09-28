@@ -101,6 +101,14 @@ import java.util.Locale
 import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
+// ==== Retro Pixel Palette ====
+private val RetroBgDark = Color(0xFF1A1008)
+private val RetroGold = Color(0xFFFFD700)
+private val RetroAmber = Color(0xFFF59E0B)
+private val RetroBrown = Color(0xFF78350F)
+private val RetroCard = Color(0xFF2A1810)
+private val RetroBorder = Color(0xFFD97706)
+
 @Composable
 fun GameRoomScreen(
     viewModel: AffiliateViewModel,
@@ -493,6 +501,117 @@ fun GameRoomScreenContent(
 // TAB 0: RUANG RAK MINING (ROLLERCOIN RACK ROOM)
 // -------------------------------------------------------------
 @Composable
+private fun HeroBanner(
+    totalPowerGhs: Double,
+    liveUnclaimedPoints: Double,
+    generationRatePerMin: Double
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(
+                Brush.linearGradient(
+                    listOf(RetroBrown, RetroBgDark, Color(0xFF0F0805))
+                )
+            )
+            .border(2.dp, RetroBorder, RoundedCornerShape(20.dp))
+            .padding(20.dp)
+    ) {
+        // Emoji besar background
+        Text(
+            text = "⛏️",
+            fontSize = 110.sp,
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 8.dp),
+            color = Color.White.copy(alpha = 0.08f)
+        )
+
+        Column {
+            Text(
+                text = "MINING TYCOON",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Black,
+                color = RetroGold,
+                letterSpacing = 2.sp
+            )
+            Text(
+                text = "Royaltree Points Miner",
+                fontSize = 11.sp,
+                color = RetroAmber,
+                letterSpacing = 1.sp
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Stats row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                RetroStatBox(
+                    emoji = "🔥",
+                    label = "POWER",
+                    value = "${String.format("%.0f", totalPowerGhs)} GH/s",
+                    color = RetroAmber,
+                    modifier = Modifier.weight(1f)
+                )
+                RetroStatBox(
+                    emoji = "💰",
+                    label = "RTP",
+                    value = String.format("%.2f", liveUnclaimedPoints),
+                    color = RetroGold,
+                    modifier = Modifier.weight(1f)
+                )
+                RetroStatBox(
+                    emoji = "⚡",
+                    label = "RATE",
+                    value = "${String.format("%.2f", generationRatePerMin)}/m",
+                    color = EmeraldLight,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun RetroStatBox(
+    emoji: String,
+    label: String,
+    value: String,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color.Black.copy(alpha = 0.4f))
+            .border(1.dp, color.copy(alpha = 0.4f), RoundedCornerShape(10.dp))
+            .padding(vertical = 8.dp, horizontal = 6.dp)
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+            Text(emoji, fontSize = 16.sp)
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = label,
+                fontSize = 8.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White.copy(alpha = 0.6f),
+                letterSpacing = 1.sp
+            )
+            Text(
+                text = value,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Black,
+                color = color
+            )
+        }
+    }
+}
+
+@Composable
 private fun MiningRoomTab(
     placedMiners: List<GameMinerItemEntity>,
     allMiners: List<GameMinerItemEntity>,
@@ -539,12 +658,13 @@ private fun MiningRoomTab(
                         .background(
                             Brush.linearGradient(
                                 colors = listOf(
-                                    Color(0xFF0F172A),
-                                    Color(0xFF1E1B4B),
-                                    Color(0xFF064E3B)
+                                    RetroBrown,
+                                    RetroBgDark,
+                                    Color(0xFF0F0805)
                                 )
                             )
                         )
+                        .border(2.dp, RetroBorder, RoundedCornerShape(20.dp))
                         .padding(18.dp)
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
