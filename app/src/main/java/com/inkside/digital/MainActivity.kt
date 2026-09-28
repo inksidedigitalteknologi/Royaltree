@@ -726,7 +726,23 @@ fun MainAffiliateAppContent(
 
                 else -> {
                     // Screen yang dinonaktifkan (tidak ada backend support)
-                    // STEP_COUNTER, APP_OFFERS, CAMPAIGNS, ANALYTICS, INVEST, GAME_ROOM
+                    // STEP_COUNTER, APP_OFFERS, CAMPAIGNS, ANALYTICS, INVEST
+
+                AppScreen.GAME_ROOM -> {
+                    GameRoomScreenContent(
+                        user = user,
+                        minerItems = minerItems,
+                        placedMiners = placedMiners,
+                        roomState = roomState,
+                        onClaimMining = onClaimMining,
+                        onToggleMinerSlot = onToggleMinerSlot,
+                        onBuyGameMinerItem = onBuyGameMinerItem,
+                        onFinishGame = onFinishGame,
+                        onNavigateToMissions = { onNavigate(AppScreen.MISSIONS) },
+                        onBack = { onNavigate(AppScreen.HOME) },
+                        currentLanguage = currentLanguage
+                    )
+                }
                 }
             }
         }
