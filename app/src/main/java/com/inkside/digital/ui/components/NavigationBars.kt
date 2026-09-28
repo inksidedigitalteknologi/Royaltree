@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -284,7 +285,67 @@ fun AppBottomNavigationBar(
     currentLanguage: AppLanguage,
     onNavigate: (AppScreen) -> Unit
 ) {
-    val userNavItems = listOf(
+    // ==== Admin mode — flat nav ====
+    if (isAdminMode) {
+        val adminItems = listOf(
+            BottomNavItem(
+                screen = AppScreen.ADMIN,
+                titleKey = "nav_admin",
+                selectedIcon = Icons.Filled.AdminPanelSettings,
+                unselectedIcon = Icons.Outlined.AdminPanelSettings
+            ),
+            BottomNavItem(
+                screen = AppScreen.HOME,
+                titleKey = "nav_home",
+                selectedIcon = Icons.Filled.Home,
+                unselectedIcon = Icons.Outlined.Home
+            )
+        )
+
+        NavigationBar(
+            containerColor = MaterialTheme.colorScheme.surface,
+            tonalElevation = 8.dp,
+            modifier = Modifier
+                .navigationBarsPadding()
+                .fillMaxWidth()
+        ) {
+            adminItems.forEach { item ->
+                val isSelected = currentScreen == item.screen
+                val title = LanguageManager.getString(item.titleKey, currentLanguage)
+                NavigationBarItem(
+                    selected = isSelected,
+                    onClick = { onNavigate(item.screen) },
+                    icon = {
+                        Icon(
+                            imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                            contentDescription = title,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = title,
+                            fontSize = 10.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            maxLines = 1
+                        )
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = PurpleSecondary,
+                        selectedTextColor = PurpleSecondary,
+                        indicatorColor = PurpleSecondary.copy(alpha = 0.2f),
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
+                    modifier = Modifier.testTag("nav_item_${item.screen.name}")
+                )
+            }
+        }
+        return
+    }
+
+    // ==== User mode — 5 tombol dengan FAB tengah ====
+    val leftItems = listOf(
         BottomNavItem(
             screen = AppScreen.HOME,
             titleKey = "nav_home",
@@ -296,6 +357,14 @@ fun AppBottomNavigationBar(
             titleKey = "nav_missions",
             selectedIcon = Icons.Filled.TaskAlt,
             unselectedIcon = Icons.Outlined.TaskAlt
+        )
+    )
+    val rightItems = listOf(
+        BottomNavItem(
+            screen = AppScreen.GAME_ROOM,
+            titleKey = "nav_game",
+            selectedIcon = Icons.Filled.SportsEsports,
+            unselectedIcon = Icons.Outlined.SportsEsports
         ),
         BottomNavItem(
             screen = AppScreen.PROFILE,
@@ -305,61 +374,122 @@ fun AppBottomNavigationBar(
         )
     )
 
-    val adminNavItems = listOf(
-        BottomNavItem(
-            screen = AppScreen.ADMIN,
-            titleKey = "nav_admin",
-            selectedIcon = Icons.Filled.AdminPanelSettings,
-            unselectedIcon = Icons.Outlined.AdminPanelSettings
-        ),
-        BottomNavItem(
-            screen = AppScreen.HOME,
-            titleKey = "nav_home",
-            selectedIcon = Icons.Filled.Home,
-            unselectedIcon = Icons.Outlined.Home
-        )
-    )
-
-    val items = if (isAdminMode) adminNavItems else userNavItems
-
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface,
-        tonalElevation = 8.dp,
+    Box(
         modifier = Modifier
-            .navigationBarsPadding()
             .fillMaxWidth()
+            .navigationBarsPadding()
     ) {
-        items.forEach { item ->
-            val isSelected = currentScreen == item.screen
-            val title = LanguageManager.getString(item.titleKey, currentLanguage)
+        // ==== Background nav bar (dengan cut-out di tengah) ====
+        Surface(
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 8.dp,
+            shadowElevation = 12.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // 2 tombol kiri
+                leftItems.forEach { item ->
+                    NavItemButton(
+                        item = item,
+                        isSelected = currentScreen == item.screen,
+                        currentLanguage = currentLanguage,
+                        onNavigate = onNavigate,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
-            NavigationBarItem(
-                selected = isSelected,
-                onClick = { onNavigate(item.screen) },
-                icon = {
-                    Icon(
-                        imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
-                        contentDescription = title,
-                        modifier = Modifier.size(22.dp)
+                // Spacer tengah (untuk FAB)
+                Spacer(modifier = Modifier.weight(1f))
+
+                // 2 tombol kanan
+                rightItems.forEach { item ->
+                    NavItemButton(
+                        item = item,
+                        isSelected = currentScreen == item.screen,
+                        currentLanguage = currentLanguage,
+                        onNavigate = onNavigate,
+                        modifier = Modifier.weight(1f)
                     )
-                },
-                label = {
-                    Text(
-                        text = title,
-                        fontSize = 10.sp,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                        maxLines = 1
-                    )
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = if (isAdminMode) PurpleSecondary else EmeraldLight,
-                    selectedTextColor = if (isAdminMode) PurpleSecondary else EmeraldLight,
-                    indicatorColor = if (isAdminMode) PurpleSecondary.copy(alpha = 0.2f) else EmeraldLight.copy(alpha = 0.15f),
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                ),
-                modifier = Modifier.testTag("nav_item_${item.screen.name}")
-            )
+                }
+            }
         }
+
+        // ==== FAB tengah (menonjol ke atas) ====
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .offset(y = (-24).dp)
+        ) {
+            Surface(
+                shape = CircleShape,
+                color = Color.Transparent,
+                shadowElevation = 10.dp,
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(
+                                Color(0xFFFFD700),
+                                Color(0xFFFF8C00)
+                            )
+                        )
+                    )
+                    .clickable { onNavigate(AppScreen.DAILY_CHECK_IN) }
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Filled.CardGiftcard,
+                        contentDescription = "Daily Check-In",
+                        tint = Color.Black,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+// ==== Helper: Nav Item Button ====
+@Composable
+private fun NavItemButton(
+    item: BottomNavItem,
+    isSelected: Boolean,
+    currentLanguage: AppLanguage,
+    onNavigate: (AppScreen) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val title = LanguageManager.getString(item.titleKey, currentLanguage)
+    val accent = EmeraldLight
+
+    Column(
+        modifier = modifier
+            .clickable { onNavigate(item.screen) }
+            .padding(vertical = 6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
+            contentDescription = title,
+            tint = if (isSelected) accent else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = title,
+            fontSize = 10.sp,
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+            color = if (isSelected) accent else MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1
+        )
     }
 }
