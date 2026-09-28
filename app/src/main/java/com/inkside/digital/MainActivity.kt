@@ -351,6 +351,7 @@ fun MainAffiliateApp(
         onDailyCheckInDismiss = { viewModel.showDailyCheckInModal.value = false },
         onDailyCheckInClaim = { viewModel.performDailyCheckIn() },
         onDailyCheckInWithAd = { txId, vendor -> viewModel.performDailyCheckInWithAd(txId, vendor) },
+        onLoadGameState = { viewModel.loadGameState() },
         onBuyCouponDismiss = { viewModel.showBuyCouponModal.value = null },
         onBuyCouponConfirm = { coupon, qty -> viewModel.buyCoupon(coupon, qty) },
         onListCouponDismiss = { viewModel.showListCouponModal.value = null },
@@ -468,6 +469,7 @@ fun MainAffiliateAppContent(
     onDailyCheckInDismiss: () -> Unit,
     onDailyCheckInClaim: () -> Unit,
     onDailyCheckInWithAd: (String, String) -> Unit = { _, _ -> },
+    onLoadGameState: () -> Unit = {},
     onBuyCouponDismiss: () -> Unit,
     onBuyCouponConfirm: (InvestmentCouponEntity, Int) -> Unit,
     onListCouponDismiss: () -> Unit,
@@ -735,7 +737,8 @@ fun MainAffiliateAppContent(
                         user = user,
                         currentLanguage = currentLanguage,
                         onNavigate = { onNavigate(it) },
-                        onBack = { onNavigate(AppScreen.HOME) }
+                        onBack = { onNavigate(AppScreen.HOME) },
+                        onLoadGameState = { onLoadGameState() }
                     )
                 }
 
