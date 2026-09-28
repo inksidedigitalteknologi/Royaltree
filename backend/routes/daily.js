@@ -11,8 +11,8 @@ const db = admin.firestore();
 
 // Default config (kalau di Firestore belum ada)
 const DEFAULT_CONFIG = {
-    weekdayPoints: 50,
-    weekendPoints: 100,
+    weekdayPoints: 5,
+    weekendPoints: 10,
     specialDays: {},
     streakRecovery: {
         enabled: true,
@@ -361,6 +361,123 @@ router.post('/recover-day', verifyFirebaseToken, checkFraud, async (req, res) =>
 
     } catch (error) {
         console.error('Recover day error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// POST /api/v1/daily/check-in-with-ad
+// Check-in WAJIB nonton iklan dulu
+// Body: { transactionId, vendor }
+// ============================================================
+router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+        const { transactionId, vendor } = req.body;
+
+        // 1. Validasi body
+        if (!transactionId || !vendor) {
+            return res.status(400).json({
+                success: false,
+                message: 'transactionId dan vendor wajib diisi.'
+            });
+        }
+
+        const config = await getConfig();
+        const today = todayStr();
+
+        const userRef = db.collection('users').doc(uid);
+        const userDoc = await userRef.get();
+        const userData = userDoc.exists ? userDoc.data() : {};
+
+        // 2. Cek sudah check-in hari ini?
+        if (userData.lastCheckInDate === today) {
+            return res.status(400).json({
+                success: false,
+                message: 'Anda sudah check-in hari ini.'
+            });
+        }
+
+        // 3. Cek transactionId unik (anti-replay)
+        const txRef = db.collection('ad_transactions').doc(transactionId);
+        const txDoc = await txRef.get();
+        if (txDoc.exists) {
+            return res.status(400).json({
+                success: false,
+                message: 'Transaksi sudah digunakan.'
+            });
+        }
+
+        // 4. Hitung poin
+        const isWeekendDay = isWeekend(today);
+        let points = isWeekendDay ? config.weekendPoints : config.weekdayPoints;
+
+        // Special days
+        const mmdd = today.substring(5);
+        if (config.specialDays && config.specialDays[mmdd]) {
+            points = config.specialDays[mmdd];
+        }
+
+        // 5. Hitung streak
+        const yesterday = daysAgo(1);
+        let streak = (userData.lastCheckInDate === yesterday)
+            ? (userData.checkInStreak || 0) + 1
+            : 1;
+
+        // 6. Simpan transaksi iklan
+        await txRef.set({
+            userId: uid,
+            type: 'CHECK_IN_AD',
+            vendor: vendor,
+            points: points,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        // 7. Simpan check-in
+        const checkinRef = userRef.collection('daily_checkins').doc(today);
+        await checkinRef.set({
+            date: today,
+            points: points,
+            isWeekend: isWeekendDay,
+            checkedAt: admin.firestore.FieldValue.serverTimestamp(),
+            recovered: false,
+            viaAd: true,
+            adVendor: vendor
+        });
+
+        // 8. Update user
+        await userRef.update({
+            lastCheckInDate: today,
+            checkInStreak: streak,
+            points: admin.firestore.FieldValue.increment(points),
+            monthCheckInCount: admin.firestore.FieldValue.increment(1)
+        });
+
+        // 9. Audit log
+        await db.collection('audit_logs').add({
+            userId: uid,
+            action: 'DAILY_CHECK_IN_WITH_AD',
+            points: points,
+            streak: streak,
+            isWeekend: isWeekendDay,
+            vendor: vendor,
+            transactionId: transactionId,
+            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            ip: req.ip || 'unknown',
+            deviceId: req.headers['x-device-id'] || 'unknown'
+        });
+
+        return res.json({
+            success: true,
+            message: `Check-in berhasil! +${points} RTP (streak hari ke-${streak})`,
+            points: points,
+            streak: streak,
+            isWeekend: isWeekendDay,
+            today: today
+        });
+
+    } catch (error) {
+        console.error('Check-in with ad error:', error);
         return res.status(500).json({ success: false, message: error.message });
     }
 });
