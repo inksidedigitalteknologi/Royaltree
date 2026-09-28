@@ -302,6 +302,81 @@ object ApiClient {
         }
     }
 
+    // ============ GAME — MINING TYCOON ============
+
+    suspend fun getGameState(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response: ResponseBody = apiService.getGameState()
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun claimMining(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response: ResponseBody = apiService.claimMining()
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun buyMiner(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val response: ResponseBody = apiService.buyMiner(requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun placeMiner(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val response: ResponseBody = apiService.placeMiner(requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun unplaceMiner(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val response: ResponseBody = apiService.unplaceMiner(requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getGameLeaderboard(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response: ResponseBody = apiService.getGameLeaderboard()
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getGameStats(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response: ResponseBody = apiService.getGameStats()
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     // ============ MISSIONS ============
 
     suspend fun completeMission(missionId: String, userId: String): Result<JSONObject> = withContext(Dispatchers.IO) {

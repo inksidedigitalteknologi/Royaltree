@@ -85,6 +85,28 @@ interface RoyaltreeApiService {
         @Body request: SpinRequest
     ): ApiSpinResponse
 
+    // ==== Game — Mining Tycoon ====
+    @GET("game/state")
+    suspend fun getGameState(): ResponseBody
+
+    @POST("game/mining/claim")
+    suspend fun claimMining(): ResponseBody
+
+    @POST("game/mining/buy")
+    suspend fun buyMiner(@Body body: RequestBody): ResponseBody
+
+    @POST("game/mining/place")
+    suspend fun placeMiner(@Body body: RequestBody): ResponseBody
+
+    @POST("game/mining/unplace")
+    suspend fun unplaceMiner(@Body body: RequestBody): ResponseBody
+
+    @GET("game/leaderboard")
+    suspend fun getGameLeaderboard(): ResponseBody
+
+    @GET("game/stats")
+    suspend fun getGameStats(): ResponseBody
+
     // Profile
     @GET("profile/{userId}")
     suspend fun getProfile(

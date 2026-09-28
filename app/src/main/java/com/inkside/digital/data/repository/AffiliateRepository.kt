@@ -1414,6 +1414,60 @@ class AffiliateRepository(private val dao: AppDao) {
     suspend fun syncTransactionsFromBackend(transactions: List<TransactionEntity>) = withContext(Dispatchers.IO) {
         transactions.forEach { dao.insertTransaction(it) }
     }
+
+    // ============ GAME — SYNC FROM BACKEND ============
+
+    /**
+     * Sync game state dari backend — parse & simpan ke Room.
+     * @param json Response dari GET /game/state
+     */
+    suspend fun syncGameStateFromBackend(json: org.json.JSONObject) = withContext(Dispatchers.IO) {
+        try {
+            val data = json.optJSONObject("data") ?: return@withContext
+
+            // 1. Update room state
+            val roomJson = data.optJSONObject("room")
+            if (roomJson != null) {
+                val room = com.inkside.digital.data.model.GameRoomStateEntity(
+                    id = "default_room",
+                    unclaimedMiningPoints = roomJson.optDouble("unclaimedMiningPoints", 0.0),
+                    lastClaimTimestamp = roomJson.optLong("lastClaimTimestamp", System.currentTimeMillis()),
+                    totalMinedPointsClaimed = roomJson.optDouble("totalMinedPointsClaimed", 0.0),
+                    tempPowerBonusGhs = roomJson.optDouble("tempPowerBonusGhs", 0.0),
+                    bonusExpiryTimestamp = roomJson.optLong("bonusExpiryTimestamp", 0L),
+                    miniGameHighScore = roomJson.optInt("miniGameHighScore", 0)
+                )
+                dao.insertGameRoomState(room)
+            }
+
+            // 2. Update miners
+            val minersJson = data.optJSONArray("miners")
+            if (minersJson != null) {
+                val miners = mutableListOf<com.inkside.digital.data.model.GameMinerItemEntity>()
+                for (i in 0 until minersJson.length()) {
+                    val m = minersJson.getJSONObject(i)
+                    miners.add(
+                        com.inkside.digital.data.model.GameMinerItemEntity(
+                            id = m.optString("id", ""),
+                            name = m.optString("name", ""),
+                            tier = m.optString("tier", "COMMON"),
+                            iconEmoji = m.optString("iconEmoji", "⛏️"),
+                            pricePoints = m.optInt("pricePoints", 0),
+                            powerGhs = m.optDouble("powerGhs", 0.0),
+                            pointsPerMinute = m.optDouble("pointsPerMinute", 0.0),
+                            isOwned = m.optBoolean("isOwned", true),
+                            isPlacedInRoom = m.optBoolean("isPlacedInRoom", false),
+                            placedSlotIndex = m.optInt("placedSlotIndex", -1),
+                            description = m.optString("description", "")
+                        )
+                    )
+                }
+                dao.insertGameMinerItems(miners)
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("AffiliateRepository", "syncGameStateFromBackend error: ${e.message}")
+        }
+    }
 }
 
 data class TransferResult(
