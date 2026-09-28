@@ -14,6 +14,9 @@ import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.AdListener
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -32,6 +35,10 @@ object AdMobProvider {
     private var rewardedAd: RewardedAd? = null
     private var isInitialized = false
 
+    // State: null = loading, true = ready, false = no ad
+    private val _adState = MutableStateFlow<Boolean?>(null)
+    val adState: StateFlow<Boolean?> = _adState.asStateFlow()
+
     /**
      * Init AdMob SDK — panggil sekali di MainActivity.onCreate.
      */
@@ -48,6 +55,7 @@ object AdMobProvider {
      * @param userId Firebase UID (untuk SSV custom_data)
      */
     suspend fun loadRewardedAd(context: Context, userId: String? = null): Result<Unit> {
+        _adState.value = null  // loading
         return suspendCancellableCoroutine { continuation ->
             // Set test device IDs di request configuration
             if (AdConfig.TEST_DEVICE_IDS.isNotEmpty()) {
@@ -76,12 +84,14 @@ object AdMobProvider {
                         }
 
                         rewardedAd = ad
+                        _adState.value = true  // ready
                         if (continuation.isActive) continuation.resume(Result.success(Unit))
                     }
 
                     override fun onAdFailedToLoad(error: LoadAdError) {
                         Log.e(TAG, "Ad failed to load: code=${error.code}, msg=${error.message}")
                         rewardedAd = null
+                        _adState.value = false  // no ad
 
                         val userMsg = when (error.code) {
                             AdRequest.ERROR_CODE_NO_FILL ->
@@ -159,6 +169,7 @@ object AdMobProvider {
      */
     fun reset() {
         rewardedAd = null
+        _adState.value = null
     }
 
     /**

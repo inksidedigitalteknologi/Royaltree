@@ -239,6 +239,16 @@ object ApiClient {
 
     // ============ ADS REWARD ============
 
+    suspend fun getAdStatus(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response: ResponseBody = apiService.getAdStatus()
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun rewardAd(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
@@ -274,16 +284,6 @@ object ApiClient {
         try {
             val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
             val response: ResponseBody = apiService.recoverDay(requestBody)
-            val json = JSONObject(response.string())
-            Result.success(json)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun getAdStatus(): Result<JSONObject> = withContext(Dispatchers.IO) {
-        try {
-            val response: ResponseBody = apiService.getAdStatus()
             val json = JSONObject(response.string())
             Result.success(json)
         } catch (e: Exception) {

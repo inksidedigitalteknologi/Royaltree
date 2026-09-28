@@ -48,6 +48,7 @@ import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.viewmodel.AppScreen
+import com.inkside.digital.viewmodel.AdButtonState
 import com.inkside.digital.ui.components.BannerAdView
 
 // ==== Color Palette (Mewah & Elegan) ====
@@ -71,7 +72,9 @@ fun HomeScreen(
     onOpenRedeemPoints: () -> Unit,
     onOpenTransferQr: () -> Unit = {},
     onSimulateConversion: (AffiliateLinkEntity) -> Unit,
-    onOpenAdReward: () -> Unit
+    onOpenAdReward: () -> Unit,
+    adButtonState: AdButtonState = AdButtonState.LOADING,
+    onRetryAdLoad: () -> Unit = {}
 ) {
     val isPremium = user?.tier == "PREMIUM"
 
@@ -263,14 +266,56 @@ fun HomeScreen(
             }
         }
 
-        // ==== 5. Ad Banner (Placeholder) ====
+        // ==== 5. Ad Banner (Dinamis) ====
         item {
+            val (label, subtitle, accentColor, isEnabled) = when (adButtonState) {
+                AdButtonState.READY -> Quadruple(
+                    "Tonton Iklan Sponsor",
+                    "Dapat +2-5 RTP • 30 detik",
+                    GoldAccent,
+                    true
+                )
+                AdButtonState.LOADING_AD -> Quadruple(
+                    "Memuat iklan...",
+                    "Mohon tunggu sebentar",
+                    TextSecondary,
+                    false
+                )
+                AdButtonState.NO_AD -> Quadruple(
+                    "Iklan tidak tersedia",
+                    "Coba lagi nanti",
+                    TextSecondary,
+                    false
+                )
+                AdButtonState.LIMIT -> Quadruple(
+                    "Limit harian tercapai",
+                    "Kembali besok untuk nonton lagi",
+                    TextSecondary,
+                    false
+                )
+                AdButtonState.COOLDOWN -> Quadruple(
+                    "Tunggu sebentar...",
+                    "30 detik antar iklan",
+                    TextSecondary,
+                    false
+                )
+                AdButtonState.LOADING -> Quadruple(
+                    "Memeriksa...",
+                    "Sedang memuat status",
+                    TextSecondary,
+                    false
+                )
+            }
+
             Card(
                 shape = RoundedCornerShape(18.dp),
                 colors = CardDefaults.cardColors(containerColor = CardSlate),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onOpenAdReward() }
+                    .then(
+                        if (isEnabled) Modifier.clickable { onOpenAdReward() }
+                        else Modifier
+                    )
             ) {
                 Row(
                     modifier = Modifier
@@ -279,7 +324,7 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Surface(
-                        color = GoldAccent.copy(alpha = 0.15f),
+                        color = accentColor.copy(alpha = 0.15f),
                         shape = CircleShape,
                         modifier = Modifier.size(48.dp)
                     ) {
@@ -287,7 +332,7 @@ fun HomeScreen(
                             Icon(
                                 imageVector = Icons.Filled.PlayArrow,
                                 contentDescription = null,
-                                tint = GoldAccent,
+                                tint = accentColor,
                                 modifier = Modifier.size(28.dp)
                             )
                         }
@@ -295,24 +340,36 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.width(14.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = LanguageManager.translate("sponsor_ad_title", currentLanguage, "Tonton Iklan Sponsor"),
+                            text = label,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = if (isEnabled) Color.White else TextSecondary
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Dapat +50 RTP • 30 detik",
+                            text = subtitle,
                             fontSize = 11.sp,
                             color = TextSecondary
                         )
                     }
-                    Icon(
-                        imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = null,
-                        tint = GoldAccent,
-                        modifier = Modifier.size(24.dp)
-                    )
+                    if (adButtonState == AdButtonState.NO_AD) {
+                        Text(
+                            text = "Coba Lagi",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = GoldAccent,
+                            modifier = Modifier
+                                .clickable { onRetryAdLoad() }
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Filled.PlayArrow,
+                            contentDescription = null,
+                            tint = accentColor,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
         }
@@ -401,3 +458,12 @@ private fun QuickActionButton(
         }
     }
 }
+
+
+// Helper: Quadruple untuk destructuring 4 nilai
+private data class Quadruple<A, B, C, D>(
+    val first: A,
+    val second: B,
+    val third: C,
+    val fourth: D
+)
