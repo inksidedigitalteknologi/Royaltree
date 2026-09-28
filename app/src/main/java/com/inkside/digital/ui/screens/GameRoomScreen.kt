@@ -1186,21 +1186,21 @@ private fun ShopMinerCard(
     userPoints: Int,
     onBuy: () -> Unit
 ) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    val rarityColor = tierColor(item.tier)
+    val canAfford = userPoints >= item.pricePoints
+
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                color = if (item.isOwned) EmeraldLight.copy(alpha = 0.4f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
-                shape = RoundedCornerShape(16.dp)
-            )
+            .clip(RoundedCornerShape(14.dp))
+            .background(RetroCard)
+            .border(2.dp, rarityColor.copy(alpha = 0.6f), RoundedCornerShape(14.dp))
     ) {
         Column(
             modifier = Modifier.padding(14.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+            // ==== Header: Icon + Name + Tier ====
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -1208,8 +1208,9 @@ private fun ShopMinerCard(
                 Box(
                     modifier = Modifier
                         .size(48.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFF0F172A)),
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color(0xFF0F0805))
+                        .border(1.dp, rarityColor.copy(alpha = 0.5f), RoundedCornerShape(10.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(item.iconEmoji, fontSize = 26.sp)
@@ -1222,122 +1223,148 @@ private fun ShopMinerCard(
                         Text(
                             text = item.name,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
+                            color = Color.White
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Surface(
-                            color = tierColor(item.tier).copy(alpha = 0.15f),
+                            color = rarityColor.copy(alpha = 0.2f),
                             shape = RoundedCornerShape(4.dp)
                         ) {
                             Text(
                                 text = item.tier,
                                 fontSize = 8.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = tierColor(item.tier),
-                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                                color = rarityColor,
+                                modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
                             )
                         }
                     }
                     Text(
                         text = item.description,
                         fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = Color.White.copy(alpha = 0.6f),
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
             }
 
-            // Specs badges: Hash Rate & Point Rate
+            // ==== Specs ====
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Surface(
-                    color = ElectricBlue.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.weight(1f)
+                    color = RetroAmber.copy(alpha = 0.12f),
+                    shape = RoundedCornerShape(6.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .border(1.dp, RetroAmber.copy(alpha = 0.3f), RoundedCornerShape(6.dp))
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        Icon(imageVector = Icons.Filled.Speed, contentDescription = null, tint = ElectricBlue, modifier = Modifier.size(12.dp))
+                        Text("⚡", fontSize = 11.sp)
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Power: +${item.powerGhs} GH/s", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = ElectricBlue)
+                        Text(
+                            text = "+${item.powerGhs} GH/s",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = RetroAmber
+                        )
                     }
                 }
 
                 Surface(
-                    color = EmeraldLight.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.weight(1f)
+                    color = EmeraldLight.copy(alpha = 0.12f),
+                    shape = RoundedCornerShape(6.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .border(1.dp, EmeraldLight.copy(alpha = 0.3f), RoundedCornerShape(6.dp))
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        Icon(imageVector = Icons.Filled.Bolt, contentDescription = null, tint = EmeraldLight, modifier = Modifier.size(12.dp))
+                        Text("💰", fontSize = 11.sp)
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Generate: +${item.pointsPerMinute}/mnt", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = EmeraldLight)
+                        Text(
+                            text = "+${item.pointsPerMinute}/mnt",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = EmeraldLight
+                        )
                     }
                 }
             }
 
-            // Price & Buy Button
+            // ==== Price & Action ====
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text("Harga Item:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        text = "HARGA",
+                        fontSize = 9.sp,
+                        color = Color.White.copy(alpha = 0.5f),
+                        letterSpacing = 1.sp
+                    )
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("⭐", fontSize = 12.sp)
+                        Text("💰", fontSize = 14.sp)
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "${item.pricePoints} Poin",
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 15.sp,
-                            color = GoldVip
+                            text = "${item.pricePoints}",
+                            fontWeight = FontWeight.Black,
+                            fontSize = 16.sp,
+                            color = RetroGold
+                        )
+                        Text(
+                            text = " RTP",
+                            fontSize = 11.sp,
+                            color = RetroGold.copy(alpha = 0.7f)
                         )
                     }
                 }
 
                 if (item.isOwned) {
                     Surface(
-                        color = EmeraldLight.copy(alpha = 0.18f),
-                        shape = RoundedCornerShape(8.dp)
+                        color = EmeraldLight.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(8.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.4f))
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(imageVector = Icons.Filled.CheckCircle, contentDescription = null, tint = EmeraldLight, modifier = Modifier.size(14.dp))
+                            Text("✅", fontSize = 12.sp)
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = if (item.isPlacedInRoom) "Terpasang di Rak" else "Di Inventaris",
-                                fontSize = 11.sp,
+                                text = if (item.isPlacedInRoom) "Terpasang" else "Di Inventaris",
+                                fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = EmeraldLight
                             )
                         }
                     }
                 } else {
-                    val canAfford = userPoints >= item.pricePoints
-                    Button(
-                        onClick = onBuy,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (canAfford) EmeraldPrimary else MaterialTheme.colorScheme.surfaceVariant
-                        ),
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier.height(38.dp)
+                    Surface(
+                        color = if (canAfford) RetroGold else Color.Gray.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.clickable(enabled = canAfford) { onBuy() }
                     ) {
                         Text(
-                            text = if (canAfford) "Beli Pakai Poin" else "Poin Kurang (${userPoints}/${item.pricePoints})",
+                            text = if (canAfford) "BELI" else "KURANG ${item.pricePoints - userPoints}",
                             fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (canAfford) Color.Black else MaterialTheme.colorScheme.onSurfaceVariant
+                            fontWeight = FontWeight.Black,
+                            color = if (canAfford) Color.Black else Color.White.copy(alpha = 0.7f),
+                            letterSpacing = 1.sp,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 9.dp)
                         )
                     }
                 }
@@ -1347,243 +1374,6 @@ private fun ShopMinerCard(
 }
 
 // -------------------------------------------------------------
-// TAB 2: MINI-GAME ARCADE (COIN RUSH)
-// -------------------------------------------------------------
-@Composable
-private fun MiniGameArcadeTab(
-    onFinishGame: (score: Int) -> Unit,
-    highScore: Int
-) {
-    var isPlaying by remember { mutableStateOf(false) }
-    var score by remember { mutableIntStateOf(0) }
-    var secondsRemaining by remember { mutableIntStateOf(15) }
-    var targetPositionX by remember { mutableIntStateOf(50) }
-    var targetPositionY by remember { mutableIntStateOf(50) }
-    var targetEmoji by remember { mutableStateOf("🪙") }
-    var comboCount by remember { mutableIntStateOf(0) }
-
-    LaunchedEffect(isPlaying) {
-        if (isPlaying) {
-            score = 0
-            secondsRemaining = 15
-            comboCount = 0
-            while (secondsRemaining > 0 && isPlaying) {
-                delay(1000L)
-                secondsRemaining--
-            }
-            if (isPlaying) {
-                isPlaying = false
-                onFinishGame(score)
-            }
-        }
-    }
-
-    // Move target periodically during play
-    LaunchedEffect(isPlaying, score) {
-        if (isPlaying) {
-            targetPositionX = Random.nextInt(10, 80)
-            targetPositionY = Random.nextInt(10, 80)
-            val emojis = listOf("🪙", "💎", "⚡", "💰", "⭐")
-            targetEmoji = emojis[Random.nextInt(emojis.size)]
-        }
-    }
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp),
-        contentPadding = PaddingValues(vertical = 14.dp)
-    ) {
-        // Arcade Header Card
-        item {
-            Card(
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            Brush.linearGradient(
-                                colors = listOf(
-                                    Color(0xFF312E81),
-                                    Color(0xFF4C1D95),
-                                    Color(0xFF0F172A)
-                                )
-                            )
-                        )
-                        .padding(18.dp)
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("🎮", fontSize = 24.sp)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Column {
-                                    Text("Crypto Coin Tap Rush", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
-                                    Text("Mini-Game Penghasil Power RollerCoin", fontSize = 11.sp, color = Color(0xFFC7D2FE))
-                                }
-                            }
-                            Surface(
-                                color = GoldVip.copy(alpha = 0.2f),
-                                shape = RoundedCornerShape(8.dp)
-                            ) {
-                                Text(
-                                    text = "High Score: $highScore",
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = GoldVip,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                                )
-                            }
-                        }
-
-                        Text(
-                            text = "Mainkan game 15 detik! Ketuk koin & permata secepat mungkin untuk mendapatkan +20 s/d 60 Poin instan dan +80 GH/s Power Boost selama 2 jam.",
-                            fontSize = 11.sp,
-                            color = Color(0xFFE0E7FF)
-                        )
-                    }
-                }
-            }
-        }
-
-        // Game Arena Card
-        item {
-            Card(
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(340.dp)
-                    .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(20.dp))
-            ) {
-                if (!isPlaying) {
-                    // Ready / Idle State
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text("🎯", fontSize = 54.sp)
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Text(
-                            text = "Siap Uji Kecepatan Jari?",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Kumpulkan koin sebanyak-banyaknya dalam 15 detik.",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(
-                            onClick = { isPlaying = true },
-                            colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.height(46.dp)
-                        ) {
-                            Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = null, tint = Color.Black)
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text("Mulai Game Sekarang (15s)", fontWeight = FontWeight.Bold, color = Color.Black)
-                        }
-                    }
-                } else {
-                    // Active Game Playing State
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        // Game HUD (Timer & Score)
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(14.dp)
-                                .align(Alignment.TopCenter),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Surface(
-                                color = Color(0xFFEF4444).copy(alpha = 0.15f),
-                                shape = RoundedCornerShape(8.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(imageVector = Icons.Filled.Timer, contentDescription = null, tint = Color(0xFFEF4444), modifier = Modifier.size(14.dp))
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text(
-                                        text = "${secondsRemaining}s",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp,
-                                        color = Color(0xFFEF4444)
-                                    )
-                                }
-                            }
-
-                            Surface(
-                                color = EmeraldLight.copy(alpha = 0.15f),
-                                shape = RoundedCornerShape(8.dp)
-                            ) {
-                                Text(
-                                    text = "Skor: $score",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp,
-                                    color = EmeraldLight,
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-                                )
-                            }
-                        }
-
-                        // Target Coin to tap
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(
-                                    start = (targetPositionX * 2.5).dp.coerceIn(20.dp, 220.dp),
-                                    top = (targetPositionY * 1.8).dp.coerceIn(50.dp, 200.dp)
-                                )
-                                .size(64.dp)
-                                .clip(CircleShape)
-                                .background(GoldVip.copy(alpha = 0.25f))
-                                .clickable {
-                                    score += 10
-                                    comboCount++
-                                    targetPositionX = Random.nextInt(10, 80)
-                                    targetPositionY = Random.nextInt(10, 80)
-                                    val emojis = listOf("🪙", "💎", "⚡", "💰", "⭐")
-                                    targetEmoji = emojis[Random.nextInt(emojis.size)]
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(targetEmoji, fontSize = 36.sp)
-                        }
-
-                        Text(
-                            text = "KETUK KOIN / DIAMOND!",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(bottom = 12.dp)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
 private fun tierColor(tier: String): Color {
     return when (tier.uppercase()) {
         "COMMON" -> Color(0xFF94A3B8)
