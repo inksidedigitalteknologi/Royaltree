@@ -96,7 +96,6 @@ fun MissionsScreen(
     missions: List<TaskMissionEntity>,
     currentLanguage: AppLanguage,
     onBack: () -> Unit,
-    onCheckIn: () -> Unit,
     onClaimMission: (missionId: String) -> Unit,
     onCompleteTaskAction: (missionId: String) -> Unit,
     onOpenRedeemPoints: () -> Unit,
@@ -119,11 +118,7 @@ fun MissionsScreen(
 
     val totalPoints = user?.points ?: 0
     val usdValue = GlobalPointsManager.getUsdValue(totalPoints)
-    val streakDay = user?.checkInStreak ?: 1
-    val isCheckedInToday = remember(user?.lastCheckInDate) {
-        val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
-        user?.lastCheckInDate == today
-    }
+    val streakDay = user?.checkInStreak ?: 0
 
     Scaffold(
         topBar = {
@@ -301,134 +296,6 @@ fun MissionsScreen(
             // ==== Banner AdMob ====
             item {
                 BannerAdView()
-            }
-
-            // Daily Check-in Streak Section
-            item {
-                Card(
-                    shape = RoundedCornerShape(18.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.DateRange,
-                                    contentDescription = null,
-                                    tint = GoldVip,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Login Harian Royaltree",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 15.sp
-                                )
-                            }
-                            Text(
-                                text = if (isCheckedInToday) "Sudah Klaim ✓" else "Tersedia!",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = if (isCheckedInToday) EmeraldLight else GoldVip
-                            )
-                        }
-
-                        Text(
-                            text = "Login 7 hari berturut-turut untuk membuka Jackpot +150 RTP di Hari ke-7!",
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(vertical = 6.dp)
-                        )
-
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        // 7 Days Streak Row
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            (1..7).forEach { day ->
-                                val reward = GlobalPointsManager.getLoginRewardForStreak(day)
-                                val isPastOrCurrent = day <= streakDay && isCheckedInToday
-                                val isCurrentTarget = day == streakDay && !isCheckedInToday
-
-                                val bgColor by animateColorAsState(
-                                    targetValue = when {
-                                        isPastOrCurrent -> EmeraldLight.copy(alpha = 0.2f)
-                                        isCurrentTarget -> GoldVip.copy(alpha = 0.25f)
-                                        else -> MaterialTheme.colorScheme.surfaceVariant
-                                    },
-                                    label = "bg_color"
-                                )
-
-                                val borderColor = when {
-                                    isPastOrCurrent -> EmeraldLight
-                                    isCurrentTarget -> GoldVip
-                                    else -> Color.Transparent
-                                }
-
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(horizontal = 2.dp)
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .background(bgColor)
-                                        .border(1.dp, borderColor, RoundedCornerShape(10.dp))
-                                        .padding(vertical = 8.dp)
-                                ) {
-                                    Text(
-                                        text = "H-$day",
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = if (day == 7) "🎁" else "⭐",
-                                        fontSize = 12.sp
-                                    )
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Text(
-                                        text = "+$reward",
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = if (isPastOrCurrent) EmeraldLight else if (isCurrentTarget) GoldVip else MaterialTheme.colorScheme.onSurface
-                                    )
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(14.dp))
-
-                        Button(
-                            onClick = onCheckIn,
-                            enabled = !isCheckedInToday,
-                            colors = ButtonDefaults.buttonColors(containerColor = if (isCheckedInToday) Color.Gray else EmeraldPrimary),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .testTag("claim_daily_checkin_button")
-                        ) {
-                            Icon(
-                                imageVector = if (isCheckedInToday) Icons.Default.CheckCircle else Icons.Default.CardGiftcard,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = if (isCheckedInToday) "Sudah Check-in Hari Ini (Streak H-$streakDay)" else "Check-in Sekarang (+${GlobalPointsManager.getLoginRewardForStreak(if (isCheckedInToday) streakDay else streakDay)} RTP)",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 13.sp
-                            )
-                        }
-                    }
-                }
             }
 
             // Mission Category Filter Tabs
