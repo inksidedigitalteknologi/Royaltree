@@ -828,8 +828,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     return@launch
                 }
 
-                // 2. Sync ke backend
-                val item = repository.gameMinerItems.value.find { it.id == itemId }
+                // 2. Sync ke backend — ambil item dari Room
+                val item = repository.getGameMinerItemByIdSync(itemId)
                 if (item != null) {
                     val body = org.json.JSONObject().apply {
                         put("minerId", item.id)
@@ -886,10 +886,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 ApiClient.unplaceMiner(body)
 
                 // Update lokal — set isPlacedInRoom = false
-                val item = repository.gameMinerItems.value.find { it.id == itemId }
-                if (item != null) {
-                    repository.toggleMinerSlot(itemId, -1)
-                }
+                repository.toggleMinerSlot(itemId, -1)
 
                 loadGameState()
             } catch (e: Exception) {

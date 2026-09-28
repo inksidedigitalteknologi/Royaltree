@@ -728,10 +728,6 @@ fun MainAffiliateAppContent(
                     )
                 }
 
-                else -> {
-                    // Screen yang dinonaktifkan (tidak ada backend support)
-                    // STEP_COUNTER, APP_OFFERS, CAMPAIGNS, ANALYTICS, INVEST
-
                 AppScreen.GAME_ROOM -> {
                     GameHubScreen(
                         user = user,
@@ -775,6 +771,10 @@ fun MainAffiliateAppContent(
                         onBack = { onNavigate(AppScreen.GAME_ROOM) }
                     )
                 }
+
+                else -> {
+                    // Screen yang dinonaktifkan (tidak ada backend support)
+                    // STEP_COUNTER, APP_OFFERS, CAMPAIGNS, ANALYTICS, INVEST
                 }
             }
         }
