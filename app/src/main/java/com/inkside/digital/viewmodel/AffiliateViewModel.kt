@@ -763,6 +763,141 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    // ============ GAME — MINING TYCOON ============
+
+    /**
+     * Load game state dari backend.
+     * Panggil saat user buka GameHub.
+     */
+    fun loadGameState() {
+        viewModelScope.launch {
+            try {
+                ApiClient.getGameState().onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
+                        repository.syncGameStateFromBackend(json)
+                        android.util.Log.d("AffiliateViewModel", "✅ Game state loaded")
+                    }
+                }.onFailure {
+                    android.util.Log.w("AffiliateViewModel", "Gagal load game state: ${it.message}")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("AffiliateViewModel", "loadGameState error: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Claim mining points — sync ke backend.
+     */
+    fun claimMiningFromBackend() {
+        viewModelScope.launch {
+            try {
+                // 1. Claim lokal (Room)
+                val localResult = repository.claimGameMiningPoints()
+                localResult.onSuccess { points ->
+                    showSnackbar("Berhasil klaim ${points.toInt()} RTP! ⛏️")
+                }.onFailure {
+                    showSnackbar(it.message ?: "Gagal claim")
+                }
+
+                // 2. Sync ke backend
+                ApiClient.claimMining().onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
+                        loadGameState()
+                        loadUserFromBackend()
+                    }
+                }
+            } catch (e: Exception) {
+                showSnackbar("Error: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Beli miner — sync ke backend.
+     */
+    fun buyMinerFromBackend(itemId: String) {
+        viewModelScope.launch {
+            try {
+                // 1. Beli lokal
+                val localResult = repository.buyGameMinerItem(itemId)
+                localResult.onSuccess { msg ->
+                    showSnackbar(msg)
+                }.onFailure {
+                    showSnackbar(it.message ?: "Gagal beli")
+                    return@launch
+                }
+
+                // 2. Sync ke backend
+                val item = repository.gameMinerItems.value.find { it.id == itemId }
+                if (item != null) {
+                    val body = org.json.JSONObject().apply {
+                        put("minerId", item.id)
+                        put("tier", item.tier)
+                        put("name", item.name)
+                        put("pricePoints", item.pricePoints)
+                        put("powerGhs", item.powerGhs)
+                        put("pointsPerMinute", item.pointsPerMinute)
+                        put("iconEmoji", item.iconEmoji)
+                    }
+                    ApiClient.buyMiner(body)
+                }
+
+                loadGameState()
+                loadUserFromBackend()
+            } catch (e: Exception) {
+                showSnackbar("Error: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Pasang miner — sync ke backend.
+     */
+    fun placeMinerFromBackend(itemId: String, slotIndex: Int) {
+        viewModelScope.launch {
+            try {
+                // 1. Pasang lokal
+                repository.toggleMinerSlot(itemId, slotIndex)
+
+                // 2. Sync ke backend
+                val body = org.json.JSONObject().apply {
+                    put("minerId", itemId)
+                    put("slotIndex", slotIndex)
+                }
+                ApiClient.placeMiner(body)
+
+                loadGameState()
+            } catch (e: Exception) {
+                showSnackbar("Error: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Lepas miner — sync ke backend.
+     */
+    fun unplaceMinerFromBackend(itemId: String) {
+        viewModelScope.launch {
+            try {
+                val body = org.json.JSONObject().apply {
+                    put("minerId", itemId)
+                }
+                ApiClient.unplaceMiner(body)
+
+                // Update lokal — set isPlacedInRoom = false
+                val item = repository.gameMinerItems.value.find { it.id == itemId }
+                if (item != null) {
+                    repository.toggleMinerSlot(itemId, -1)
+                }
+
+                loadGameState()
+            } catch (e: Exception) {
+                showSnackbar("Error: ${e.message}")
+            }
+        }
+    }
+
     fun claimMissionReward(missionId: String) {
         viewModelScope.launch {
             val currentUser = user.value ?: return@launch
