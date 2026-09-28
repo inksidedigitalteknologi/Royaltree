@@ -51,12 +51,9 @@ import com.inkside.digital.viewmodel.AppScreen
 import com.inkside.digital.viewmodel.AdButtonState
 import com.inkside.digital.ui.components.BannerAdView
 
-// ==== Color Palette (Mewah & Elegan) ====
-private val DarkNavy = Color(0xFF0A0E1A)
-private val CardSlate = Color(0xFF1E293B)
+// ==== Accent Colors (tetap sama light/dark) ====
 private val GoldAccent = Color(0xFFFFD700)
 private val EmeraldLight = Color(0xFF10B981)
-private val TextSecondary = Color(0xFF94A3B8)
 private val ElectricBlue = Color(0xFF3B82F6)
 
 @Composable
@@ -81,7 +78,7 @@ fun HomeScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkNavy)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
@@ -98,19 +95,19 @@ fun HomeScreen(
                     Text(
                         text = LanguageManager.translate("home_welcome", currentLanguage, "Selamat Datang"),
                         fontSize = 13.sp,
-                        color = TextSecondary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         text = user?.name ?: "User",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
                 // Tier Badge
                 Surface(
-                    color = if (isPremium) GoldAccent.copy(alpha = 0.2f) else CardSlate,
+                    color = if (isPremium) GoldAccent.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceVariant,
                     shape = RoundedCornerShape(20.dp)
                 ) {
                     Row(
@@ -120,7 +117,7 @@ fun HomeScreen(
                         Icon(
                             imageVector = if (isPremium) Icons.Filled.WorkspacePremium else Icons.Filled.Star,
                             contentDescription = null,
-                            tint = if (isPremium) GoldAccent else TextSecondary,
+                            tint = if (isPremium) GoldAccent else MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(14.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -128,7 +125,7 @@ fun HomeScreen(
                             text = user?.tier ?: "FREE",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (isPremium) GoldAccent else TextSecondary
+                            color = if (isPremium) GoldAccent else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -159,7 +156,7 @@ fun HomeScreen(
                         Text(
                             text = LanguageManager.translate("total_commission", currentLanguage, "Saldo Tersedia"),
                             fontSize = 12.sp,
-                            color = TextSecondary
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
@@ -192,7 +189,7 @@ fun HomeScreen(
                                     text = LanguageManager.translate("btn_withdraw", currentLanguage, "Tarik Dana"),
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color.White
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                         }
@@ -278,38 +275,38 @@ fun HomeScreen(
                 AdButtonState.LOADING_AD -> Quadruple(
                     "Memuat iklan...",
                     "Mohon tunggu sebentar",
-                    TextSecondary,
+                    MaterialTheme.colorScheme.onSurfaceVariant,
                     false
                 )
                 AdButtonState.NO_AD -> Quadruple(
                     "Iklan tidak tersedia",
                     "Coba lagi nanti",
-                    TextSecondary,
+                    MaterialTheme.colorScheme.onSurfaceVariant,
                     false
                 )
                 AdButtonState.LIMIT -> Quadruple(
                     "Limit harian tercapai",
                     "Kembali besok untuk nonton lagi",
-                    TextSecondary,
+                    MaterialTheme.colorScheme.onSurfaceVariant,
                     false
                 )
                 AdButtonState.COOLDOWN -> Quadruple(
                     "Tunggu sebentar...",
                     "30 detik antar iklan",
-                    TextSecondary,
+                    MaterialTheme.colorScheme.onSurfaceVariant,
                     false
                 )
                 AdButtonState.LOADING -> Quadruple(
                     "Memeriksa...",
                     "Sedang memuat status",
-                    TextSecondary,
+                    MaterialTheme.colorScheme.onSurfaceVariant,
                     false
                 )
             }
 
             Card(
                 shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.cardColors(containerColor = CardSlate),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                 modifier = Modifier
                     .fillMaxWidth()
                     .then(
@@ -343,13 +340,13 @@ fun HomeScreen(
                             text = label,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (isEnabled) Color.White else TextSecondary
+                            color = if (isEnabled) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = subtitle,
                             fontSize = 11.sp,
-                            color = TextSecondary
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     if (adButtonState == AdButtonState.NO_AD) {
@@ -389,7 +386,7 @@ private fun StatCard(
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardSlate),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         modifier = modifier
     ) {
         Column(
@@ -409,13 +406,13 @@ private fun StatCard(
                 text = value,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
             )
             Text(
                 text = label,
                 fontSize = 10.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
         }
@@ -453,7 +450,7 @@ private fun QuickActionButton(
                 text = label,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
