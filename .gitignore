@@ -27,12 +27,11 @@ backend/service-account.json
 backend/.env
 backend/node_modules/
 
-# Backup files
+# Backup files (semua variasi)
 *.backup
 *.bak
-admin/*.backup
-
-# Backup files
-*.bak
-*.bak2-*
+*.bak[0-9]*
+*.bak[0-9][0-9]*
 *.bak-*
+*.bak2-*
+admin/*.backup
