@@ -52,7 +52,11 @@ object ApiClient {
         .readTimeout(10, TimeUnit.SECONDS)
         .addInterceptor(AuthInterceptor())  // Firebase ID token (kalau ada user login)
         .addInterceptor(HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = if (com.inkside.digital.BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
         })
         .build()
 
