@@ -10,6 +10,83 @@ const { checkFraud } = require('../middleware/antiFraud');
 const db = admin.firestore();
 
 // ============================================================
+// KATALOG MINER DEFAULT
+// ============================================================
+const MINER_CATALOG = [
+    {
+        id: 'miner_common',
+        name: 'Pico Miner',
+        tier: 'COMMON',
+        iconEmoji: '⛏️',
+        tokenCost: 10,
+        powerGhs: 10,
+        pointsPerDay: 1,
+        description: 'Miner dasar untuk pemula'
+    },
+    {
+        id: 'miner_rare',
+        name: 'Micro Rig',
+        tier: 'RARE',
+        iconEmoji: '🔧',
+        tokenCost: 50,
+        powerGhs: 50,
+        pointsPerDay: 5,
+        description: 'Miner dengan power lebih besar'
+    },
+    {
+        id: 'miner_epic',
+        name: 'Quantum Rig',
+        tier: 'EPIC',
+        iconEmoji: '⚡',
+        tokenCost: 200,
+        powerGhs: 200,
+        pointsPerDay: 20,
+        description: 'Miner dengan teknologi quantum'
+    },
+    {
+        id: 'miner_legendary',
+        name: 'Titan Miner',
+        tier: 'LEGENDARY',
+        iconEmoji: '💎',
+        tokenCost: 1000,
+        powerGhs: 1000,
+        pointsPerDay: 100,
+        description: 'Miner raksasa dengan power luar biasa'
+    },
+    {
+        id: 'miner_mythic',
+        name: 'Infinity Core',
+        tier: 'MYTHIC',
+        iconEmoji: '🌌',
+        tokenCost: 5000,
+        powerGhs: 5000,
+        pointsPerDay: 500,
+        description: 'Miner legendaris dengan power tak terbatas'
+    }
+];
+
+// ============================================================
+// HELPER: Hitung token reward
+// ============================================================
+function getTokenReward(source) {
+    const rewards = {
+        'AD': 1,
+        'CHECKIN': 2,
+        'MISSION': 2,
+        'REFERRAL': 5
+    };
+    return rewards[source] || 1;
+}
+
+// ============================================================
+// HELPER: Hitung poin dari total power
+// ============================================================
+function calculatePointsPerDay(totalPowerGhs) {
+    // Asumsi: 10 GH/s = 1 poin/hari
+    return totalPowerGhs / 10;
+}
+
+// ============================================================
 // GET /api/v1/game/state
 // Ambil state game user (room, miners, stats)
 // ============================================================
@@ -46,15 +123,26 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
             miners.push({ id: doc.id, ...doc.data() });
         });
 
+        // Hitung total power
+        const totalPowerGhs = miners.reduce((sum, m) => sum + (m.powerGhs || 0), 0);
+        const pointsPerDay = calculatePointsPerDay(totalPowerGhs);
+
         return res.json({
             success: true,
             data: {
                 user: {
                     points: userData.points || 0,
-                    balance: userData.balance || 0
+                    balance: userData.balance || 0,
+                    minerTokens: userData.minerTokens || 0,
+                    todayTokensEarned: userData.todayTokensEarned || 0
                 },
-                room: room,
-                miners: miners
+                room: {
+                    ...room,
+                    totalPowerGhs: totalPowerGhs,
+                    pointsPerDay: pointsPerDay
+                },
+                miners: miners,
+                catalog: MINER_CATALOG
             }
         });
     } catch (error) {
@@ -318,6 +406,197 @@ router.get('/stats', verifyFirebaseToken, async (req, res) => {
         });
     } catch (error) {
         console.error('Stats error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// GET /api/v1/game/miners/catalog
+// Katalog miner (untuk ditampilkan di toko)
+// ============================================================
+router.get('/miners/catalog', verifyFirebaseToken, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+
+        // Ambil miner yang sudah dimiliki user
+        const ownedSnapshot = await db.collection('game_miners')
+            .where('userId', '==', uid)
+            .get();
+
+        const ownedIds = new Set();
+        ownedSnapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.catalogId) ownedIds.add(data.catalogId);
+        });
+
+        // Gabung katalog + status owned
+        const catalog = MINER_CATALOG.map(miner => ({
+            ...miner,
+            isOwned: ownedIds.has(miner.id),
+            ownedCount: ownedSnapshot.docs.filter(d => d.data().catalogId === miner.id).length
+        }));
+
+        return res.json({
+            success: true,
+            data: {
+                catalog: catalog,
+                ownedCount: ownedIds.size
+            }
+        });
+    } catch (error) {
+        console.error('Miner catalog error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// POST /api/v1/game/miners/claim-token
+// Claim Miner Token dari aktivitas (iklan, check-in, misi)
+// Body: { source, transactionId }
+// ============================================================
+router.post('/miners/claim-token', verifyFirebaseToken, checkFraud, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+        const { source, transactionId } = req.body;
+
+        if (!source || !transactionId) {
+            return res.status(400).json({ success: false, message: 'source & transactionId wajib' });
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+        const userRef = db.collection('users').doc(uid);
+        const userDoc = await userRef.get();
+        const userData = userDoc.exists ? userDoc.data() : {};
+
+        // Cek limit harian token
+        const lastTokenDate = userData.lastTokenDate || '';
+        const todayTokens = lastTokenDate === today ? (userData.todayTokensEarned || 0) : 0;
+
+        const MAX_TOKENS_PER_DAY = 20;
+        if (todayTokens >= MAX_TOKENS_PER_DAY) {
+            return res.status(400).json({
+                success: false,
+                message: 'Limit token harian tercapai.'
+            });
+        }
+
+        // Cek transaction unik
+        const txRef = db.collection('token_transactions').doc(transactionId);
+        const txDoc = await txRef.get();
+        if (txDoc.exists) {
+            return res.status(400).json({ success: false, message: 'Transaksi sudah digunakan.' });
+        }
+
+        const tokenAmount = getTokenReward(source);
+
+        // Simpan transaksi
+        await txRef.set({
+            userId: uid,
+            type: 'MINT_TOKEN',
+            source: source,
+            amount: tokenAmount,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Update user
+        await userRef.update({
+            minerTokens: admin.firestore.FieldValue.increment(tokenAmount),
+            todayTokensEarned: todayTokens + tokenAmount,
+            lastTokenDate: today
+        });
+
+        // Audit log
+        await db.collection('audit_logs').add({
+            userId: uid,
+            action: 'CLAIM_MINER_TOKEN',
+            source: source,
+            amount: tokenAmount,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        return res.json({
+            success: true,
+            message: `+${tokenAmount} Miner Token!`,
+            tokens: tokenAmount,
+            totalTokens: (userData.minerTokens || 0) + tokenAmount
+        });
+    } catch (error) {
+        console.error('Claim token error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// POST /api/v1/game/miners/unlock
+// Unlock miner pakai token
+// Body: { catalogId }
+// ============================================================
+router.post('/miners/unlock', verifyFirebaseToken, checkFraud, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+        const { catalogId } = req.body;
+
+        if (!catalogId) {
+            return res.status(400).json({ success: false, message: 'catalogId wajib' });
+        }
+
+        const catalogItem = MINER_CATALOG.find(m => m.id === catalogId);
+        if (!catalogItem) {
+            return res.status(404).json({ success: false, message: 'Miner tidak ditemukan di katalog' });
+        }
+
+        const userRef = db.collection('users').doc(uid);
+        const userDoc = await userRef.get();
+        const userData = userDoc.exists ? userDoc.data() : {};
+
+        const currentTokens = userData.minerTokens || 0;
+        if (currentTokens < catalogItem.tokenCost) {
+            return res.status(400).json({
+                success: false,
+                message: `Token tidak cukup. Butuh ${catalogItem.tokenCost}, punya ${currentTokens}.`
+            });
+        }
+
+        // Potong token
+        await userRef.update({
+            minerTokens: admin.firestore.FieldValue.increment(-catalogItem.tokenCost)
+        });
+
+        // Buat instance miner baru
+        const minerInstanceId = 'miner_' + uid.substring(0, 6) + '_' + Date.now();
+        const minerRef = db.collection('game_miners').doc(minerInstanceId);
+        await minerRef.set({
+            userId: uid,
+            catalogId: catalogItem.id,
+            name: catalogItem.name,
+            tier: catalogItem.tier,
+            iconEmoji: catalogItem.iconEmoji,
+            powerGhs: catalogItem.powerGhs,
+            pointsPerDay: catalogItem.pointsPerDay,
+            isOwned: true,
+            isPlacedInRoom: false,
+            placedSlotIndex: -1,
+            unlockedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Audit log
+        await db.collection('audit_logs').add({
+            userId: uid,
+            action: 'UNLOCK_MINER',
+            catalogId: catalogId,
+            tier: catalogItem.tier,
+            tokenCost: catalogItem.tokenCost,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        return res.json({
+            success: true,
+            message: `Berhasil unlock ${catalogItem.name}!`,
+            minerId: minerInstanceId,
+            tokensRemaining: currentTokens - catalogItem.tokenCost
+        });
+    } catch (error) {
+        console.error('Unlock miner error:', error);
         return res.status(500).json({ success: false, message: error.message });
     }
 });
