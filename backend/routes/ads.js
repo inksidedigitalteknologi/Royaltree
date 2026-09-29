@@ -139,13 +139,22 @@ router.post('/reward', verifyFirebaseToken, checkFraud, async (req, res) => {
             timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
 
-        // Update user + recentAdTimestamps
+        // Update user + recentAdTimestamps + Miner Token
         const now = Date.now();
         const recentAds = (userData.recentAdTimestamps || []).filter(ts => now - ts < 300000);
         recentAds.push(now);
 
+        // Cek limit token harian
+        const lastTokenDate = userData.lastTokenDate || '';
+        const todayTokens = lastTokenDate === today ? (userData.todayTokensEarned || 0) : 0;
+        const MAX_TOKENS_PER_DAY = 20;
+        const tokenToGrant = todayTokens < MAX_TOKENS_PER_DAY ? 1 : 0;
+
         await userRef.update({
             points: admin.firestore.FieldValue.increment(rewardPoints),
+            minerTokens: admin.firestore.FieldValue.increment(tokenToGrant),
+            todayTokensEarned: todayTokens + tokenToGrant,
+            lastTokenDate: today,
             todayAdsWatched: todayAdsWatched + 1,
             lastAdDate: today,
             recentAdTimestamps: recentAds
@@ -166,9 +175,11 @@ router.post('/reward', verifyFirebaseToken, checkFraud, async (req, res) => {
 
         return res.json({
             success: true,
-            message: `+${rewardPoints} poin dari video!`,
+            message: `+${rewardPoints} RTP & +${tokenToGrant} Miner Token!`,
             points: rewardPoints,
-            todayAdsWatched: todayAdsWatched + 1
+            tokens: tokenToGrant,
+            todayAdsWatched: todayAdsWatched + 1,
+            minerTokens: (userData.minerTokens || 0) + tokenToGrant
         });
 
     } catch (error) {
