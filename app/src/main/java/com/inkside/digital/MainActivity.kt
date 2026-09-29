@@ -117,6 +117,7 @@ fun RootNav(
 
     val context = androidx.compose.ui.platform.LocalContext.current
     val isOnboarded = com.inkside.digital.data.preferences.AppThemePreferences.isOnboarded
+    val currentLanguage by viewModel.currentLanguage.collectAsState()
 
     if (!isOnboarded) {
         // Tampil onboarding pertama kali
@@ -257,7 +258,6 @@ fun MainAffiliateApp(
 
     val currentScreen by viewModel.currentScreen.collectAsState()
     val isAdminMode by viewModel.isAdminMode.collectAsState()
-    val currentLanguage by viewModel.currentLanguage.collectAsState()
     val adButtonState by viewModel.adButtonState.collectAsState()
 
     // Preload ad + refresh state saat HomeScreen dibuka
