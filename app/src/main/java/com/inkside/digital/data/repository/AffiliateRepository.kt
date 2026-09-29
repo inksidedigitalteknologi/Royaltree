@@ -1425,6 +1425,40 @@ class AffiliateRepository(private val dao: AppDao) {
         dao.getGameMinerItemById(itemId)
     }
 
+    /**
+     * Sync katalog miner dari backend → simpan ke Room.
+     * @param json Response dari GET /game/miners/catalog
+     */
+    suspend fun syncMinerCatalogFromBackend(json: org.json.JSONObject) = withContext(Dispatchers.IO) {
+        try {
+            val data = json.optJSONObject("data") ?: return@withContext
+            val catalogJson = data.optJSONArray("catalog") ?: return@withContext
+
+            val items = mutableListOf<com.inkside.digital.data.model.GameMinerItemEntity>()
+            for (i in 0 until catalogJson.length()) {
+                val m = catalogJson.getJSONObject(i)
+                items.add(
+                    com.inkside.digital.data.model.GameMinerItemEntity(
+                        id = m.optString("id", ""),
+                        name = m.optString("name", ""),
+                        tier = m.optString("tier", "COMMON"),
+                        iconEmoji = m.optString("iconEmoji", "⛏️"),
+                        pricePoints = m.optInt("tokenCost", 0),  // token cost
+                        powerGhs = m.optDouble("powerGhs", 0.0),
+                        pointsPerMinute = m.optDouble("pointsPerDay", 0.0),  // per hari
+                        isOwned = m.optBoolean("isOwned", false),
+                        isPlacedInRoom = false,
+                        placedSlotIndex = -1,
+                        description = m.optString("description", "")
+                    )
+                )
+            }
+            dao.insertGameMinerItems(items)
+        } catch (e: Exception) {
+            android.util.Log.e("AffiliateRepository", "syncMinerCatalog error: ${e.message}")
+        }
+    }
+
     suspend fun syncGameStateFromBackend(json: org.json.JSONObject) = withContext(Dispatchers.IO) {
         try {
             val data = json.optJSONObject("data") ?: return@withContext

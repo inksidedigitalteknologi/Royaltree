@@ -766,6 +766,82 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     // ============ GAME — MINING TYCOON ============
 
     /**
+     * Load katalog miner dari backend.
+     */
+    fun loadMinerCatalog() {
+        viewModelScope.launch {
+            try {
+                ApiClient.getMinerCatalog().onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
+                        repository.syncMinerCatalogFromBackend(json)
+                        android.util.Log.d("AffiliateViewModel", "✅ Miner catalog loaded")
+                    }
+                }.onFailure {
+                    android.util.Log.w("AffiliateViewModel", "Gagal load catalog: ${it.message}")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("AffiliateViewModel", "loadMinerCatalog error: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Claim Miner Token dari aktivitas (iklan, check-in, misi).
+     */
+    fun claimMinerToken(source: String) {
+        viewModelScope.launch {
+            try {
+                val txId = java.util.UUID.randomUUID().toString()
+                val body = org.json.JSONObject().apply {
+                    put("source", source)
+                    put("transactionId", txId)
+                }
+
+                ApiClient.claimMinerToken(body).onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
+                        val tokens = json.optInt("tokens", 0)
+                        showSnackbar("+$tokens Miner Token! ⛏️")
+                        loadGameState()
+                    } else {
+                        showSnackbar(json.optString("message", "Gagal claim token"))
+                    }
+                }.onFailure {
+                    showSnackbar("Error: ${it.message}")
+                }
+            } catch (e: Exception) {
+                showSnackbar("Error: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Unlock miner pakai token.
+     */
+    fun unlockMiner(catalogId: String) {
+        viewModelScope.launch {
+            try {
+                val body = org.json.JSONObject().apply {
+                    put("catalogId", catalogId)
+                }
+
+                ApiClient.unlockMiner(body).onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
+                        showSnackbar(json.optString("message", "Miner berhasil di-unlock!"))
+                        loadGameState()
+                        loadMinerCatalog()
+                    } else {
+                        showSnackbar(json.optString("message", "Gagal unlock miner"))
+                    }
+                }.onFailure {
+                    showSnackbar("Error: ${it.message}")
+                }
+            } catch (e: Exception) {
+                showSnackbar("Error: ${e.message}")
+            }
+        }
+    }
+
+    /**
      * Load game state dari backend.
      * Panggil saat user buka GameHub.
      */

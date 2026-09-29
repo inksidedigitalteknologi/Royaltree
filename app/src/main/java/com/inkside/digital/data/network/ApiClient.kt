@@ -377,6 +377,38 @@ object ApiClient {
         }
     }
 
+    suspend fun getMinerCatalog(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response: ResponseBody = apiService.getMinerCatalog()
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun claimMinerToken(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val response: ResponseBody = apiService.claimMinerToken(requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun unlockMiner(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val response: ResponseBody = apiService.unlockMiner(requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     // ============ MISSIONS ============
 
     suspend fun completeMission(missionId: String, userId: String): Result<JSONObject> = withContext(Dispatchers.IO) {
