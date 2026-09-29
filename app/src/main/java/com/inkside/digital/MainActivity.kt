@@ -288,6 +288,7 @@ fun MainAffiliateApp(
     val minerItems by viewModel.gameMinerItems.collectAsState()
     val placedMiners by viewModel.placedMinerItems.collectAsState()
     val roomState by viewModel.gameRoomState.collectAsState()
+    val currentLanguage by viewModel.currentLanguage.collectAsState()
 
     MainAffiliateAppContent(
         user = user,
