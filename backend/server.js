@@ -18,6 +18,7 @@ const dailyRoutes = require('./routes/daily');
 const adsRoutes = require('./routes/ads');
 const adminRoutes = require('./routes/admin');
 const gameRoutes = require('./routes/game');
+const purchaseRoutes = require('./routes/purchase');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,6 +30,7 @@ app.use('/api/v1/daily', dailyRoutes);
 app.use('/api/v1/ads', adsRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/game', gameRoutes);
+app.use('/api/v1/purchase', purchaseRoutes);
 
 // Serve admin panel
 app.use('/admin', express.static('/root/Royaltree/admin'));
