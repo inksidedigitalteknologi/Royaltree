@@ -107,6 +107,16 @@ interface RoyaltreeApiService {
     @GET("game/stats")
     suspend fun getGameStats(): ResponseBody
 
+    // ==== Miner Token + Catalog ====
+    @GET("game/miners/catalog")
+    suspend fun getMinerCatalog(): ResponseBody
+
+    @POST("game/miners/claim-token")
+    suspend fun claimMinerToken(@Body body: RequestBody): ResponseBody
+
+    @POST("game/miners/unlock")
+    suspend fun unlockMiner(@Body body: RequestBody): ResponseBody
+
     // Profile
     @GET("profile/{userId}")
     suspend fun getProfile(
