@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.room.migration.Migration
 import com.inkside.digital.data.dao.AppDao
 import com.inkside.digital.data.model.AffiliateLinkEntity
 import com.inkside.digital.data.model.AppDownloadAdEntity
@@ -40,7 +41,7 @@ import kotlinx.coroutines.launch
         GameRoomStateEntity::class
     ],
     version = 6,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun appDao(): AppDao
@@ -49,6 +50,15 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
+        // Migration 5 -> 6: schema tidak berubah, tapi kita kekalkan
+        // supaya user lama TIDAK kehilangan data (sebelum ini fallback
+        // destructive akan drop semua table).
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // No-op: tidak ada perubahan schema antara v5 dan v6.
+            }
+        }
+
         fun getDatabase(context: Context, scope: CoroutineScope): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -56,7 +66,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "royaltree.db"
                 )
-                    .fallbackToDestructiveMigration()
+                    .addMigrations(MIGRATION_5_6)
                     .addCallback(DatabaseCallback(scope))
                     .build()
                 INSTANCE = instance
