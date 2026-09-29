@@ -177,13 +177,13 @@ fun DailyCheckInScreen(
                 Column(modifier = Modifier.padding(12.dp)) {
                     // Header hari
                     Row(modifier = Modifier.fillMaxWidth()) {
-                        listOf("Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab").forEach { dayName ->
+                        listOf("day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat").forEach { dayKey ->
                             Box(
                                 modifier = Modifier.weight(1f),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = dayName,
+                                    text = LanguageManager.translate(dayKey, currentLanguage, dayKey),
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -301,7 +301,7 @@ fun DailyCheckInScreen(
                 ) {
                     Icon(Icons.Default.CardGiftcard, null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Tonton Iklan & Check-In", fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("btn_watch_and_checkin", currentLanguage, "Tonton Iklan & Check-In"), fontWeight = FontWeight.Bold)
                 }
             } else {
                 Card(
@@ -338,6 +338,7 @@ fun DailyCheckInScreen(
             userPoints = 0,
             adsWatchedToday = 0,
             maxAdsPerDay = 1,
+            currentLanguage = currentLanguage,
             onWatchAd = {
                 showRecoveryDialog = false
                 onWatchAdForRecovery(selectedMissedDate)

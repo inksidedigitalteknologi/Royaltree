@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.GoldVip
 
@@ -34,6 +36,7 @@ fun RecoveryDialog(
     userPoints: Int,
     adsWatchedToday: Int,
     maxAdsPerDay: Int,
+    currentLanguage: AppLanguage = AppLanguage.INDONESIAN,
     onWatchAd: () -> Unit,
     onPayPoints: () -> Unit,
     onDismiss: () -> Unit
@@ -45,13 +48,13 @@ fun RecoveryDialog(
         onDismissRequest = onDismiss,
         title = {
             Column {
-                Text("Pulihkan Streak", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text("Hari $missedDate", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(LanguageManager.translate("recover_title", currentLanguage, "Pulihkan Streak"), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text("${LanguageManager.translate("recover_date", currentLanguage, "Hari")} $missedDate", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("Kamu bolos di hari ini. Pulihkan streak dengan salah satu cara:", fontSize = 13.sp)
+                Text(LanguageManager.translate("recover_desc", currentLanguage, "Kamu bolos di hari ini..."), fontSize = 13.sp)
 
                 Button(
                     onClick = onWatchAd,
@@ -66,7 +69,7 @@ fun RecoveryDialog(
                     Icon(Icons.Default.PlayArrow, null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Tonton Iklan", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("recover_watch_ad", currentLanguage, "Tonton Iklan"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         Text(
                             text = if (canWatchAd) "Sisa hari ini: ${maxAdsPerDay - adsWatchedToday}/${maxAdsPerDay}"
                                    else "Batas iklan hari ini tercapai",
@@ -90,7 +93,7 @@ fun RecoveryDialog(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Bayar $pointCost Poin", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("recover_pay_points", currentLanguage, "Bayar %d Poin").format(pointCost), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         Text(
                             text = if (canPayPoints) "Poin kamu: $userPoints"
                                    else "Poin tidak cukup (butuh $pointCost)",
@@ -103,7 +106,7 @@ fun RecoveryDialog(
         },
         confirmButton = {},
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Batal") }
+            TextButton(onClick = onDismiss) { Text(LanguageManager.translate("common_cancel", currentLanguage, "Batal")) }
         }
     )
 }
