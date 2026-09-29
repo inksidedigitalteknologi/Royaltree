@@ -149,7 +149,10 @@ fun GameRoomScreenContent(
     onFinishGame: (Int) -> Unit,
     onNavigateToMissions: () -> Unit,
     onBack: () -> Unit,
-    currentLanguage: AppLanguage
+    currentLanguage: AppLanguage,
+    minerTokens: Int = 0,
+    onClaimMinerToken: (String) -> Unit = {},
+    onUnlockMiner: (String) -> Unit = {}
 ) {
     var activeTab by remember { mutableIntStateOf(0) } // 0: Ruang Rak, 1: Toko Item, 2: Mini-Game
     var selectedItemToBuy by remember { mutableStateOf<GameMinerItemEntity?>(null) }
@@ -293,7 +296,10 @@ fun GameRoomScreenContent(
                         generationRatePerMin = generationRatePerMin,
                         liveUnclaimedPoints = liveUnclaimedPoints,
                         roomState = roomState,
+                        minerTokens = minerTokens,
                         onClaimMining = onClaimMining,
+                        onClaimMinerToken = onClaimMinerToken,
+                        onUnlockMiner = onUnlockMiner,
                         onUnplaceMiner = { minerId, slot -> onToggleMinerSlot(minerId, slot) },
                         onOpenShop = { activeTab = 1 },
                         onOpenAssignSlotModal = { slot -> slotToAssignItem = slot },
@@ -305,7 +311,9 @@ fun GameRoomScreenContent(
                     ItemShopTab(
                         minerItems = minerItems,
                         userPoints = user?.points ?: 0,
+                        minerTokens = minerTokens,
                         onBuyItem = { item -> selectedItemToBuy = item },
+                        onUnlockMiner = onUnlockMiner,
                         onNavigateToMissions = onNavigateToMissions
                     )
                 }
@@ -621,7 +629,10 @@ private fun MiningRoomTab(
     generationRatePerMin: Double,
     liveUnclaimedPoints: Double,
     roomState: GameRoomStateEntity?,
+    minerTokens: Int = 0,
     onClaimMining: () -> Unit,
+    onClaimMinerToken: (String) -> Unit = {},
+    onUnlockMiner: (String) -> Unit = {},
     onUnplaceMiner: (minerId: String, slot: Int) -> Unit,
     onOpenShop: () -> Unit,
     onOpenAssignSlotModal: (slotIndex: Int) -> Unit,
@@ -645,7 +656,42 @@ private fun MiningRoomTab(
         verticalArrangement = Arrangement.spacedBy(14.dp),
         contentPadding = PaddingValues(vertical = 14.dp)
     ) {
-        // Hero Room Power & Harvest Dashboard
+        // ==== Hero Banner Retro + Token Counter ====
+        item {
+            Box(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                HeroBanner(
+                    totalPowerGhs = totalPowerGhs,
+                    liveUnclaimedPoints = liveUnclaimedPoints,
+                    generationRatePerMin = generationRatePerMin
+                )
+                // Token badge di pojok kanan atas
+                Surface(
+                    color = RetroGold,
+                    shape = RoundedCornerShape(20.dp),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("⛏️", fontSize = 14.sp)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "$minerTokens",
+                            fontWeight = FontWeight.Black,
+                            fontSize = 13.sp,
+                            color = Color.Black
+                        )
+                    }
+                }
+            }
+        }
+
+        // Hero Room Power & Harvest Dashboard (lama)
         item {
             Card(
                 shape = RoundedCornerShape(20.dp),
@@ -1094,7 +1140,9 @@ private fun RackSlotItemCard(
 private fun ItemShopTab(
     minerItems: List<GameMinerItemEntity>,
     userPoints: Int,
+    minerTokens: Int = 0,
     onBuyItem: (GameMinerItemEntity) -> Unit,
+    onUnlockMiner: (String) -> Unit = {},
     onNavigateToMissions: () -> Unit
 ) {
     LazyColumn(
@@ -1117,19 +1165,37 @@ private fun ItemShopTab(
                         .padding(14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("🛒", fontSize = 32.sp)
+                    Text("⛏️", fontSize = 32.sp)
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Beli Item Penambang Pakai Poin",
+                            text = "Unlock Miner dengan Token",
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
                         )
                         Text(
-                            text = "Item yang Anda beli akan langsung ditempatkan di rak untuk memproduksi poin pasif setiap menit!",
+                            text = "Kumpulkan Miner Token dari iklan & misi untuk membuka miner baru!",
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Surface(
+                            color = RetroGold.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(6.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("Token: ", fontSize = 11.sp, color = RetroGold)
+                                Text(
+                                    text = "$minerTokens",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Black,
+                                    color = RetroGold
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -1174,7 +1240,9 @@ private fun ItemShopTab(
             ShopMinerCard(
                 item = item,
                 userPoints = userPoints,
-                onBuy = { onBuyItem(item) }
+                minerTokens = minerTokens,
+                onBuy = { onBuyItem(item) },
+                onUnlock = { onUnlockMiner(item.id) }
             )
         }
     }
@@ -1184,7 +1252,9 @@ private fun ItemShopTab(
 private fun ShopMinerCard(
     item: GameMinerItemEntity,
     userPoints: Int,
-    onBuy: () -> Unit
+    minerTokens: Int = 0,
+    onBuy: () -> Unit,
+    onUnlock: () -> Unit = {}
 ) {
     val rarityColor = tierColor(item.tier)
     val canAfford = userPoints >= item.pricePoints
