@@ -91,6 +91,7 @@ import com.inkside.digital.data.model.GameRoomStateEntity
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.ui.theme.ElectricBlue
+import com.inkside.digital.ui.components.BannerAdView
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.EmeraldPrimary
 import com.inkside.digital.ui.theme.GoldVip
@@ -866,6 +867,11 @@ private fun MiningRoomTab(
                     }
                 }
             }
+        }
+
+        // ==== Banner AdMob ====
+        item {
+            BannerAdView()
         }
 
         // Section Title: Virtual Server Rack (6 Slots)
