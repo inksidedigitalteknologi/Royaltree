@@ -540,6 +540,7 @@ fun MainAffiliateAppContent(
                     user = user,
                     isAdminMode = isAdminMode,
                     currentScreen = currentScreen,
+                    currentLanguage = currentLanguage,
                     onNavigate = { screen -> onNavigate(screen) },
                     onToggleRole = { onSetAdminMode(!isAdminMode) },
                     onCloseDrawer = { coroutineScope.launch { drawerState.close() } },
