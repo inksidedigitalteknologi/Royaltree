@@ -187,6 +187,116 @@ object LanguageManager {
             AppLanguage.ARABIC to "المصادقة الثنائية والتشفير",
             AppLanguage.JAPANESE to "2要素認証 & 暗号化"
         ),
+        // ==== RECOVERY ====
+        "recover_title" to mapOf(
+            AppLanguage.INDONESIAN to "Pulihkan Streak",
+            AppLanguage.ENGLISH to "Recover Streak",
+            AppLanguage.SPANISH to "Recuperar Racha",
+            AppLanguage.CHINESE to "恢复连续记录",
+            AppLanguage.ARABIC to "استعادة السلسلة",
+            AppLanguage.JAPANESE to "連続記録を回復"
+        ),
+        "recover_date" to mapOf(
+            AppLanguage.INDONESIAN to "Hari",
+            AppLanguage.ENGLISH to "Date",
+            AppLanguage.SPANISH to "Fecha",
+            AppLanguage.CHINESE to "日期",
+            AppLanguage.ARABIC to "التاريخ",
+            AppLanguage.JAPANESE to "日付"
+        ),
+        "recover_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Kamu bolos di hari ini. Pulihkan streak dengan salah satu cara:",
+            AppLanguage.ENGLISH to "You missed this day. Recover your streak using one of these:",
+            AppLanguage.SPANISH to "Faltaste este día. Recupera tu racha con una de estas opciones:",
+            AppLanguage.CHINESE to "您错过了这一天。通过以下方式之一恢复连续记录：",
+            AppLanguage.ARABIC to "لقد فاتك هذا اليوم. استعد سلسلتك بإحدى الطرق التالية:",
+            AppLanguage.JAPANESE to "この日を逃しました。次のいずれかで連続記録を回復できます："
+        ),
+        "recover_watch_ad" to mapOf(
+            AppLanguage.INDONESIAN to "Tonton Iklan",
+            AppLanguage.ENGLISH to "Watch Ad",
+            AppLanguage.SPANISH to "Ver Anuncio",
+            AppLanguage.CHINESE to "观看广告",
+            AppLanguage.ARABIC to "مشاهدة إعلان",
+            AppLanguage.JAPANESE to "広告を見る"
+        ),
+        "recover_pay_points" to mapOf(
+            AppLanguage.INDONESIAN to "Bayar %d Poin",
+            AppLanguage.ENGLISH to "Pay %d Points",
+            AppLanguage.SPANISH to "Pagar %d Puntos",
+            AppLanguage.CHINESE to "支付 %d 积分",
+            AppLanguage.ARABIC to "دفع %d نقاط",
+            AppLanguage.JAPANESE to "%d ポイントを支払う"
+        ),
+
+        // ==== HARI ====
+        "day_sun" to mapOf(
+            AppLanguage.INDONESIAN to "Min",
+            AppLanguage.ENGLISH to "Sun",
+            AppLanguage.SPANISH to "Dom",
+            AppLanguage.CHINESE to "日",
+            AppLanguage.ARABIC to "أحد",
+            AppLanguage.JAPANESE to "日"
+        ),
+        "day_mon" to mapOf(
+            AppLanguage.INDONESIAN to "Sen",
+            AppLanguage.ENGLISH to "Mon",
+            AppLanguage.SPANISH to "Lun",
+            AppLanguage.CHINESE to "一",
+            AppLanguage.ARABIC to "إثن",
+            AppLanguage.JAPANESE to "月"
+        ),
+        "day_tue" to mapOf(
+            AppLanguage.INDONESIAN to "Sel",
+            AppLanguage.ENGLISH to "Tue",
+            AppLanguage.SPANISH to "Mar",
+            AppLanguage.CHINESE to "二",
+            AppLanguage.ARABIC to "ثلا",
+            AppLanguage.JAPANESE to "火"
+        ),
+        "day_wed" to mapOf(
+            AppLanguage.INDONESIAN to "Rab",
+            AppLanguage.ENGLISH to "Wed",
+            AppLanguage.SPANISH to "Mié",
+            AppLanguage.CHINESE to "三",
+            AppLanguage.ARABIC to "أرب",
+            AppLanguage.JAPANESE to "水"
+        ),
+        "day_thu" to mapOf(
+            AppLanguage.INDONESIAN to "Kam",
+            AppLanguage.ENGLISH to "Thu",
+            AppLanguage.SPANISH to "Jue",
+            AppLanguage.CHINESE to "四",
+            AppLanguage.ARABIC to "خمي",
+            AppLanguage.JAPANESE to "木"
+        ),
+        "day_fri" to mapOf(
+            AppLanguage.INDONESIAN to "Jum",
+            AppLanguage.ENGLISH to "Fri",
+            AppLanguage.SPANISH to "Vie",
+            AppLanguage.CHINESE to "五",
+            AppLanguage.ARABIC to "جمع",
+            AppLanguage.JAPANESE to "金"
+        ),
+        "day_sat" to mapOf(
+            AppLanguage.INDONESIAN to "Sab",
+            AppLanguage.ENGLISH to "Sat",
+            AppLanguage.SPANISH to "Sáb",
+            AppLanguage.CHINESE to "六",
+            AppLanguage.ARABIC to "سبت",
+            AppLanguage.JAPANESE to "土"
+        ),
+
+        // ==== BUTTON ====
+        "btn_watch_and_checkin" to mapOf(
+            AppLanguage.INDONESIAN to "Tonton Iklan & Check-In",
+            AppLanguage.ENGLISH to "Watch Ad & Check-In",
+            AppLanguage.SPANISH to "Ver Anuncio y Registrarse",
+            AppLanguage.CHINESE to "观看广告并签到",
+            AppLanguage.ARABIC to "شاهد الإعلان وسجل الدخول",
+            AppLanguage.JAPANESE to "広告を見てチェックイン"
+        ),
+
         "sponsor_ad_title" to mapOf(
             AppLanguage.INDONESIAN to "Tonton Iklan Sponsor (+2-5 RTP)",
             AppLanguage.ENGLISH to "Watch Sponsor Ad (+2-5 RTP)",
