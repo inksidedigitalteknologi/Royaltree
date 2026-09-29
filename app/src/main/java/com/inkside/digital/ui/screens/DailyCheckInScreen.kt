@@ -55,6 +55,7 @@ import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
+import com.inkside.digital.ui.components.BannerAdView
 import java.util.Calendar
 
 @Composable
@@ -165,6 +166,11 @@ fun DailyCheckInScreen(
                     modifier = Modifier.padding(12.dp)
                 )
             }
+        }
+
+        // ==== Banner AdMob ====
+        item {
+            BannerAdView()
         }
 
         // Kalender
