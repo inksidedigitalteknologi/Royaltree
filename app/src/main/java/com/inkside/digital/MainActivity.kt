@@ -121,6 +121,10 @@ fun RootNav(
     if (!isOnboarded) {
         // Tampil onboarding pertama kali
         OnboardingScreen(
+            currentLanguage = currentLanguage,
+            onLanguageChange = { lang ->
+                com.inkside.digital.data.preferences.AppThemePreferences.setLanguage(context, lang)
+            },
             onFinish = {
                 com.inkside.digital.data.preferences.AppThemePreferences.setOnboarded(context, true)
             }

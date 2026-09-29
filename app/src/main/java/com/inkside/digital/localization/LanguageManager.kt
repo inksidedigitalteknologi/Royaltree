@@ -297,6 +297,96 @@ object LanguageManager {
             AppLanguage.JAPANESE to "広告を見てチェックイン"
         ),
 
+        // ==== ONBOARDING ====
+        "onboarding_welcome_title" to mapOf(
+            AppLanguage.INDONESIAN to "Selamat Datang",
+            AppLanguage.ENGLISH to "Welcome",
+            AppLanguage.SPANISH to "Bienvenido",
+            AppLanguage.CHINESE to "欢迎",
+            AppLanguage.ARABIC to "مرحبا",
+            AppLanguage.JAPANESE to "ようこそ"
+        ),
+        "onboarding_welcome_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Royaltree adalah platform afiliasi rewarding yang memberi kamu poin dari aktivitas sehari-hari.",
+            AppLanguage.ENGLISH to "Royaltree is a rewarding affiliate platform that gives you points from daily activities.",
+            AppLanguage.SPANISH to "Royaltree es una plataforma de afiliados que te da puntos por actividades diarias.",
+            AppLanguage.CHINESE to "Royaltree 是一个奖励联盟平台，通过日常活动为您赚取积分。",
+            AppLanguage.ARABIC to "رويالتري هي منصة تسويق بالعمولة تمنحك نقاطًا من الأنشطة اليومية.",
+            AppLanguage.JAPANESE to "Royaltreeは日常活動でポイントが貯まるアフィリエイトプラットフォームです。"
+        ),
+        "onboarding_points_title" to mapOf(
+            AppLanguage.INDONESIAN to "Banyak Cara Dapat Poin",
+            AppLanguage.ENGLISH to "Many Ways to Earn Points",
+            AppLanguage.SPANISH to "Muchas Formas de Ganar Puntos",
+            AppLanguage.CHINESE to "多种赚取积分的方式",
+            AppLanguage.ARABIC to "طرق عديدة لكسب النقاط",
+            AppLanguage.JAPANESE to "ポイントを稼ぐ多くの方法"
+        ),
+        "onboarding_points_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Langkah kaki, misi harian, game, dan offerwall — semua bisa jadi poin.",
+            AppLanguage.ENGLISH to "Steps, daily missions, games, and offerwall — everything becomes points.",
+            AppLanguage.SPANISH to "Pasos, misiones diarias, juegos y offerwall: todo se convierte en puntos.",
+            AppLanguage.CHINESE to "步数、每日任务、游戏和 offerwall——一切都能变成积分。",
+            AppLanguage.ARABIC to "الخطوات والمهام اليومية والألعاب والعروض — كل شيء يصبح نقاطًا.",
+            AppLanguage.JAPANESE to "歩数、デイリーミッション、ゲーム、オファーウォール——すべてがポイントに。"
+        ),
+        "onboarding_withdraw_title" to mapOf(
+            AppLanguage.INDONESIAN to "Tarik ke Rekening",
+            AppLanguage.ENGLISH to "Withdraw to Bank",
+            AppLanguage.SPANISH to "Retirar al Banco",
+            AppLanguage.CHINESE to "提现到银行",
+            AppLanguage.ARABIC to "اسحب إلى البنك",
+            AppLanguage.JAPANESE to "銀行へ出金"
+        ),
+        "onboarding_withdraw_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Tukar poin jadi saldo, lalu tarik ke e-wallet atau bank favoritmu.",
+            AppLanguage.ENGLISH to "Convert points to balance, then withdraw to your favorite e-wallet or bank.",
+            AppLanguage.SPANISH to "Convierte puntos en saldo y retíralos a tu billetera o banco favorito.",
+            AppLanguage.CHINESE to "将积分转换为余额，然后提现到您最喜欢的电子钱包或银行。",
+            AppLanguage.ARABIC to "حوّل النقاط إلى رصيد، ثم اسحب إلى محفظتك الإلكترونية أو بنكك المفضل.",
+            AppLanguage.JAPANESE to "ポイントを残高に変換し、お気に入りの電子ウォレットや銀行へ出金できます。"
+        ),
+        "onboarding_start_title" to mapOf(
+            AppLanguage.INDONESIAN to "Mulai Sekarang",
+            AppLanguage.ENGLISH to "Start Now",
+            AppLanguage.SPANISH to "Empezar Ahora",
+            AppLanguage.CHINESE to "立即开始",
+            AppLanguage.ARABIC to "ابدأ الآن",
+            AppLanguage.JAPANESE to "今すぐ始める"
+        ),
+        "onboarding_start_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Daftar gratis, selesaikan misi, dan raih penghasilan tambahan!",
+            AppLanguage.ENGLISH to "Sign up free, complete missions, and earn extra income!",
+            AppLanguage.SPANISH to "¡Regístrate gratis, completa misiones y gana ingresos extra!",
+            AppLanguage.CHINESE to "免费注册，完成任务，赚取额外收入！",
+            AppLanguage.ARABIC to "سجّل مجانًا وأكمل المهام واكسب دخلًا إضافيًا!",
+            AppLanguage.JAPANESE to "無料登録してミッションを完了し、追加収入を稼ぎましょう！"
+        ),
+        "onboarding_skip" to mapOf(
+            AppLanguage.INDONESIAN to "Lewati",
+            AppLanguage.ENGLISH to "Skip",
+            AppLanguage.SPANISH to "Saltar",
+            AppLanguage.CHINESE to "跳过",
+            AppLanguage.ARABIC to "تخطي",
+            AppLanguage.JAPANESE to "スキップ"
+        ),
+        "onboarding_next" to mapOf(
+            AppLanguage.INDONESIAN to "Lanjut",
+            AppLanguage.ENGLISH to "Next",
+            AppLanguage.SPANISH to "Siguiente",
+            AppLanguage.CHINESE to "下一步",
+            AppLanguage.ARABIC to "التالي",
+            AppLanguage.JAPANESE to "次へ"
+        ),
+        "onboarding_start" to mapOf(
+            AppLanguage.INDONESIAN to "Mulai",
+            AppLanguage.ENGLISH to "Start",
+            AppLanguage.SPANISH to "Empezar",
+            AppLanguage.CHINESE to "开始",
+            AppLanguage.ARABIC to "ابدأ",
+            AppLanguage.JAPANESE to "開始"
+        ),
+
         "sponsor_ad_title" to mapOf(
             AppLanguage.INDONESIAN to "Tonton Iklan Sponsor (+2-5 RTP)",
             AppLanguage.ENGLISH to "Watch Sponsor Ad (+2-5 RTP)",
