@@ -20,16 +20,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.CardGiftcard
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,7 +47,6 @@ private val RetroGold = Color(0xFFFFD700)
 private val RetroBrown = Color(0xFF78350F)
 private val RetroAmber = Color(0xFFF59E0B)
 private val DarkBg = Color(0xFF0A0E1A)
-private val CardBg = Color(0xFF1E293B)
 private val TextMuted = Color(0xFF94A3B8)
 
 @Composable
@@ -65,7 +57,6 @@ fun GameHubScreen(
     onBack: () -> Unit,
     onLoadGameState: () -> Unit = {}
 ) {
-    // Load game state saat layar dibuka
     LaunchedEffect(Unit) {
         onLoadGameState()
     }
@@ -75,232 +66,215 @@ fun GameHubScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    listOf(
-                        DarkBg,
-                        Color(0xFF1E1B4B),
-                        Color(0xFF0F172A)
-                    )
+                    listOf(DarkBg, Color(0xFF1E1B4B), Color(0xFF0F172A))
                 )
             )
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             // ==== TOP BAR ====
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-
-                // Profil mini
-                Box(
+            item {
+                Row(
                     modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(
-                            Brush.linearGradient(listOf(NeonPurple, NeonBlue))
-                        ),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = (user?.name?.take(1) ?: "U").uppercase(),
-                        color = Color.White,
-                        fontWeight = FontWeight.Black,
-                        fontSize = 16.sp
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = user?.name ?: "User",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp,
-                        maxLines = 1
-                    )
-                    Text(
-                        text = "Rank #--",
-                        color = TextMuted,
-                        fontSize = 10.sp
-                    )
-                }
-
-                // RTP
-                Surface(
-                    color = RetroGold.copy(alpha = 0.15f),
-                    shape = RoundedCornerShape(10.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, RetroGold.copy(alpha = 0.5f))
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("💰", fontSize = 12.sp)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "${user?.points ?: 0}",
-                            color = RetroGold,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
                         )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(38.dp)
+                            .clip(CircleShape)
+                            .background(
+                                Brush.linearGradient(listOf(NeonPurple, NeonBlue))
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = (user?.name?.take(1) ?: "U").uppercase(),
+                            color = Color.White,
+                            fontWeight = FontWeight.Black,
+                            fontSize = 16.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = user?.name ?: "User",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            maxLines = 1
+                        )
+                        Text(
+                            text = "Rank #--",
+                            color = TextMuted,
+                            fontSize = 10.sp
+                        )
+                    }
+
+                    Surface(
+                        color = RetroGold.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(10.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, RetroGold.copy(alpha = 0.5f))
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("💰", fontSize = 12.sp)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "${user?.points ?: 0}",
+                                color = RetroGold,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
+                        }
                     }
                 }
             }
 
-            // ==== MAIN AREA: Sidebar + Grid ====
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(horizontal = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                // SIDEBAR KIRI
-                Column(
-                    modifier = Modifier.width(60.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+            // ==== GRID 2×2 FULL WIDTH ====
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    SidebarButton("🛒", "Shop", NeonBlue) {
-                        onNavigate(AppScreen.MISSIONS)
-                    }
-                    SidebarButton("🎁", "Events", NeonPink) {
-                        onNavigate(AppScreen.MISSIONS)
-                    }
-                }
-
-                // GRID 2×2
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        GameGridCard(
-                            title = "Mining Tycoon",
-                            emoji = "⛏️",
-                            gradient = listOf(RetroGold, RetroBrown),
-                            available = true,
-                            onClick = { onNavigate(AppScreen.GAME_MINING) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        GameGridCard(
-                            title = "Coin Rush",
-                            emoji = "🎰",
-                            gradient = listOf(NeonPurple, NeonBlue),
-                            available = false,
-                            onClick = { },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        GameGridCard(
-                            title = "Dice Roll",
-                            emoji = "🎲",
-                            gradient = listOf(NeonPink, NeonPurple),
-                            available = false,
-                            onClick = { },
-                            modifier = Modifier.weight(1f)
-                        )
-                        GameGridCard(
-                            title = "Spin Wheel",
-                            emoji = "🎯",
-                            gradient = listOf(Color(0xFF10B981), Color(0xFF059669)),
-                            available = false,
-                            onClick = { },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    // Leaderboard preview
-                    LeaderboardPreviewCard(
-                        onViewAll = { onNavigate(AppScreen.LEADERBOARD) }
+                    GameGridCard(
+                        title = "Mining Tycoon",
+                        emoji = "⛏️",
+                        gradient = listOf(RetroGold, RetroBrown),
+                        available = true,
+                        onClick = { onNavigate(AppScreen.GAME_MINING) },
+                        modifier = Modifier.weight(1f)
+                    )
+                    GameGridCard(
+                        title = "Coin Rush",
+                        emoji = "🎰",
+                        gradient = listOf(NeonPurple, NeonBlue),
+                        available = false,
+                        onClick = { },
+                        modifier = Modifier.weight(1f)
                     )
                 }
+            }
 
-                // SIDEBAR KANAN
-                Column(
-                    modifier = Modifier.width(60.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    SidebarButton("⚙️", "Set", Color(0xFF64748B)) {
-                        onNavigate(AppScreen.SETTINGS)
-                    }
-                    SidebarButton("❓", "Help", Color(0xFF64748B)) {
-                        onNavigate(AppScreen.FAQ)
-                    }
+                    GameGridCard(
+                        title = "Dice Roll",
+                        emoji = "🎲",
+                        gradient = listOf(NeonPink, NeonPurple),
+                        available = false,
+                        onClick = { },
+                        modifier = Modifier.weight(1f)
+                    )
+                    GameGridCard(
+                        title = "Spin Wheel",
+                        emoji = "🎯",
+                        gradient = listOf(Color(0xFF10B981), Color(0xFF059669)),
+                        available = false,
+                        onClick = { },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            // ==== LEADERBOARD PREVIEW ====
+            item {
+                LeaderboardPreviewCard(
+                    onViewAll = { onNavigate(AppScreen.LEADERBOARD) }
+                )
+            }
+
+            // ==== MENU FLOATING (compact) ====
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.White.copy(alpha = 0.05f))
+                        .border(1.dp, RetroBorder2.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    MenuIconButton("🛒", "Shop") { onNavigate(AppScreen.MISSIONS) }
+                    MenuIconButton("🎁", "Events") { onNavigate(AppScreen.MISSIONS) }
+                    MenuIconButton("📊", "Stats") { onNavigate(AppScreen.LEADERBOARD) }
+                    MenuIconButton("⚙️", "Set") { onNavigate(AppScreen.SETTINGS) }
+                    MenuIconButton("❓", "Help") { onNavigate(AppScreen.FAQ) }
                 }
             }
 
             // ==== TOMBOL BESAR ====
-            Surface(
-                color = Color.Transparent,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-                    .height(56.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(
-                        Brush.linearGradient(
-                            listOf(RetroGold, RetroAmber)
+            item {
+                Surface(
+                    color = Color.Transparent,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(
+                            Brush.linearGradient(listOf(RetroGold, RetroAmber))
                         )
-                    )
-                    .clickable { onNavigate(AppScreen.GAME_MINING) }
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                        .clickable { onNavigate(AppScreen.GAME_MINING) }
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier.size(26.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "MAINKAN MINING",
-                        color = Color.Black,
-                        fontWeight = FontWeight.Black,
-                        fontSize = 16.sp,
-                        letterSpacing = 1.sp
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.size(26.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "MAINKAN MINING",
+                            color = Color.Black,
+                            fontWeight = FontWeight.Black,
+                            fontSize = 16.sp,
+                            letterSpacing = 1.sp
+                        )
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            item { Spacer(modifier = Modifier.height(16.dp)) }
         }
     }
 }
 
+private val RetroBorder2 = Color(0xFFD97706)
+
 @Composable
-private fun SidebarButton(
+private fun MenuIconButton(
     emoji: String,
     label: String,
-    accent: Color,
     onClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White.copy(alpha = 0.05f))
-            .border(1.dp, accent.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(10.dp))
             .clickable { onClick() }
-            .padding(vertical = 10.dp),
+            .padding(horizontal = 8.dp, vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(emoji, fontSize = 20.sp)
@@ -325,7 +299,7 @@ private fun GameGridCard(
 ) {
     Box(
         modifier = modifier
-            .aspectRatio(1f)
+            .aspectRatio(1.05f)
             .clip(RoundedCornerShape(16.dp))
             .background(
                 if (available) Brush.linearGradient(gradient)
@@ -338,10 +312,9 @@ private fun GameGridCard(
             )
             .clickable(enabled = available) { onClick() }
     ) {
-        // Emoji besar background
         Text(
             text = emoji,
-            fontSize = 70.sp,
+            fontSize = 80.sp,
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .padding(end = 4.dp),
@@ -351,26 +324,23 @@ private fun GameGridCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(10.dp),
+                .padding(12.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = emoji,
-                fontSize = 26.sp
-            )
+            Text(text = emoji, fontSize = 30.sp)
             Column {
                 Text(
                     text = title,
                     color = Color.White,
-                    fontSize = 11.sp,
+                    fontSize = 13.sp,
                     fontWeight = FontWeight.Black,
-                    lineHeight = 13.sp
+                    lineHeight = 15.sp
                 )
                 if (!available) {
                     Text(
                         text = "SOON",
                         color = Color.White.copy(alpha = 0.6f),
-                        fontSize = 8.sp,
+                        fontSize = 9.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -389,38 +359,33 @@ private fun LeaderboardPreviewCard(onViewAll: () -> Unit) {
             .fillMaxWidth()
             .clickable { onViewAll() }
     ) {
-        Column(modifier = Modifier.padding(10.dp)) {
+        Column(modifier = Modifier.padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.EmojiEvents,
-                    contentDescription = null,
-                    tint = RetroGold,
-                    modifier = Modifier.size(14.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
+                Text("🏆", fontSize = 14.sp)
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = "TOP PLAYER",
                     color = RetroGold,
-                    fontSize = 10.sp,
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = "Lihat →",
                     color = TextMuted,
-                    fontSize = 9.sp
+                    fontSize = 10.sp
                 )
             }
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "🥇 MiningKing         15.420",
                 color = Color.White,
-                fontSize = 10.sp
+                fontSize = 11.sp
             )
             Text(
                 text = "🥈 CryptoHunter       12.380",
                 color = Color.White,
-                fontSize = 10.sp
+                fontSize = 11.sp
             )
         }
     }
