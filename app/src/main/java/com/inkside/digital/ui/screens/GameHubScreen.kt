@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.viewmodel.AppScreen
+import com.inkside.digital.ui.components.BannerAdView
 
 // ==== Colors ====
 private val NeonPurple = Color(0xFF8B5CF6)
@@ -144,6 +145,11 @@ fun GameHubScreen(
                         }
                     }
                 }
+            }
+
+            // ==== Banner AdMob ====
+            item {
+                BannerAdView()
             }
 
             // ==== GRID 2×2 FULL WIDTH ====
