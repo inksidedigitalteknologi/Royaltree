@@ -117,7 +117,7 @@ fun RootNav(
 
     val context = androidx.compose.ui.platform.LocalContext.current
     val isOnboarded = com.inkside.digital.data.preferences.AppThemePreferences.isOnboarded
-    val currentLanguage by viewModel.currentLanguage.collectAsState()
+    val currentLanguage by affiliateViewModel.currentLanguage.collectAsState()
 
     if (!isOnboarded) {
         // Tampil onboarding pertama kali
