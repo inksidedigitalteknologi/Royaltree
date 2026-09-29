@@ -52,6 +52,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.UserEntity
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
@@ -62,6 +64,7 @@ fun AppDrawer(
     user: UserEntity?,
     isAdminMode: Boolean,
     currentScreen: AppScreen,
+    currentLanguage: AppLanguage,
     onNavigate: (AppScreen) -> Unit,
     onToggleRole: () -> Unit,
     onCloseDrawer: () -> Unit,
@@ -88,37 +91,37 @@ fun AppDrawer(
             // ============ MENU UTAMA ============
             DrawerItem(
                 icon = Icons.Default.Home,
-                label = "Beranda",
+                label = LanguageManager.translate("nav_home", currentLanguage, "Beranda"),
                 selected = currentScreen == AppScreen.HOME,
                 onClick = { onNavigate(AppScreen.HOME); onCloseDrawer() }
             )
             DrawerItem(
                 icon = Icons.Default.TaskAlt,
-                label = "Misi",
+                label = LanguageManager.translate("nav_missions", currentLanguage, "Misi"),
                 selected = currentScreen == AppScreen.MISSIONS,
                 onClick = { onNavigate(AppScreen.MISSIONS); onCloseDrawer() }
             )
             DrawerItem(
                 icon = Icons.Default.CardGiftcard,
-                label = "Login Harian",
+                label = LanguageManager.translate("daily_title", currentLanguage, "Login Harian"),
                 selected = currentScreen == AppScreen.DAILY_CHECK_IN,
                 onClick = { onNavigate(AppScreen.DAILY_CHECK_IN); onCloseDrawer() }
             )
             DrawerItem(
                 icon = Icons.Default.MonetizationOn,
-                label = "Penarikan",
+                label = LanguageManager.translate("nav_withdraw", currentLanguage, "Penarikan"),
                 selected = currentScreen == AppScreen.WITHDRAW,
                 onClick = { onNavigate(AppScreen.WITHDRAW); onCloseDrawer() }
             )
             DrawerItem(
                 icon = Icons.Default.History,
-                label = "Riwayat",
+                label = LanguageManager.translate("nav_history", currentLanguage, "Riwayat"),
                 selected = currentScreen == AppScreen.HISTORY,
                 onClick = { onNavigate(AppScreen.HISTORY); onCloseDrawer() }
             )
             DrawerItem(
                 icon = Icons.Default.CardGiftcard,
-                label = "Undang Teman",
+                label = LanguageManager.translate("referral_title", currentLanguage, "Undang Teman"),
                 selected = currentScreen == AppScreen.REFERRAL,
                 onClick = { onNavigate(AppScreen.REFERRAL); onCloseDrawer() }
             )
@@ -130,19 +133,19 @@ fun AppDrawer(
             // ============ MENU PROFIL ============
             DrawerItem(
                 icon = Icons.Default.Person,
-                label = "Profil",
+                label = LanguageManager.translate("nav_profile", currentLanguage, "Profil"),
                 selected = currentScreen == AppScreen.PROFILE,
                 onClick = { onNavigate(AppScreen.PROFILE); onCloseDrawer() }
             )
             DrawerItem(
                 icon = Icons.Default.Settings,
-                label = "Pengaturan",
+                label = LanguageManager.translate("settings_title", currentLanguage, "Pengaturan"),
                 selected = currentScreen == AppScreen.SETTINGS,
                 onClick = { onNavigate(AppScreen.SETTINGS); onCloseDrawer() }
             )
             DrawerItem(
                 icon = Icons.Default.HelpOutline,
-                label = "Bantuan",
+                label = LanguageManager.translate("faq_title", currentLanguage, "Bantuan"),
                 selected = currentScreen == AppScreen.FAQ,
                 onClick = { onNavigate(AppScreen.FAQ); onCloseDrawer() }
             )
@@ -154,7 +157,7 @@ fun AppDrawer(
             // ============ MENU BAWAH ============
             DrawerItem(
                 icon = Icons.Default.ExitToApp,
-                label = "Keluar",
+                label = LanguageManager.translate("settings_logout", currentLanguage, "Keluar"),
                 selected = false,
                 tint = MaterialTheme.colorScheme.error,
                 onClick = { showLogoutDialog = true }
@@ -168,20 +171,20 @@ fun AppDrawer(
     if (showLogoutDialog) {
         AlertDialog(
             onDismissRequest = { showLogoutDialog = false },
-            title = { Text("Keluar dari Akun?") },
-            text = { Text("Anda yakin ingin keluar dari Royaltree?") },
+            title = { Text(LanguageManager.translate("settings_logout", currentLanguage, "Keluar dari Akun?")) },
+            text = { Text(LanguageManager.translate("settings_logout_confirm", currentLanguage, "Anda yakin ingin keluar dari Royaltree?")) },
             confirmButton = {
                 TextButton(onClick = {
                     showLogoutDialog = false
                     onCloseDrawer()
                     onLogout()
                 }) {
-                    Text("Keluar", color = MaterialTheme.colorScheme.error)
+                    Text(LanguageManager.translate("settings_logout", currentLanguage, "Keluar"), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showLogoutDialog = false }) {
-                    Text("Batal")
+                    Text(LanguageManager.translate("common_cancel", currentLanguage, "Batal"))
                 }
             }
         )
