@@ -26,6 +26,7 @@ import com.inkside.digital.data.ads.AdManager
 import com.inkside.digital.data.repository.PeerContact
 import com.inkside.digital.data.repository.TransferResult
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.ui.components.AdBlockedDialog
 import com.inkside.digital.ui.components.AdRewardModal
 import com.inkside.digital.ui.components.AdminReviewModal
 import com.inkside.digital.ui.components.AppBottomNavigationBar
@@ -119,6 +120,7 @@ fun RootNav(
     val context = androidx.compose.ui.platform.LocalContext.current
     val isOnboarded = com.inkside.digital.data.preferences.AppThemePreferences.isOnboarded
     val currentLanguage by affiliateViewModel.currentLanguage.collectAsState()
+    var adBlockedReason by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<String?>(null) }
 
     if (!isOnboarded) {
         // Tampil onboarding pertama kali
@@ -326,6 +328,13 @@ fun MainAffiliateApp(
         listCouponTarget = listCouponTarget,
         adminReviewTarget = adminReviewTarget,
         showAdReward = showAdReward,
+        adBlockedReason = adBlockedReason,
+        onAdBlockedDismiss = { adBlockedReason = null },
+        onAdBlockedRetry = {
+            adBlockedReason = null
+            viewModel.showAdRewardModal.value = true
+        },
+        onAdBlockedSetReason = { r -> adBlockedReason = r },
         show2FA = show2FA,
         showQrTransfer = showQrTransfer,
         contacts = contacts,
@@ -450,6 +459,10 @@ fun MainAffiliateAppContent(
     listCouponTarget: InvestmentCouponEntity?,
     adminReviewTarget: WithdrawalEntity?,
     showAdReward: Boolean,
+    adBlockedReason: String? = null,
+    onAdBlockedDismiss: () -> Unit = {},
+    onAdBlockedRetry: () -> Unit = {},
+    onAdBlockedSetReason: (String) -> Unit = {},
     show2FA: Boolean,
     showQrTransfer: Boolean,
     contacts: List<PeerContact>,
@@ -883,21 +896,24 @@ fun MainAffiliateAppContent(
                         onAdRewardDismiss()
                         onAdRewardEarned(points)
                     },
-                    onFailure = { error ->
-                        android.util.Log.e("MainActivity", "Ad error: $error")
+                    onFailure = { reason, message ->
+                        android.util.Log.e("MainActivity", "Ad error [$reason]: $message")
                         onAdRewardDismiss()
-                        // Tampilkan pesan error ke user via snackbar
-                        android.widget.Toast.makeText(
-                            context,
-                            error,
-                            android.widget.Toast.LENGTH_LONG
-                        ).show()
+                        onAdBlockedSetReason(reason.name)
                     }
                 )
             } else {
                 onAdRewardDismiss()
             }
         }
+    }
+
+    if (adBlockedReason != null) {
+        AdBlockedDialog(
+            reason = adBlockedReason,
+            onRetry = { onAdBlockedRetry() },
+            onDismiss = { onAdBlockedDismiss() }
+        )
     }
 
     if (showLanguageModal) {

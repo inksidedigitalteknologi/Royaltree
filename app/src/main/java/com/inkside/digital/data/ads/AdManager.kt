@@ -22,12 +22,15 @@ object AdManager {
         activity: Activity,
         userId: String,
         onSuccess: (points: Int) -> Unit,
-        onFailure: (message: String) -> Unit
+        onFailure: (reason: AdFailureReason, message: String) -> Unit
     ) {
         // 1. Load ad
         val loadResult = AdMobProvider.loadRewardedAd(activity, userId)
         if (loadResult.isFailure) {
-            onFailure("[1] Gagal load iklan: ${loadResult.exceptionOrNull()?.message}")
+            val ex = loadResult.exceptionOrNull()
+            val reason = if (ex is AdLoadException) ex.reason else AdFailureReason.UNKNOWN
+            val msg = ex?.message ?: "Gagal load iklan"
+            onFailure(reason, msg)
             return
         }
 
@@ -59,16 +62,16 @@ object AdManager {
                                     Log.d(TAG, "Backend reward OK: +$points poin")
                                     onSuccess(points)
                                 } else {
-                                    onFailure(json.optString("message", "Gagal klaim reward"))
+                                    onFailure(AdFailureReason.UNKNOWN, json.optString("message", "Gagal klaim reward"))
                                 }
                             }.onFailure { error ->
                                 Log.e(TAG, "Backend reward error: ${error.message}")
-                                onFailure("Gagal klaim reward: ${error.message}")
+                                onFailure(AdFailureReason.UNKNOWN, "Gagal klaim reward: ${error.message}")
                             }
                         }
                     } catch (e: Exception) {
                         withContext(Dispatchers.Main) {
-                            onFailure("Error: ${e.message}")
+                            onFailure(AdFailureReason.UNKNOWN, "Error: ${e.message}")
                         }
                     }
                 }
@@ -77,7 +80,7 @@ object AdManager {
                 Log.d(TAG, "Ad dismissed")
             },
             onAdFailed = { error ->
-                onFailure(error)
+                onFailure(AdFailureReason.SHOW_FAILED, error)
             }
         )
     }
