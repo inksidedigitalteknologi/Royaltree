@@ -60,6 +60,7 @@ import com.inkside.digital.ui.screens.AnalyticsScreen
 import com.inkside.digital.ui.screens.CampaignsScreen
 import com.inkside.digital.ui.screens.HistoryScreen
 import com.inkside.digital.ui.screens.HomeScreen
+import com.inkside.digital.ui.screens.CoinRushScreen
 import com.inkside.digital.ui.screens.InvestmentCouponScreen
 import com.inkside.digital.ui.screens.MissionsScreen
 import com.inkside.digital.ui.screens.NotificationsScreen
@@ -350,6 +351,7 @@ fun MainAffiliateApp(
         onNewLinkCreate = { camp, slug, subId -> viewModel.createLink(camp, slug, subId) },
         onUpgradeDismiss = { viewModel.showUpgradeModal.value = false },
         onUpgradeConfirm = { viewModel.upgradeToPremium() },
+        onFinishMiniGame = { score -> viewModel.finishMiniGame(score) },
         onRedeemDismiss = { viewModel.showRedeemPointsModal.value = false },
         onRedeemConfirm = { pts, wallet, phone, curr -> viewModel.redeemPoints(pts, wallet, phone, curr) },
         onRedeemOpenQr = { viewModel.showQrTransferModal.value = true },
@@ -769,12 +771,11 @@ fun MainAffiliateAppContent(
                 }
 
                 AppScreen.GAME_COIN_RUSH -> {
-                    // Placeholder — Coming Soon
-                    GameHubScreen(
+                    CoinRushScreen(
                         user = user,
                         currentLanguage = currentLanguage,
-                        onNavigate = { onNavigate(it) },
-                        onBack = { onNavigate(AppScreen.GAME_ROOM) }
+                        onBack = { onNavigate(AppScreen.GAME_ROOM) },
+                        onFinish = { score -> onFinishMiniGame(score) }
                     )
                 }
 

@@ -684,9 +684,12 @@ fun NewLinkModal(
 @Composable
 fun UpgradeVipModal(
     user: UserEntity?,
+    tiers: List<org.json.JSONObject> = emptyList(),
     onDismiss: () -> Unit,
-    onUpgrade: () -> Unit
+    onUpgrade: () -> Unit = {}
 ) {
+    val currentTier = user?.tier ?: "FREE"
+
     Dialog(onDismissRequest = onDismiss) {
         Card(
             shape = RoundedCornerShape(24.dp),
@@ -700,11 +703,10 @@ fun UpgradeVipModal(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
-                // Banner Header
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(140.dp)
+                        .height(120.dp)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.banner_premium_upgrade),
@@ -718,88 +720,194 @@ fun UpgradeVipModal(
                             .align(Alignment.TopEnd)
                             .padding(8.dp)
                     ) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Tutup", tint = Color.White)
+                        Icon(Icons.Default.Close, contentDescription = "Tutup", tint = Color.White)
                     }
                 }
 
                 Column(modifier = Modifier.padding(20.dp)) {
                     Text(
-                        text = "Upgrade ke Level Premium VIP",
+                        text = "Upgrade Tier",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
                     )
-
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Dapatkan komisi hingga 2.5x lebih tinggi, prioritas pencairan, dan dasbor analitik mendalam.",
+                        text = "Buka slot miner tambahan + badge eksklusif. Pembayaran sekali seumur hidup.",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    TierRow(
+                        tierName = "FREE",
+                        priceLabel = "Gratis",
+                        slots = 6,
+                        benefits = listOf("Slot miner 6", "Fitur dasar"),
+                        isCurrent = currentTier == "FREE",
+                        isOwned = false,
+                        accentColor = MaterialTheme.colorScheme.surfaceVariant,
+                        onClick = {}
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    TierRow(
+                        tierName = "VIP",
+                        priceLabel = "$2.49",
+                        slots = 7,
+                        benefits = listOf("Slot miner 7", "Badge VIP"),
+                        isCurrent = currentTier == "VIP",
+                        isOwned = currentTier == "VIP" || currentTier == "VIP_PRO",
+                        accentColor = GoldVip,
+                        onClick = onUpgrade
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    TierRow(
+                        tierName = "VIP Pro",
+                        priceLabel = "$3.49",
+                        slots = 8,
+                        benefits = listOf("Slot miner 8", "Badge VIP Pro", "Prioritas support"),
+                        isCurrent = currentTier == "VIP_PRO",
+                        isOwned = currentTier == "VIP_PRO",
+                        accentColor = Color(0xFFEC4899),
+                        onClick = onUpgrade
+                    )
+
                     Spacer(modifier = Modifier.height(14.dp))
 
-                    // Comparison
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf(
-                            "Tingkat Komisi" to ("12% (Standar)" to "30% (2.5x Ekstra)"),
-                            "Biaya Penarikan" to ("Rp 4.500/trx" to "0% Bebas Biaya"),
-                            "Waktu Pencairan" to ("1-2 Hari Kerja" to "Prioritas Instan"),
-                            "Pasar Sekunder" to ("Fee 5%" to "Fee 0% Bebas"),
-                            "Akses Analitik" to ("Dasar" to "Real-time Mendalam")
-                        ).forEach { (feat, values) ->
-                            val (free, vip) = values
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 2.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(text = feat, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Row {
-                                    Text(text = free, fontSize = 11.sp, color = Color.Gray)
-                                    Spacer(modifier = Modifier.width(10.dp))
-                                    Text(text = vip, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = GoldVip)
-                                }
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
                     Surface(
-                        color = GoldVip.copy(alpha = 0.15f),
-                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(10.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column {
-                                Text("Biaya Upgrade:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("Rp 250.000 / Sekali Seumur Hidup", fontSize = 13.sp, fontWeight = FontWeight.Black, color = GoldVip)
-                            }
-                            Text("+500 Poin", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = EmeraldLight)
-                        }
+                        Text(
+                            text = "💡 Pembelian dalam app akan segera hadir. Sementara ini, tingkatan dapat diperoleh melalui aktivitas (iklan, check-in, misi).",
+                            fontSize = 10.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(10.dp)
+                        )
                     }
+                }
+            }
+        }
+    }
+}
 
-                    Spacer(modifier = Modifier.height(16.dp))
+@Composable
+private fun TierRow(
+    tierName: String,
+    priceLabel: String,
+    slots: Int,
+    benefits: List<String>,
+    isCurrent: Boolean,
+    isOwned: Boolean,
+    accentColor: Color,
+    onClick: () -> Unit
+) {
+    val borderColor = if (isCurrent) accentColor else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+    val bgColor = if (isCurrent) accentColor.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
 
+    Surface(
+        color = bgColor,
+        shape = RoundedCornerShape(14.dp),
+        border = androidx.compose.foundation.BorderStroke(1.5.dp, borderColor),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        tierName,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Black,
+                        color = if (isCurrent) accentColor else MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        "$slots slot miner",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Text(
+                    priceLabel,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Black,
+                    color = accentColor
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            benefits.forEach { b ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("•", fontSize = 11.sp, color = accentColor)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(b, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            when {
+                isCurrent -> {
+                    Surface(
+                        color = accentColor.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            "✓ Tingkatan Anda saat ini",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = accentColor,
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                    }
+                }
+                isOwned -> {
+                    Surface(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            "Sudah dimiliki",
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                    }
+                }
+                tierName == "FREE" -> {
                     Button(
-                        onClick = onUpgrade,
-                        colors = ButtonDefaults.buttonColors(containerColor = GoldVip),
-                        shape = RoundedCornerShape(12.dp),
+                        onClick = {},
+                        enabled = false,
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Paket dasar", fontSize = 11.sp)
+                    }
+                }
+                else -> {
+                    Button(
+                        onClick = onClick,
+                        enabled = false,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = accentColor,
+                            disabledContainerColor = accentColor.copy(alpha = 0.5f)
+                        ),
+                        shape = RoundedCornerShape(8.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp)
-                            .testTag("btn_confirm_upgrade_vip")
+                            .testTag("btn_upgrade_$tierName")
                     ) {
-                        Icon(imageVector = Icons.Default.Star, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Upgrade Sekarang (Rp 250.000)", color = Color.Black, fontWeight = FontWeight.Bold)
+                        Text("Coming Soon", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                     }
                 }
             }

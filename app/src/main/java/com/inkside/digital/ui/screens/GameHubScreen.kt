@@ -170,8 +170,8 @@ fun GameHubScreen(
                         title = "Coin Rush",
                         emoji = "🎰",
                         gradient = listOf(NeonPurple, NeonBlue),
-                        available = false,
-                        onClick = { },
+                        available = true,
+                        onClick = { onNavigate(AppScreen.GAME_COIN_RUSH) },
                         modifier = Modifier.weight(1f)
                     )
                 }

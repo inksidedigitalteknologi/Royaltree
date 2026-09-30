@@ -509,6 +509,30 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    // ==== TIER / UPGRADE (Play Billing belum ada — baca dari backend) ====
+    private val _tiers = MutableStateFlow<List<org.json.JSONObject>>(emptyList())
+    val tiers: StateFlow<List<org.json.JSONObject>> = _tiers.asStateFlow()
+
+    fun loadTiers() {
+        viewModelScope.launch {
+            ApiClient.getTiersPublic()
+                .onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
+                        val arr = json.optJSONArray("data") ?: return@onSuccess
+                        val list = mutableListOf<org.json.JSONObject>()
+                        for (i in 0 until arr.length()) {
+                            arr.optJSONObject(i)?.let { list.add(it) }
+                        }
+                        _tiers.value = list
+                        android.util.Log.d("AffiliateViewModel", "✅ Tiers loaded: ${list.size}")
+                    }
+                }
+                .onFailure {
+                    android.util.Log.w("AffiliateViewModel", "Gagal load tiers: ${it.message}")
+                }
+        }
+    }
+
     fun upgradeToPremium() {
         viewModelScope.launch {
             val result = repository.upgradeToPremium()

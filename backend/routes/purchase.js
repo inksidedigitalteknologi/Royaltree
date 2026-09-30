@@ -267,4 +267,25 @@ router.get('/tiers', verifyFirebaseToken, async (req, res) => {
     }
 });
 
+// ============================================================
+// GET /api/v1/purchase/tiers-public
+// Versi publik (tanpa auth) untuk MVP — user belum login Firebase.
+// Nanti bila Firebase Auth stabil, buang endpoint ini & guna /tiers.
+// ============================================================
+router.get('/tiers-public', async (req, res) => {
+    try {
+        const tiers = Object.entries(TIER_CATALOG).map(([productId, config]) => ({
+            productId: productId,
+            tier: config.tier,
+            displayName: config.displayName,
+            priceUsd: config.priceUsd,
+            maxMinerSlots: config.maxMinerSlots,
+            benefits: config.benefits,
+        }));
+        return res.json({ success: true, data: tiers });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 module.exports = router;
