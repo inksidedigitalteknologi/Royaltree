@@ -916,6 +916,80 @@ private fun TierRow(
 }
 
 @Composable
+fun AdBlockedDialog(
+    reason: String,   // NO_FILL, NETWORK, INTERNAL, dsb
+    onRetry: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val isAdBlocked = reason == "NO_FILL"
+    val title = if (isAdBlocked) "Iklan Tidak Dapat Dimuat" else "Iklan Gagal Dimuat"
+    val message = when (reason) {
+        "NO_FILL" -> "Kami mengesan kemungkinan AdGuard / adblocker aktif. Sila matikan adblocker (DNS atau aplikasi) supaya anda boleh terima reward."
+        "NETWORK" -> "Koneksi internet bermasalah. Periksa jaringan anda dan cuba lagi."
+        "INTERNAL" -> "Layanan iklan sedang gangguan. Cubalah beberapa minit lagi."
+        "INVALID" -> "Konfigurasi iklan bermasalah. Hubungi support."
+        "NOT_READY" -> "Iklan belum siap. Tunggu beberapa detik lalu cuba lagi."
+        "SHOW_FAILED" -> "Iklan gagal ditampilkan. Cuba lagi."
+        else -> "Iklan gagal dimuat. Sila cuba lagi."
+    }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(if (isAdBlocked) "\uD83D\uDEAB" else "\u26A0\uFE0F", fontSize = 28.sp)
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        title,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Black
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    message,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(18.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Button(
+                        onClick = onDismiss,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        ),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Tutup", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    }
+                    Button(
+                        onClick = {
+                            onDismiss()
+                            onRetry()
+                        },
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = GoldVip),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Cuba Lagi", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun RedeemPointsModal(
     user: UserEntity?,
     onDismiss: () -> Unit,

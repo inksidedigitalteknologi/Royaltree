@@ -28,6 +28,21 @@ import kotlin.coroutines.resume
  * - Show ad dengan SSV (kalau ada)
  * - Callback: onRewardEarned, onAdDismissed, onAdFailed
  */
+class AdLoadException(
+    val reason: AdFailureReason,
+    message: String
+) : Exception(message)
+
+enum class AdFailureReason {
+    NO_FILL,
+    NETWORK,
+    INTERNAL,
+    INVALID,
+    NOT_READY,
+    SHOW_FAILED,
+    UNKNOWN
+}
+
 object AdMobProvider {
 
     private const val TAG = "AdMobProvider"
@@ -93,21 +108,21 @@ object AdMobProvider {
                         rewardedAd = null
                         _adState.value = false  // no ad
 
-                        val userMsg = when (error.code) {
+                        val (reason, userMsg) = when (error.code) {
                             AdRequest.ERROR_CODE_NO_FILL ->
-                                "Iklan tidak dapat dimuat. Matikan AdGuard/AdBlock DNS untuk mendapat reward."
+                                AdFailureReason.NO_FILL to "Iklan tidak dapat dimuat. Matikan AdGuard/AdBlock DNS untuk mendapat reward."
                             AdRequest.ERROR_CODE_NETWORK_ERROR ->
-                                "Koneksi internet bermasalah. Periksa jaringan Anda."
+                                AdFailureReason.NETWORK to "Koneksi internet bermasalah. Periksa jaringan Anda."
                             AdRequest.ERROR_CODE_INTERNAL_ERROR ->
-                                "Layanan iklan sedang gangguan. Coba lagi nanti."
+                                AdFailureReason.INTERNAL to "Layanan iklan sedang gangguan. Coba lagi nanti."
                             AdRequest.ERROR_CODE_INVALID_REQUEST ->
-                                "Konfigurasi iklan bermasalah. Hubungi support."
+                                AdFailureReason.INVALID to "Konfigurasi iklan bermasalah. Hubungi support."
                             else ->
-                                "Iklan gagal dimuat. Coba lagi nanti."
+                                AdFailureReason.UNKNOWN to "Iklan gagal dimuat. Coba lagi nanti."
                         }
 
                         if (continuation.isActive) {
-                            continuation.resume(Result.failure(Exception(userMsg)))
+                            continuation.resume(Result.failure(AdLoadException(reason, userMsg)))
                         }
                     }
                 }
@@ -177,7 +192,7 @@ object AdMobProvider {
      * @param context Context
      * @param adWidthDp Lebar banner dalam dp (dari BoxWithConstraints)
      */
-    fun createBannerView(context: Context, adWidthDp: Int): AdView {
+    fun createBannerView(context: Context, adWidthDp: Int, onFailed: () -> Unit = {}): AdView {
         val adView = AdView(context)
         adView.setAdSize(
             AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidthDp)
@@ -189,7 +204,8 @@ object AdMobProvider {
                 Log.d(TAG, "Banner ad loaded")
             }
             override fun onAdFailedToLoad(error: LoadAdError) {
-                Log.e(TAG, "Banner failed: ${error.message}")
+                Log.e(TAG, "Banner failed: code=${error.code}, msg=${error.message}")
+                try { onFailed() } catch (_: Exception) { }
             }
         }
 
