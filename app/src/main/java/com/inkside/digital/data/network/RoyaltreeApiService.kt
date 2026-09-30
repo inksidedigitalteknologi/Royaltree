@@ -150,6 +150,12 @@ interface RoyaltreeApiService {
         @Body body: ApiWithdrawalRequest
     ): ApiGenericResponse
 
+    @GET("purchase/tiers-public")
+    suspend fun getTiersPublic(): ResponseBody
+
+    @POST("purchase/verify")
+    suspend fun verifyPurchase(@Body body: RequestBody): ResponseBody
+
     @GET("campaigns")
     suspend fun getCampaigns(
         @Header("Authorization") token: String

@@ -205,6 +205,26 @@ object ApiClient {
         try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.getMissions(b)) } catch (e: Exception) { Result.failure(e) }
     }
 
+    suspend fun getTiersPublic(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val resp = apiService.getTiersPublic()
+            Result.success(JSONObject(resp.string()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun verifyPurchase(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val media = JSON_MEDIA
+            val reqBody = RequestBody.create(media, body.toString())
+            val resp = apiService.verifyPurchase(reqBody)
+            Result.success(JSONObject(resp.string()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     // ============ AUTH (Firebase) ============
 
     private val JSON_MEDIA = "application/json; charset=utf-8".toMediaType()
