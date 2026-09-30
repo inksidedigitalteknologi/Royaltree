@@ -292,6 +292,7 @@ fun MainAffiliateApp(
     val placedMiners by viewModel.placedMinerItems.collectAsState()
     val roomState by viewModel.gameRoomState.collectAsState()
     val currentLanguage by viewModel.currentLanguage.collectAsState()
+    var adBlockedReason by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<String?>(null) }
 
     MainAffiliateAppContent(
         user = user,
@@ -459,6 +460,7 @@ fun MainAffiliateAppContent(
     listCouponTarget: InvestmentCouponEntity?,
     adminReviewTarget: WithdrawalEntity?,
     showAdReward: Boolean,
+    onFinishMiniGame: (Int) -> Unit = {},
     adBlockedReason: String? = null,
     onAdBlockedDismiss: () -> Unit = {},
     onAdBlockedRetry: () -> Unit = {},
