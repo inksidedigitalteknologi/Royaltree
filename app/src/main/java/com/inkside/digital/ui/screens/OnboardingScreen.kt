@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
+import com.inkside.digital.ui.components.RoyaltreeTree
+import androidx.compose.foundation.layout.aspectRatio
 import kotlinx.coroutines.launch
 
 private val DarkBg = Color(0xFF0A0E1A)
@@ -138,11 +140,29 @@ fun OnboardingScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // Emoji
-                    Text(
-                        text = pages[page].emoji,
-                        fontSize = 120.sp,
-                        modifier = Modifier.padding(bottom = 24.dp)
+                    // Pohon — berubah ikut halaman
+                    val treeLevel = when (page) {
+                        0 -> 1   // Sprout
+                        1 -> 2   // Sapling
+                        2 -> 3   // Young Tree
+                        else -> 5 // Royaltree
+                    }
+                    val treeGrowth by animateFloatAsState(
+                        targetValue = if (page == pagerState.currentPage) 1f else 0f,
+                        animationSpec = androidx.compose.animation.core.tween(
+                            durationMillis = 800,
+                            easing = androidx.compose.animation.core.FastOutSlowInEasing
+                        ),
+                        label = "treeGrowth"
+                    )
+
+                    RoyaltreeTree(
+                        level = treeLevel,
+                        growthProgress = treeGrowth,
+                        modifier = Modifier
+                            .fillMaxWidth(0.72f)
+                            .aspectRatio(1f)
+                            .padding(bottom = 12.dp)
                     )
 
                     // Title
