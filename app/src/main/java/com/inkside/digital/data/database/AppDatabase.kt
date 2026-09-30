@@ -55,7 +55,74 @@ abstract class AppDatabase : RoomDatabase() {
         // destructive akan drop semua table).
         private val MIGRATION_5_6 = object : Migration(5, 6) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // No-op: tidak ada perubahan schema antara v5 dan v6.
+                // Schema v5 -> v6:
+                // - lastCheckInDate: INTEGER -> TEXT
+                // - tambah referredCount (sudah ada di v5)
+                // - buang lastLocationUpdate, lastStepTimestamp, encryptionKeyHash, referralEarnings
+
+                // 1. Rename table lama
+                db.execSQL("ALTER TABLE users RENAME TO users_old")
+
+                // 2. Buat table baru (schema v6)
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS `users` (
+                        `id` TEXT NOT NULL,
+                        `name` TEXT NOT NULL,
+                        `email` TEXT NOT NULL,
+                        `phone` TEXT NOT NULL,
+                        `tier` TEXT NOT NULL,
+                        `balance` REAL NOT NULL,
+                        `points` INTEGER NOT NULL,
+                        `referralCode` TEXT NOT NULL,
+                        `referredCount` INTEGER NOT NULL,
+                        `checkInStreak` INTEGER NOT NULL,
+                        `lastCheckInDate` TEXT NOT NULL,
+                        `todaySteps` INTEGER NOT NULL,
+                        `pendingBalance` REAL NOT NULL,
+                        `totalPaidOut` REAL NOT NULL,
+                        `unclaimedSteps` INTEGER NOT NULL,
+                        `dailyStepGoal` INTEGER NOT NULL,
+                        `isLocationTrackingAllowed` INTEGER NOT NULL,
+                        `latitude` REAL NOT NULL,
+                        `longitude` REAL NOT NULL,
+                        `locationCity` TEXT NOT NULL,
+                        `locationProvince` TEXT NOT NULL,
+                        `regionZone` TEXT NOT NULL,
+                        `is2FAEnabled` INTEGER NOT NULL,
+                        `twoFactorSecret` TEXT NOT NULL,
+                        `commissionRateMultiplier` REAL NOT NULL,
+                        `convertedStepsToday` INTEGER NOT NULL,
+                        PRIMARY KEY(`id`)
+                    )
+                """.trimIndent())
+
+                // 3. Copy data lama -> baru (cast lastCheckInDate ke TEXT, default kolum baru)
+                db.execSQL("""
+                    INSERT INTO users (
+                        id, name, email, phone, tier, balance, points, referralCode,
+                        referredCount, checkInStreak, lastCheckInDate, todaySteps,
+                        pendingBalance, totalPaidOut, unclaimedSteps, dailyStepGoal,
+                        isLocationTrackingAllowed, latitude, longitude,
+                        locationCity, locationProvince, regionZone,
+                        is2FAEnabled, twoFactorSecret, commissionRateMultiplier,
+                        convertedStepsToday
+                    )
+                    SELECT
+                        id, name, email, phone, tier, balance, points, referralCode,
+                        0,
+                        checkInStreak,
+                        CAST(COALESCE(lastCheckInDate, '') AS TEXT),
+                        todaySteps,
+                        pendingBalance, totalPaidOut, unclaimedSteps, dailyStepGoal,
+                        isLocationTrackingAllowed, latitude, longitude,
+                        locationCity, locationProvince, regionZone,
+                        is2FAEnabled, twoFactorSecret, commissionRateMultiplier,
+                        convertedStepsToday
+                    FROM users_old
+                """.trimIndent())
+
+                // 4. Drop table lama
+                db.execSQL("DROP TABLE users_old")
             }
         }
 
