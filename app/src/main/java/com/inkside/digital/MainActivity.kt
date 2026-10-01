@@ -90,6 +90,7 @@ import com.inkside.digital.ui.screens.auth.LoginScreen
 import com.inkside.digital.ui.screens.auth.ProfileSetupScreen
 import com.inkside.digital.ui.screens.auth.RegisterScreen
 import com.inkside.digital.ui.screens.auth.SplashScreen
+import com.inkside.digital.ui.screens.LoadingScreen
 import com.inkside.digital.ui.screens.auth.VerifyEmailScreen
 import com.inkside.digital.viewmodel.AffiliateViewModel
 import com.inkside.digital.viewmodel.AppScreen
@@ -125,6 +126,19 @@ fun RootNav(
     // Sync user dari Firebase saat app dibuka
     androidx.compose.runtime.LaunchedEffect(Unit) {
         affiliateViewModel.syncFirebaseUser()
+    }
+
+    // Preload semua komponen + auto-navigate bila complete
+    val loadingState by affiliateViewModel.loadingState.collectAsState()
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        affiliateViewModel.preloadAll()
+    }
+    androidx.compose.runtime.LaunchedEffect(loadingState.isComplete) {
+        if (loadingState.isComplete && isOnboarded) {
+            // Tunggu 800ms untuk tunjuk 100% dulu, baru navigate
+            kotlinx.coroutines.delay(800)
+            authViewModel.navigateTo(AuthScreen.HOME)
+        }
     }
 
     // Register FCM token bila app dibuka
@@ -180,7 +194,8 @@ fun RootNav(
         }
 
         AuthScreen.SPLASH -> {
-            SplashScreen()
+            val loadingState by affiliateViewModel.loadingState.collectAsState()
+            LoadingScreen(loadingState = loadingState)
         }
 
         AuthScreen.LOGIN -> {
