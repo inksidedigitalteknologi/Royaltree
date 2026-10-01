@@ -27,10 +27,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.inkside.digital.ui.components.AnimatedBackground
 import com.inkside.digital.ui.components.RoyaltreeTree
 import kotlinx.coroutines.delay
 
-private val DarkBg = Color(0xFF05060A)
 private val EmeraldLight = Color(0xFF34D399)
 private val GoldAccent = Color(0xFFFFD700)
 
@@ -52,15 +52,14 @@ fun SplashScreen() {
         label = "splash"
     )
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(DarkBg, Color(0xFF0F172A), DarkBg)
-                )
-            ),
-        contentAlignment = Alignment.Center
+    AnimatedBackground(
+        accentColor = EmeraldLight,
+        enableAurora = true,
+        enableStars = true,
+        enableGlow = true,
+        enableParticles = true,
+        starCount = 40,
+        particleCount = 20
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
