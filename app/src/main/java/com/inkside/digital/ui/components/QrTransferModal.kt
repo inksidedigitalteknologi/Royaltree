@@ -33,7 +33,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.Backspace
+import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
@@ -46,7 +46,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Verified
@@ -55,7 +55,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -231,7 +231,7 @@ fun QrTransferModal(
                         },
                         text = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(imageVector = Icons.Default.Send, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text("Kirim RTP (Scan)", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
@@ -641,7 +641,7 @@ fun QrTransferModal(
                                 }
 
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Divider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
                                 Spacer(modifier = Modifier.height(8.dp))
 
                                 Row(
@@ -670,7 +670,7 @@ fun QrTransferModal(
                                 )
 
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Divider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
                                 Spacer(modifier = Modifier.height(8.dp))
 
                                 Row(
@@ -1202,7 +1202,7 @@ fun TransferReceiptDialog(
                         }
 
                         Spacer(modifier = Modifier.height(8.dp))
-                        Divider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Row(
@@ -1226,7 +1226,7 @@ fun TransferReceiptDialog(
                             color = Color(0xFFEF4444)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Divider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Row(
@@ -1549,7 +1549,7 @@ fun SecurityPinModal(
                                             }
                                             "DEL" -> {
                                                 Icon(
-                                                    imageVector = Icons.Default.Backspace,
+                                                    imageVector = Icons.AutoMirrored.Filled.Backspace,
                                                     contentDescription = "Hapus",
                                                     modifier = Modifier.size(20.dp)
                                                 )

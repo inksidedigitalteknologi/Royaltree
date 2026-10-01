@@ -20,8 +20,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.CardGiftcard
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MonetizationOn
@@ -153,7 +153,7 @@ fun AppDrawer(
                 onClick = { onNavigate(AppScreen.SETTINGS); onCloseDrawer() }
             )
             DrawerItem(
-                icon = Icons.Default.HelpOutline,
+                icon = Icons.AutoMirrored.Filled.HelpOutline,
                 label = LanguageManager.translate("faq_title", currentLanguage, "Bantuan"),
                 selected = currentScreen == AppScreen.FAQ,
                 onClick = { onNavigate(AppScreen.FAQ); onCloseDrawer() }
@@ -165,7 +165,7 @@ fun AppDrawer(
 
             // ============ MENU BAWAH ============
             DrawerItem(
-                icon = Icons.Default.ExitToApp,
+                icon = Icons.AutoMirrored.Filled.ExitToApp,
                 label = LanguageManager.translate("settings_logout", currentLanguage, "Keluar"),
                 selected = false,
                 tint = MaterialTheme.colorScheme.error,

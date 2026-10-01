@@ -30,7 +30,7 @@ import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.CurrencyBitcoin
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.QrCode
@@ -41,16 +41,16 @@ import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Verified
-import androidx.compose.material.icons.filled.VolumeOff
-import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -398,7 +398,7 @@ fun WithdrawDialog(
                                 color = if (fee == 0.0) EmeraldLight else MaterialTheme.colorScheme.onSurface
                             )
                         }
-                        Divider(modifier = Modifier.padding(vertical = 6.dp))
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 6.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
@@ -1765,7 +1765,7 @@ fun AdRewardModal(
                 verifiedBadge = "Berizin & Diawasi OJK",
                 ctaText = "Mulai Portofolio Investasi",
                 brandColors = listOf(Color(0xFF14532D), Color(0xFF16A34A)),
-                iconVector = Icons.Default.TrendingUp,
+                iconVector = Icons.AutoMirrored.Filled.TrendingUp,
                 features = listOf("Bebas Biaya Komisi Beli/Jual", "Mulai Rp 10.000", "Pencairan Instan 24/7"),
                 complianceTag = "Standar Kelayakan: Lembaga Keuangan Berlisensi OJK"
             ),
@@ -2015,7 +2015,7 @@ fun AdRewardModal(
                                         modifier = Modifier.clickable { isMuted = !isMuted }
                                     ) {
                                         Icon(
-                                            imageVector = if (isMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp,
+                                            imageVector = if (isMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
                                             contentDescription = "Mute",
                                             tint = Color.White,
                                             modifier = Modifier.padding(5.dp).size(14.dp)
@@ -2191,7 +2191,7 @@ fun AdRewardModal(
                     modifier = Modifier.fillMaxWidth().height(42.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.OpenInNew,
+                        imageVector = Icons.AutoMirrored.Filled.OpenInNew,
                         contentDescription = null,
                         modifier = Modifier.size(15.dp)
                     )
