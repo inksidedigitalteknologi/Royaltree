@@ -123,6 +123,9 @@ fun RootNav(
     authViewModel: AuthViewModel = viewModel(),
     affiliateViewModel: AffiliateViewModel = viewModel()
 ) {
+    // Onboarding flag
+    val isOnboarded = com.inkside.digital.data.preferences.AppThemePreferences.isOnboarded
+
     // Sync user dari Firebase saat app dibuka
     androidx.compose.runtime.LaunchedEffect(Unit) {
         affiliateViewModel.syncFirebaseUser()
@@ -170,7 +173,6 @@ fun RootNav(
     val successMessage by authViewModel.successMessage.collectAsState()
 
     val context = androidx.compose.ui.platform.LocalContext.current
-    val isOnboarded = com.inkside.digital.data.preferences.AppThemePreferences.isOnboarded
     val currentLanguage by affiliateViewModel.currentLanguage.collectAsState()
     var adBlockedReason by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<String?>(null) }
 
