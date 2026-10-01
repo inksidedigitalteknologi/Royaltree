@@ -130,6 +130,12 @@ fun RootNav(
         affiliateViewModel.loadAffiliateBalance()
     }
 
+    // Load game state + katalog miner bila app dibuka
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        affiliateViewModel.loadGameState()
+        affiliateViewModel.loadMinerCatalog()
+    }
+
     val authScreen by authViewModel.currentScreen.collectAsState()
     val currentUser by authViewModel.currentUser.collectAsState()
     val isLoading by authViewModel.isLoading.collectAsState()
