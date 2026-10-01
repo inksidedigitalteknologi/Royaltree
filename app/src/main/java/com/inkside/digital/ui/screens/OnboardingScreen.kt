@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.components.RoyaltreeTree
+import com.inkside.digital.ui.components.AnimatedBackground
 import androidx.compose.foundation.layout.aspectRatio
 import kotlinx.coroutines.launch
 
@@ -72,14 +73,12 @@ fun OnboardingScreen(
     val coroutineScope = rememberCoroutineScope()
     var showLanguageModal by remember { mutableStateOf(false) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(DarkBg, Color(0xFF1E1B4B), Color(0xFF0F172A))
-                )
-            )
+    AnimatedBackground(
+        accentColor = EmeraldLight,
+        enableAurora = true,
+        enableStars = true,
+        enableGlow = true,
+        enableParticles = true
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
 
