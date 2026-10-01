@@ -24,9 +24,10 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 // ============ Colors ============
-private val AuroraDeep = Color(0xFF070A18)
+private val AuroraDeep = Color(0xFF05060A)
 private val AuroraMid = Color(0xFF0F1729)
-private val AuroraSoft = Color(0xFF1E293B)
+private val AuroraSoft = Color(0xFF1E3A4F)
+private val AuroraTeal = Color(0xFF0D9488)
 private val EmeraldAccent = Color(0xFF34D399)
 private val CyanAccent = Color(0xFF06B6D4)
 private val GoldAccent = Color(0xFFFFD700)
@@ -74,7 +75,7 @@ fun AnimatedBackground(
     enableStars: Boolean = true,
     enableGlow: Boolean = true,
     enableParticles: Boolean = true,
-    starCount: Int = 40,
+    starCount: Int = 60,
     particleCount: Int = 20,
     content: @Composable BoxScope.() -> Unit = {}
 ) {
@@ -188,7 +189,8 @@ fun AnimatedBackground(
                 drawCircle(
                     brush = Brush.radialGradient(
                         colors = listOf(
-                            accentColor.copy(alpha = 0.15f),
+                            GoldAccent.copy(alpha = 0.22f),
+                            accentColor.copy(alpha = 0.14f),
                             accentColor.copy(alpha = 0.05f),
                             Color.Transparent
                         ),
