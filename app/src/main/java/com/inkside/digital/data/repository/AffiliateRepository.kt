@@ -340,6 +340,26 @@ class AffiliateRepository(private val dao: AppDao) {
         )
     }
 
+    // ============ AFFILIATE ============
+    suspend fun updateUserAffiliateFromBackend(
+        userId: String,
+        affiliateBalance: Double,
+        affiliateBalanceAvailable: Double,
+        affiliateBalancePending: Double,
+        affiliateTotalEarned: Double,
+        affiliateTotalWithdrawn: Double
+    ) = withContext(Dispatchers.IO) {
+        val current = dao.getUserSync(userId) ?: return@withContext
+        val updated = current.copy(
+            affiliateBalance = affiliateBalance,
+            affiliateBalanceAvailable = affiliateBalanceAvailable,
+            affiliateBalancePending = affiliateBalancePending,
+            affiliateTotalEarned = affiliateTotalEarned,
+            affiliateTotalWithdrawn = affiliateTotalWithdrawn
+        )
+        dao.updateUser(updated)
+    }
+
     suspend fun upgradeToPremium(): Result<String> = withContext(Dispatchers.IO) {
         val user = dao.getUserSync(_activeUserId.value) ?: return@withContext Result.failure(Exception("User tidak ditemukan"))
         val upgradeCost = 250000.0 // IDR

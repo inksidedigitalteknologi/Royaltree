@@ -513,6 +513,28 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     private val _tiers = MutableStateFlow<List<org.json.JSONObject>>(emptyList())
     val tiers: StateFlow<List<org.json.JSONObject>> = _tiers.asStateFlow()
 
+    // ==== AFFILIATE STATE ====
+    data class AffiliateBalanceData(
+        val balance: Double = 0.0,
+        val available: Double = 0.0,
+        val pending: Double = 0.0,
+        val totalEarned: Double = 0.0,
+        val totalWithdrawn: Double = 0.0,
+        val minWithdraw: Double = 10.0
+    )
+
+    private val _affiliateBalance = MutableStateFlow(AffiliateBalanceData())
+    val affiliateBalance: StateFlow<AffiliateBalanceData> = _affiliateBalance.asStateFlow()
+
+    private val _affiliateTransactions = MutableStateFlow<List<org.json.JSONObject>>(emptyList())
+    val affiliateTransactions: StateFlow<List<org.json.JSONObject>> = _affiliateTransactions.asStateFlow()
+
+    private val _affiliateWithdrawals = MutableStateFlow<List<org.json.JSONObject>>(emptyList())
+    val affiliateWithdrawals: StateFlow<List<org.json.JSONObject>> = _affiliateWithdrawals.asStateFlow()
+
+    private val _affiliateLoading = MutableStateFlow(false)
+    val affiliateLoading: StateFlow<Boolean> = _affiliateLoading.asStateFlow()
+
     fun loadTiers() {
         viewModelScope.launch {
             ApiClient.getTiersPublic()
@@ -529,6 +551,112 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 }
                 .onFailure {
                     android.util.Log.w("AffiliateViewModel", "Gagal load tiers: ${it.message}")
+                }
+        }
+    }
+
+    // ============ AFFILIATE METHODS ============
+    fun loadAffiliateBalance() {
+        viewModelScope.launch {
+            _affiliateLoading.value = true
+            ApiClient.getAffiliateBalance()
+                .onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
+                        val data = json.optJSONObject("data") ?: return@onSuccess
+                        _affiliateBalance.value = AffiliateBalanceData(
+                            balance = data.optDouble("balance", 0.0),
+                            available = data.optDouble("available", 0.0),
+                            pending = data.optDouble("pending", 0.0),
+                            totalEarned = data.optDouble("totalEarned", 0.0),
+                            totalWithdrawn = data.optDouble("totalWithdrawn", 0.0),
+                            minWithdraw = data.optDouble("minWithdraw", 10.0)
+                        )
+                        val uid = FirebaseAuth.getInstance().currentUser?.uid
+                        if (uid != null) {
+                            repository.updateUserAffiliateFromBackend(
+                                userId = uid,
+                                affiliateBalance = data.optDouble("balance", 0.0),
+                                affiliateBalanceAvailable = data.optDouble("available", 0.0),
+                                affiliateBalancePending = data.optDouble("pending", 0.0),
+                                affiliateTotalEarned = data.optDouble("totalEarned", 0.0),
+                                affiliateTotalWithdrawn = data.optDouble("totalWithdrawn", 0.0)
+                            )
+                        }
+                    }
+                }
+                .onFailure {
+                    android.util.Log.w("AffiliateViewModel", "Gagal load affiliate balance: ${it.message}")
+                }
+            _affiliateLoading.value = false
+        }
+    }
+
+    fun loadAffiliateTransactions(limit: Int = 50) {
+        viewModelScope.launch {
+            ApiClient.getAffiliateTransactions(limit)
+                .onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
+                        val arr = json.optJSONArray("data") ?: return@onSuccess
+                        val list = mutableListOf<org.json.JSONObject>()
+                        for (i in 0 until arr.length()) {
+                            arr.optJSONObject(i)?.let { list.add(it) }
+                        }
+                        _affiliateTransactions.value = list
+                    }
+                }
+                .onFailure {
+                    android.util.Log.w("AffiliateViewModel", "Gagal load affiliate transactions: ${it.message}")
+                }
+        }
+    }
+
+    fun requestAffiliateWithdraw(amount: Double, destination: String, method: String = "PAYPAL") {
+        viewModelScope.launch {
+            _affiliateLoading.value = true
+            ApiClient.requestAffiliateWithdraw(amount, destination, method)
+                .onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
+                        showSnackbar(json.optString("message", "Withdraw berhasil diajukan!"))
+                        loadAffiliateBalance()
+                        loadAffiliateWithdrawals()
+                    } else {
+                        showSnackbar(json.optString("message", "Gagal withdraw"))
+                    }
+                }
+                .onFailure {
+                    showSnackbar("Error: ${it.message}")
+                }
+            _affiliateLoading.value = false
+        }
+    }
+
+    fun loadAffiliateWithdrawals(limit: Int = 20) {
+        viewModelScope.launch {
+            ApiClient.getAffiliateWithdrawals(limit)
+                .onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
+                        val arr = json.optJSONArray("data") ?: return@onSuccess
+                        val list = mutableListOf<org.json.JSONObject>()
+                        for (i in 0 until arr.length()) {
+                            arr.optJSONObject(i)?.let { list.add(it) }
+                        }
+                        _affiliateWithdrawals.value = list
+                    }
+                }
+                .onFailure {
+                    android.util.Log.w("AffiliateViewModel", "Gagal load withdrawals: ${it.message}")
+                }
+        }
+    }
+
+    fun registerFcmToken(token: String, deviceId: String = "") {
+        viewModelScope.launch {
+            ApiClient.registerFcmToken(token, deviceId)
+                .onSuccess {
+                    android.util.Log.d("AffiliateViewModel", "✅ FCM token registered")
+                }
+                .onFailure {
+                    android.util.Log.w("AffiliateViewModel", "Gagal register FCM: ${it.message}")
                 }
         }
     }
