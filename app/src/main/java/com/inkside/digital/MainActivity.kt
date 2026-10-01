@@ -12,6 +12,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -110,6 +112,22 @@ fun RootNav(
     // Sync user dari Firebase saat app dibuka
     androidx.compose.runtime.LaunchedEffect(Unit) {
         affiliateViewModel.syncFirebaseUser()
+    }
+
+    // Register FCM token bila app dibuka
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        try {
+            val token = FirebaseMessaging.getInstance().token.await()
+            android.util.Log.d("RootNav", "FCM token: ${token.take(20)}...")
+            affiliateViewModel.registerFcmToken(token)
+        } catch (e: Exception) {
+            android.util.Log.w("RootNav", "Gagal ambil FCM token: ${e.message}")
+        }
+    }
+
+    // Load affiliate balance bila app dibuka
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        affiliateViewModel.loadAffiliateBalance()
     }
 
     val authScreen by authViewModel.currentScreen.collectAsState()
