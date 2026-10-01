@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LocationOn
@@ -93,7 +93,7 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth().clickable { showLogoutDialog = true }
             ) {
                 Row(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.ExitToApp, "Logout", tint = MaterialTheme.colorScheme.error)
+                    Icon(Icons.AutoMirrored.Filled.ExitToApp, "Logout", tint = MaterialTheme.colorScheme.error)
                     Column(modifier = Modifier.padding(start = 16.dp)) {
                         Text(LanguageManager.translate("settings_logout", currentLanguage, "Logout"), fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.error)
                         Text(LanguageManager.translate("settings_logout_desc", currentLanguage, "Sign out"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)

@@ -25,7 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CardGiftcard
-import androidx.compose.material.icons.filled.DirectionsWalk
+import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.ElectricBolt
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.LocalFireDepartment
@@ -241,7 +241,7 @@ fun StepCounterScreenContent(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Icon(
-                                imageVector = Icons.Filled.DirectionsWalk,
+                                imageVector = Icons.AutoMirrored.Filled.DirectionsWalk,
                                 contentDescription = null,
                                 tint = Color(0xFF10B981),
                                 modifier = Modifier.size(34.dp)
@@ -501,7 +501,7 @@ fun StepCounterScreenContent(
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = Icons.Filled.DirectionsWalk,
+                                imageVector = Icons.AutoMirrored.Filled.DirectionsWalk,
                                 contentDescription = null,
                                 tint = Color(0xFF059669),
                                 modifier = Modifier.size(20.dp)
