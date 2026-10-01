@@ -305,6 +305,16 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _currentScreen.value = AuthScreen.FORGOT_PASSWORD
     }
 
+    /**
+     * navigateTo — method generik untuk navigate ke screen apa-apa.
+     * Dipakai oleh LoadingScreen untuk navigate ke HOME bila preload complete.
+     */
+    fun navigateTo(screen: AuthScreen) {
+        _errorMessage.value = null
+        _successMessage.value = null
+        _currentScreen.value = screen
+    }
+
     // ============ RESET PASSWORD ============
 
     fun resetPassword(email: String) {

@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.delay
 import org.json.JSONObject
 import com.google.firebase.auth.FirebaseAuth
 import com.inkside.digital.widget.WidgetUpdater
@@ -534,6 +536,128 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val _affiliateLoading = MutableStateFlow(false)
     val affiliateLoading: StateFlow<Boolean> = _affiliateLoading.asStateFlow()
+
+    // ============ LOADING STATE (Preload Gate) ============
+    data class LoadingState(
+        val firebaseAuth: Boolean = false,
+        val userProfile: Boolean = false,
+        val minerCatalog: Boolean = false,
+        val gameState: Boolean = false,
+        val affiliateBalance: Boolean = false,
+        val adMobReady: Boolean = false,
+        val fcmToken: Boolean = false
+    ) {
+        val totalItems: Int get() = 7
+        val readyCount: Int get() = listOf(
+            firebaseAuth, userProfile, minerCatalog, gameState,
+            affiliateBalance, adMobReady, fcmToken
+        ).count { it }
+        val progress: Float get() = readyCount.toFloat() / totalItems
+        val isComplete: Boolean get() = readyCount == totalItems
+
+        fun itemList(): List<Pair<String, Boolean>> = listOf(
+            "Memuatkan akun" to firebaseAuth,
+            "Sinkronisasi profil" to userProfile,
+            "Memuat katalog miner" to minerCatalog,
+            "Menyiapkan game" to gameState,
+            "Memuat komisi affiliate" to affiliateBalance,
+            "Menyiapkan iklan" to adMobReady,
+            "Menyambung notifikasi" to fcmToken
+        )
+    }
+
+    private val _loadingState = MutableStateFlow(LoadingState())
+    val loadingState: StateFlow<LoadingState> = _loadingState.asStateFlow()
+
+    /**
+     * preloadAll — panggil semua komponen penting sebelum masuk app.
+     * Setiap komponen ditandai ready bila selesai.
+     */
+    fun preloadAll() {
+        viewModelScope.launch {
+            // 1. Firebase Auth
+            try {
+                val fbUser = FirebaseAuth.getInstance().currentUser
+                _loadingState.value = _loadingState.value.copy(firebaseAuth = fbUser != null)
+                android.util.Log.d("Preload", "1/7 Firebase Auth: ${fbUser?.uid?.take(8)}")
+            } catch (e: Exception) {
+                _loadingState.value = _loadingState.value.copy(firebaseAuth = true)
+            }
+
+            // 2. User Profile
+            try {
+                loadUserFromBackend()
+                delay(300)
+                _loadingState.value = _loadingState.value.copy(userProfile = true)
+                android.util.Log.d("Preload", "2/7 User Profile ✅")
+            } catch (e: Exception) {
+                _loadingState.value = _loadingState.value.copy(userProfile = true)
+            }
+
+            // 3. Miner Catalog
+            try {
+                loadMinerCatalog()
+                delay(300)
+                _loadingState.value = _loadingState.value.copy(minerCatalog = true)
+                android.util.Log.d("Preload", "3/7 Miner Catalog ✅")
+            } catch (e: Exception) {
+                _loadingState.value = _loadingState.value.copy(minerCatalog = true)
+            }
+
+            // 4. Game State
+            try {
+                loadGameState()
+                delay(300)
+                _loadingState.value = _loadingState.value.copy(gameState = true)
+                android.util.Log.d("Preload", "4/7 Game State ✅")
+            } catch (e: Exception) {
+                _loadingState.value = _loadingState.value.copy(gameState = true)
+            }
+
+            // 5. Affiliate Balance
+            try {
+                loadAffiliateBalance()
+                delay(300)
+                _loadingState.value = _loadingState.value.copy(affiliateBalance = true)
+                android.util.Log.d("Preload", "5/7 Affiliate Balance ✅")
+            } catch (e: Exception) {
+                _loadingState.value = _loadingState.value.copy(affiliateBalance = true)
+            }
+
+            // 6. Tiers (bonus — digabung ke affiliateBalance kalau gagal)
+            try {
+                loadTiers()
+            } catch (e: Exception) { }
+
+            // 7. AdMob Ready — callback
+            try {
+                // AdMob biasanya ready bila AdManager.init selesai
+                // Tandai ready lepas 500ms
+                delay(500)
+                _loadingState.value = _loadingState.value.copy(adMobReady = true)
+                android.util.Log.d("Preload", "6/7 AdMob ✅")
+            } catch (e: Exception) {
+                _loadingState.value = _loadingState.value.copy(adMobReady = true)
+            }
+
+            // 8. FCM Token
+            try {
+                val token = com.google.firebase.messaging.FirebaseMessaging.getInstance().token.await()
+                registerFcmToken(token)
+                _loadingState.value = _loadingState.value.copy(fcmToken = true)
+                android.util.Log.d("Preload", "7/7 FCM ✅")
+            } catch (e: Exception) {
+                _loadingState.value = _loadingState.value.copy(fcmToken = true)
+                android.util.Log.w("Preload", "FCM gagal: ${e.message}")
+            }
+
+            android.util.Log.d("Preload", "🎉 PRELOAD COMPLETE")
+        }
+    }
+
+    fun resetLoadingState() {
+        _loadingState.value = LoadingState()
+    }
 
     fun loadTiers() {
         viewModelScope.launch {
