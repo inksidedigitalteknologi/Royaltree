@@ -726,7 +726,22 @@ fun MainAffiliateAppContent(
                         onLogout = { onLogout() },
                         affiliateBalance = affiliateBalance,
                         onOpenWithdraw = onOpenWithdraw,
-                        onOpenWithdrawHistory = onOpenWithdrawHistory
+                        onOpenWithdrawHistory = onOpenWithdrawHistory,
+                        onOpenUpgrade = { onSetUpgradeModalVisible(true) },
+                        onNavigateToDailyCheckIn = { onNavigate(AppScreen.DAILY_CHECK_IN) },
+                        onNavigateToMining = { onNavigate(AppScreen.GAME_MINING) },
+                        onNavigateToCoinRush = { onNavigate(AppScreen.GAME_COIN_RUSH) },
+                        onNavigateToMissions = { onNavigate(AppScreen.MISSIONS) },
+                        minerSlotsUsed = placedMiners.size,
+                        minerSlotsMax = when (user?.tier) {
+                            "ROYAL" -> 10
+                            "VIP" -> 8
+                            "PREMIUM" -> 5
+                            "STARTER" -> 3
+                            else -> 6
+                        },
+                        minerPowerGhs = placedMiners.sumOf { it.powerGhs },
+                        minerTokens = 0
                     )
                 }
 

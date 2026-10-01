@@ -21,6 +21,14 @@ import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CardGiftcard
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -57,7 +65,18 @@ fun ProfileScreen(
     onLogout: () -> Unit,
     affiliateBalance: AffiliateViewModel.AffiliateBalanceData = AffiliateViewModel.AffiliateBalanceData(),
     onOpenWithdraw: () -> Unit = {},
-    onOpenWithdrawHistory: () -> Unit = {}
+    onOpenWithdrawHistory: () -> Unit = {},
+    // Quick Actions
+    onOpenUpgrade: () -> Unit = {},
+    onNavigateToDailyCheckIn: () -> Unit = {},
+    onNavigateToMining: () -> Unit = {},
+    onNavigateToCoinRush: () -> Unit = {},
+    onNavigateToMissions: () -> Unit = {},
+    // Mining & Referral data
+    minerSlotsUsed: Int = 0,
+    minerSlotsMax: Int = 6,
+    minerPowerGhs: Double = 0.0,
+    minerTokens: Int = 0
 ) {
     var name by remember { mutableStateOf(user?.name ?: "") }
     var email by remember { mutableStateOf(user?.email ?: "") }
@@ -194,6 +213,42 @@ fun ProfileScreen(
             }
         }
 
+        // ==== Quick Actions ====
+        item {
+            QuickActionsRow(
+                onDailyCheckIn = onNavigateToDailyCheckIn,
+                onMining = onNavigateToMining,
+                onCoinRush = onNavigateToCoinRush,
+                onMissions = onNavigateToMissions
+            )
+        }
+
+        // ==== Upgrade Tier ====
+        item {
+            UpgradeTierCard(
+                currentTier = user?.tier ?: "FREE",
+                onClick = onOpenUpgrade
+            )
+        }
+
+        // ==== Referral Stats ====
+        item {
+            ReferralStatsCard(
+                referredCount = user?.referredCount ?: 0,
+                commissionIdr = (user?.referredCount ?: 0) * 0.0  // TODO: guna komisi dari backend nanti
+            )
+        }
+
+        // ==== Mining Stats ====
+        item {
+            MiningStatsCard(
+                slotsUsed = minerSlotsUsed,
+                slotsMax = minerSlotsMax,
+                powerGhs = minerPowerGhs,
+                tokens = minerTokens
+            )
+        }
+
         // ==== Affiliate Balance ====
         item {
             AffiliateBalanceCard(
@@ -249,5 +304,246 @@ fun ProfileScreen(
         }
 
         item { Spacer(modifier = Modifier.height(24.dp)) }
+    }
+}
+
+// ==========================================================
+// QUICK ACTIONS — 4 tombol
+// ==========================================================
+@Composable
+private fun QuickActionsRow(
+    onDailyCheckIn: () -> Unit,
+    onMining: () -> Unit,
+    onCoinRush: () -> Unit,
+    onMissions: () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            Text(
+                "⚡ Aksi Cepat",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                QuickActionButton("🎁", "Check-in", EmeraldLight, onDailyCheckIn)
+                QuickActionButton("⛏️", "Mining", ElectricBlue, onMining)
+                QuickActionButton("🎰", "Coin Rush", GoldVip, onCoinRush)
+                QuickActionButton("🎯", "Misi", Color(0xFFEC4899), onMissions)
+            }
+        }
+    }
+}
+
+@Composable
+private fun QuickActionButton(
+    emoji: String,
+    label: String,
+    accent: Color,
+    onClick: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clip(RoundedCornerShape(10.dp))
+            .clickable { onClick() }
+            .padding(horizontal = 8.dp, vertical = 6.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(44.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(accent.copy(alpha = 0.15f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(emoji, fontSize = 22.sp)
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(label, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+    }
+}
+
+// ==========================================================
+// UPGRADE TIER — card dengan tier semasa + button
+// ==========================================================
+@Composable
+private fun UpgradeTierCard(
+    currentTier: String,
+    onClick: () -> Unit
+) {
+    val tierInfo = when (currentTier.uppercase()) {
+        "ROYAL" -> Triple("💎", "Royal", Color(0xFFB9F2FF))
+        "VIP" -> Triple("🥇", "VIP", GoldVip)
+        "PREMIUM" -> Triple("🥈", "Premium", Color(0xFFC0C0C0))
+        "STARTER" -> Triple("🥉", "Pemula", Color(0xFFCD7F32))
+        else -> Triple("🌱", "Gratis", EmeraldLight)
+    }
+
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(46.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(tierInfo.third.copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(tierInfo.first, fontSize = 24.sp)
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    "Tingkat Anda: ${tierInfo.second}",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    if (currentTier == "ROYAL") "Tingkat tertinggi tercapai! 🎉" else "Upgrade untuk slot miner & komisi lebih besar",
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Surface(
+                color = tierInfo.third,
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text(
+                    if (currentTier == "ROYAL") "MAX" else "Upgrade",
+                    color = Color.Black,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Black,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                )
+            }
+        }
+    }
+}
+
+// ==========================================================
+// REFERRAL STATS — 2 kolum
+// ==========================================================
+@Composable
+private fun ReferralStatsCard(
+    referredCount: Int,
+    commissionIdr: Double
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            // Teman diundang
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(14.dp)
+            ) {
+                Text("👥 Teman", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    "$referredCount",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Black,
+                    color = EmeraldLight
+                )
+                Text("Diundang", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            // Divider
+            Box(
+                modifier = Modifier
+                    .width(1.dp)
+                    .height(60.dp)
+                    .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+            )
+            // Komisi
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(14.dp)
+            ) {
+                Text("💰 Komisi", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    "Rp ${String.format("%,.0f", commissionIdr).replace(",", ".")}",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Black,
+                    color = GoldVip
+                )
+                Text("Total", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+    }
+}
+
+// ==========================================================
+// MINING STATS — slot, power, token
+// ==========================================================
+@Composable
+private fun MiningStatsCard(
+    slotsUsed: Int,
+    slotsMax: Int,
+    powerGhs: Double,
+    tokens: Int
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            Text(
+                "⛏️ Status Mining",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                MiniStatBox("Slot", "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox("Power", "${powerGhs.toInt()} GH/s", ElectricBlue, Modifier.weight(1f))
+                MiniStatBox("Token", "$tokens", GoldVip, Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun MiniStatBox(
+    label: String,
+    value: String,
+    accent: Color,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        color = accent.copy(alpha = 0.12f),
+        shape = RoundedCornerShape(10.dp),
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(label, fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(value, fontSize = 13.sp, fontWeight = FontWeight.Black, color = accent)
+        }
     }
 }
