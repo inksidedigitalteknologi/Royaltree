@@ -1139,6 +1139,28 @@ class AffiliateRepository(private val dao: AppDao) {
         Result.success(coins)
     }
 
+    // ============ MINING CLAIM HELPERS ============
+    suspend fun getGameRoomStateOnce(): com.inkside.digital.data.model.GameRoomStateEntity? = withContext(Dispatchers.IO) {
+        try {
+            dao.getGameRoomStateSync()
+        } catch (e: Exception) { null }
+    }
+
+    suspend fun resetMiningAfterClaim(nextClaimAtMs: Long) = withContext(Dispatchers.IO) {
+        try {
+            val current = dao.getGameRoomStateSync() ?: com.inkside.digital.data.model.GameRoomStateEntity()
+            val updated = current.copy(
+                unclaimedMiningPoints = 0.0,
+                lastClaimTimestamp = System.currentTimeMillis(),
+                lastMiningClaimAt = System.currentTimeMillis(),
+                lastMiningUpdateTimestamp = System.currentTimeMillis()
+            )
+            dao.insertGameRoomState(updated)
+        } catch (e: Exception) {
+            android.util.Log.w("AffiliateRepository", "resetMiningAfterClaim error: ${e.message}")
+        }
+    }
+
     suspend fun claimGameMiningPoints(): Result<Double> = withContext(Dispatchers.IO) {
         val currentId = _activeUserId.value
         val user = dao.getUserSync(currentId) ?: return@withContext Result.failure(Exception("Pengguna tidak ditemukan"))

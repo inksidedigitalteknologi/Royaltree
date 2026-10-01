@@ -395,6 +395,20 @@ object ApiClient {
         }
     }
 
+    suspend fun claimMiningWithAd(transactionId: String, vendor: String): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().apply {
+                put("transactionId", transactionId)
+                put("vendor", vendor)
+            }
+            val reqBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val resp = apiService.claimMiningWithAd(reqBody)
+            Result.success(JSONObject(resp.string()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun claimMining(): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val response: ResponseBody = apiService.claimMining()

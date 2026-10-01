@@ -90,6 +90,9 @@ interface RoyaltreeApiService {
     @GET("game/state")
     suspend fun getGameState(): ResponseBody
 
+    @POST("game/mining/claim-with-ad")
+    suspend fun claimMiningWithAd(@Body body: RequestBody): ResponseBody
+
     @POST("game/mining/claim")
     suspend fun claimMining(): ResponseBody
 

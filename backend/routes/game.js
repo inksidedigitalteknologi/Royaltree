@@ -152,6 +152,116 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
 });
 
 // ============================================================
+// POST /api/v1/game/mining/claim-with-ad
+// Claim mining points — WAJIB nonton iklan dulu
+// Body: { transactionId, vendor }
+// ============================================================
+const MINING_CLAIM_COOLDOWN_MS = 60 * 60 * 1000; // 1 jam
+
+router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+        const { transactionId, vendor } = req.body;
+
+        // Validasi transactionId (anti-replay)
+        if (!transactionId || !vendor) {
+            return res.status(400).json({
+                success: false,
+                message: 'transactionId dan vendor wajib diisi.'
+            });
+        }
+
+        // Cek anti-replay
+        const txRef = db.collection('mining_claim_transactions').doc(transactionId);
+        const txDoc = await txRef.get();
+        if (txDoc.exists) {
+            return res.status(400).json({
+                success: false,
+                message: 'Transaksi sudah pernah diproses.'
+            });
+        }
+
+        const roomRef = db.collection('game_rooms').doc(uid);
+        const roomDoc = await roomRef.get();
+        const room = roomDoc.exists ? roomDoc.data() : {};
+
+        // Cek cooldown
+        const lastClaimAt = room.lastMiningClaimAt || 0;
+        const now = Date.now();
+        const cooldownRemaining = (lastClaimAt + MINING_CLAIM_COOLDOWN_MS) - now;
+
+        if (cooldownRemaining > 0) {
+            return res.status(429).json({
+                success: false,
+                message: `Tunggu ${Math.ceil(cooldownRemaining / 60000)} menit lagi untuk klaim berikutnya.`,
+                cooldownRemainingMs: cooldownRemaining,
+                nextClaimAt: lastClaimAt + MINING_CLAIM_COOLDOWN_MS
+            });
+        }
+
+        const unclaimed = room.unclaimedMiningPoints || 0;
+        if (unclaimed < 1) {
+            return res.status(400).json({
+                success: false,
+                message: 'Belum ada poin yang bisa diklaim.'
+            });
+        }
+
+        const claimAmount = Math.floor(unclaimed);
+        const totalClaimed = (room.totalMinedPointsClaimed || 0) + claimAmount;
+
+        // Update user points
+        await db.collection('users').doc(uid).update({
+            points: admin.firestore.FieldValue.increment(claimAmount)
+        });
+
+        // Reset room + set cooldown
+        await roomRef.set({
+            unclaimedMiningPoints: unclaimed - claimAmount,
+            lastClaimTimestamp: now,
+            lastMiningClaimAt: now,
+            totalMinedPointsClaimed: totalClaimed,
+            tempPowerBonusGhs: room.tempPowerBonusGhs || 0,
+            bonusExpiryTimestamp: room.bonusExpiryTimestamp || 0,
+            miniGameHighScore: room.miniGameHighScore || 0
+        }, { merge: true });
+
+        // Simpan transaction (anti-replay)
+        await txRef.set({
+            uid,
+            transactionId,
+            vendor,
+            claimAmount,
+            claimedAt: admin.firestore.FieldValue.serverTimestamp(),
+            claimedAtMs: now
+        });
+
+        // Audit log
+        await db.collection('audit_logs').add({
+            userId: uid,
+            action: 'GAME_MINING_CLAIM_WITH_AD',
+            points: claimAmount,
+            vendor,
+            transactionId,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        const nextClaimAt = now + MINING_CLAIM_COOLDOWN_MS;
+
+        return res.json({
+            success: true,
+            message: `Berhasil klaim ${claimAmount} RTP! Iklan + cooldown 1 jam.`,
+            points: claimAmount,
+            nextClaimAt,
+            cooldownRemainingMs: MINING_CLAIM_COOLDOWN_MS
+        });
+    } catch (error) {
+        console.error('Claim mining with ad error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
 // POST /api/v1/game/mining/claim
 // Claim mining points
 // ============================================================

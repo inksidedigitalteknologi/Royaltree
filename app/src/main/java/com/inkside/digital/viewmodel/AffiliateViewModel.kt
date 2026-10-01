@@ -1141,6 +1141,71 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     /**
      * Claim mining points — sync ke backend.
      */
+    // ============ MINING CLAIM (Wajib Iklan + Cooldown 1 Jam) ============
+    private val _miningCooldownRemainingMs = MutableStateFlow(0L)
+    val miningCooldownRemainingMs: StateFlow<Long> = _miningCooldownRemainingMs.asStateFlow()
+
+    private val _miningClaimInProgress = MutableStateFlow(false)
+    val miningClaimInProgress: StateFlow<Boolean> = _miningClaimInProgress.asStateFlow()
+
+    /**
+     * Refresh countdown cooldown dari room state.
+     */
+    fun refreshMiningCooldown() {
+        viewModelScope.launch {
+            try {
+                val room = repository.getGameRoomStateOnce() ?: return@launch
+                val last = room.lastMiningClaimAt
+                if (last <= 0L) {
+                    _miningCooldownRemainingMs.value = 0L
+                    return@launch
+                }
+                val next = last + 60L * 60L * 1000L
+                val remaining = (next - System.currentTimeMillis()).coerceAtLeast(0L)
+                _miningCooldownRemainingMs.value = remaining
+            } catch (e: Exception) {
+                android.util.Log.w("AffiliateViewModel", "refreshMiningCooldown error: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Claim mining dengan iklan. transactionId dari AdMob callback.
+     */
+    fun claimMiningWithAd(transactionId: String, vendor: String) {
+        viewModelScope.launch {
+            _miningClaimInProgress.value = true
+
+            val result = ApiClient.claimMiningWithAd(transactionId, vendor)
+
+            result.onSuccess { json ->
+                if (json.optBoolean("success", false)) {
+                    val points = json.optInt("points", 0)
+                    val nextClaimAt = json.optLong("nextClaimAt", 0L)
+                    val remaining = (nextClaimAt - System.currentTimeMillis()).coerceAtLeast(0L)
+                    _miningCooldownRemainingMs.value = remaining
+                    showSnackbar("🎉 Berhasil klaim $points RTP! Klaim lagi dalam 1 jam.")
+                    // Refresh user + game state
+                    loadUserFromBackend()
+                    loadGameState()
+                    // Update Room local
+                    repository.resetMiningAfterClaim(nextClaimAt)
+                } else {
+                    val msg = json.optString("message", "Gagal klaim")
+                    val remaining = json.optLong("cooldownRemainingMs", 0L)
+                    if (remaining > 0) {
+                        _miningCooldownRemainingMs.value = remaining
+                    }
+                    showSnackbar(msg)
+                }
+            }.onFailure {
+                showSnackbar("Error: ${it.message}")
+            }
+
+            _miningClaimInProgress.value = false
+        }
+    }
+
     fun claimMiningFromBackend() {
         viewModelScope.launch {
             try {
