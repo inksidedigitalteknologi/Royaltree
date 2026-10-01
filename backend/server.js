@@ -19,6 +19,8 @@ const adsRoutes = require('./routes/ads');
 const adminRoutes = require('./routes/admin');
 const gameRoutes = require('./routes/game');
 const purchaseRoutes = require('./routes/purchase');
+const affiliateRoutes = require('./routes/affiliate');
+const { releasePendingCommission } = require('./services/affiliate');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +33,7 @@ app.use('/api/v1/ads', adsRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/game', gameRoutes);
 app.use('/api/v1/purchase', purchaseRoutes);
+app.use('/api/v1/affiliate', affiliateRoutes);
 
 // Serve admin panel
 app.use('/admin', express.static('/root/Royaltree/admin'));
@@ -1053,6 +1056,30 @@ function requireAdmin(req, res, next) {
     }
     next();
 }
+// ============================================================
+// CRON JOB — Release pending affiliate commission (setiap 5 menit)
+// ============================================================
+setInterval(async () => {
+    try {
+        const result = await releasePendingCommission();
+        if (result.released > 0) {
+            console.log(`[CRON] Released ${result.released} pending commissions`);
+        }
+    } catch (error) {
+        console.error('[CRON] releasePendingCommission error:', error.message);
+    }
+}, 5 * 60 * 1000); // 5 menit
+
+// Jalankan sekali saat server start (biar yang dah expired langsung cair)
+setTimeout(async () => {
+    try {
+        await releasePendingCommission();
+        console.log('[CRON] Initial release check done');
+    } catch (error) {
+        console.error('[CRON] Initial release error:', error.message);
+    }
+}, 10 * 1000); // 10 detik setelah start
+
 app.listen(PORT, () => {
     console.log(`====================================================`);
     console.log(` Royaltree Portal API Server aktif di port ${PORT}`);

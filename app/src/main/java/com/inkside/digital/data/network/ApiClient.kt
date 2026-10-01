@@ -205,6 +205,63 @@ object ApiClient {
         try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.getMissions(b)) } catch (e: Exception) { Result.failure(e) }
     }
 
+    // ============ AFFILIATE ============
+    suspend fun getAffiliateBalance(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val resp = apiService.getAffiliateBalance()
+            Result.success(JSONObject(resp.string()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getAffiliateTransactions(limit: Int = 50): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val resp = apiService.getAffiliateTransactions(limit)
+            Result.success(JSONObject(resp.string()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun requestAffiliateWithdraw(amount: Double, destination: String, method: String = "PAYPAL"): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().apply {
+                put("amount", amount)
+                put("destination", destination)
+                put("method", method)
+            }
+            val reqBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val resp = apiService.requestAffiliateWithdraw(reqBody)
+            Result.success(JSONObject(resp.string()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getAffiliateWithdrawals(limit: Int = 20): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val resp = apiService.getAffiliateWithdrawals(limit)
+            Result.success(JSONObject(resp.string()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun registerFcmToken(fcmToken: String, deviceId: String = ""): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().apply {
+                put("fcmToken", fcmToken)
+                if (deviceId.isNotEmpty()) put("deviceId", deviceId)
+            }
+            val reqBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val resp = apiService.registerFcmToken(reqBody)
+            Result.success(JSONObject(resp.string()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun getTiersPublic(): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val resp = apiService.getTiersPublic()

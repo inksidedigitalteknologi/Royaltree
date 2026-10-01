@@ -33,7 +33,14 @@ data class UserEntity(
     val is2FAEnabled: Boolean = false,
     val twoFactorSecret: String = "",
     val commissionRateMultiplier: Double = 1.0,
-    val convertedStepsToday: Int = 0
+    val convertedStepsToday: Int = 0,
+
+    // === Affiliate fields (dari Firestore) ===
+    val affiliateBalance: Double = 0.0,
+    val affiliateBalanceAvailable: Double = 0.0,
+    val affiliateBalancePending: Double = 0.0,
+    val affiliateTotalEarned: Double = 0.0,
+    val affiliateTotalWithdrawn: Double = 0.0
 )
 
 @Entity(tableName = "user_locations")
