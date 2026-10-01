@@ -57,6 +57,7 @@ import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.components.BannerAdView
 import java.util.Calendar
+import java.time.LocalDate
 
 @Composable
 fun DailyCheckInScreen(
@@ -68,6 +69,7 @@ fun DailyCheckInScreen(
     onPayPointsForRecovery: (date: String) -> Unit,
     streak: Int,
     checkedInToday: Boolean,
+    lastCheckInDate: String = "",
     isLoading: Boolean,
     errorMessage: String?,
     successMessage: String?
@@ -215,10 +217,25 @@ fun DailyCheckInScreen(
                                     val isPast = dayNum < today
                                     val isFuture = dayNum > today
 
+                                    // Tanggal ini dalam bulan
+                                    val thisDate = try {
+                                        LocalDate.of(currentYear, currentMonth, dayNum)
+                                    } catch (e: Exception) { null }
+
+                                    // Range streak
+                                    val lastCheckInLocal = try {
+                                        if (lastCheckInDate.isNotBlank()) LocalDate.parse(lastCheckInDate) else null
+                                    } catch (e: Exception) { null }
+                                    val streakStart = lastCheckInLocal?.minusDays((streak - 1).toLong().coerceAtLeast(0))
+
+                                    val inStreak = thisDate != null && lastCheckInLocal != null && streakStart != null
+                                        && !thisDate.isBefore(streakStart) && !thisDate.isAfter(lastCheckInLocal)
+
                                     val status = when {
                                         isToday && checkedInToday -> DayStatus.CHECKED_IN
                                         isToday -> DayStatus.TODAY
-                                        isPast -> DayStatus.MISSED  // bisa dioverride nanti
+                                        inStreak -> DayStatus.CHECKED_IN
+                                        isPast -> DayStatus.MISSED
                                         isFuture -> DayStatus.FUTURE
                                         else -> DayStatus.FUTURE
                                     }

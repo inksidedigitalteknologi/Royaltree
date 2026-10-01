@@ -779,6 +779,7 @@ fun MainAffiliateAppContent(
                         onPayPointsForRecovery = { /* TODO */ },
                         streak = user?.checkInStreak ?: 0,
                         checkedInToday = isCheckedInToday,
+                        lastCheckInDate = user?.lastCheckInDate ?: "",
                         isLoading = false,
                         errorMessage = null,
                         successMessage = null
