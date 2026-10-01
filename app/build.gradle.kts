@@ -57,6 +57,20 @@ android {
       freeCompilerArgs.add("-Xannotation-default-target=param-property")
     }
   }
+
+  // ============ Custom APK name ============
+  // Output: royaltree-v1.0-debug.apk / royaltree-v1.0-release.apk
+  applicationVariants.all {
+    val variant = this
+    val version = variant.versionName
+    val buildType = variant.buildType.name
+    variant.outputs
+      .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
+      .forEach { output ->
+        output.outputFileName = "royaltree-v${version}-${buildType}.apk"
+      }
+  }
+
   buildFeatures {
     compose = true
     buildConfig = true
