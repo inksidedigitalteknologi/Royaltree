@@ -175,6 +175,7 @@ fun RootNav(
     val context = androidx.compose.ui.platform.LocalContext.current
     val currentLanguage by affiliateViewModel.currentLanguage.collectAsState()
     var adBlockedReason by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<String?>(null) }
+    var pendingMiningClaim by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
 
     if (!isOnboarded) {
         // Tampil onboarding pertama kali
@@ -446,7 +447,17 @@ fun MainAffiliateApp(
         on2FADismiss = { viewModel.show2FAModal.value = false },
         on2FAVerifyToggle = { viewModel.toggle2FA(it) },
         onAdRewardDismiss = { viewModel.showAdRewardModal.value = false },
-        onAdRewardEarned = { points -> viewModel.onAdRewardEarned(points) },
+        onAdRewardEarned = { points ->
+            if (pendingMiningClaim) {
+                // Mining claim — WAJIB iklan
+                pendingMiningClaim = false
+                val txId = java.util.UUID.randomUUID().toString()
+                viewModel.claimMiningWithAd(txId, "admob")
+            } else {
+                // Reward biasa (iklan sponsor)
+                viewModel.onAdRewardEarned(points)
+            }
+        },
         onQrTransferDismiss = { viewModel.showQrTransferModal.value = false },
         onQrTransferToggleFavorite = { viewModel.toggleFavoriteContact(it) },
         onQrTransferSubmit = { recipientId, recipientName, amount, note ->
@@ -484,7 +495,7 @@ fun MainAffiliateApp(
         onCompleteTaskAction = { viewModel.completeTaskAction(it) },
         onAddSteps = { viewModel.addSteps(it) },
         onConvertSteps = { viewModel.convertStepsToCoins() },
-        onClaimMining = { viewModel.claimGameMiningPoints() },
+        onClaimMining = { pendingMiningClaim = true; viewModel.showAdRewardModal.value = true },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
         onFinishGame = { score -> viewModel.finishMiniGame(score) },

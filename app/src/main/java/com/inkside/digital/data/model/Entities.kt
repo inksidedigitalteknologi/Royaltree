@@ -213,7 +213,10 @@ data class GameRoomStateEntity(
     val totalMinedPointsClaimed: Double = 0.0,
     val tempPowerBonusGhs: Double = 0.0,
     val bonusExpiryTimestamp: Long = 0L,
-    val miniGameHighScore: Int = 0
+    val miniGameHighScore: Int = 0,
+    // Cooldown 1 jam + timestamp update
+    val lastMiningClaimAt: Long = 0L,
+    val lastMiningUpdateTimestamp: Long = System.currentTimeMillis()
 )
 
 @Entity(tableName = "app_download_ads")

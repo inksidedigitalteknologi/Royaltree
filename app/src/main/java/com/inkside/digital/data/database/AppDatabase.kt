@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
         GameMinerItemEntity::class,
         GameRoomStateEntity::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -53,6 +53,14 @@ abstract class AppDatabase : RoomDatabase() {
         // Migration 5 -> 6: schema tidak berubah, tapi kita kekalkan
         // supaya user lama TIDAK kehilangan data (sebelum ini fallback
         // destructive akan drop semua table).
+        // Migration 7 -> 8: tambah lastMiningClaimAt + lastMiningUpdateTimestamp
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE game_room_state ADD COLUMN lastMiningClaimAt INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE game_room_state ADD COLUMN lastMiningUpdateTimestamp INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         // Migration 6 -> 7: tambah 5 field affiliate ke table users
         private val MIGRATION_6_7 = object : Migration(6, 7) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -144,7 +152,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "royaltree.db"
                 )
-                    .addMigrations(MIGRATION_5_6, MIGRATION_6_7)
+                    .addMigrations(MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
                     .addCallback(DatabaseCallback(scope))
                     .build()
                 INSTANCE = instance

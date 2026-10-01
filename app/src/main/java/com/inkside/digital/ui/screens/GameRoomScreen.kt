@@ -92,6 +92,7 @@ import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.components.BannerAdView
+import com.inkside.digital.ui.components.MiningClaimDialog
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.EmeraldPrimary
 import com.inkside.digital.ui.theme.GoldVip
@@ -127,7 +128,7 @@ fun GameRoomScreen(
         minerItems = minerItems,
         placedMiners = placedMiners,
         roomState = roomState,
-        onClaimMining = { viewModel.claimGameMiningPoints() },
+        onClaimMining = { showClaimDialog = true },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
         onFinishGame = { score -> viewModel.finishMiniGame(score) },
@@ -161,6 +162,13 @@ fun GameRoomScreenContent(
 
     // Live point ticker for smooth real-time generation feedback
     var liveUnclaimedPoints by remember { mutableDoubleStateOf(0.0) }
+    var showClaimDialog by remember { mutableStateOf(false) }
+    val miningCooldownMs by viewModel.miningCooldownRemainingMs.collectAsState()
+    val miningClaimInProgress by viewModel.miningClaimInProgress.collectAsState()
+
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.refreshMiningCooldown()
+    }
 
     val basePowerGhs = remember(placedMiners) {
         placedMiners.sumOf { it.powerGhs }
@@ -501,6 +509,20 @@ fun GameRoomScreenContent(
                     Text("Tutup")
                 }
             }
+        )
+    }
+
+    // ============ MINING CLAIM DIALOG ============
+    if (showClaimDialog) {
+        MiningClaimDialog(
+            pointsToClaim = liveUnclaimedPoints,
+            cooldownRemainingMs = miningCooldownMs,
+            isLoading = miningClaimInProgress,
+            onConfirm = {
+                showClaimDialog = false
+                onClaimMining()  // trigger AdMob rewarded — handle in MainActivity
+            },
+            onDismiss = { showClaimDialog = false }
         )
     }
 }
