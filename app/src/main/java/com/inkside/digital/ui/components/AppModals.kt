@@ -686,9 +686,61 @@ fun UpgradeVipModal(
     user: UserEntity?,
     tiers: List<org.json.JSONObject> = emptyList(),
     onDismiss: () -> Unit,
-    onUpgrade: () -> Unit = {}
+    onUpgrade: (String) -> Unit = {}
 ) {
     val currentTier = user?.tier ?: "FREE"
+
+    // Katalog tier — hardcoded (kalau backend belum kirim)
+    data class TierDef(
+        val tier: String,
+        val displayName: String,
+        val priceLabel: String,
+        val slots: Int,
+        val benefits: List<String>,
+        val accentColor: Color,
+        val emoji: String,
+        val order: Int
+    )
+
+    val tierList = listOf(
+        TierDef(
+            tier = "FREE", displayName = "Gratis", priceLabel = "Gratis",
+            slots = 6,
+            benefits = listOf("Slot miner 6", "Fitur dasar", "Iklan + misi + game"),
+            accentColor = MaterialTheme.colorScheme.surfaceVariant,
+            emoji = "🌱", order = 1
+        ),
+        TierDef(
+            tier = "STARTER", displayName = "Pemula", priceLabel = "$1.99",
+            slots = 3,
+            benefits = listOf("Slot miner 3", "Badge Starter", "Bisa jual affiliate"),
+            accentColor = Color(0xFFCD7F32),
+            emoji = "🥉", order = 2
+        ),
+        TierDef(
+            tier = "PREMIUM", displayName = "Premium", priceLabel = "$2.99",
+            slots = 5,
+            benefits = listOf("Slot miner 5", "Badge Premium", "Komisi affiliate 15%"),
+            accentColor = Color(0xFFC0C0C0),
+            emoji = "🥈", order = 3
+        ),
+        TierDef(
+            tier = "VIP", displayName = "VIP", priceLabel = "$4.99",
+            slots = 8,
+            benefits = listOf("Slot miner 8", "Badge VIP", "Komisi affiliate 25%", "Prioritas support"),
+            accentColor = Color(0xFFFFD700),
+            emoji = "🥇", order = 4
+        ),
+        TierDef(
+            tier = "ROYAL", displayName = "Royal", priceLabel = "$9.99",
+            slots = 10,
+            benefits = listOf("Slot miner 10", "Badge Royal", "Komisi affiliate 35%", "Fitur eksklusif", "Prioritas tertinggi"),
+            accentColor = Color(0xFFB9F2FF),
+            emoji = "💎", order = 5
+        )
+    )
+
+    val currentOrder = tierList.find { it.tier == currentTier }?.order ?: 1
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -703,6 +755,7 @@ fun UpgradeVipModal(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
+                // Header
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -710,7 +763,7 @@ fun UpgradeVipModal(
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.banner_premium_upgrade),
-                        contentDescription = "Upgrade VIP",
+                        contentDescription = "Upgrade Tier",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -734,47 +787,34 @@ fun UpgradeVipModal(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Buka slot miner tambahan + badge eksklusif. Pembayaran sekali seumur hidup.",
+                        text = "Buka slot miner tambahan + komisi affiliate lebih besar. Pembayaran sekali seumur hidup.",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    TierRow(
-                        tierName = "FREE",
-                        priceLabel = "Gratis",
-                        slots = 6,
-                        benefits = listOf("Slot miner 6", "Fitur dasar"),
-                        isCurrent = currentTier == "FREE",
-                        isOwned = false,
-                        accentColor = MaterialTheme.colorScheme.surfaceVariant,
-                        onClick = {}
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    TierRow(
-                        tierName = "VIP",
-                        priceLabel = "$2.49",
-                        slots = 7,
-                        benefits = listOf("Slot miner 7", "Badge VIP"),
-                        isCurrent = currentTier == "VIP",
-                        isOwned = currentTier == "VIP" || currentTier == "VIP_PRO",
-                        accentColor = GoldVip,
-                        onClick = onUpgrade
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    TierRow(
-                        tierName = "VIP Pro",
-                        priceLabel = "$3.49",
-                        slots = 8,
-                        benefits = listOf("Slot miner 8", "Badge VIP Pro", "Prioritas support"),
-                        isCurrent = currentTier == "VIP_PRO",
-                        isOwned = currentTier == "VIP_PRO",
-                        accentColor = Color(0xFFEC4899),
-                        onClick = onUpgrade
-                    )
+                    // Render semua tier
+                    tierList.forEach { tier ->
+                        val isCurrent = tier.tier == currentTier
+                        val isOwned = tier.order < currentOrder
+                        val canBuy = tier.order > currentOrder
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                        TierRow(
+                            tierName = "${tier.emoji} ${tier.displayName}",
+                            priceLabel = tier.priceLabel,
+                            slots = tier.slots,
+                            benefits = tier.benefits,
+                            isCurrent = isCurrent,
+                            isOwned = isOwned,
+                            canBuy = canBuy,
+                            accentColor = tier.accentColor,
+                            onClick = { onUpgrade(tier.tier) }
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
 
                     Surface(
                         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
@@ -782,7 +822,7 @@ fun UpgradeVipModal(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "💡 Pembelian dalam app akan segera hadir. Sementara ini, tingkatan dapat diperoleh melalui aktivitas (iklan, check-in, misi).",
+                            text = "💡 Pembelian dalam app akan segera hadir. Sementara ini, tingkatan dapat diperoleh melalui aktivitas (iklan, check-in, misi) dan referral.",
                             fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(10.dp)
@@ -802,6 +842,7 @@ private fun TierRow(
     benefits: List<String>,
     isCurrent: Boolean,
     isOwned: Boolean,
+    canBuy: Boolean = true,
     accentColor: Color,
     onClick: () -> Unit
 ) {

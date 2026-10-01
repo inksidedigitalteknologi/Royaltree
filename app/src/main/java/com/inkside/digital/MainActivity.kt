@@ -881,7 +881,10 @@ fun MainAffiliateAppContent(
         UpgradeVipModal(
             user = user,
             onDismiss = onUpgradeDismiss,
-            onUpgrade = onUpgradeConfirm
+            onUpgrade = { tier ->
+                android.util.Log.d("MainActivity", "Upgrade tier: $tier")
+                onUpgradeConfirm()
+            }
         )
     }
 
