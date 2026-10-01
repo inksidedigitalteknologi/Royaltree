@@ -150,6 +150,22 @@ interface RoyaltreeApiService {
         @Body body: ApiWithdrawalRequest
     ): ApiGenericResponse
 
+    // ============ AFFILIATE ============
+    @GET("affiliate/balance")
+    suspend fun getAffiliateBalance(): ResponseBody
+
+    @GET("affiliate/transactions")
+    suspend fun getAffiliateTransactions(@Query("limit") limit: Int = 50): ResponseBody
+
+    @POST("affiliate/withdraw")
+    suspend fun requestAffiliateWithdraw(@Body body: RequestBody): ResponseBody
+
+    @GET("affiliate/withdrawals")
+    suspend fun getAffiliateWithdrawals(@Query("limit") limit: Int = 20): ResponseBody
+
+    @POST("affiliate/register-fcm")
+    suspend fun registerFcmToken(@Body body: RequestBody): ResponseBody
+
     @GET("purchase/tiers-public")
     suspend fun getTiersPublic(): ResponseBody
 

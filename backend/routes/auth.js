@@ -100,7 +100,13 @@ router.post('/sync', verifyFirebaseToken, async (req, res) => {
                 commissionRateMultiplier: 1.0,
                 convertedStepsToday: 0,
                 checkInStreak: 0,
-                lastCheckInDate: ''
+                lastCheckInDate: '',
+                // === Affiliate fields (untuk semua user) ===
+                affiliateBalance: 0,
+                affiliateBalanceAvailable: 0,
+                affiliateBalancePending: 0,
+                affiliateTotalEarned: 0,
+                affiliateTotalWithdrawn: 0
             };
 
             // Cari field yang belum ada
@@ -160,7 +166,17 @@ router.post('/sync', verifyFirebaseToken, async (req, res) => {
             is2FAEnabled: false,
             twoFactorSecret: '',
             commissionRateMultiplier: 1.0,
-            convertedStepsToday: 0
+            convertedStepsToday: 0,
+
+            // === Affiliate fields ===
+            affiliateBalance: 0,
+            affiliateBalanceAvailable: 0,
+            affiliateBalancePending: 0,
+            affiliateTotalEarned: 0,
+            affiliateTotalWithdrawn: 0,
+            fcmToken: null,
+            lastDeviceId: null,
+            lastLoginIp: null
         };
 
         // Kalau ada referral code -> validasi & simpan
