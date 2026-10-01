@@ -41,6 +41,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.UserEntity
+import com.inkside.digital.ui.components.AffiliateBalanceCard
+import com.inkside.digital.viewmodel.AffiliateViewModel
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
@@ -52,7 +54,10 @@ fun ProfileScreen(
     currentLanguage: AppLanguage,
     onOpenLanguage: () -> Unit,
     onSaveProfile: (name: String, email: String, phone: String) -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    affiliateBalance: AffiliateViewModel.AffiliateBalanceData = AffiliateViewModel.AffiliateBalanceData(),
+    onOpenWithdraw: () -> Unit = {},
+    onOpenWithdrawHistory: () -> Unit = {}
 ) {
     var name by remember { mutableStateOf(user?.name ?: "") }
     var email by remember { mutableStateOf(user?.email ?: "") }
@@ -187,6 +192,15 @@ fun ProfileScreen(
                     }
                 }
             }
+        }
+
+        // ==== Affiliate Balance ====
+        item {
+            AffiliateBalanceCard(
+                balance = affiliateBalance,
+                onWithdraw = onOpenWithdraw,
+                onHistory = onOpenWithdrawHistory
+            )
         }
 
         // ==== Banner AdMob ====

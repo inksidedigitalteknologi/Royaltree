@@ -43,6 +43,7 @@ import com.inkside.digital.ui.components.TransferReceiptDialog
 import com.inkside.digital.ui.components.TwoFactorModal
 import com.inkside.digital.ui.components.UpgradeVipModal
 import com.inkside.digital.ui.components.WithdrawDialog
+import com.inkside.digital.ui.components.AffiliateWithdrawDialog
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -292,7 +293,10 @@ fun MainAffiliateApp(
     val placedMiners by viewModel.placedMinerItems.collectAsState()
     val roomState by viewModel.gameRoomState.collectAsState()
     val currentLanguage by viewModel.currentLanguage.collectAsState()
+    val affiliateBalance by viewModel.affiliateBalance.collectAsState()
+    val affiliateLoading by viewModel.affiliateLoading.collectAsState()
     var adBlockedReason by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<String?>(null) }
+    var showWithdrawAffiliateModal by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
 
     MainAffiliateAppContent(
         user = user,
@@ -336,6 +340,16 @@ fun MainAffiliateApp(
             viewModel.showAdRewardModal.value = true
         },
         onAdBlockedSetReason = { r -> adBlockedReason = r },
+        affiliateBalance = affiliateBalance,
+        affiliateLoading = affiliateLoading,
+        showWithdrawAffiliateModal = showWithdrawAffiliateModal,
+        onOpenWithdraw = { showWithdrawAffiliateModal = true },
+        onOpenWithdrawHistory = { /* TODO: navigasi ke history */ },
+        onWithdrawAffiliateDismiss = { showWithdrawAffiliateModal = false },
+        onWithdrawAffiliateSubmit = { amount, dest ->
+            viewModel.requestAffiliateWithdraw(amount, dest, "PAYPAL")
+            showWithdrawAffiliateModal = false
+        },
         show2FA = show2FA,
         showQrTransfer = showQrTransfer,
         contacts = contacts,
@@ -465,6 +479,14 @@ fun MainAffiliateAppContent(
     onAdBlockedDismiss: () -> Unit = {},
     onAdBlockedRetry: () -> Unit = {},
     onAdBlockedSetReason: (String) -> Unit = {},
+    // === Affiliate ===
+    affiliateBalance: AffiliateViewModel.AffiliateBalanceData = AffiliateViewModel.AffiliateBalanceData(),
+    affiliateLoading: Boolean = false,
+    showWithdrawAffiliateModal: Boolean = false,
+    onOpenWithdraw: () -> Unit = {},
+    onOpenWithdrawHistory: () -> Unit = {},
+    onWithdrawAffiliateDismiss: () -> Unit = {},
+    onWithdrawAffiliateSubmit: (amount: Double, destination: String) -> Unit = { _, _ -> },
     show2FA: Boolean,
     showQrTransfer: Boolean,
     contacts: List<PeerContact>,
@@ -677,7 +699,10 @@ fun MainAffiliateAppContent(
                         onSaveProfile = { name, email, phone ->
                             onUpdateProfile(name, email, phone, "")
                         },
-                        onLogout = { onLogout() }
+                        onLogout = { onLogout() },
+                        affiliateBalance = affiliateBalance,
+                        onOpenWithdraw = onOpenWithdraw,
+                        onOpenWithdrawHistory = onOpenWithdrawHistory
                     )
                 }
 
@@ -915,6 +940,18 @@ fun MainAffiliateAppContent(
             reason = adBlockedReason,
             onRetry = { onAdBlockedRetry() },
             onDismiss = { onAdBlockedDismiss() }
+        )
+    }
+
+    // === Affiliate Withdraw Dialog ===
+    if (showWithdrawAffiliateModal) {
+        AffiliateWithdrawDialog(
+            availableBalance = affiliateBalance.available,
+            minWithdraw = affiliateBalance.minWithdraw,
+            userEmail = user?.email ?: "",
+            isLoading = affiliateLoading,
+            onSubmit = { amount, dest -> onWithdrawAffiliateSubmit(amount, dest) },
+            onDismiss = { onWithdrawAffiliateDismiss() }
         )
     }
 
