@@ -1148,6 +1148,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     private val _miningClaimInProgress = MutableStateFlow(false)
     val miningClaimInProgress: StateFlow<Boolean> = _miningClaimInProgress.asStateFlow()
 
+    // Flag: user trigger claim dari mining → tunggu callback AdMob
+    private val _pendingMiningClaim = MutableStateFlow(false)
+    val pendingMiningClaim: StateFlow<Boolean> = _pendingMiningClaim.asStateFlow()
+
+    fun setPendingMiningClaim(v: Boolean) { _pendingMiningClaim.value = v }
+
     /**
      * Refresh countdown cooldown dari room state.
      */

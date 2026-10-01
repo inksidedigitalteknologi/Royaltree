@@ -128,7 +128,7 @@ fun GameRoomScreen(
         minerItems = minerItems,
         placedMiners = placedMiners,
         roomState = roomState,
-        onClaimMining = { showClaimDialog = true },
+        onClaimMining = { viewModel.showAdRewardModal.value = true; viewModel.setPendingMiningClaim(true) },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
         onFinishGame = { score -> viewModel.finishMiniGame(score) },
@@ -162,13 +162,6 @@ fun GameRoomScreenContent(
 
     // Live point ticker for smooth real-time generation feedback
     var liveUnclaimedPoints by remember { mutableDoubleStateOf(0.0) }
-    var showClaimDialog by remember { mutableStateOf(false) }
-    val miningCooldownMs by viewModel.miningCooldownRemainingMs.collectAsState()
-    val miningClaimInProgress by viewModel.miningClaimInProgress.collectAsState()
-
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        viewModel.refreshMiningCooldown()
-    }
 
     val basePowerGhs = remember(placedMiners) {
         placedMiners.sumOf { it.powerGhs }
@@ -512,19 +505,6 @@ fun GameRoomScreenContent(
         )
     }
 
-    // ============ MINING CLAIM DIALOG ============
-    if (showClaimDialog) {
-        MiningClaimDialog(
-            pointsToClaim = liveUnclaimedPoints,
-            cooldownRemainingMs = miningCooldownMs,
-            isLoading = miningClaimInProgress,
-            onConfirm = {
-                showClaimDialog = false
-                onClaimMining()  // trigger AdMob rewarded — handle in MainActivity
-            },
-            onDismiss = { showClaimDialog = false }
-        )
-    }
 }
 
 

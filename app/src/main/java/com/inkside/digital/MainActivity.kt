@@ -175,7 +175,6 @@ fun RootNav(
     val context = androidx.compose.ui.platform.LocalContext.current
     val currentLanguage by affiliateViewModel.currentLanguage.collectAsState()
     var adBlockedReason by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<String?>(null) }
-    var pendingMiningClaim by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
 
     if (!isOnboarded) {
         // Tampil onboarding pertama kali
@@ -336,6 +335,7 @@ fun MainAffiliateApp(
     val listCouponTarget by viewModel.showListCouponModal.collectAsState()
     val adminReviewTarget by viewModel.showAdminReviewModal.collectAsState()
     val showAdReward by viewModel.showAdRewardModal.collectAsState()
+    val pendingMiningClaim by viewModel.pendingMiningClaim.collectAsState()
     val show2FA by viewModel.show2FAModal.collectAsState()
     val showQrTransfer by viewModel.showQrTransferModal.collectAsState()
     val contacts by viewModel.contacts.collectAsState()
@@ -449,12 +449,10 @@ fun MainAffiliateApp(
         onAdRewardDismiss = { viewModel.showAdRewardModal.value = false },
         onAdRewardEarned = { points ->
             if (pendingMiningClaim) {
-                // Mining claim — WAJIB iklan
-                pendingMiningClaim = false
+                viewModel.setPendingMiningClaim(false)
                 val txId = java.util.UUID.randomUUID().toString()
                 viewModel.claimMiningWithAd(txId, "admob")
             } else {
-                // Reward biasa (iklan sponsor)
                 viewModel.onAdRewardEarned(points)
             }
         },
@@ -495,7 +493,7 @@ fun MainAffiliateApp(
         onCompleteTaskAction = { viewModel.completeTaskAction(it) },
         onAddSteps = { viewModel.addSteps(it) },
         onConvertSteps = { viewModel.convertStepsToCoins() },
-        onClaimMining = { pendingMiningClaim = true; viewModel.showAdRewardModal.value = true },
+        onClaimMining = { viewModel.setPendingMiningClaim(true); viewModel.showAdRewardModal.value = true },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
         onFinishGame = { score -> viewModel.finishMiniGame(score) },
