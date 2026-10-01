@@ -904,17 +904,30 @@ private fun MiningRoomTab(
             }
         }
 
-        // 6 Slots in Rack Room
+        // 6 Slots in Rack Room — Grid 2x3
         val occupiedMap = placedMiners.associateBy { it.placedSlotIndex }
-        items(6) { slotIndex ->
-            val minerInSlot = occupiedMap[slotIndex]
-            RackSlotItemCard(
-                slotIndex = slotIndex,
-                miner = minerInSlot,
-                pulseAlpha = pulseAlpha,
-                onUnplace = { onUnplaceMiner(minerInSlot!!.id, slotIndex) },
-                onAssign = { onOpenAssignSlotModal(slotIndex) }
-            )
+        items(3) { rowIndex ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                for (colIndex in 0 until 2) {
+                    val slotIndex = rowIndex * 2 + colIndex
+                    Box(modifier = Modifier.weight(1f)) {
+                        RackSlotItemCard(
+                            slotIndex = slotIndex,
+                            miner = occupiedMap[slotIndex],
+                            pulseAlpha = pulseAlpha,
+                            onUnplace = {
+                                occupiedMap[slotIndex]?.let { miner ->
+                                    onUnplaceMiner(miner.id, slotIndex)
+                                }
+                            },
+                            onAssign = { onOpenAssignSlotModal(slotIndex) }
+                        )
+                    }
+                }
+            }
         }
 
         // Action Banner: Mini-Game Booster
@@ -975,14 +988,20 @@ private fun RackSlotItemCard(
     onAssign: () -> Unit
 ) {
     val isOccupied = miner != null
-    val borderColor = if (isOccupied) RetroGold else RetroBorder.copy(alpha = 0.3f)
+    val borderColor = if (isOccupied) RetroGold else RetroBorder.copy(alpha = 0.5f)
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .height(110.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(if (isOccupied) RetroCard else RetroBgDark.copy(alpha = 0.5f))
-            .border(2.dp, borderColor, RoundedCornerShape(12.dp))
+            .background(if (isOccupied) RetroCard else RetroBgDark.copy(alpha = 0.7f))
+            .border(
+                width = if (isOccupied) 2.dp else 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .clickable(enabled = !isOccupied) { onAssign() }
     ) {
         if (isOccupied) {
             // ==== Occupied Slot ====
@@ -1078,62 +1097,39 @@ private fun RackSlotItemCard(
             }
         } else {
             // ==== Empty Slot ====
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .clickable { onAssign() }
-                    .padding(14.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(38.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Color(0xFF0F0805))
-                            .border(1.dp, RetroBorder.copy(alpha = 0.3f), RoundedCornerShape(8.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("⛏️", fontSize = 18.sp, color = Color.White.copy(alpha = 0.4f))
-                    }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column {
-                        Text(
-                            text = "Slot ${slotIndex + 1}",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            color = Color.White.copy(alpha = 0.7f)
-                        )
-                        Text(
-                            text = "Ketuk untuk pasang",
-                            fontSize = 10.sp,
-                            color = Color.White.copy(alpha = 0.4f)
-                        )
-                    }
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color(0xFF0F0805))
+                        .border(1.dp, RetroBorder.copy(alpha = 0.4f), RoundedCornerShape(8.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("⛏️", fontSize = 18.sp)
                 }
 
-                Surface(
-                    color = RetroAmber.copy(alpha = 0.15f),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier
-                        .border(1.dp, RetroAmber.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
-                        .clickable { onAssign() }
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("+", fontSize = 12.sp, color = RetroAmber, fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Pasang",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = RetroAmber
-                        )
-                    }
-                }
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "Slot ${slotIndex + 1}",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 11.sp,
+                    color = Color.White.copy(alpha = 0.85f)
+                )
+
+                Text(
+                    text = "Tap untuk isi",
+                    fontSize = 9.sp,
+                    color = RetroAmber.copy(alpha = 0.9f)
+                )
             }
         }
     }
