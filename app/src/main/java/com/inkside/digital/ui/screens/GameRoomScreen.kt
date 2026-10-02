@@ -291,6 +291,7 @@ fun GameRoomScreenContent(
                 0 -> {
                     // TAB 0: RUANG RAK MINING & POWER STATS
                     MiningRoomTab(
+                        currentLanguage = currentLanguage,
                         placedMiners = placedMiners,
                         allMiners = minerItems,
                         totalPowerGhs = totalPowerGhs,
@@ -312,6 +313,7 @@ fun GameRoomScreenContent(
                 1 -> {
                     // TAB 1: TOKO ITEM (SHOP)
                     ItemShopTab(
+                        currentLanguage = currentLanguage,
                         minerItems = minerItems,
                         userPoints = user?.points ?: 0,
                         minerTokens = minerTokens,
@@ -323,6 +325,7 @@ fun GameRoomScreenContent(
                 2 -> {
                     // TAB 2: MINI-GAME ARCADE
                     MiniGameArcadeTab(
+                        currentLanguage = currentLanguage,
                         onFinishGame = { score -> onFinishGame(score) },
                         highScore = roomState?.miniGameHighScore ?: 0
                     )
@@ -625,6 +628,7 @@ private fun RetroStatBox(
 
 @Composable
 private fun MiningRoomTab(
+    currentLanguage: AppLanguage,
     placedMiners: List<GameMinerItemEntity>,
     allMiners: List<GameMinerItemEntity>,
     totalPowerGhs: Double,
@@ -1143,6 +1147,7 @@ private fun RackSlotItemCard(
 // -------------------------------------------------------------
 @Composable
 private fun ItemShopTab(
+    currentLanguage: AppLanguage,
     minerItems: List<GameMinerItemEntity>,
     userPoints: Int,
     minerTokens: Int = 0,
@@ -1450,6 +1455,7 @@ private fun ShopMinerCard(
 
 @Composable
 private fun MiniGameArcadeTab(
+    currentLanguage: AppLanguage,
     onFinishGame: (score: Int) -> Unit,
     highScore: Int
 ) {

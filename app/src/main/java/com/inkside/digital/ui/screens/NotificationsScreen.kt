@@ -150,7 +150,7 @@ fun NotificationsScreen(
 
         // ============ CONTENT ============
         if (notifications.isEmpty()) {
-            item { EmptyNotifications() }
+            item { EmptyNotifications(currentLanguage = currentLanguage) }
         } else {
             orderedGroups.forEach { groupName ->
                 item {
@@ -174,7 +174,7 @@ fun NotificationsScreen(
 }
 
 @Composable
-private fun EmptyNotifications() {
+private fun EmptyNotifications(currentLanguage: AppLanguage) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
         shape = RoundedCornerShape(16.dp),

@@ -43,6 +43,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.TransactionEntity
+import com.inkside.digital.localization.LanguageManager
+import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import java.text.SimpleDateFormat
@@ -51,7 +53,8 @@ import java.util.Locale
 
 @Composable
 fun HistoryScreen(
-    transactions: List<TransactionEntity>
+    transactions: List<TransactionEntity>,
+    currentLanguage: AppLanguage
 ) {
     var filterType by remember { mutableStateOf("ALL") } // ALL, COMMISSION, WITHDRAWAL, COUPON, REWARD
     var searchQuery by remember { mutableStateOf("") }
@@ -159,7 +162,7 @@ fun HistoryScreen(
             }
         } else {
             items(filteredList) { tx ->
-                HistoryDetailCard(tx = tx)
+                HistoryDetailCard(tx = tx, currentLanguage = currentLanguage)
             }
         }
 
@@ -168,7 +171,7 @@ fun HistoryScreen(
 }
 
 @Composable
-fun HistoryDetailCard(tx: TransactionEntity) {
+fun HistoryDetailCard(tx: TransactionEntity, currentLanguage: AppLanguage) {
     val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
     val dateStr = sdf.format(Date(tx.timestamp))
     val isTransfer = tx.type.contains("TRANSFER")

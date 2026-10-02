@@ -205,6 +205,7 @@ fun GameHubScreen(
             // ==== LEADERBOARD PREVIEW ====
             item {
                 LeaderboardPreviewCard(
+                    currentLanguage = currentLanguage,
                     onViewAll = { onNavigate(AppScreen.LEADERBOARD) }
                 )
             }
@@ -357,7 +358,7 @@ private fun GameGridCard(
 }
 
 @Composable
-private fun LeaderboardPreviewCard(onViewAll: () -> Unit) {
+private fun LeaderboardPreviewCard(currentLanguage: AppLanguage, onViewAll: () -> Unit) {
     Surface(
         color = Color.White.copy(alpha = 0.05f),
         shape = RoundedCornerShape(14.dp),

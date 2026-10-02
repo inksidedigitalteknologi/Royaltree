@@ -359,6 +359,7 @@ fun MissionsScreen(
     activeInteractiveMission?.let { mission ->
         InteractiveMissionDialog(
             mission = mission,
+            currentLanguage = currentLanguage,
             onDismiss = { activeInteractiveMission = null },
             onComplete = {
                 onCompleteTaskAction(mission.id)
@@ -604,6 +605,7 @@ fun MissionItemCard(
 @Composable
 fun InteractiveMissionDialog(
     mission: TaskMissionEntity,
+    currentLanguage: AppLanguage,
     onDismiss: () -> Unit,
     onComplete: () -> Unit,
     onOpenGame: () -> Unit

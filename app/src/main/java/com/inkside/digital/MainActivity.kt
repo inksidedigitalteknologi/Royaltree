@@ -727,7 +727,8 @@ fun MainAffiliateAppContent(
                 AppScreen.HISTORY -> {
                     LaunchedEffect(Unit) { onLoadHistory() }
                     HistoryScreen(
-                        transactions = transactions
+                        transactions = transactions,
+                        currentLanguage = currentLanguage
                     )
                 }
 
