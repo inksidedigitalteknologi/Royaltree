@@ -58,18 +58,6 @@ android {
     }
   }
 
-  // ============ Custom APK name ============
-  // Output: royaltree-v1.0-debug.apk / royaltree-v1.0-release.apk
-  applicationVariants.all {
-    val variant = this
-    val version = variant.versionName
-    val buildType = variant.buildType.name
-    variant.outputs
-      .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
-      .forEach { output ->
-        output.outputFileName = "royaltree-v${version}-${buildType}.apk"
-      }
-  }
 
   buildFeatures {
     compose = true
@@ -80,6 +68,18 @@ android {
     includeInApk = false
     includeInBundle = true
   }
+}
+
+// ============ Custom APK name (AGP 9 API) ============
+// Output: royaltree-v1.0-debug.apk / royaltree-v1.0-release.apk
+androidComponents {
+    onVariants { variant ->
+        variant.outputs.forEach { output ->
+            val version = variant.versionName ?: "1.0"
+            val buildType = variant.buildType ?: "release"
+            output.outputFileName.set("royaltree-v${version}-${buildType}.apk")
+        }
+    }
 }
 
 // Configure the Secrets Gradle Plugin to use .env and .env.example files
