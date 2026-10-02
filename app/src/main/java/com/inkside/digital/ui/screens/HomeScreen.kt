@@ -267,38 +267,38 @@ fun HomeScreen(
         item {
             val (label, subtitle, accentColor, isEnabled) = when (adButtonState) {
                 AdButtonState.READY -> Quadruple(
-                    "Tonton Iklan Sponsor",
-                    "Dapat +2-5 RTP • 30 detik",
+                    LanguageManager.translate("home_watch_ad", currentLanguage, "Tonton Iklan Sponsor"),
+                    LanguageManager.translate("home_watch_ad_desc", currentLanguage, "Dapat +2-5 RTP • 30 detik"),
                     GoldAccent,
                     true
                 )
                 AdButtonState.LOADING_AD -> Quadruple(
-                    "Memuat iklan...",
-                    "Mohon tunggu sebentar",
+                    LanguageManager.translate("home_loading_ad", currentLanguage, "Memuat iklan..."),
+                    LanguageManager.translate("home_please_wait", currentLanguage, "Mohon tunggu sebentar"),
                     MaterialTheme.colorScheme.onSurfaceVariant,
                     false
                 )
                 AdButtonState.NO_AD -> Quadruple(
-                    "Iklan tidak tersedia",
-                    "Coba lagi nanti",
+                    LanguageManager.translate("home_ad_not_available", currentLanguage, "Iklan tidak tersedia"),
+                    LanguageManager.translate("home_try_later", currentLanguage, "Coba lagi nanti"),
                     MaterialTheme.colorScheme.onSurfaceVariant,
                     false
                 )
                 AdButtonState.LIMIT -> Quadruple(
-                    "Limit harian tercapai",
-                    "Kembali besok untuk nonton lagi",
+                    LanguageManager.translate("home_limit_reached", currentLanguage, "Limit harian tercapai"),
+                    LanguageManager.translate("home_come_back_tomorrow", currentLanguage, "Kembali besok untuk nonton lagi"),
                     MaterialTheme.colorScheme.onSurfaceVariant,
                     false
                 )
                 AdButtonState.COOLDOWN -> Quadruple(
-                    "Tunggu sebentar...",
+                    LanguageManager.translate("home_wait_moment", currentLanguage, "Tunggu sebentar..."),
                     "30 detik antar iklan",
                     MaterialTheme.colorScheme.onSurfaceVariant,
                     false
                 )
                 AdButtonState.LOADING -> Quadruple(
-                    "Memeriksa...",
-                    "Sedang memuat status",
+                    LanguageManager.translate("home_checking", currentLanguage, "Memeriksa..."),
+                    LanguageManager.translate("home_checking_status", currentLanguage, "Sedang memuat status"),
                     MaterialTheme.colorScheme.onSurfaceVariant,
                     false
                 )
@@ -351,7 +351,7 @@ fun HomeScreen(
                     }
                     if (adButtonState == AdButtonState.NO_AD) {
                         Text(
-                            text = "Coba Lagi",
+                            text = LanguageManager.translate("common_try_again", currentLanguage, "Coba Lagi"),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = GoldAccent,

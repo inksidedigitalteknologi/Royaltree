@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.viewmodel.AppScreen
 import com.inkside.digital.ui.components.BannerAdView
 
@@ -119,7 +120,7 @@ fun GameHubScreen(
                             maxLines = 1
                         )
                         Text(
-                            text = "Rank #--",
+                            text = LanguageManager.translate("game_hub_rank", currentLanguage, "Rank #--"),
                             color = TextMuted,
                             fontSize = 10.sp
                         )
@@ -159,7 +160,7 @@ fun GameHubScreen(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     GameGridCard(
-                        title = "Mining Tycoon",
+                        title = LanguageManager.translate("game_hub_mining", currentLanguage, "Mining Tycoon"),
                         emoji = "⛏️",
                         gradient = listOf(RetroGold, RetroBrown),
                         available = true,
@@ -167,7 +168,7 @@ fun GameHubScreen(
                         modifier = Modifier.weight(1f)
                     )
                     GameGridCard(
-                        title = "Coin Rush",
+                        title = LanguageManager.translate("game_hub_coinrush", currentLanguage, "Coin Rush"),
                         emoji = "🎰",
                         gradient = listOf(NeonPurple, NeonBlue),
                         available = true,
@@ -183,7 +184,7 @@ fun GameHubScreen(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     GameGridCard(
-                        title = "Dice Roll",
+                        title = LanguageManager.translate("game_hub_dice", currentLanguage, "Dice Roll"),
                         emoji = "🎲",
                         gradient = listOf(NeonPink, NeonPurple),
                         available = false,
@@ -191,7 +192,7 @@ fun GameHubScreen(
                         modifier = Modifier.weight(1f)
                     )
                     GameGridCard(
-                        title = "Spin Wheel",
+                        title = LanguageManager.translate("game_hub_spin", currentLanguage, "Spin Wheel"),
                         emoji = "🎯",
                         gradient = listOf(Color(0xFF10B981), Color(0xFF059669)),
                         available = false,
@@ -219,11 +220,11 @@ fun GameHubScreen(
                         .padding(8.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    MenuIconButton("🛒", "Shop") { onNavigate(AppScreen.MISSIONS) }
-                    MenuIconButton("🎁", "Events") { onNavigate(AppScreen.MISSIONS) }
-                    MenuIconButton("📊", "Stats") { onNavigate(AppScreen.LEADERBOARD) }
-                    MenuIconButton("⚙️", "Set") { onNavigate(AppScreen.SETTINGS) }
-                    MenuIconButton("❓", "Help") { onNavigate(AppScreen.FAQ) }
+                    MenuIconButton("🛒", LanguageManager.translate("game_hub_shop", currentLanguage, "Shop")) { onNavigate(AppScreen.MISSIONS) }
+                    MenuIconButton("🎁", LanguageManager.translate("game_hub_events", currentLanguage, "Events")) { onNavigate(AppScreen.MISSIONS) }
+                    MenuIconButton("📊", LanguageManager.translate("game_hub_stats", currentLanguage, "Stats")) { onNavigate(AppScreen.LEADERBOARD) }
+                    MenuIconButton("⚙️", LanguageManager.translate("game_hub_settings", currentLanguage, "Set")) { onNavigate(AppScreen.SETTINGS) }
+                    MenuIconButton("❓", LanguageManager.translate("game_hub_help", currentLanguage, "Help")) { onNavigate(AppScreen.FAQ) }
                 }
             }
 
@@ -377,7 +378,7 @@ private fun LeaderboardPreviewCard(onViewAll: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "Lihat →",
+                    text = LanguageManager.translate("game_hub_view_all", currentLanguage, "Lihat →"),
                     color = TextMuted,
                     fontSize = 10.sp
                 )
