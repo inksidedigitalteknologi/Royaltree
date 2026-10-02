@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.ui.components.BannerAdView
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -268,6 +269,11 @@ fun CoinRushScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
         }
+
+        // ============ Banner AdMob ============
+        BannerAdView(
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 
