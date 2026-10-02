@@ -924,6 +924,14 @@ object LanguageManager {
             AppLanguage.ARABIC to "قبل %d شهر",
             AppLanguage.JAPANESE to "%d ヶ月前"
         ),
+        "profile_tier_you" to mapOf(
+            AppLanguage.INDONESIAN to "Tingkat Anda: %s",
+            AppLanguage.ENGLISH to "Your Tier: %s",
+            AppLanguage.SPANISH to "Tu nivel: %s",
+            AppLanguage.CHINESE to "您的等级：%s",
+            AppLanguage.ARABIC to "مستواك: %s",
+            AppLanguage.JAPANESE to "あなたのティア: %s"
+        ),
     )
 
     fun getString(key: String, language: AppLanguage): String {

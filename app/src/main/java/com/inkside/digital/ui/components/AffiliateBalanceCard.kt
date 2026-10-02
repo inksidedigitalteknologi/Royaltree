@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.viewmodel.AffiliateViewModel
+import com.inkside.digital.localization.LanguageManager
 
 private val AffiliateGold = Color(0xFFFFD700)
 private val AffiliateAmber = Color(0xFFF59E0B)
@@ -44,6 +45,7 @@ private val AffiliateBlue = Color(0xFF3B82F6)
 @Composable
 fun AffiliateBalanceCard(
     balance: AffiliateViewModel.AffiliateBalanceData,
+    currentLanguage: com.inkside.digital.localization.AppLanguage = com.inkside.digital.localization.AppLanguage.INDONESIAN,
     onWithdraw: () -> Unit = {},
     onHistory: () -> Unit = {}
 ) {
@@ -73,12 +75,12 @@ fun AffiliateBalanceCard(
                 Spacer(modifier = Modifier.width(10.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        "Affiliate Balance",
+                        LanguageManager.translate("profile_affiliate_balance", currentLanguage, "Affiliate Balance"),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Black
                     )
                     Text(
-                        "Komisi dari teman yang upgrade",
+                        LanguageManager.translate("profile_affiliate_subtitle", currentLanguage, "Komisi dari teman yang upgrade"),
                         fontSize = 10.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -89,7 +91,7 @@ fun AffiliateBalanceCard(
 
             // Total Balance
             Text(
-                text = "Total Balance",
+                text = LanguageManager.translate("profile_total_balance", currentLanguage, "Total Balance"),
                 fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -114,14 +116,14 @@ fun AffiliateBalanceCard(
                     modifier = Modifier.weight(1f)
                 ) {
                     Column(modifier = Modifier.padding(10.dp)) {
-                        Text("✅ Available", fontSize = 9.sp, color = AffiliateEmerald, fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("profile_available", currentLanguage, "✅ Available"), fontSize = 9.sp, color = AffiliateEmerald, fontWeight = FontWeight.Bold)
                         Text(
                             "$${String.format("%.2f", balance.available)}",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Black,
                             color = AffiliateEmerald
                         )
-                        Text("Siap withdraw", fontSize = 8.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("profile_ready_withdraw", currentLanguage, "Siap withdraw"), fontSize = 8.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
 
@@ -132,14 +134,14 @@ fun AffiliateBalanceCard(
                     modifier = Modifier.weight(1f)
                 ) {
                     Column(modifier = Modifier.padding(10.dp)) {
-                        Text("⏳ Pending", fontSize = 9.sp, color = AffiliateAmber, fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("profile_pending", currentLanguage, "⏳ Pending"), fontSize = 9.sp, color = AffiliateAmber, fontWeight = FontWeight.Bold)
                         Text(
                             "$${String.format("%.2f", balance.pending)}",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Black,
                             color = AffiliateAmber
                         )
-                        Text("Hold 24 jam", fontSize = 8.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("profile_hold_24h", currentLanguage, "Hold 24 jam"), fontSize = 8.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -164,7 +166,7 @@ fun AffiliateBalanceCard(
                     ) {
                         Text(
                             text = if (balance.available >= balance.minWithdraw)
-                                "Withdraw"
+                                LanguageManager.translate("profile_withdraw", currentLanguage, "Withdraw")
                             else
                                 "Min $${String.format("%.0f", balance.minWithdraw)}",
                             fontSize = 12.sp,
@@ -186,7 +188,7 @@ fun AffiliateBalanceCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            "History",
+                            LanguageManager.translate("profile_history", currentLanguage, "History"),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -198,7 +200,7 @@ fun AffiliateBalanceCard(
             // Info total earned
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = "Total seumur hidup: $${String.format("%.2f", balance.totalEarned)}",
+                text = LanguageManager.translate("profile_total_earned", currentLanguage, "Total seumur hidup") + ": $${String.format("%.2f", balance.totalEarned)}",
                 fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

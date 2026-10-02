@@ -53,6 +53,7 @@ import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.ui.components.AffiliateBalanceCard
 import com.inkside.digital.viewmodel.AffiliateViewModel
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
@@ -92,8 +93,8 @@ fun ProfileScreen(
         // Header
         item {
             Column {
-                Text("👤 Profil", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
-                Text("Kelola akun & informasi pribadi", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("👤 " + LanguageManager.translate("profile_title", currentLanguage, "Profil"), style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
+                Text(LanguageManager.translate("profile_subtitle", currentLanguage, "Kelola akun & informasi pribadi"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
@@ -151,7 +152,7 @@ fun ProfileScreen(
                     modifier = Modifier.weight(1f)
                 ) {
                     Column(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
-                        Text("Saldo", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("profile_balance", currentLanguage, "Saldo"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             "Rp " + String.format("%,.0f", user?.balance ?: 0.0).replace(",", "."),
                             fontSize = 16.sp, fontWeight = FontWeight.Black, color = EmeraldLight
@@ -164,7 +165,7 @@ fun ProfileScreen(
                     modifier = Modifier.weight(1f)
                 ) {
                     Column(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
-                        Text("Poin", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("profile_points", currentLanguage, "Poin"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             "${user?.points ?: 0}",
                             fontSize = 16.sp, fontWeight = FontWeight.Black, color = ElectricBlue
@@ -182,23 +183,23 @@ fun ProfileScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("✏️ Edit Profil", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(LanguageManager.translate("profile_edit", currentLanguage, "✏️ Edit Profil"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(12.dp))
                     OutlinedTextField(
                         value = name, onValueChange = { name = it },
-                        label = { Text("Nama Lengkap") }, singleLine = true,
+                        label = { Text(LanguageManager.translate("profile_name", currentLanguage, "Nama Lengkap")) }, singleLine = true,
                         shape = RoundedCornerShape(10.dp), modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = email, onValueChange = { email = it },
-                        label = { Text("Email") }, singleLine = true,
+                        label = { Text(LanguageManager.translate("profile_email_label", currentLanguage, "Email")) }, singleLine = true,
                         shape = RoundedCornerShape(10.dp), modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = phone, onValueChange = { phone = it },
-                        label = { Text("Nomor HP") }, singleLine = true,
+                        label = { Text(LanguageManager.translate("profile_phone", currentLanguage, "Nomor HP")) }, singleLine = true,
                         shape = RoundedCornerShape(10.dp), modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(14.dp))
@@ -208,7 +209,7 @@ fun ProfileScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = EmeraldLight),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Simpan Perubahan", fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("profile_save", currentLanguage, "Simpan Perubahan"), fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -254,6 +255,7 @@ fun ProfileScreen(
         item {
             AffiliateBalanceCard(
                 balance = affiliateBalance,
+                currentLanguage = currentLanguage,
                 onWithdraw = onOpenWithdraw,
                 onHistory = onOpenWithdrawHistory
             )
@@ -279,7 +281,7 @@ fun ProfileScreen(
                     Icon(Icons.Default.Language, null, tint = EmeraldLight)
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Bahasa", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("profile_language", currentLanguage, "Bahasa"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         Text("${currentLanguage.flag} ${currentLanguage.displayName}", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
@@ -299,7 +301,7 @@ fun ProfileScreen(
                 ) {
                     Icon(Icons.AutoMirrored.Filled.ExitToApp, null, tint = MaterialTheme.colorScheme.error)
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text("Keluar", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.error)
+                    Text(LanguageManager.translate("profile_logout", currentLanguage, "Keluar"), fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.error)
                 }
             }
         }
@@ -325,7 +327,7 @@ private fun QuickActionsRow(
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Text(
-                "⚡ Aksi Cepat",
+                LanguageManager.translate("profile_quick_actions", currentLanguage, "⚡ Aksi Cepat"),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -334,10 +336,10 @@ private fun QuickActionsRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                QuickActionButton("🎁", "Check-in", EmeraldLight, onDailyCheckIn)
-                QuickActionButton("⛏️", "Mining", ElectricBlue, onMining)
-                QuickActionButton("🎰", "Coin Rush", GoldVip, onCoinRush)
-                QuickActionButton("🎯", "Misi", Color(0xFFEC4899), onMissions)
+                QuickActionButton("🎁", LanguageManager.translate("profile_action_checkin", currentLanguage, "Check-in"), EmeraldLight, onDailyCheckIn)
+                QuickActionButton("⛏️", LanguageManager.translate("profile_action_mining", currentLanguage, "Mining"), ElectricBlue, onMining)
+                QuickActionButton("🎰", LanguageManager.translate("profile_action_coinrush", currentLanguage, "Coin Rush"), GoldVip, onCoinRush)
+                QuickActionButton("🎯", LanguageManager.translate("profile_action_missions", currentLanguage, "Misi"), Color(0xFFEC4899), onMissions)
             }
         }
     }
@@ -412,12 +414,12 @@ private fun UpgradeTierCard(
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    "Tingkat Anda: ${tierInfo.second}",
+                    String.format(LanguageManager.translate("profile_tier_you", currentLanguage, "Tingkat Anda: %s"), tierInfo.second),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    if (currentTier == "ROYAL") "Tingkat tertinggi tercapai! 🎉" else "Upgrade untuk slot miner & komisi lebih besar",
+                    if (currentTier == "ROYAL") LanguageManager.translate("profile_tier_max_msg", currentLanguage, "Tingkat tertinggi tercapai! 🎉") else LanguageManager.translate("profile_tier_desc", currentLanguage, "Upgrade untuk slot miner & komisi lebih besar"),
                     fontSize = 10.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -427,7 +429,7 @@ private fun UpgradeTierCard(
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Text(
-                    if (currentTier == "ROYAL") "MAX" else "Upgrade",
+                    if (currentTier == "ROYAL") LanguageManager.translate("profile_tier_max", currentLanguage, "MAX") else LanguageManager.translate("profile_tier_upgrade", currentLanguage, "Upgrade"),
                     color = Color.Black,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Black,
@@ -458,14 +460,14 @@ private fun ReferralStatsCard(
                     .weight(1f)
                     .padding(14.dp)
             ) {
-                Text("👥 Teman", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(LanguageManager.translate("profile_referral_friends", currentLanguage, "👥 Teman"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(
                     "$referredCount",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Black,
                     color = EmeraldLight
                 )
-                Text("Diundang", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(LanguageManager.translate("profile_referral_invited", currentLanguage, "Diundang"), fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             // Divider
             Box(
@@ -480,14 +482,14 @@ private fun ReferralStatsCard(
                     .weight(1f)
                     .padding(14.dp)
             ) {
-                Text("💰 Komisi", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(LanguageManager.translate("profile_commission", currentLanguage, "💰 Komisi"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(
                     "Rp ${String.format("%,.0f", commissionIdr).replace(",", ".")}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Black,
                     color = GoldVip
                 )
-                Text("Total", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(LanguageManager.translate("profile_total", currentLanguage, "Total"), fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }
@@ -510,7 +512,7 @@ private fun MiningStatsCard(
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Text(
-                "⛏️ Status Mining",
+                LanguageManager.translate("profile_mining_status", currentLanguage, "⛏️ Status Mining"),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -519,9 +521,9 @@ private fun MiningStatsCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                MiniStatBox("Slot", "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox("Power", "${powerGhs.toInt()} GH/s", ElectricBlue, Modifier.weight(1f))
-                MiniStatBox("Token", "$tokens", GoldVip, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_slot", currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), "${powerGhs.toInt()} GH/s", ElectricBlue, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_token", currentLanguage, "Token"), "$tokens", GoldVip, Modifier.weight(1f))
             }
         }
     }
