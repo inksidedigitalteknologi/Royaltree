@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -231,7 +232,7 @@ object ApiClient {
                 put("destination", destination)
                 put("method", method)
             }
-            val reqBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val reqBody = body.toString().toRequestBody(JSON_MEDIA)
             val resp = apiService.requestAffiliateWithdraw(reqBody)
             Result.success(JSONObject(resp.string()))
         } catch (e: Exception) {
@@ -254,7 +255,7 @@ object ApiClient {
                 put("fcmToken", fcmToken)
                 if (deviceId.isNotEmpty()) put("deviceId", deviceId)
             }
-            val reqBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val reqBody = body.toString().toRequestBody(JSON_MEDIA)
             val resp = apiService.registerFcmToken(reqBody)
             Result.success(JSONObject(resp.string()))
         } catch (e: Exception) {
@@ -274,7 +275,7 @@ object ApiClient {
     suspend fun verifyPurchase(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val media = JSON_MEDIA
-            val reqBody = RequestBody.create(media, body.toString())
+            val reqBody = body.toString().toRequestBody(media)
             val resp = apiService.verifyPurchase(reqBody)
             Result.success(JSONObject(resp.string()))
         } catch (e: Exception) {
@@ -288,7 +289,7 @@ object ApiClient {
 
     suspend fun syncFirebaseUser(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
-            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.syncFirebaseUser(requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
@@ -309,7 +310,7 @@ object ApiClient {
 
     suspend fun linkReferral(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
-            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.linkReferral(requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
@@ -332,7 +333,7 @@ object ApiClient {
 
     suspend fun rewardAd(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
-            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.rewardAd(requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
@@ -363,7 +364,7 @@ object ApiClient {
 
     suspend fun dailyCheckInWithAd(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
-            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.dailyCheckInWithAd(requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
@@ -374,7 +375,7 @@ object ApiClient {
 
     suspend fun recoverDay(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
-            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.recoverDay(requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
@@ -401,7 +402,7 @@ object ApiClient {
                 put("transactionId", transactionId)
                 put("vendor", vendor)
             }
-            val reqBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val reqBody = body.toString().toRequestBody(JSON_MEDIA)
             val resp = apiService.claimMiningWithAd(reqBody)
             Result.success(JSONObject(resp.string()))
         } catch (e: Exception) {
@@ -421,7 +422,7 @@ object ApiClient {
 
     suspend fun buyMiner(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
-            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.buyMiner(requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
@@ -432,7 +433,7 @@ object ApiClient {
 
     suspend fun placeMiner(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
-            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.placeMiner(requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
@@ -443,7 +444,7 @@ object ApiClient {
 
     suspend fun unplaceMiner(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
-            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.unplaceMiner(requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
@@ -484,7 +485,7 @@ object ApiClient {
 
     suspend fun claimMinerToken(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
-            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.claimMinerToken(requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
@@ -495,7 +496,7 @@ object ApiClient {
 
     suspend fun unlockMiner(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
-            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.unlockMiner(requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
@@ -509,7 +510,7 @@ object ApiClient {
     suspend fun completeMission(missionId: String, userId: String): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val body = JSONObject().apply { put("userId", userId) }
-            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.completeMission(missionId, requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
@@ -521,7 +522,7 @@ object ApiClient {
     suspend fun claimMission(missionId: String, userId: String): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val body = JSONObject().apply { put("userId", userId) }
-            val requestBody = RequestBody.create(JSON_MEDIA, body.toString())
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.claimMission(missionId, requestBody)
             val json = JSONObject(response.string())
             Result.success(json)

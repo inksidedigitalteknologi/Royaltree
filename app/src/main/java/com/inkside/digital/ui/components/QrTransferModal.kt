@@ -1108,7 +1108,7 @@ fun TransferReceiptDialog(
 ) {
     val context = LocalContext.current
     val dateStr = remember(receipt.timestamp) {
-        val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm:ss", Locale("id", "ID"))
+        val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm:ss", Locale.forLanguageTag("id-ID"))
         sdf.format(Date(receipt.timestamp))
     }
 

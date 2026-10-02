@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
         GameRoomStateEntity::class
     ],
     version = 8,
-    exportSchema = true
+    exportSchema = false  // No-op, sudah ada migration manual
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun appDao(): AppDao
