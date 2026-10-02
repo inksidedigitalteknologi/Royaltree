@@ -1364,6 +1364,86 @@ object LanguageManager {
             AppLanguage.ARABIC to "النتيجة النهائية",
             AppLanguage.JAPANESE to "最終スコア"
         ),
+        "history_search_hint" to mapOf(
+            AppLanguage.INDONESIAN to "Cari berdasarkan judul, ref ID, atau nama kampanye...",
+            AppLanguage.ENGLISH to "Search by title, ref ID, or campaign name...",
+            AppLanguage.SPANISH to "Buscar por título, ID o campaña...",
+            AppLanguage.CHINESE to "按标题、参考ID或活动名称搜索...",
+            AppLanguage.ARABIC to "ابحث بالعنوان أو معرّف المرجع أو اسم الحملة...",
+            AppLanguage.JAPANESE to "タイトル、参照ID、キャンペーン名で検索..."
+        ),
+        "history_empty" to mapOf(
+            AppLanguage.INDONESIAN to "Tidak Ada Catatan Transaksi",
+            AppLanguage.ENGLISH to "No Transaction Records",
+            AppLanguage.SPANISH to "Sin registros de transacciones",
+            AppLanguage.CHINESE to "没有交易记录",
+            AppLanguage.ARABIC to "لا توجد سجلات معاملات",
+            AppLanguage.JAPANESE to "取引履歴がありません"
+        ),
+        "referral_how_it_works" to mapOf(
+            AppLanguage.INDONESIAN to "Cara Kerja",
+            AppLanguage.ENGLISH to "How It Works",
+            AppLanguage.SPANISH to "Cómo funciona",
+            AppLanguage.CHINESE to "如何运作",
+            AppLanguage.ARABIC to "كيف يعمل",
+            AppLanguage.JAPANESE to "仕組み"
+        ),
+        "referral_invited_friends" to mapOf(
+            AppLanguage.INDONESIAN to "Teman yang Diundang",
+            AppLanguage.ENGLISH to "Invited Friends",
+            AppLanguage.SPANISH to "Amigos invitados",
+            AppLanguage.CHINESE to "已邀请的好友",
+            AppLanguage.ARABIC to "الأصدقاء المدعوون",
+            AppLanguage.JAPANESE to "招待した友達"
+        ),
+        "faq_subtitle" to mapOf(
+            AppLanguage.INDONESIAN to "Pertanyaan umum & dukungan",
+            AppLanguage.ENGLISH to "Common questions & support",
+            AppLanguage.SPANISH to "Preguntas frecuentes y soporte",
+            AppLanguage.CHINESE to "常见问题和支持",
+            AppLanguage.ARABIC to "الأسئلة الشائعة والدعم",
+            AppLanguage.JAPANESE to "よくある質問とサポート"
+        ),
+        "faq_need_help" to mapOf(
+            AppLanguage.INDONESIAN to "Masih butuh bantuan?",
+            AppLanguage.ENGLISH to "Still need help?",
+            AppLanguage.SPANISH to "¿Aún necesitas ayuda?",
+            AppLanguage.CHINESE to "还需要帮助吗？",
+            AppLanguage.ARABIC to "هل ما زلت بحاجة للمساعدة؟",
+            AppLanguage.JAPANESE to "まだお困りですか？"
+        ),
+        "faq_contact_support" to mapOf(
+            AppLanguage.INDONESIAN to "Hubungi tim support kami",
+            AppLanguage.ENGLISH to "Contact our support team",
+            AppLanguage.SPANISH to "Contacta a nuestro equipo",
+            AppLanguage.CHINESE to "联系我们的支持团队",
+            AppLanguage.ARABIC to "اتصل بفريق الدعم",
+            AppLanguage.JAPANESE to "サポートチームにお問い合わせ"
+        ),
+        "leaderboard_title" to mapOf(
+            AppLanguage.INDONESIAN to "Papan Peringkat",
+            AppLanguage.ENGLISH to "Leaderboard",
+            AppLanguage.SPANISH to "Clasificación",
+            AppLanguage.CHINESE to "排行榜",
+            AppLanguage.ARABIC to "لوحة المتصدرين",
+            AppLanguage.JAPANESE to "リーダーボード"
+        ),
+        "leaderboard_empty" to mapOf(
+            AppLanguage.INDONESIAN to "Belum ada data peringkat",
+            AppLanguage.ENGLISH to "No leaderboard data yet",
+            AppLanguage.SPANISH to "Sin datos de clasificación",
+            AppLanguage.CHINESE to "暂无排行榜数据",
+            AppLanguage.ARABIC to "لا توجد بيانات الترتيب بعد",
+            AppLanguage.JAPANESE to "まだリーダーボードデータがありません"
+        ),
+        "common_ref" to mapOf(
+            AppLanguage.INDONESIAN to "Ref:",
+            AppLanguage.ENGLISH to "Ref:",
+            AppLanguage.SPANISH to "Ref:",
+            AppLanguage.CHINESE to "参考:",
+            AppLanguage.ARABIC to "المرجع:",
+            AppLanguage.JAPANESE to "参照:"
+        ),
     )
 
     fun getString(key: String, language: AppLanguage): String {

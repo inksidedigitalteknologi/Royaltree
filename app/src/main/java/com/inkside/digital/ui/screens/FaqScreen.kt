@@ -58,7 +58,7 @@ fun FaqScreen(currentLanguage: AppLanguage) {
         item {
             Column {
                 Text(LanguageManager.translate("faq_title", currentLanguage, "Help"), style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
-                Text("Pertanyaan umum & dukungan", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(LanguageManager.translate("faq_subtitle", currentLanguage, "Pertanyaan umum & dukungan"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
@@ -71,8 +71,8 @@ fun FaqScreen(currentLanguage: AppLanguage) {
                 Column(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(Icons.Default.Email, null, tint = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Masih butuh bantuan?", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    Text("Hubungi tim support kami", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(LanguageManager.translate("faq_need_help", currentLanguage, "Masih butuh bantuan?"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(LanguageManager.translate("faq_contact_support", currentLanguage, "Hubungi tim support kami"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(onClick = { }) { Text(LanguageManager.translate("faq_contact_support", currentLanguage, "Contact Support")) }
                 }
