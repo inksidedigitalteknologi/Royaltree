@@ -1020,6 +1020,190 @@ object LanguageManager {
             AppLanguage.ARABIC to "إغلاق",
             AppLanguage.JAPANESE to "閉じる"
         ),
+        "home_watch_ad" to mapOf(
+            AppLanguage.INDONESIAN to "Tonton Iklan Sponsor",
+            AppLanguage.ENGLISH to "Watch Sponsor Ad",
+            AppLanguage.SPANISH to "Ver anuncio patrocinado",
+            AppLanguage.CHINESE to "观看赞助广告",
+            AppLanguage.ARABIC to "شاهد إعلان الراعي",
+            AppLanguage.JAPANESE to "スポンサー広告を見る"
+        ),
+        "home_watch_ad_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Dapat +2-5 RTP • 30 detik",
+            AppLanguage.ENGLISH to "Get +2-5 RTP • 30 sec",
+            AppLanguage.SPANISH to "Obtén +2-5 RTP • 30 seg",
+            AppLanguage.CHINESE to "获得 +2-5 RTP • 30 秒",
+            AppLanguage.ARABIC to "احصل على +2-5 RTP • 30 ثانية",
+            AppLanguage.JAPANESE to "+2-5 RTP 獲得 • 30秒"
+        ),
+        "home_loading_ad" to mapOf(
+            AppLanguage.INDONESIAN to "Memuat iklan...",
+            AppLanguage.ENGLISH to "Loading ad...",
+            AppLanguage.SPANISH to "Cargando anuncio...",
+            AppLanguage.CHINESE to "加载广告中...",
+            AppLanguage.ARABIC to "جارٍ تحميل الإعلان...",
+            AppLanguage.JAPANESE to "広告を読み込み中..."
+        ),
+        "home_please_wait" to mapOf(
+            AppLanguage.INDONESIAN to "Mohon tunggu sebentar",
+            AppLanguage.ENGLISH to "Please wait a moment",
+            AppLanguage.SPANISH to "Por favor espera un momento",
+            AppLanguage.CHINESE to "请稍等",
+            AppLanguage.ARABIC to "الرجاء الانتظار لحظة",
+            AppLanguage.JAPANESE to "少々お待ちください"
+        ),
+        "home_ad_not_available" to mapOf(
+            AppLanguage.INDONESIAN to "Iklan tidak tersedia",
+            AppLanguage.ENGLISH to "Ad not available",
+            AppLanguage.SPANISH to "Anuncio no disponible",
+            AppLanguage.CHINESE to "广告不可用",
+            AppLanguage.ARABIC to "الإعلان غير متاح",
+            AppLanguage.JAPANESE to "広告は利用できません"
+        ),
+        "home_try_later" to mapOf(
+            AppLanguage.INDONESIAN to "Coba lagi nanti",
+            AppLanguage.ENGLISH to "Try again later",
+            AppLanguage.SPANISH to "Inténtalo más tarde",
+            AppLanguage.CHINESE to "稍后再试",
+            AppLanguage.ARABIC to "حاول مرة أخرى لاحقًا",
+            AppLanguage.JAPANESE to "後でもう一度お試しください"
+        ),
+        "home_limit_reached" to mapOf(
+            AppLanguage.INDONESIAN to "Limit harian tercapai",
+            AppLanguage.ENGLISH to "Daily limit reached",
+            AppLanguage.SPANISH to "Límite diario alcanzado",
+            AppLanguage.CHINESE to "已达到每日上限",
+            AppLanguage.ARABIC to "تم الوصول إلى الحد اليومي",
+            AppLanguage.JAPANESE to "1日の上限に達しました"
+        ),
+        "home_come_back_tomorrow" to mapOf(
+            AppLanguage.INDONESIAN to "Kembali besok untuk nonton lagi",
+            AppLanguage.ENGLISH to "Come back tomorrow to watch again",
+            AppLanguage.SPANISH to "Vuelve mañana para ver más",
+            AppLanguage.CHINESE to "明天再来观看",
+            AppLanguage.ARABIC to "عد غدًا للمشاهدة مرة أخرى",
+            AppLanguage.JAPANESE to "明日また見に来てください"
+        ),
+        "home_wait_moment" to mapOf(
+            AppLanguage.INDONESIAN to "Tunggu sebentar...",
+            AppLanguage.ENGLISH to "Wait a moment...",
+            AppLanguage.SPANISH to "Espera un momento...",
+            AppLanguage.CHINESE to "请稍候...",
+            AppLanguage.ARABIC to "انتظر لحظة...",
+            AppLanguage.JAPANESE to "少々お待ちを..."
+        ),
+        "home_checking" to mapOf(
+            AppLanguage.INDONESIAN to "Memeriksa...",
+            AppLanguage.ENGLISH to "Checking...",
+            AppLanguage.SPANISH to "Verificando...",
+            AppLanguage.CHINESE to "检查中...",
+            AppLanguage.ARABIC to "جارٍ التحقق...",
+            AppLanguage.JAPANESE to "確認中..."
+        ),
+        "home_checking_status" to mapOf(
+            AppLanguage.INDONESIAN to "Sedang memuat status",
+            AppLanguage.ENGLISH to "Loading status",
+            AppLanguage.SPANISH to "Cargando estado",
+            AppLanguage.CHINESE to "加载状态中",
+            AppLanguage.ARABIC to "جارٍ تحميل الحالة",
+            AppLanguage.JAPANESE to "ステータスを読み込み中"
+        ),
+        "common_try_again" to mapOf(
+            AppLanguage.INDONESIAN to "Coba Lagi",
+            AppLanguage.ENGLISH to "Try Again",
+            AppLanguage.SPANISH to "Reintentar",
+            AppLanguage.CHINESE to "重试",
+            AppLanguage.ARABIC to "حاول مرة أخرى",
+            AppLanguage.JAPANESE to "再試行"
+        ),
+        "game_hub_mining" to mapOf(
+            AppLanguage.INDONESIAN to "Mining Tycoon",
+            AppLanguage.ENGLISH to "Mining Tycoon",
+            AppLanguage.SPANISH to "Mining Tycoon",
+            AppLanguage.CHINESE to "挖矿大亨",
+            AppLanguage.ARABIC to "Mining Tycoon",
+            AppLanguage.JAPANESE to "マイニングタイクーン"
+        ),
+        "game_hub_coinrush" to mapOf(
+            AppLanguage.INDONESIAN to "Coin Rush",
+            AppLanguage.ENGLISH to "Coin Rush",
+            AppLanguage.SPANISH to "Coin Rush",
+            AppLanguage.CHINESE to "金币冲刺",
+            AppLanguage.ARABIC to "Coin Rush",
+            AppLanguage.JAPANESE to "コインラッシュ"
+        ),
+        "game_hub_dice" to mapOf(
+            AppLanguage.INDONESIAN to "Dice Roll",
+            AppLanguage.ENGLISH to "Dice Roll",
+            AppLanguage.SPANISH to "Dados",
+            AppLanguage.CHINESE to "掷骰子",
+            AppLanguage.ARABIC to "رمي النرد",
+            AppLanguage.JAPANESE to "サイコロ"
+        ),
+        "game_hub_spin" to mapOf(
+            AppLanguage.INDONESIAN to "Spin Wheel",
+            AppLanguage.ENGLISH to "Spin Wheel",
+            AppLanguage.SPANISH to "Ruleta",
+            AppLanguage.CHINESE to "幸运转盘",
+            AppLanguage.ARABIC to "عجلة الحظ",
+            AppLanguage.JAPANESE to "スピンホイール"
+        ),
+        "game_hub_shop" to mapOf(
+            AppLanguage.INDONESIAN to "Shop",
+            AppLanguage.ENGLISH to "Shop",
+            AppLanguage.SPANISH to "Tienda",
+            AppLanguage.CHINESE to "商店",
+            AppLanguage.ARABIC to "المتجر",
+            AppLanguage.JAPANESE to "ショップ"
+        ),
+        "game_hub_events" to mapOf(
+            AppLanguage.INDONESIAN to "Events",
+            AppLanguage.ENGLISH to "Events",
+            AppLanguage.SPANISH to "Eventos",
+            AppLanguage.CHINESE to "活动",
+            AppLanguage.ARABIC to "الأحداث",
+            AppLanguage.JAPANESE to "イベント"
+        ),
+        "game_hub_stats" to mapOf(
+            AppLanguage.INDONESIAN to "Stats",
+            AppLanguage.ENGLISH to "Stats",
+            AppLanguage.SPANISH to "Estadísticas",
+            AppLanguage.CHINESE to "统计",
+            AppLanguage.ARABIC to "الإحصائيات",
+            AppLanguage.JAPANESE to "統計"
+        ),
+        "game_hub_settings" to mapOf(
+            AppLanguage.INDONESIAN to "Set",
+            AppLanguage.ENGLISH to "Set",
+            AppLanguage.SPANISH to "Ajustes",
+            AppLanguage.CHINESE to "设置",
+            AppLanguage.ARABIC to "الإعدادات",
+            AppLanguage.JAPANESE to "設定"
+        ),
+        "game_hub_help" to mapOf(
+            AppLanguage.INDONESIAN to "Help",
+            AppLanguage.ENGLISH to "Help",
+            AppLanguage.SPANISH to "Ayuda",
+            AppLanguage.CHINESE to "帮助",
+            AppLanguage.ARABIC to "مساعدة",
+            AppLanguage.JAPANESE to "ヘルプ"
+        ),
+        "game_hub_view_all" to mapOf(
+            AppLanguage.INDONESIAN to "Lihat →",
+            AppLanguage.ENGLISH to "View →",
+            AppLanguage.SPANISH to "Ver →",
+            AppLanguage.CHINESE to "查看 →",
+            AppLanguage.ARABIC to "عرض →",
+            AppLanguage.JAPANESE to "表示 →"
+        ),
+        "game_hub_rank" to mapOf(
+            AppLanguage.INDONESIAN to "Peringkat #--",
+            AppLanguage.ENGLISH to "Rank #--",
+            AppLanguage.SPANISH to "Rango #--",
+            AppLanguage.CHINESE to "排名 #--",
+            AppLanguage.ARABIC to "الترتيب #--",
+            AppLanguage.JAPANESE to "ランク #--"
+        ),
     )
 
     fun getString(key: String, language: AppLanguage): String {
