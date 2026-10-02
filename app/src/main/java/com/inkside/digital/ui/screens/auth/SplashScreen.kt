@@ -39,11 +39,14 @@ fun SplashScreen() {
     var progress by remember { mutableStateOf(0f) }
 
     LaunchedEffect(Unit) {
-        val steps = 40
+        // Loading 3 saat (50 steps × 60ms)
+        val steps = 50
         for (i in 1..steps) {
-            delay(50L)
+            delay(60L)
             progress = i.toFloat() / steps
         }
+        // Hold 0.5s pada 100%
+        delay(500L)
     }
 
     val animatedProgress by animateFloatAsState(
@@ -117,13 +120,7 @@ fun SplashScreen() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
 
-            Text(
-                text = "${(animatedProgress * 100).toInt()}%  •  Memuatkan...",
-                fontSize = 11.sp,
-                color = Color.White.copy(alpha = 0.5f)
-            )
         }
     }
 }
