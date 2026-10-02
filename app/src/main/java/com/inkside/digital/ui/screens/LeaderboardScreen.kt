@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.localization.AppLanguage
@@ -47,6 +48,8 @@ data class LeaderboardEntry(
     val rank: Int,
     val name: String,
     val points: Int,
+    val userId: String = "",
+    val tier: String = "FREE",
     val isCurrentUser: Boolean = false
 )
 
@@ -57,18 +60,42 @@ fun LeaderboardScreen(
     onBack: () -> Unit
 ) {
     var isLoading by remember { mutableStateOf(true) }
+    var errorMsg by remember { mutableStateOf<String?>(null) }
     var entries by remember { mutableStateOf<List<LeaderboardEntry>>(emptyList()) }
 
-    // TODO: fetch dari backend nanti
     LaunchedEffect(Unit) {
-        // Placeholder data
-        entries = listOf(
-            LeaderboardEntry(1, "MiningKing", 15420),
-            LeaderboardEntry(2, "CryptoHunter", 12380),
-            LeaderboardEntry(3, "RoyaltreePro", 10250),
-            LeaderboardEntry(4, "AffiliateMaster", 9870),
-            LeaderboardEntry(5, "GoldDigger", 8420)
-        )
+        isLoading = true
+        errorMsg = null
+        try {
+            com.inkside.digital.data.network.ApiClient.getGameLeaderboard()
+                .onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
+                        val arr = json.optJSONArray("data") ?: return@onSuccess
+                        val list = mutableListOf<LeaderboardEntry>()
+                        for (i in 0 until arr.length()) {
+                            val obj = arr.optJSONObject(i) ?: continue
+                            list.add(
+                                LeaderboardEntry(
+                                    rank = obj.optInt("rank", i + 1),
+                                    name = obj.optString("name", "Anonim"),
+                                    points = obj.optInt("points", 0),
+                                    userId = obj.optString("userId", ""),
+                                    tier = obj.optString("tier", "FREE"),
+                                    isCurrentUser = obj.optString("userId", "") == currentUserId
+                                )
+                            )
+                        }
+                        entries = list
+                    } else {
+                        errorMsg = json.optString("message", "Gagal memuat leaderboard")
+                    }
+                }
+                .onFailure {
+                    errorMsg = it.message ?: "Network error"
+                }
+        } catch (e: Exception) {
+            errorMsg = e.message ?: "Error"
+        }
         isLoading = false
     }
 
@@ -123,20 +150,69 @@ fun LeaderboardScreen(
         }
 
         // ==== List rank 4+ ====
-        if (isLoading) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(40.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+        when {
+            isLoading -> {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(40.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
             }
-        } else {
-            itemsIndexed(entries.drop(3)) { _, entry ->
-                LeaderboardRow(entry)
+            errorMsg != null -> {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(40.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("⚠️", fontSize = 32.sp)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = errorMsg ?: "Error",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+            }
+            entries.isEmpty() -> {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(40.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("🏆", fontSize = 40.sp)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                "Belum ada data",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                "Leaderboard akan muncul setelah ada aktivitas",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+            else -> {
+                itemsIndexed(entries.drop(3)) { _, entry ->
+                    LeaderboardRow(entry, isCurrentUser = entry.userId == currentUserId)
+                }
             }
         }
 
@@ -186,7 +262,7 @@ private fun PodiumCard(entry: LeaderboardEntry, rank: Int, modifier: Modifier = 
 }
 
 @Composable
-private fun LeaderboardRow(entry: LeaderboardEntry) {
+private fun LeaderboardRow(entry: LeaderboardEntry, isCurrentUser: Boolean = false) {
     Card(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
