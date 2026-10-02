@@ -218,6 +218,7 @@ fun ProfileScreen(
         // ==== Quick Actions ====
         item {
             QuickActionsRow(
+                currentLanguage = currentLanguage,
                 onDailyCheckIn = onNavigateToDailyCheckIn,
                 onMining = onNavigateToMining,
                 onCoinRush = onNavigateToCoinRush,
@@ -244,6 +245,7 @@ fun ProfileScreen(
         // ==== Mining Stats ====
         item {
             MiningStatsCard(
+                currentLanguage = currentLanguage,
                 slotsUsed = minerSlotsUsed,
                 slotsMax = minerSlotsMax,
                 powerGhs = minerPowerGhs,
@@ -315,6 +317,7 @@ fun ProfileScreen(
 // ==========================================================
 @Composable
 private fun QuickActionsRow(
+    currentLanguage: AppLanguage,
     onDailyCheckIn: () -> Unit,
     onMining: () -> Unit,
     onCoinRush: () -> Unit,
@@ -500,6 +503,7 @@ private fun ReferralStatsCard(
 // ==========================================================
 @Composable
 private fun MiningStatsCard(
+    currentLanguage: AppLanguage,
     slotsUsed: Int,
     slotsMax: Int,
     powerGhs: Double,
