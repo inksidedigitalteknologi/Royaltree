@@ -21,6 +21,7 @@ class RoyaltreeFcmService : FirebaseMessagingService() {
         private const val CHANNEL_NAME = "Royaltree Notifications"
     }
 
+    @Suppress("DEPRECATION")
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d(TAG, "New FCM token: ${token.take(20)}...")

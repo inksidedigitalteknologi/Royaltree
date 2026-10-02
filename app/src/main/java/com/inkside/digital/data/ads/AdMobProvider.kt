@@ -192,10 +192,11 @@ object AdMobProvider {
      * @param context Context
      * @param adWidthDp Lebar banner dalam dp (dari BoxWithConstraints)
      */
+    @Suppress("DEPRECATION")
     fun createBannerView(context: Context, adWidthDp: Int, onFailed: () -> Unit = {}): AdView {
         val adView = AdView(context)
         adView.setAdSize(
-            AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidthDp)
+            AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidthDp)  // TODO: update to new API
         )
         adView.adUnitId = AdConfig.BANNER_AD_UNIT_ID
 
