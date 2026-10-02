@@ -98,7 +98,7 @@ fun HistoryScreen(
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = { Text("Cari berdasarkan judul, ref ID, atau nama kampanye...", fontSize = 12.sp) },
+                placeholder = { Text(LanguageManager.translate("history_search_hint", currentLanguage, "Cari berdasarkan judul, ref ID, atau nama kampanye..."), fontSize = 12.sp) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -153,7 +153,7 @@ fun HistoryScreen(
                     ) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ReceiptLong, contentDescription = null, modifier = Modifier.size(36.dp))
                         Spacer(modifier = Modifier.height(6.dp))
-                        Text("Tidak Ada Catatan Transaksi", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                        Text(LanguageManager.translate("history_empty", currentLanguage, "Tidak Ada Catatan Transaksi"), fontWeight = FontWeight.Bold, fontSize = 13.sp)
                     }
                 }
             }
@@ -237,7 +237,7 @@ fun HistoryDetailCard(tx: TransactionEntity) {
                     }
                 }
                 Text(tx.description, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text("Ref: ${tx.referenceId} • $dateStr", fontSize = 9.sp, fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(LanguageManager.translate("common_ref", currentLanguage, "Ref:") + " ${tx.referenceId} • $dateStr", fontSize = 9.sp, fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             Spacer(modifier = Modifier.width(8.dp))

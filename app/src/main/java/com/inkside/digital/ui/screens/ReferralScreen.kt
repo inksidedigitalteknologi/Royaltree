@@ -115,7 +115,7 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Star, null, tint = GoldVip, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Cara Kerja", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("referral_how_it_works", currentLanguage, "Cara Kerja"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text("1. Bagikan kode referral ke teman\n2. Teman daftar pakai kode kamu\n3. Kamu dapat komisi 5%\n4. Komisi masuk otomatis ke saldo", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 20.sp)
@@ -131,7 +131,7 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Teman yang Diundang", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("referral_invited_friends", currentLanguage, "Teman yang Diundang"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         Surface(
                             color = if (referredCount > 0) EmeraldLight.copy(alpha = 0.2f) else Color.Gray.copy(alpha = 0.2f),
                             shape = RoundedCornerShape(8.dp)
