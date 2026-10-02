@@ -16,6 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
@@ -50,6 +56,7 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
     val context = LocalContext.current
     val referralCode = user?.referralCode ?: "RT0001"
     val referredCount = user?.referredCount ?: 0
+    val affiliateBalance = user?.affiliateBalance ?: 0.0
 
     LazyColumn(
         modifier = Modifier
@@ -67,21 +74,59 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
         }
 
         item {
-            Card(shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(LanguageManager.translate("referral_your_code", currentLanguage, "Your Referral Code"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                        Text(referralCode, fontSize = 24.sp, fontWeight = FontWeight.Black, fontFamily = FontFamily.Monospace, color = ElectricBlue)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(
+                                ElectricBlue,
+                                ElectricBlue.copy(alpha = 0.85f),
+                                Color(0xFF7C3AED)
+                            )
+                        )
+                    )
+                    .border(1.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(20.dp))
+                    .padding(20.dp)
+            ) {
+                Column {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("✨", fontSize = 18.sp)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            LanguageManager.translate("referral_your_code", currentLanguage, "Your Referral Code"),
+                            fontSize = 12.sp,
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            referralCode,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Black,
+                            fontFamily = FontFamily.Monospace,
+                            color = Color.White,
+                            letterSpacing = 2.sp
+                        )
                         IconButton(onClick = {
                             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                             clipboard.setPrimaryClip(ClipData.newPlainText("Referral", referralCode))
                             Toast.makeText(context, LanguageManager.translate("referral_copied", currentLanguage, "Code copied!"), Toast.LENGTH_SHORT).show()
                         }) {
-                            Icon(Icons.Default.ContentCopy, "Copy", tint = EmeraldLight)
+                            Icon(Icons.Default.ContentCopy, "Copy", tint = Color.White)
                         }
                     }
-                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
                     Button(
                         onClick = {
                             val shareIntent = Intent().apply {
@@ -92,11 +137,61 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
                             context.startActivity(Intent.createChooser(shareIntent, "Bagikan via"))
                         },
                         shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White.copy(alpha = 0.15f),
+                            contentColor = Color.White
+                        ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(Icons.Default.Share, null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(LanguageManager.translate("referral_share", currentLanguage, "Share"), fontWeight = FontWeight.Bold)
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                val text = "Hai! Gabung Royaltree pakai kode referral saya: " + referralCode + "\n\nDownload: https://play.google.com/store/apps/details?id=com.inkside.digital"
+                                val waIntent = Intent(Intent.ACTION_VIEW).apply {
+                                    data = android.net.Uri.parse("https://wa.me/?text=" + java.net.URLEncoder.encode(text, "UTF-8"))
+                                }
+                                try { context.startActivity(waIntent) } catch (e: Exception) {
+                                    Toast.makeText(context, "WhatsApp tak dipasang", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF25D366),
+                                contentColor = Color.White
+                            ),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("WA", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        }
+                        Button(
+                            onClick = {
+                                val text = "Hai! Gabung Royaltree pakai kode referral saya: " + referralCode + "\n\nDownload: https://play.google.com/store/apps/details?id=com.inkside.digital"
+                                val tgIntent = Intent(Intent.ACTION_VIEW).apply {
+                                    data = android.net.Uri.parse("https://t.me/share/url?url=https://play.google.com/store/apps/details?id=com.inkside.digital&text=" + java.net.URLEncoder.encode(text, "UTF-8"))
+                                }
+                                try { context.startActivity(tgIntent) } catch (e: Exception) {
+                                    Toast.makeText(context, "Telegram tak dipasang", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF0088CC),
+                                contentColor = Color.White
+                            ),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Telegram", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        }
                     }
                 }
             }
@@ -104,8 +199,8 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
 
         item {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                StatCard(Modifier.weight(1f), "Teman", "0", "Diundang")
-                StatCard(Modifier.weight(1f), "Komisi", "Rp 0", "Total")
+                StatCard(Modifier.weight(1f), "Teman", referredCount.toString(), "Diundang")
+                StatCard(Modifier.weight(1f), "Komisi", "Rp ${affiliateBalance.toInt()}", "Total")
             }
         }
 
