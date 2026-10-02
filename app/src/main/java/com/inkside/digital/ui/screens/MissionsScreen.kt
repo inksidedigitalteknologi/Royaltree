@@ -81,6 +81,7 @@ import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.TaskMissionEntity
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.EmeraldPrimary
@@ -278,7 +279,7 @@ fun MissionsScreen(
                                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text("🔥 Streak: ", fontSize = 11.sp, color = Color.White)
+                                        Text(LanguageManager.translate("mission_streak", currentLanguage, "🔥 Streak: "), fontSize = 11.sp, color = Color.White)
                                         Text(
                                             text = "Hari ke-$streakDay",
                                             fontSize = 11.sp,
@@ -669,7 +670,7 @@ fun InteractiveMissionDialog(
                                     .padding(14.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text("📱 Postingan ${mission.targetPlatform ?: "Media Sosial"}", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Text(String.format(LanguageManager.translate("mission_social_post", currentLanguage, "📱 Postingan %s"), mission.targetPlatform ?: "Media Sosial"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Box(
                                     modifier = Modifier
@@ -709,7 +710,7 @@ fun InteractiveMissionDialog(
                                     .padding(14.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text("📢 Saluran Resmi ${mission.targetPlatform ?: "Platform"}", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Text(String.format(LanguageManager.translate("mission_official_channel", currentLanguage, "📢 Saluran Resmi %s"), mission.targetPlatform ?: "Platform"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Button(
                                     onClick = { hasSubscribed = true },
@@ -756,10 +757,10 @@ fun InteractiveMissionDialog(
                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                             Icon(imageVector = Icons.Default.Timer, contentDescription = null, tint = GoldVip, modifier = Modifier.size(14.dp))
                                             Spacer(modifier = Modifier.width(4.dp))
-                                            Text("Sisa waktu tonton: ${timerCountdown}s", color = GoldVip, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                            Text(String.format(LanguageManager.translate("mission_watch_remaining", currentLanguage, "Sisa waktu tonton: %ds"), timerCountdown), color = GoldVip, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                         }
                                     } else {
-                                        Text("Selesai Ditonton! ✓", color = EmeraldLight, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                                        Text(LanguageManager.translate("mission_watch_done", currentLanguage, "Selesai Ditonton! ✓"), color = EmeraldLight, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                                     }
                                 }
                             }
@@ -832,7 +833,7 @@ fun InteractiveMissionDialog(
                         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                             Text("🎮", fontSize = 32.sp)
                             Spacer(modifier = Modifier.height(6.dp))
-                            Text("Buka Ruang Game RollerCoin untuk menaruh item dan memproduksi poin pasif 24/7!", fontSize = 11.sp)
+                            Text(LanguageManager.translate("mission_game_promo", currentLanguage, "Buka Ruang Game RollerCoin untuk menaruh item dan memproduksi poin pasif 24/7!"), fontSize = 11.sp)
                         }
                     }
                 }
@@ -846,7 +847,7 @@ fun InteractiveMissionDialog(
                         enabled = hasLiked,
                         colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
                     ) {
-                        Text("Konfirmasi Suka (+${mission.rtpReward} RTP)", fontWeight = FontWeight.Bold)
+                        Text(String.format(LanguageManager.translate("mission_confirm_like", currentLanguage, "Konfirmasi Suka (+%d RTP)"), mission.rtpReward), fontWeight = FontWeight.Bold)
                     }
                 }
                 "SUBSCRIBE" -> {
@@ -855,7 +856,7 @@ fun InteractiveMissionDialog(
                         enabled = hasSubscribed,
                         colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
                     ) {
-                        Text("Verifikasi Subscribe (+${mission.rtpReward} RTP)", fontWeight = FontWeight.Bold)
+                        Text(String.format(LanguageManager.translate("mission_verify_subscribe", currentLanguage, "Verifikasi Subscribe (+%d RTP)"), mission.rtpReward), fontWeight = FontWeight.Bold)
                     }
                 }
                 "VIEW", "WATCH", "WEB" -> {
@@ -875,19 +876,19 @@ fun InteractiveMissionDialog(
                         onClick = onOpenGame,
                         colors = ButtonDefaults.buttonColors(containerColor = PurpleSecondary)
                     ) {
-                        Text("Buka Ruang Game", fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("mission_open_game_room", currentLanguage, "Buka Ruang Game"), fontWeight = FontWeight.Bold)
                     }
                 }
                 else -> {
                     Button(onClick = onComplete, colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)) {
-                        Text("Selesaikan (+${mission.rtpReward} RTP)")
+                        Text(String.format(LanguageManager.translate("mission_complete", currentLanguage, "Selesaikan (+%d RTP)"), mission.rtpReward))
                     }
                 }
             }
         },
         dismissButton = {
             OutlinedButton(onClick = onDismiss) {
-                Text("Tutup")
+                Text(LanguageManager.translate("common_close", currentLanguage, "Tutup"))
             }
         }
     )

@@ -932,6 +932,94 @@ object LanguageManager {
             AppLanguage.ARABIC to "مستواك: %s",
             AppLanguage.JAPANESE to "あなたのティア: %s"
         ),
+        "mission_streak" to mapOf(
+            AppLanguage.INDONESIAN to "🔥 Streak: ",
+            AppLanguage.ENGLISH to "🔥 Streak: ",
+            AppLanguage.SPANISH to "🔥 Racha: ",
+            AppLanguage.CHINESE to "🔥 连续: ",
+            AppLanguage.ARABIC to "🔥 السلسلة: ",
+            AppLanguage.JAPANESE to "🔥 連続: "
+        ),
+        "mission_social_post" to mapOf(
+            AppLanguage.INDONESIAN to "📱 Postingan %s",
+            AppLanguage.ENGLISH to "📱 Post on %s",
+            AppLanguage.SPANISH to "📱 Publicación en %s",
+            AppLanguage.CHINESE to "📱 发布到 %s",
+            AppLanguage.ARABIC to "📱 نشر على %s",
+            AppLanguage.JAPANESE to "📱 %s に投稿"
+        ),
+        "mission_official_channel" to mapOf(
+            AppLanguage.INDONESIAN to "📢 Saluran Resmi %s",
+            AppLanguage.ENGLISH to "📢 Official Channel %s",
+            AppLanguage.SPANISH to "📢 Canal oficial %s",
+            AppLanguage.CHINESE to "📢 官方频道 %s",
+            AppLanguage.ARABIC to "📢 القناة الرسمية %s",
+            AppLanguage.JAPANESE to "📢 公式チャンネル %s"
+        ),
+        "mission_watch_remaining" to mapOf(
+            AppLanguage.INDONESIAN to "Sisa waktu tonton: %ds",
+            AppLanguage.ENGLISH to "Watch time left: %ds",
+            AppLanguage.SPANISH to "Tiempo restante: %ds",
+            AppLanguage.CHINESE to "剩余观看时间: %ds",
+            AppLanguage.ARABIC to "الوقت المتبقي: %ds",
+            AppLanguage.JAPANESE to "残り視聴時間: %ds"
+        ),
+        "mission_watch_done" to mapOf(
+            AppLanguage.INDONESIAN to "Selesai Ditonton! ✓",
+            AppLanguage.ENGLISH to "Watch Complete! ✓",
+            AppLanguage.SPANISH to "¡Visto! ✓",
+            AppLanguage.CHINESE to "观看完成！✓",
+            AppLanguage.ARABIC to "تم المشاهدة! ✓",
+            AppLanguage.JAPANESE to "視聴完了! ✓"
+        ),
+        "mission_game_promo" to mapOf(
+            AppLanguage.INDONESIAN to "Buka Ruang Game RollerCoin untuk menaruh item dan memproduksi poin pasif 24/7!",
+            AppLanguage.ENGLISH to "Open Game Room to place items and generate passive points 24/7!",
+            AppLanguage.SPANISH to "¡Abre Game Room para colocar objetos y generar puntos pasivos 24/7!",
+            AppLanguage.CHINESE to "打开游戏室放置物品，24/7 产生被动积分！",
+            AppLanguage.ARABIC to "افتح غرفة الألعاب لوضع العناصر وتوليد نقاط سلبية 24/7!",
+            AppLanguage.JAPANESE to "ゲームルームを開いてアイテムを配置し、24時間受動的にポイントを生成しましょう！"
+        ),
+        "mission_confirm_like" to mapOf(
+            AppLanguage.INDONESIAN to "Konfirmasi Suka (+%d RTP)",
+            AppLanguage.ENGLISH to "Confirm Like (+%d RTP)",
+            AppLanguage.SPANISH to "Confirmar Me gusta (+%d RTP)",
+            AppLanguage.CHINESE to "确认点赞 (+%d RTP)",
+            AppLanguage.ARABIC to "تأكيد الإعجاب (+%d RTP)",
+            AppLanguage.JAPANESE to "いいね確認 (+%d RTP)"
+        ),
+        "mission_verify_subscribe" to mapOf(
+            AppLanguage.INDONESIAN to "Verifikasi Subscribe (+%d RTP)",
+            AppLanguage.ENGLISH to "Verify Subscribe (+%d RTP)",
+            AppLanguage.SPANISH to "Verificar Suscripción (+%d RTP)",
+            AppLanguage.CHINESE to "验证订阅 (+%d RTP)",
+            AppLanguage.ARABIC to "التحقق من الاشتراك (+%d RTP)",
+            AppLanguage.JAPANESE to "登録確認 (+%d RTP)"
+        ),
+        "mission_open_game_room" to mapOf(
+            AppLanguage.INDONESIAN to "Buka Ruang Game",
+            AppLanguage.ENGLISH to "Open Game Room",
+            AppLanguage.SPANISH to "Abrir Game Room",
+            AppLanguage.CHINESE to "打开游戏室",
+            AppLanguage.ARABIC to "افتح غرفة الألعاب",
+            AppLanguage.JAPANESE to "ゲームルームを開く"
+        ),
+        "mission_complete" to mapOf(
+            AppLanguage.INDONESIAN to "Selesaikan (+%d RTP)",
+            AppLanguage.ENGLISH to "Complete (+%d RTP)",
+            AppLanguage.SPANISH to "Completar (+%d RTP)",
+            AppLanguage.CHINESE to "完成 (+%d RTP)",
+            AppLanguage.ARABIC to "إكمال (+%d RTP)",
+            AppLanguage.JAPANESE to "完了 (+%d RTP)"
+        ),
+        "common_close" to mapOf(
+            AppLanguage.INDONESIAN to "Tutup",
+            AppLanguage.ENGLISH to "Close",
+            AppLanguage.SPANISH to "Cerrar",
+            AppLanguage.CHINESE to "关闭",
+            AppLanguage.ARABIC to "إغلاق",
+            AppLanguage.JAPANESE to "閉じる"
+        ),
     )
 
     fun getString(key: String, language: AppLanguage): String {
