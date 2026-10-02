@@ -49,6 +49,12 @@ object WidgetUpdater {
                         prefs[KEY_STREAK] = user.checkInStreak.toString()
                         prefs[KEY_STEPS] = stepsFormatted
                         prefs[KEY_TIER] = user.tier
+                        prefs[KEY_REFERRAL] = user.referredCount.toString()
+                        // Token dari gameRoomState
+                        try {
+                            val room = db.appDao().getGameRoomStateSync()
+                            prefs[KEY_TOKEN] = "0"  // Room takde field token, guna 0
+                        } catch (e: Exception) { prefs[KEY_TOKEN] = "0" }
                     }
                 }
 
@@ -90,6 +96,8 @@ object WidgetUpdater {
                     prefs[KEY_STREAK] = streak.toString()
                     prefs[KEY_STEPS] = stepsFormatted
                     prefs[KEY_TIER] = tier
+                    prefs[KEY_TOKEN] = "0"
+                    prefs[KEY_REFERRAL] = "0"
                 }
             }
 

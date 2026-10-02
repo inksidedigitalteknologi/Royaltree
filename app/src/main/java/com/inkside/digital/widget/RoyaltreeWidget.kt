@@ -29,14 +29,17 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 
-// ==== Colors ====
-private val DarkNavy = Color(0xFF0A0E1A)
-private val CardSlate = Color(0xFF1E293B)
+// ==== Colors (Royaltree theme) ====
+private val DarkBg = Color(0xFF0A0E1A)
+private val DarkBg2 = Color(0xFF0F172A)
+private val CardSurface = Color(0xFF1E293B)
+private val EmeraldLight = Color(0xFF34D399)
+private val EmeraldMid = Color(0xFF10B981)
 private val GoldAccent = Color(0xFFFFD700)
-private val EmeraldLight = Color(0xFF10B981)
+private val CyanAccent = Color(0xFF06B6D4)
+private val PinkAccent = Color(0xFFEC4899)
 private val TextSecondary = Color(0xFF94A3B8)
-private val ElectricBlue = Color(0xFF3B82F6)
-private val PurpleAccent = Color(0xFF8B5CF6)
+private val TextMuted = Color(0xFF64748B)
 
 // ==== Keys ====
 val KEY_USER_NAME = stringPreferencesKey("user_name")
@@ -45,6 +48,8 @@ val KEY_POINTS = stringPreferencesKey("user_points")
 val KEY_STREAK = stringPreferencesKey("user_streak")
 val KEY_STEPS = stringPreferencesKey("user_steps")
 val KEY_TIER = stringPreferencesKey("user_tier")
+val KEY_TOKEN = stringPreferencesKey("user_token")
+val KEY_REFERRAL = stringPreferencesKey("user_referral")
 
 class RoyaltreeWidget : GlanceAppWidget() {
     override val stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
@@ -63,36 +68,88 @@ class RoyaltreeWidget : GlanceAppWidget() {
         val points = prefs[KEY_POINTS] ?: "0"
         val streak = prefs[KEY_STREAK] ?: "0"
         val steps = prefs[KEY_STEPS] ?: "0"
+        val token = prefs[KEY_TOKEN] ?: "0"
+        val referral = prefs[KEY_REFERRAL] ?: "0"
         val tier = prefs[KEY_TIER] ?: "FREE"
-        val isPremium = tier == "PREMIUM"
+
+        val (tierEmoji, tierColor) = when (tier.uppercase()) {
+            "ROYAL" -> "💎" to Color(0xFFB9F2FF)
+            "VIP" -> "🥇" to GoldAccent
+            "PREMIUM" -> "🥈" to Color(0xFFC0C0C0)
+            "STARTER" -> "🥉" to Color(0xFFCD7F32)
+            else -> "🌱" to EmeraldLight
+        }
 
         Column(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(DarkNavy)
-                .padding(14.dp),
+                .background(DarkBg)
+                .padding(12.dp),
             verticalAlignment = Alignment.Vertical.Top,
             horizontalAlignment = Alignment.Horizontal.Start
         ) {
-            // ==== Header: Royaltree + Tier Badge ====
+            // ============ HEADER ============
             Row(
                 modifier = GlanceModifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Vertical.CenterVertically
             ) {
+                // Logo emoji
                 Text(
-                    text = "Royaltree",
+                    text = "🌳",
+                    style = TextStyle(fontSize = 18.sp)
+                )
+                Spacer(GlanceModifier.width(6.dp))
+                Column(modifier = GlanceModifier.defaultWeight()) {
+                    Text(
+                        text = "Royaltree",
+                        style = TextStyle(
+                            color = ColorProvider(GoldAccent),
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                    Text(
+                        text = "$tierEmoji $tier",
+                        style = TextStyle(
+                            color = ColorProvider(tierColor),
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
+                // User initial
+                Text(
+                    text = userName.take(1).uppercase(),
                     style = TextStyle(
-                        color = ColorProvider(GoldAccent),
+                        color = ColorProvider(EmeraldLight),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
-                    ),
-                    modifier = GlanceModifier.defaultWeight()
+                    )
                 )
+            }
+
+            Spacer(GlanceModifier.height(8.dp))
+
+            // ============ BALANCE CARD ============
+            Column(
+                modifier = GlanceModifier
+                    .fillMaxWidth()
+                    .background(CardSurface)
+                    .padding(10.dp)
+            ) {
                 Text(
-                    text = if (isPremium) "PREMIUM" else "FREE",
+                    text = "💰 Saldo",
                     style = TextStyle(
-                        color = ColorProvider(if (isPremium) GoldAccent else TextSecondary),
-                        fontSize = 9.sp,
+                        color = ColorProvider(TextSecondary),
+                        fontSize = 8.sp
+                    )
+                )
+                Spacer(GlanceModifier.height(2.dp))
+                Text(
+                    text = balance,
+                    style = TextStyle(
+                        color = ColorProvider(GoldAccent),
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
                 )
@@ -100,57 +157,62 @@ class RoyaltreeWidget : GlanceAppWidget() {
 
             Spacer(GlanceModifier.height(6.dp))
 
-            // ==== Greeting ====
-            Text(
-                text = "Halo, $userName",
-                style = TextStyle(
-                    color = ColorProvider(TextSecondary),
-                    fontSize = 11.sp
-                )
-            )
-
-            Spacer(GlanceModifier.height(8.dp))
-
-            // ==== Balance (Gold, besar) ====
-            Text(
-                text = "Saldo",
-                style = TextStyle(
-                    color = ColorProvider(TextSecondary),
-                    fontSize = 9.sp
-                )
-            )
-            Text(
-                text = balance,
-                style = TextStyle(
-                    color = ColorProvider(GoldAccent),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            )
-
-            Spacer(GlanceModifier.height(10.dp))
-
-            // ==== Stats Row (3 kolom) ====
-            Row(
-                modifier = GlanceModifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.Horizontal.Start
-            ) {
+            // ============ 2×2 STATS GRID ============
+            Row(modifier = GlanceModifier.fillMaxWidth()) {
                 StatItem(
+                    emoji = "⭐",
                     value = points,
                     label = "Poin",
                     color = EmeraldLight,
                     modifier = GlanceModifier.defaultWeight()
                 )
+                Spacer(GlanceModifier.width(4.dp))
                 StatItem(
+                    emoji = "🔥",
                     value = streak,
                     label = "Streak",
-                    color = PurpleAccent,
+                    color = PinkAccent,
                     modifier = GlanceModifier.defaultWeight()
                 )
+            }
+            Spacer(GlanceModifier.height(4.dp))
+            Row(modifier = GlanceModifier.fillMaxWidth()) {
                 StatItem(
-                    value = steps,
-                    label = "Langkah",
-                    color = ElectricBlue,
+                    emoji = "⛏️",
+                    value = token,
+                    label = "Token",
+                    color = CyanAccent,
+                    modifier = GlanceModifier.defaultWeight()
+                )
+                Spacer(GlanceModifier.width(4.dp))
+                StatItem(
+                    emoji = "👥",
+                    value = referral,
+                    label = "Teman",
+                    color = EmeraldLight,
+                    modifier = GlanceModifier.defaultWeight()
+                )
+            }
+
+            Spacer(GlanceModifier.height(6.dp))
+
+            // ============ ACTION ROW ============
+            Row(
+                modifier = GlanceModifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
+                verticalAlignment = Alignment.Vertical.CenterVertically
+            ) {
+                ActionChip(
+                    emoji = "🎁",
+                    label = "Check-in",
+                    color = GoldAccent,
+                    modifier = GlanceModifier.defaultWeight()
+                )
+                Spacer(GlanceModifier.width(4.dp))
+                ActionChip(
+                    emoji = "⛏️",
+                    label = "Mining",
+                    color = EmeraldLight,
                     modifier = GlanceModifier.defaultWeight()
                 )
             }
@@ -159,28 +221,68 @@ class RoyaltreeWidget : GlanceAppWidget() {
 
     @Composable
     private fun StatItem(
+        emoji: String,
         value: String,
         label: String,
         color: Color,
         modifier: GlanceModifier = GlanceModifier
     ) {
-        Column(
-            modifier = modifier,
+        Row(
+            modifier = modifier
+                .background(CardSurface)
+                .padding(8.dp),
+            verticalAlignment = Alignment.Vertical.CenterVertically
+        ) {
+            Text(
+                text = emoji,
+                style = TextStyle(fontSize = 12.sp)
+            )
+            Spacer(GlanceModifier.width(4.dp))
+            Column {
+                Text(
+                    text = value,
+                    style = TextStyle(
+                        color = ColorProvider(color),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                Text(
+                    text = label,
+                    style = TextStyle(
+                        color = ColorProvider(TextMuted),
+                        fontSize = 8.sp
+                    )
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun ActionChip(
+        emoji: String,
+        label: String,
+        color: Color,
+        modifier: GlanceModifier = GlanceModifier
+    ) {
+        Row(
+            modifier = modifier
+                .background(color.copy(alpha = 0.15f))
+                .padding(vertical = 6.dp, horizontal = 8.dp),
+            verticalAlignment = Alignment.Vertical.CenterVertically,
             horizontalAlignment = Alignment.Horizontal.CenterHorizontally
         ) {
             Text(
-                text = value,
-                style = TextStyle(
-                    color = ColorProvider(color),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                text = emoji,
+                style = TextStyle(fontSize = 10.sp)
             )
+            Spacer(GlanceModifier.width(4.dp))
             Text(
                 text = label,
                 style = TextStyle(
-                    color = ColorProvider(TextSecondary),
-                    fontSize = 9.sp
+                    color = ColorProvider(color),
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Bold
                 )
             )
         }
