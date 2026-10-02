@@ -572,7 +572,7 @@ private fun HeroBanner(
                 RetroStatBox(
                     emoji = "💰",
                     label = "RTP",
-                    value = String.format("%.2f", liveUnclaimedPoints),
+                    value = String.format(Locale.US, "%.8f", liveUnclaimedPoints),
                     color = RetroGold,
                     modifier = Modifier.weight(1f)
                 )
@@ -836,7 +836,7 @@ private fun MiningRoomTab(
                                             color = EmeraldLight
                                         )
                                         Text(
-                                            text = "${String.format(Locale.US, "%.3f", liveUnclaimedPoints)} POIN",
+                                            text = "${String.format(Locale.US, "%.8f", liveUnclaimedPoints)} RTP",
                                             fontSize = 22.sp,
                                             fontWeight = FontWeight.ExtraBold,
                                             color = Color.White
@@ -858,7 +858,7 @@ private fun MiningRoomTab(
                                         Icon(imageVector = Icons.Filled.Bolt, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
                                         Spacer(modifier = Modifier.width(6.dp))
                                         Text(
-                                            text = "Klaim Hasil Mining (${liveUnclaimedPoints.toInt().coerceAtLeast(1)} Poin)",
+                                            text = "Klaim Hasil Mining (${String.format(Locale.US, "%.8f", liveUnclaimedPoints)} RTP)",
                                             color = Color.Black,
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 13.sp

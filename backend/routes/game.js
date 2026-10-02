@@ -30,7 +30,7 @@ const MINER_CATALOG = [
         iconEmoji: '🔧',
         tokenCost: 50,
         powerGhs: 50,
-        pointsPerDay: 5,
+        pointsPerDay: 4,
         description: 'Miner dengan power lebih besar'
     },
     {
@@ -40,7 +40,7 @@ const MINER_CATALOG = [
         iconEmoji: '⚡',
         tokenCost: 200,
         powerGhs: 200,
-        pointsPerDay: 20,
+        pointsPerDay: 15,
         description: 'Miner dengan teknologi quantum'
     },
     {
@@ -50,7 +50,7 @@ const MINER_CATALOG = [
         iconEmoji: '💎',
         tokenCost: 1000,
         powerGhs: 1000,
-        pointsPerDay: 100,
+        pointsPerDay: 60,
         description: 'Miner raksasa dengan power luar biasa'
     },
     {
@@ -60,7 +60,7 @@ const MINER_CATALOG = [
         iconEmoji: '🌌',
         tokenCost: 5000,
         powerGhs: 5000,
-        pointsPerDay: 500,
+        pointsPerDay: 300,
         description: 'Miner legendaris dengan power tak terbatas'
     }
 ];
@@ -81,9 +81,14 @@ function getTokenReward(source) {
 // ============================================================
 // HELPER: Hitung poin dari total power
 // ============================================================
-function calculatePointsPerDay(totalPowerGhs) {
-    // Asumsi: 10 GH/s = 1 poin/hari
-    return totalPowerGhs / 10;
+function calculatePointsPerDay(totalPowerGhs, miners = []) {
+    // Utamakan sum pointsPerDay dari catalog (tepat)
+    if (Array.isArray(miners) && miners.length > 0) {
+        const sum = miners.reduce((s, m) => s + (m.pointsPerDay || 0), 0);
+        if (sum > 0) return sum;
+    }
+    // Fallback: formula ratio (kalau miners array kosong)
+    return totalPowerGhs * 0.06;
 }
 
 // ============================================================
@@ -125,7 +130,7 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
 
         // Hitung total power
         const totalPowerGhs = miners.reduce((sum, m) => sum + (m.powerGhs || 0), 0);
-        const pointsPerDay = calculatePointsPerDay(totalPowerGhs);
+        const pointsPerDay = calculatePointsPerDay(totalPowerGhs, miners);
 
         return res.json({
             success: true,
@@ -207,7 +212,7 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
             });
         }
 
-        const claimAmount = Math.floor(unclaimed);
+        const claimAmount = parseFloat(unclaimed.toFixed(8));  // Preserve 8 decimals (BTC-style)
         const totalClaimed = (room.totalMinedPointsClaimed || 0) + claimAmount;
 
         // Update user points
@@ -281,7 +286,7 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
             });
         }
 
-        const claimAmount = Math.floor(unclaimed);
+        const claimAmount = parseFloat(unclaimed.toFixed(8));  // Preserve 8 decimals (BTC-style)
 
         // Update user points
         await db.collection('users').doc(uid).update({
