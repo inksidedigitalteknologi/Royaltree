@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.tooling.preview.Preview
@@ -104,18 +105,28 @@ fun RoyaltreeTree(
         val trunkTopY = baseY - trunkHeight
         val trunkWidth = w * (0.035f + 0.006f * level)
 
-        // Batang: gradient emerald dark -> light
-        drawLine(
+        // Batang: gradient emerald dark -> light (MELENGKUNG natural)
+        // Guna cubicTo untuk lekuk seperti pohon sungguhan
+        val trunkBend = w * 0.025f * (1f + rand.nextFloat() * 0.4f)  // lekuk ke kanan sikit
+        val trunkPath = Path().apply {
+            moveTo(cx, baseY)
+            cubicTo(
+                cx - trunkBend * 0.3f, baseY - trunkHeight * 0.35f,   // control 1 (condong kiri sikit)
+                cx + trunkBend * 1.2f, trunkTopY + trunkHeight * 0.25f, // control 2 (condong kanan)
+                cx + trunkBend * 0.6f, trunkTopY                        // end (off-center)
+            )
+        }
+        drawPath(
+            path = trunkPath,
             brush = Brush.verticalGradient(
                 colors = listOf(TrunkLight, TrunkMid, TrunkDark),
                 startY = trunkTopY,
                 endY = baseY
             ),
-            start = Offset(cx, baseY),
-            end = Offset(cx, trunkTopY),
-            strokeWidth = trunkWidth,
-            cap = StrokeCap.Round
+            style = Stroke(width = trunkWidth, cap = StrokeCap.Round)
         )
+        // Simpan titik hujung batang untuk cabang
+        val trunkEndX = cx + trunkBend * 0.6f
 
         // ============ 4. Dahan fractal (L-system) ============
         val branchCount = 2 + level              // 3..7
@@ -126,7 +137,7 @@ fun RoyaltreeTree(
             val spreadDeg = 15f + level * 2f
             val angleDeg = -90f + ((i - (branchCount - 1) / 2f) * spreadDeg)
             drawBranch(
-                start = Offset(cx, trunkTopY),
+                start = Offset(trunkEndX, trunkTopY),
                 angleDeg = angleDeg,
                 length = branchLength,
                 depth = 0,
@@ -189,23 +200,31 @@ private fun DrawScope.drawBranch(
         else -> LeafDark
     }
 
-    drawLine(
+    // Bezier curve — cabang melengkung natural, bukan straight
+    val curveOffset = length * 0.18f * (rand.nextFloat() - 0.5f)  // -0.09 to +0.09
+    val midX = (start.x + end.x) / 2f + curveOffset
+    val midY = (start.y + end.y) / 2f + curveOffset * 0.5f
+    val branchPath = Path().apply {
+        moveTo(start.x, start.y)
+        quadraticBezierTo(midX, midY, end.x, end.y)
+    }
+    drawPath(
+        path = branchPath,
         color = branchColor,
-        start = start,
-        end = end,
-        strokeWidth = thickness,
-        cap = StrokeCap.Round
+        style = Stroke(width = thickness, cap = StrokeCap.Round)
     )
 
-    // Rekursif — 2 cabang
-    val nextLength = length * 0.68f
+    // Rekursif — 2 cabang TAK SIMETRI (panjang + sudut berbeza)
     val nextThickness = thickness * 0.62f
-    val spread = 22f + rand.nextFloat() * 8f
+    val spreadLeft = 18f + rand.nextFloat() * 14f    // 18-32°
+    val spreadRight = 20f + rand.nextFloat() * 16f   // 20-36°
+    val lenLeft = length * (0.60f + rand.nextFloat() * 0.15f)   // 0.60-0.75
+    val lenRight = length * (0.62f + rand.nextFloat() * 0.18f)  // 0.62-0.80
 
     drawBranch(
         start = end,
-        angleDeg = angleDeg - spread,
-        length = nextLength,
+        angleDeg = angleDeg - spreadLeft,
+        length = lenLeft,
         depth = depth + 1,
         maxDepth = maxDepth,
         thickness = nextThickness,
@@ -215,8 +234,8 @@ private fun DrawScope.drawBranch(
     )
     drawBranch(
         start = end,
-        angleDeg = angleDeg + spread,
-        length = nextLength,
+        angleDeg = angleDeg + spreadRight,
+        length = lenRight,
         depth = depth + 1,
         maxDepth = maxDepth,
         thickness = nextThickness,
@@ -276,16 +295,24 @@ private fun DrawScope.drawRoots(
         val endX = cx + offset
         val endY = baseY + rootLen
 
-        drawLine(
+        // Akar melengkung keluar (bukan straight)
+        val rootCurve = (endX - cx) * 0.3f
+        val rootPath = Path().apply {
+            moveTo(cx, baseY)
+            cubicTo(
+                cx + (endX - cx) * 0.2f, baseY + rootLen * 0.3f,
+                cx + (endX - cx) * 0.8f, baseY + rootLen * 0.5f,
+                endX, endY
+            )
+        }
+        drawPath(
+            path = rootPath,
             brush = Brush.verticalGradient(
                 colors = listOf(RootAmber, RootGold),
                 startY = baseY,
                 endY = endY
             ),
-            start = Offset(cx, baseY),
-            end = Offset(endX, endY),
-            strokeWidth = thickness,
-            cap = StrokeCap.Round
+            style = Stroke(width = thickness, cap = StrokeCap.Round)
         )
     }
 }
