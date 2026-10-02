@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.components.BannerAdView
 import kotlinx.coroutines.delay
 import kotlin.random.Random
@@ -143,8 +144,8 @@ fun CoinRushScreen(
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
                 }
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("Coin Rush", color = Color.White, fontWeight = FontWeight.Black, fontSize = 18.sp)
-                    Text("Tap koin sebelum hilang!", color = NeonCyan, fontSize = 11.sp)
+                    Text(LanguageManager.translate("game_hub_coinrush", currentLanguage, "Coin Rush"), color = Color.White, fontWeight = FontWeight.Black, fontSize = 18.sp)
+                    Text(LanguageManager.translate("coinrush_tagline", currentLanguage, "Tap koin sebelum hilang!"), color = NeonCyan, fontSize = 11.sp)
                 }
             }
 
@@ -238,7 +239,7 @@ fun CoinRushScreen(
                     ) {
                         Text("🏁", fontSize = 64.sp)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text("Skor Akhir", color = Color.White, fontSize = 13.sp)
+                        Text(LanguageManager.translate("coinrush_final_score", currentLanguage, "Skor Akhir"), color = Color.White, fontSize = 13.sp)
                         Text("$score", color = NeonYellow, fontSize = 42.sp, fontWeight = FontWeight.Black)
                         Spacer(modifier = Modifier.height(12.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {

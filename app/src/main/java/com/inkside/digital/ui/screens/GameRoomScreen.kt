@@ -90,6 +90,7 @@ import com.inkside.digital.data.model.GameMinerItemEntity
 import com.inkside.digital.data.model.GameRoomStateEntity
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.components.BannerAdView
 import com.inkside.digital.ui.components.MiningClaimDialog
@@ -354,19 +355,19 @@ fun GameRoomScreenContent(
                     ) {
                         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("Harga:", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("game_price", currentLanguage, "Harga:"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text("${item.pricePoints} Poin", fontWeight = FontWeight.Bold, color = GoldVip, fontSize = 12.sp)
                             }
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("Mining Power:", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("game_mining_power", currentLanguage, "Mining Power:"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text("+${item.powerGhs} GH/s", fontWeight = FontWeight.Bold, color = ElectricBlue, fontSize = 12.sp)
                             }
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("Rate Poin:", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("game_rate_points", currentLanguage, "Rate Poin:"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text("+${item.pointsPerMinute} Poin/Menit", fontWeight = FontWeight.Bold, color = EmeraldLight, fontSize = 12.sp)
                             }
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("Saldo Poin Anda:", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("game_your_points", currentLanguage, "Saldo Poin Anda:"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text("${user?.points ?: 0} Poin", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
                         }
@@ -398,12 +399,12 @@ fun GameRoomScreenContent(
                     enabled = canAfford,
                     colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
                 ) {
-                    Text("Beli Sekarang", fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("game_buy_now", currentLanguage, "Beli Sekarang"), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 OutlinedButton(onClick = { selectedItemToBuy = null }) {
-                    Text("Batal")
+                    Text(LanguageManager.translate("common_cancel", currentLanguage, "Batal"))
                 }
             }
         )
@@ -476,7 +477,7 @@ fun GameRoomScreenContent(
                                         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                                         modifier = Modifier.height(30.dp)
                                     ) {
-                                        Text("Pasang", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                        Text(LanguageManager.translate("game_install", currentLanguage, "Pasang"), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                                     }
                                 }
                             }
@@ -493,13 +494,13 @@ fun GameRoomScreenContent(
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
                     ) {
-                        Text("Buka Toko Item")
+                        Text(LanguageManager.translate("game_open_shop", currentLanguage, "Buka Toko Item"))
                     }
                 }
             },
             dismissButton = {
                 OutlinedButton(onClick = { slotToAssignItem = null }) {
-                    Text("Tutup")
+                    Text(LanguageManager.translate("common_close", currentLanguage, "Tutup"))
                 }
             }
         )
@@ -765,7 +766,7 @@ private fun MiningRoomTab(
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(imageVector = Icons.Filled.Speed, contentDescription = null, tint = ElectricBlue, modifier = Modifier.size(14.dp))
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Total Hash Rate", fontSize = 10.sp, color = Color(0xFF94A3B8))
+                                        Text(LanguageManager.translate("game_total_hash", currentLanguage, "Total Hash Rate"), fontSize = 10.sp, color = Color(0xFF94A3B8))
                                     }
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
@@ -794,7 +795,7 @@ private fun MiningRoomTab(
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(imageVector = Icons.Filled.Bolt, contentDescription = null, tint = EmeraldLight, modifier = Modifier.size(14.dp))
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Kecepatan Poin", fontSize = 10.sp, color = Color(0xFF94A3B8))
+                                        Text(LanguageManager.translate("game_point_speed", currentLanguage, "Kecepatan Poin"), fontSize = 10.sp, color = Color(0xFF94A3B8))
                                     }
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
@@ -901,7 +902,7 @@ private fun MiningRoomTab(
                 ) {
                     Icon(imageVector = Icons.Filled.ShoppingBag, contentDescription = null, modifier = Modifier.size(13.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Beli Item", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("game_buy_item", currentLanguage, "Beli Item"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -973,7 +974,7 @@ private fun MiningRoomTab(
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                         modifier = Modifier.height(34.dp)
                     ) {
-                        Text("Main", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("game_play", currentLanguage, "Main"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -1191,7 +1192,7 @@ private fun ItemShopTab(
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("Token: ", fontSize = 11.sp, color = RetroGold)
+                                Text(LanguageManager.translate("profile_token", currentLanguage, "Token") + ": ", fontSize = 11.sp, color = RetroGold)
                                 Text(
                                     text = "$minerTokens",
                                     fontSize = 12.sp,
@@ -1223,8 +1224,8 @@ private fun ItemShopTab(
                         Text("💡", fontSize = 16.sp)
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            Text("Butuh Poin Lebih Banyak?", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = GoldVip)
-                            Text("Selesaikan misi Like, Subscribe, Nonton, & Web", fontSize = 10.sp, color = Color(0xFF94A3B8))
+                            Text(LanguageManager.translate("game_need_more_points", currentLanguage, "Butuh Poin Lebih Banyak?"), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = GoldVip)
+                            Text(LanguageManager.translate("game_complete_missions", currentLanguage, "Selesaikan misi Like, Subscribe, Nonton, & Web"), fontSize = 10.sp, color = Color(0xFF94A3B8))
                         }
                     }
                     Button(
@@ -1233,7 +1234,7 @@ private fun ItemShopTab(
                         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                         modifier = Modifier.height(28.dp)
                     ) {
-                        Text("Buka Misi", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                        Text(LanguageManager.translate("game_open_missions", currentLanguage, "Buka Misi"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                     }
                 }
             }
@@ -1524,8 +1525,8 @@ private fun MiniGameArcadeTab(
                                 Text("🎮", fontSize = 24.sp)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Column {
-                                    Text("Crypto Coin Tap Rush", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
-                                    Text("Mini-Game Penghasil Power RollerCoin", fontSize = 11.sp, color = Color(0xFFC7D2FE))
+                                    Text(LanguageManager.translate("game_coinrush_title", currentLanguage, "Crypto Coin Tap Rush"), fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
+                                    Text(LanguageManager.translate("game_coinrush_subtitle", currentLanguage, "Mini-Game Penghasil Power RollerCoin"), fontSize = 11.sp, color = Color(0xFFC7D2FE))
                                 }
                             }
                             Surface(
@@ -1594,7 +1595,7 @@ private fun MiniGameArcadeTab(
                         ) {
                             Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = null, tint = Color.Black)
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Mulai Game Sekarang (15s)", fontWeight = FontWeight.Bold, color = Color.Black)
+                            Text(LanguageManager.translate("game_start_now", currentLanguage, "Mulai Game Sekarang (15s)"), fontWeight = FontWeight.Bold, color = Color.Black)
                         }
                     }
                 } else {
