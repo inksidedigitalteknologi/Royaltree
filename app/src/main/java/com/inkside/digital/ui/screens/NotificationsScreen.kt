@@ -37,6 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.NotificationEntity
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
@@ -46,15 +48,20 @@ import java.util.Calendar
 @Composable
 fun NotificationsScreen(
     notifications: List<NotificationEntity>,
+    currentLanguage: AppLanguage,
     onMarkAllRead: () -> Unit
 ) {
     val unreadCount = notifications.count { !it.isRead }
 
     // Group by tanggal
     val grouped = notifications.groupBy { notif ->
-        groupLabel(notif.timestamp)
+        groupLabel(notif.timestamp, currentLanguage)
     }
-    val orderedGroups = listOf("Hari Ini", "Kemarin", "Lebih Lama")
+    val orderedGroups = listOf(
+        LanguageManager.translate("notif_today", currentLanguage, "Hari Ini"),
+        LanguageManager.translate("notif_yesterday", currentLanguage, "Kemarin"),
+        LanguageManager.translate("notif_older", currentLanguage, "Lebih Lama")
+    )
         .filter { grouped.containsKey(it) }
 
     LazyColumn(
@@ -75,7 +82,7 @@ fun NotificationsScreen(
                 Column(modifier = Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "Notifikasi",
+                            text = LanguageManager.translate("notif_title", currentLanguage, "Notifikasi"),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Black,
                                 fontSize = 22.sp
@@ -99,9 +106,9 @@ fun NotificationsScreen(
                     }
                     Text(
                         text = if (unreadCount > 0)
-                            "$unreadCount belum dibaca"
+                            String.format(LanguageManager.translate("notif_unread_count", currentLanguage, "%d belum dibaca"), unreadCount)
                         else
-                            "Semua sudah dibaca",
+                            LanguageManager.translate("notif_all_read", currentLanguage, "Semua sudah dibaca"),
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -125,7 +132,7 @@ fun NotificationsScreen(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                "Tandai",
+                                LanguageManager.translate("notif_mark_all", currentLanguage, "Tandai"),
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -157,7 +164,7 @@ fun NotificationsScreen(
                 }
 
                 items(grouped[groupName] ?: emptyList()) { notif ->
-                    NotificationCard(notification = notif)
+                    NotificationCard(notification = notif, currentLanguage = currentLanguage)
                 }
             }
         }
@@ -190,13 +197,13 @@ private fun EmptyNotifications() {
             }
             Spacer(modifier = Modifier.height(14.dp))
             Text(
-                "Belum Ada Notifikasi",
+                LanguageManager.translate("notif_empty_title", currentLanguage, "Belum Ada Notifikasi"),
                 fontWeight = FontWeight.Black,
                 fontSize = 15.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                "Update komisi, check-in, dan reward akan muncul di sini",
+                LanguageManager.translate("notif_empty_desc", currentLanguage, "Update komisi, check-in, dan reward akan muncul di sini"),
                 fontSize = 11.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -205,7 +212,7 @@ private fun EmptyNotifications() {
 }
 
 @Composable
-fun NotificationCard(notification: NotificationEntity) {
+fun NotificationCard(notification: NotificationEntity, currentLanguage: AppLanguage) {
     val (emoji, accentColor) = when (notification.type) {
         "COMMISSION" -> "💰" to EmeraldLight
         "WITHDRAWAL" -> "💸" to GoldVip
@@ -279,7 +286,7 @@ fun NotificationCard(notification: NotificationEntity) {
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = relativeTime(notification.timestamp),
+                    text = relativeTime(notification.timestamp, currentLanguage),
                     fontSize = 9.sp,
                     fontWeight = FontWeight.Bold,
                     color = accentColor.copy(alpha = 0.8f)
@@ -291,7 +298,7 @@ fun NotificationCard(notification: NotificationEntity) {
 
 // ============ HELPER ============
 
-private fun groupLabel(timestamp: Long): String {
+private fun groupLabel(timestamp: Long, lang: AppLanguage): String {
     val now = Calendar.getInstance()
     val cal = Calendar.getInstance().apply { timeInMillis = timestamp }
 
@@ -301,13 +308,13 @@ private fun groupLabel(timestamp: Long): String {
     val calYear = cal.get(Calendar.YEAR)
 
     return when {
-        nowYear == calYear && nowDay == calDay -> "Hari Ini"
-        nowYear == calYear && nowDay - calDay == 1 -> "Kemarin"
-        else -> "Lebih Lama"
+        nowYear == calYear && nowDay == calDay -> LanguageManager.translate("notif_today", lang, "Hari Ini")
+        nowYear == calYear && nowDay - calDay == 1 -> LanguageManager.translate("notif_yesterday", lang, "Kemarin")
+        else -> LanguageManager.translate("notif_older", lang, "Lebih Lama")
     }
 }
 
-private fun relativeTime(timestamp: Long): String {
+private fun relativeTime(timestamp: Long, lang: AppLanguage): String {
     val diff = System.currentTimeMillis() - timestamp
     val seconds = diff / 1000
     val minutes = seconds / 60
@@ -315,11 +322,11 @@ private fun relativeTime(timestamp: Long): String {
     val days = hours / 24
 
     return when {
-        seconds < 60 -> "Baru saja"
-        minutes < 60 -> "$minutes menit lalu"
-        hours < 24 -> "$hours jam lalu"
-        days < 7 -> "$days hari lalu"
-        days < 30 -> "${days / 7} minggu lalu"
-        else -> "${days / 30} bulan lalu"
+        seconds < 60 -> LanguageManager.translate("time_just_now", lang, "Baru saja")
+        minutes < 60 -> String.format(LanguageManager.translate("time_min_ago", lang, "%d menit lalu"), minutes)
+        hours < 24 -> String.format(LanguageManager.translate("time_hour_ago", lang, "%d jam lalu"), hours)
+        days < 7 -> String.format(LanguageManager.translate("time_day_ago", lang, "%d hari lalu"), days)
+        days < 30 -> String.format(LanguageManager.translate("time_week_ago", lang, "%d minggu lalu"), days / 7)
+        else -> String.format(LanguageManager.translate("time_month_ago", lang, "%d bulan lalu"), days / 30)
     }
 }

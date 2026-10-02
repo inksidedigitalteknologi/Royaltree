@@ -851,6 +851,7 @@ fun MainAffiliateAppContent(
                     LaunchedEffect(Unit) { onLoadNotifications() }
                     NotificationsScreen(
                         notifications = notifications,
+                        currentLanguage = currentLanguage,
                         onMarkAllRead = onMarkAllNotifsRead
                     )
                 }

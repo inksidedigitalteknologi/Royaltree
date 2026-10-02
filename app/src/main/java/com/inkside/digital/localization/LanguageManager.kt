@@ -804,6 +804,126 @@ object LanguageManager {
             AppLanguage.JAPANESE to "サポートに連絡"
         ),
 
+        "notif_title" to mapOf(
+            AppLanguage.INDONESIAN to "Notifikasi",
+            AppLanguage.ENGLISH to "Notifications",
+            AppLanguage.SPANISH to "Notificaciones",
+            AppLanguage.CHINESE to "通知",
+            AppLanguage.ARABIC to "الإشعارات",
+            AppLanguage.JAPANESE to "通知"
+        ),
+        "notif_today" to mapOf(
+            AppLanguage.INDONESIAN to "Hari Ini",
+            AppLanguage.ENGLISH to "Today",
+            AppLanguage.SPANISH to "Hoy",
+            AppLanguage.CHINESE to "今天",
+            AppLanguage.ARABIC to "اليوم",
+            AppLanguage.JAPANESE to "今日"
+        ),
+        "notif_yesterday" to mapOf(
+            AppLanguage.INDONESIAN to "Kemarin",
+            AppLanguage.ENGLISH to "Yesterday",
+            AppLanguage.SPANISH to "Ayer",
+            AppLanguage.CHINESE to "昨天",
+            AppLanguage.ARABIC to "أمس",
+            AppLanguage.JAPANESE to "昨日"
+        ),
+        "notif_older" to mapOf(
+            AppLanguage.INDONESIAN to "Lebih Lama",
+            AppLanguage.ENGLISH to "Earlier",
+            AppLanguage.SPANISH to "Anterior",
+            AppLanguage.CHINESE to "更早",
+            AppLanguage.ARABIC to "أقدم",
+            AppLanguage.JAPANESE to "以前"
+        ),
+        "notif_all_read" to mapOf(
+            AppLanguage.INDONESIAN to "Semua sudah dibaca",
+            AppLanguage.ENGLISH to "All read",
+            AppLanguage.SPANISH to "Todo leído",
+            AppLanguage.CHINESE to "全部已读",
+            AppLanguage.ARABIC to "تمت قراءة الكل",
+            AppLanguage.JAPANESE to "すべて既読"
+        ),
+        "notif_unread_count" to mapOf(
+            AppLanguage.INDONESIAN to "%d belum dibaca",
+            AppLanguage.ENGLISH to "%d unread",
+            AppLanguage.SPANISH to "%d sin leer",
+            AppLanguage.CHINESE to "%d 未读",
+            AppLanguage.ARABIC to "%d غير مقروء",
+            AppLanguage.JAPANESE to "%d 未読"
+        ),
+        "notif_mark_all" to mapOf(
+            AppLanguage.INDONESIAN to "Tandai",
+            AppLanguage.ENGLISH to "Mark",
+            AppLanguage.SPANISH to "Marcar",
+            AppLanguage.CHINESE to "标记",
+            AppLanguage.ARABIC to "تحديد",
+            AppLanguage.JAPANESE to "マーク"
+        ),
+        "notif_empty_title" to mapOf(
+            AppLanguage.INDONESIAN to "Belum Ada Notifikasi",
+            AppLanguage.ENGLISH to "No Notifications Yet",
+            AppLanguage.SPANISH to "Sin notificaciones",
+            AppLanguage.CHINESE to "暂无通知",
+            AppLanguage.ARABIC to "لا توجد إشعارات",
+            AppLanguage.JAPANESE to "通知はありません"
+        ),
+        "notif_empty_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Update komisi, check-in, dan reward akan muncul di sini",
+            AppLanguage.ENGLISH to "Commission, check-in, and reward updates will appear here",
+            AppLanguage.SPANISH to "Las actualizaciones aparecerán aquí",
+            AppLanguage.CHINESE to "佣金、签到和奖励更新将显示在这里",
+            AppLanguage.ARABIC to "ستظهر تحديثات العمولة والحضور والمكافآت هنا",
+            AppLanguage.JAPANESE to "報酬、チェックイン、報酬の更新がここに表示されます"
+        ),
+        "time_just_now" to mapOf(
+            AppLanguage.INDONESIAN to "Baru saja",
+            AppLanguage.ENGLISH to "Just now",
+            AppLanguage.SPANISH to "Ahora mismo",
+            AppLanguage.CHINESE to "刚刚",
+            AppLanguage.ARABIC to "الآن",
+            AppLanguage.JAPANESE to "たった今"
+        ),
+        "time_min_ago" to mapOf(
+            AppLanguage.INDONESIAN to "%d menit lalu",
+            AppLanguage.ENGLISH to "%d min ago",
+            AppLanguage.SPANISH to "Hace %d min",
+            AppLanguage.CHINESE to "%d 分钟前",
+            AppLanguage.ARABIC to "قبل %d دقيقة",
+            AppLanguage.JAPANESE to "%d 分前"
+        ),
+        "time_hour_ago" to mapOf(
+            AppLanguage.INDONESIAN to "%d jam lalu",
+            AppLanguage.ENGLISH to "%d h ago",
+            AppLanguage.SPANISH to "Hace %d h",
+            AppLanguage.CHINESE to "%d 小时前",
+            AppLanguage.ARABIC to "قبل %d ساعة",
+            AppLanguage.JAPANESE to "%d 時間前"
+        ),
+        "time_day_ago" to mapOf(
+            AppLanguage.INDONESIAN to "%d hari lalu",
+            AppLanguage.ENGLISH to "%d d ago",
+            AppLanguage.SPANISH to "Hace %d d",
+            AppLanguage.CHINESE to "%d 天前",
+            AppLanguage.ARABIC to "قبل %d يوم",
+            AppLanguage.JAPANESE to "%d 日前"
+        ),
+        "time_week_ago" to mapOf(
+            AppLanguage.INDONESIAN to "%d minggu lalu",
+            AppLanguage.ENGLISH to "%d w ago",
+            AppLanguage.SPANISH to "Hace %d sem",
+            AppLanguage.CHINESE to "%d 周前",
+            AppLanguage.ARABIC to "قبل %d أسبوع",
+            AppLanguage.JAPANESE to "%d 週間前"
+        ),
+        "time_month_ago" to mapOf(
+            AppLanguage.INDONESIAN to "%d bulan lalu",
+            AppLanguage.ENGLISH to "%d mo ago",
+            AppLanguage.SPANISH to "Hace %d mes",
+            AppLanguage.CHINESE to "%d 个月前",
+            AppLanguage.ARABIC to "قبل %d شهر",
+            AppLanguage.JAPANESE to "%d ヶ月前"
+        ),
     )
 
     fun getString(key: String, language: AppLanguage): String {
