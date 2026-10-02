@@ -230,6 +230,7 @@ fun ProfileScreen(
         item {
             UpgradeTierCard(
                 currentTier = user?.tier ?: "FREE",
+                currentLanguage = currentLanguage,
                 onClick = onOpenUpgrade
             )
         }
@@ -238,7 +239,8 @@ fun ProfileScreen(
         item {
             ReferralStatsCard(
                 referredCount = user?.referredCount ?: 0,
-                commissionIdr = (user?.referredCount ?: 0) * 0.0  // TODO: guna komisi dari backend nanti
+                commissionIdr = (user?.referredCount ?: 0) * 0.0,  // TODO: guna komisi dari backend nanti
+                currentLanguage = currentLanguage
             )
         }
 
@@ -382,6 +384,7 @@ private fun QuickActionButton(
 @Composable
 private fun UpgradeTierCard(
     currentTier: String,
+    currentLanguage: AppLanguage,
     onClick: () -> Unit
 ) {
     val tierInfo = when (currentTier.uppercase()) {
@@ -449,7 +452,8 @@ private fun UpgradeTierCard(
 @Composable
 private fun ReferralStatsCard(
     referredCount: Int,
-    commissionIdr: Double
+    commissionIdr: Double,
+    currentLanguage: AppLanguage
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
