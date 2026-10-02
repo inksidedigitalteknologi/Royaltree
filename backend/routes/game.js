@@ -534,15 +534,29 @@ router.get('/miners/catalog', verifyFirebaseToken, async (req, res) => {
             .get();
 
         const ownedIds = new Set();
+        const ownedDetail = {};
         ownedSnapshot.forEach(doc => {
             const data = doc.data();
-            if (data.catalogId) ownedIds.add(data.catalogId);
+            if (data.catalogId) {
+                ownedIds.add(data.catalogId);
+                // Simpan detail (instance terakhir) — untuk isPlacedInRoom + placedSlotIndex
+                if (!ownedDetail[data.catalogId]) {
+                    ownedDetail[data.catalogId] = {
+                        isPlacedInRoom: data.isPlacedInRoom || false,
+                        placedSlotIndex: data.placedSlotIndex ?? -1,
+                        minerInstanceId: doc.id
+                    };
+                }
+            }
         });
 
         // Gabung katalog + status owned
         const catalog = MINER_CATALOG.map(miner => ({
             ...miner,
             isOwned: ownedIds.has(miner.id),
+            isPlacedInRoom: ownedDetail[miner.id]?.isPlacedInRoom || false,
+            placedSlotIndex: ownedDetail[miner.id]?.placedSlotIndex ?? -1,
+            minerInstanceId: ownedDetail[miner.id]?.minerInstanceId || null,
             ownedCount: ownedSnapshot.docs.filter(d => d.data().catalogId === miner.id).length
         }));
 
