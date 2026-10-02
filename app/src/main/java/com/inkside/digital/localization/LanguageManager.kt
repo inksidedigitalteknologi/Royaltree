@@ -1204,6 +1204,166 @@ object LanguageManager {
             AppLanguage.ARABIC to "الترتيب #--",
             AppLanguage.JAPANESE to "ランク #--"
         ),
+        "game_price" to mapOf(
+            AppLanguage.INDONESIAN to "Harga:",
+            AppLanguage.ENGLISH to "Price:",
+            AppLanguage.SPANISH to "Precio:",
+            AppLanguage.CHINESE to "价格：",
+            AppLanguage.ARABIC to "السعر:",
+            AppLanguage.JAPANESE to "価格:"
+        ),
+        "game_mining_power" to mapOf(
+            AppLanguage.INDONESIAN to "Mining Power:",
+            AppLanguage.ENGLISH to "Mining Power:",
+            AppLanguage.SPANISH to "Poder de minería:",
+            AppLanguage.CHINESE to "挖矿算力：",
+            AppLanguage.ARABIC to "قوة التعدين:",
+            AppLanguage.JAPANESE to "マイニングパワー:"
+        ),
+        "game_rate_points" to mapOf(
+            AppLanguage.INDONESIAN to "Rate Poin:",
+            AppLanguage.ENGLISH to "Point Rate:",
+            AppLanguage.SPANISH to "Tasa de puntos:",
+            AppLanguage.CHINESE to "积分速率：",
+            AppLanguage.ARABIC to "معدل النقاط:",
+            AppLanguage.JAPANESE to "ポイントレート:"
+        ),
+        "game_your_points" to mapOf(
+            AppLanguage.INDONESIAN to "Saldo Poin Anda:",
+            AppLanguage.ENGLISH to "Your Point Balance:",
+            AppLanguage.SPANISH to "Tu saldo de puntos:",
+            AppLanguage.CHINESE to "您的积分余额：",
+            AppLanguage.ARABIC to "رصيد نقاطك:",
+            AppLanguage.JAPANESE to "ポイント残高:"
+        ),
+        "game_buy_now" to mapOf(
+            AppLanguage.INDONESIAN to "Beli Sekarang",
+            AppLanguage.ENGLISH to "Buy Now",
+            AppLanguage.SPANISH to "Comprar ahora",
+            AppLanguage.CHINESE to "立即购买",
+            AppLanguage.ARABIC to "اشتر الآن",
+            AppLanguage.JAPANESE to "今すぐ購入"
+        ),
+        "common_cancel" to mapOf(
+            AppLanguage.INDONESIAN to "Batal",
+            AppLanguage.ENGLISH to "Cancel",
+            AppLanguage.SPANISH to "Cancelar",
+            AppLanguage.CHINESE to "取消",
+            AppLanguage.ARABIC to "إلغاء",
+            AppLanguage.JAPANESE to "キャンセル"
+        ),
+        "game_install" to mapOf(
+            AppLanguage.INDONESIAN to "Pasang",
+            AppLanguage.ENGLISH to "Install",
+            AppLanguage.SPANISH to "Instalar",
+            AppLanguage.CHINESE to "安装",
+            AppLanguage.ARABIC to "تثبيت",
+            AppLanguage.JAPANESE to "設置"
+        ),
+        "game_open_shop" to mapOf(
+            AppLanguage.INDONESIAN to "Buka Toko Item",
+            AppLanguage.ENGLISH to "Open Item Shop",
+            AppLanguage.SPANISH to "Abrir tienda",
+            AppLanguage.CHINESE to "打开商店",
+            AppLanguage.ARABIC to "افتح المتجر",
+            AppLanguage.JAPANESE to "ショップを開く"
+        ),
+        "game_total_hash" to mapOf(
+            AppLanguage.INDONESIAN to "Total Hash Rate",
+            AppLanguage.ENGLISH to "Total Hash Rate",
+            AppLanguage.SPANISH to "Tasa hash total",
+            AppLanguage.CHINESE to "总算力",
+            AppLanguage.ARABIC to "إجمالي معدل التجزئة",
+            AppLanguage.JAPANESE to "合計ハッシュレート"
+        ),
+        "game_point_speed" to mapOf(
+            AppLanguage.INDONESIAN to "Kecepatan Poin",
+            AppLanguage.ENGLISH to "Point Speed",
+            AppLanguage.SPANISH to "Velocidad de puntos",
+            AppLanguage.CHINESE to "积分速度",
+            AppLanguage.ARABIC to "سرعة النقاط",
+            AppLanguage.JAPANESE to "ポイント速度"
+        ),
+        "game_buy_item" to mapOf(
+            AppLanguage.INDONESIAN to "Beli Item",
+            AppLanguage.ENGLISH to "Buy Item",
+            AppLanguage.SPANISH to "Comprar",
+            AppLanguage.CHINESE to "购买物品",
+            AppLanguage.ARABIC to "شراء عنصر",
+            AppLanguage.JAPANESE to "アイテム購入"
+        ),
+        "game_play" to mapOf(
+            AppLanguage.INDONESIAN to "Main",
+            AppLanguage.ENGLISH to "Play",
+            AppLanguage.SPANISH to "Jugar",
+            AppLanguage.CHINESE to "玩",
+            AppLanguage.ARABIC to "العب",
+            AppLanguage.JAPANESE to "プレイ"
+        ),
+        "game_need_more_points" to mapOf(
+            AppLanguage.INDONESIAN to "Butuh Poin Lebih Banyak?",
+            AppLanguage.ENGLISH to "Need More Points?",
+            AppLanguage.SPANISH to "¿Necesitas más puntos?",
+            AppLanguage.CHINESE to "需要更多积分？",
+            AppLanguage.ARABIC to "تحتاج المزيد من النقاط؟",
+            AppLanguage.JAPANESE to "もっとポイントが必要？"
+        ),
+        "game_complete_missions" to mapOf(
+            AppLanguage.INDONESIAN to "Selesaikan misi Like, Subscribe, Nonton, & Web",
+            AppLanguage.ENGLISH to "Complete Like, Subscribe, Watch, & Web missions",
+            AppLanguage.SPANISH to "Completa misiones de Like, Suscribir, Ver y Web",
+            AppLanguage.CHINESE to "完成点赞、订阅、观看和网页任务",
+            AppLanguage.ARABIC to "أكمل مهام الإعجاب والاشتراك والمشاهدة والويب",
+            AppLanguage.JAPANESE to "いいね、登録、視聴、ウェブのミッションを完了"
+        ),
+        "game_open_missions" to mapOf(
+            AppLanguage.INDONESIAN to "Buka Misi",
+            AppLanguage.ENGLISH to "Open Missions",
+            AppLanguage.SPANISH to "Abrir misiones",
+            AppLanguage.CHINESE to "打开任务",
+            AppLanguage.ARABIC to "افتح المهام",
+            AppLanguage.JAPANESE to "ミッションを開く"
+        ),
+        "game_coinrush_title" to mapOf(
+            AppLanguage.INDONESIAN to "Crypto Coin Tap Rush",
+            AppLanguage.ENGLISH to "Crypto Coin Tap Rush",
+            AppLanguage.SPANISH to "Crypto Coin Tap Rush",
+            AppLanguage.CHINESE to "加密金币冲刺",
+            AppLanguage.ARABIC to "Crypto Coin Tap Rush",
+            AppLanguage.JAPANESE to "クリプトコインタップラッシュ"
+        ),
+        "game_coinrush_subtitle" to mapOf(
+            AppLanguage.INDONESIAN to "Mini-Game Penghasil Power RollerCoin",
+            AppLanguage.ENGLISH to "RollerCoin Power Minigame",
+            AppLanguage.SPANISH to "Minijuego de poder RollerCoin",
+            AppLanguage.CHINESE to "RollerCoin 算力小游戏",
+            AppLanguage.ARABIC to "لعبة مصغرة لتوليد القوة",
+            AppLanguage.JAPANESE to "RollerCoin パワーミニゲーム"
+        ),
+        "game_start_now" to mapOf(
+            AppLanguage.INDONESIAN to "Mulai Game Sekarang (15s)",
+            AppLanguage.ENGLISH to "Start Game Now (15s)",
+            AppLanguage.SPANISH to "Comenzar ahora (15s)",
+            AppLanguage.CHINESE to "立即开始 (15秒)",
+            AppLanguage.ARABIC to "ابدأ اللعبة الآن (15 ثانية)",
+            AppLanguage.JAPANESE to "今すぐ開始 (15秒)"
+        ),
+        "coinrush_tagline" to mapOf(
+            AppLanguage.INDONESIAN to "Tap koin sebelum hilang!",
+            AppLanguage.ENGLISH to "Tap coins before they disappear!",
+            AppLanguage.SPANISH to "¡Toca las monedas antes de que desaparezcan!",
+            AppLanguage.CHINESE to "在金币消失前点击它们！",
+            AppLanguage.ARABIC to "اضغط على العملات قبل أن تختفي!",
+            AppLanguage.JAPANESE to "コインが消える前にタップ！"
+        ),
+        "coinrush_final_score" to mapOf(
+            AppLanguage.INDONESIAN to "Skor Akhir",
+            AppLanguage.ENGLISH to "Final Score",
+            AppLanguage.SPANISH to "Puntuación final",
+            AppLanguage.CHINESE to "最终分数",
+            AppLanguage.ARABIC to "النتيجة النهائية",
+            AppLanguage.JAPANESE to "最終スコア"
+        ),
     )
 
     fun getString(key: String, language: AppLanguage): String {
