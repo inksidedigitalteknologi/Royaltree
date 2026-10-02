@@ -9,6 +9,9 @@ plugins {
   alias(libs.plugins.google.services)
 }
 
+// App version — single source of truth untuk defaultConfig + APK filename
+val appVersionName = "1.0"
+
 android {
   namespace = "com.inkside.digital"
   compileSdk { version = release(36) { minorApiLevel = 1 } }
@@ -18,7 +21,7 @@ android {
     minSdk = 24
     targetSdk = 36
     versionCode = 1
-    versionName = "1.0"
+    versionName = appVersionName
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -75,7 +78,7 @@ android {
 androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
-            val version = variant.versionName ?: "1.0"
+            val version = appVersionName
             val buildType = variant.buildType ?: "release"
             output.outputFileName.set("royaltree-v${version}-${buildType}.apk")
         }
