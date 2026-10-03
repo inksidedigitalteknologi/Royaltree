@@ -357,6 +357,17 @@ object ApiClient {
             val response: ResponseBody = apiService.dailyCheckIn()
             val json = JSONObject(response.string())
             Result.success(json)
+        } catch (e: retrofit2.HttpException) {
+            if (e.code() == 409) {
+                // Already checked in — bukan error, treat as success dengan flag
+                val json = JSONObject()
+                json.put("success", false)
+                json.put("code", "ALREADY_CHECKED_IN")
+                json.put("message", "Anda sudah check-in hari ini.")
+                Result.success(json)
+            } else {
+                Result.failure(e)
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -368,6 +379,17 @@ object ApiClient {
             val response: ResponseBody = apiService.dailyCheckInWithAd(requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
+        } catch (e: retrofit2.HttpException) {
+            if (e.code() == 409) {
+                // Already checked in — bukan error
+                val json = JSONObject()
+                json.put("success", false)
+                json.put("code", "ALREADY_CHECKED_IN")
+                json.put("message", "Anda sudah check-in hari ini.")
+                Result.success(json)
+            } else {
+                Result.failure(e)
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }

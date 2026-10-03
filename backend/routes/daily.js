@@ -36,7 +36,11 @@ async function getConfig() {
 
 // Helper: format tanggal YYYY-MM-DD (server time)
 function todayStr() {
-    return new Date().toISOString().split('T')[0];
+    // WIB = UTC+7 (Indonesia timezone)
+    // Fix: sebelumnya pakai UTC, menyebabkan "sudah check-in" false positive
+    const now = new Date();
+    const wib = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+    return wib.toISOString().split('T')[0];
 }
 
 // Helper: cek weekend
@@ -150,9 +154,13 @@ router.post('/check-in', verifyFirebaseToken, checkFraud, async (req, res) => {
 
         // Cek sudah check-in hari ini?
         if (userData.lastCheckInDate === today) {
-            return res.status(400).json({
+            return res.status(409).json({
                 success: false,
-                message: 'Anda sudah check-in hari ini.'
+                code: 'ALREADY_CHECKED_IN',
+                message: 'Anda sudah check-in hari ini.',
+                lastCheckInDate: userData.lastCheckInDate,
+                streak: userData.checkInStreak || 0,
+                points: userData.points || 0
             });
         }
 
@@ -392,9 +400,13 @@ router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, re
 
         // 2. Cek sudah check-in hari ini?
         if (userData.lastCheckInDate === today) {
-            return res.status(400).json({
+            return res.status(409).json({
                 success: false,
-                message: 'Anda sudah check-in hari ini.'
+                code: 'ALREADY_CHECKED_IN',
+                message: 'Anda sudah check-in hari ini.',
+                lastCheckInDate: userData.lastCheckInDate,
+                streak: userData.checkInStreak || 0,
+                points: userData.points || 0
             });
         }
 
