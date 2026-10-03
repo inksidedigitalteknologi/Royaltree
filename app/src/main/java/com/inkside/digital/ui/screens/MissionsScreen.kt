@@ -390,7 +390,7 @@ fun MissionItemCard(
         ),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(12.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -421,8 +421,8 @@ fun MissionItemCard(
 
                     Box(
                         modifier = Modifier
-                            .size(38.dp)
-                            .clip(RoundedCornerShape(10.dp))
+                            .size(34.dp)
+                            .clip(RoundedCornerShape(9.dp))
                             .background(
                                 when (mission.type) {
                                     "DAILY_TASK" -> ElectricBlue.copy(alpha = 0.15f)
@@ -461,9 +461,9 @@ fun MissionItemCard(
                         }
                         Text(
                             text = mission.description,
-                            fontSize = 11.sp,
+                            fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 2
+                            maxLines = 1
                         )
                     }
                 }
@@ -489,46 +489,33 @@ fun MissionItemCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // Progress Bar and State
+            // Progress + Tombol dalam 1 Row (compact)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Progres: ${mission.currentProgress} / ${mission.maxProgress}",
-                    fontSize = 10.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "${(progressRatio * 100).toInt()}%",
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (mission.isCompleted) EmeraldLight else MaterialTheme.colorScheme.onSurface
-                )
-            }
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            LinearProgressIndicator(
-                progress = { progressRatio },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(6.dp)
-                    .clip(RoundedCornerShape(3.dp)),
-                color = if (mission.isCompleted) EmeraldLight else ElectricBlue,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Action Button
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Progres: ${mission.currentProgress} / ${mission.maxProgress}  (${(progressRatio * 100).toInt()}%)",
+                        fontSize = 10.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    LinearProgressIndicator(
+                        progress = { progressRatio },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(5.dp)
+                            .clip(RoundedCornerShape(2.dp)),
+                        color = if (mission.isCompleted) EmeraldLight else ElectricBlue,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                // Action Button (inline)
                 when {
                     mission.isClaimed -> {
                         Surface(
