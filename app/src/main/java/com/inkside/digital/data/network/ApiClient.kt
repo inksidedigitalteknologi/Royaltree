@@ -31,8 +31,17 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import org.json.JSONObject
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 object ApiClient {
+    // ============ AdGuard Detection Flag ============
+    // Set true bila UnknownHostException / SocketTimeoutException (DNS block)
+    // Global observable — trigger AdBlockedDialog di MainActivity
+    var adBlockDetected by androidx.compose.runtime.mutableStateOf(false)
+        private set
+    
+    fun resetAdBlockFlag() { adBlockDetected = false }
 
     private const val PREFS_NAME = "royaltree_portal_prefs"
     private const val KEY_BASE_URL = "portal_base_url"
@@ -412,7 +421,17 @@ object ApiClient {
         try {
             val response: ResponseBody = apiService.getGameState()
             val json = JSONObject(response.string())
+            // Reset flag bila berjaya
+            resetAdBlockFlag()
             Result.success(json)
+        } catch (e: UnknownHostException) {
+            // DNS fail = AdGuard block API
+            adBlockDetected = true
+            Result.failure(e)
+        } catch (e: SocketTimeoutException) {
+            // Timeout = kemungkinan AdGuard slow-block
+            adBlockDetected = true
+            Result.failure(e)
         } catch (e: Exception) {
             Result.failure(e)
         }

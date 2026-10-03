@@ -1131,8 +1131,13 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         repository.syncGameStateFromBackend(json)
                         android.util.Log.d("AffiliateViewModel", "✅ Game state loaded")
                     }
-                }.onFailure {
-                    android.util.Log.w("AffiliateViewModel", "Gagal load game state: ${it.message}")
+                }.onFailure { error ->
+                    android.util.Log.w("AffiliateViewModel", "Gagal load game state: ${error.message}")
+                    // AdGuard detection sudah di-set dalam ApiClient
+                    if (error is java.net.UnknownHostException ||
+                        error is java.net.SocketTimeoutException) {
+                        android.util.Log.w("AffiliateViewModel", "⚠️ Kemungkinan AdGuard block!")
+                    }
                 }
             } catch (e: Exception) {
                 android.util.Log.e("AffiliateViewModel", "loadGameState error: ${e.message}")

@@ -19,6 +19,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
 import androidx.compose.runtime.collectAsState
@@ -353,6 +354,19 @@ fun MainAffiliateApp(
     var adBlockedReason by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<String?>(null) }
     var showWithdrawAffiliateModal by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
 
+    // ============ Observe AdGuard detection ============
+    // Bila ApiClient detect UnknownHostException / SocketTimeout (DNS block),
+    // trigger AdBlockedDialog secara automatik.
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        androidx.compose.runtime.snapshotFlow { com.inkside.digital.data.network.ApiClient.adBlockDetected }
+            .collect { detected ->
+                if (detected) {
+                    android.util.Log.w("MainActivity", "⚠️ AdGuard detected - trigger dialog")
+                    adBlockedReason = "NO_FILL"
+                }
+            }
+    }
+
     MainAffiliateAppContent(
         user = user,
         campaigns = campaigns,
@@ -389,7 +403,10 @@ fun MainAffiliateApp(
         adminReviewTarget = adminReviewTarget,
         showAdReward = showAdReward,
         adBlockedReason = adBlockedReason,
-        onAdBlockedDismiss = { adBlockedReason = null },
+        onAdBlockedDismiss = { 
+            adBlockedReason = null
+            com.inkside.digital.data.network.ApiClient.resetAdBlockFlag()
+        },
         onAdBlockedRetry = {
             adBlockedReason = null
             viewModel.showAdRewardModal.value = true
