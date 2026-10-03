@@ -1017,11 +1017,13 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
                 ApiClient.dailyCheckInWithAd(body)
                     .onSuccess { json ->
-                        if (json.optBoolean("success", false)) {
+                        val code = json.optString("code", "")
+                        if (code == "ALREADY_CHECKED_IN") {
+                            showSnackbar("✅ Anda sudah check-in hari ini. Kembali besok!")
+                        } else if (json.optBoolean("success", false)) {
                             val points = json.optInt("points", 0)
                             val streak = json.optInt("streak", 0)
                             showSnackbar("🎉 Check-in hari ke-$streak! +$points RTP")
-                            // Refresh user + widget
                             loadUserFromBackend()
                             user.value?.let { u ->
                                 WidgetUpdater.refreshFromRoom(getApplication(), u.id)
