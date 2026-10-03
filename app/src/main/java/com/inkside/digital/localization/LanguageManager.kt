@@ -1388,7 +1388,90 @@ object LanguageManager {
             AppLanguage.ARABIC to "كيف يعمل",
             AppLanguage.JAPANESE to "仕組み"
         ),
-        "referral_invited_friends" to mapOf(
+        // ============ Referral Stats (NEW) ============
+        "referral_friends" to mapOf(
+            AppLanguage.INDONESIAN to "Teman",
+            AppLanguage.ENGLISH to "Friends",
+            AppLanguage.SPANISH to "Amigos",
+            AppLanguage.CHINESE to "好友",
+            AppLanguage.ARABIC to "الأصدقاء",
+            AppLanguage.JAPANESE to "友達"
+        ),
+        "referral_invited" to mapOf(
+            AppLanguage.INDONESIAN to "Diundang",
+            AppLanguage.ENGLISH to "Invited",
+            AppLanguage.SPANISH to "Invitados",
+            AppLanguage.CHINESE to "已邀请",
+            AppLanguage.ARABIC to "مدعو",
+            AppLanguage.JAPANESE to "招待済み"
+        ),
+        "referral_commission" to mapOf(
+            AppLanguage.INDONESIAN to "Komisi",
+            AppLanguage.ENGLISH to "Commission",
+            AppLanguage.SPANISH to "Comisión",
+            AppLanguage.CHINESE to "佣金",
+            AppLanguage.ARABIC to "العمولة",
+            AppLanguage.JAPANESE to "コミッション"
+        ),
+        "referral_total" to mapOf(
+            AppLanguage.INDONESIAN to "Total",
+            AppLanguage.ENGLISH to "Total",
+            AppLanguage.SPANISH to "Total",
+            AppLanguage.CHINESE to "总计",
+            AppLanguage.ARABIC to "الإجمالي",
+            AppLanguage.JAPANESE to "合計"
+        ),
+        "referral_empty_message" to mapOf(
+            AppLanguage.INDONESIAN to "Belum ada teman yang diundang. Ayo bagikan kode kamu!",
+            AppLanguage.ENGLISH to "No friends invited yet. Share your code now!",
+            AppLanguage.SPANISH to "Aún no has invitado amigos. ¡Comparte tu código!",
+            AppLanguage.CHINESE to "还没有邀请好友。快分享你的代码吧！",
+            AppLanguage.ARABIC to "لم تدعُ أي صديق بعد. شارك رمزك الآن!",
+            AppLanguage.JAPANESE to "まだ友達を招待していません。コードをシェアしよう！"
+        ),
+        // ============ GameRoom (NEW) ============
+        "game_unlock_miner" to mapOf(
+            AppLanguage.INDONESIAN to "Unlock Miner dengan Token",
+            AppLanguage.ENGLISH to "Unlock Miner with Token",
+            AppLanguage.SPANISH to "Desbloquear Minero con Token",
+            AppLanguage.CHINESE to "用代币解锁矿工",
+            AppLanguage.ARABIC to "افتح Miner بالرمز",
+            AppLanguage.JAPANESE to "トークンでマイナーを解除"
+        ),
+        "game_unlock_miner_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Kumpulkan Miner Token dari iklan & misi untuk membuka miner baru!",
+            AppLanguage.ENGLISH to "Collect Miner Tokens from ads & missions to unlock new miners!",
+            AppLanguage.SPANISH to "¡Recoge Tokens de Minero de anuncios y misiones para desbloquear nuevos mineros!",
+            AppLanguage.CHINESE to "从广告和任务中收集矿工代币来解锁新矿工！",
+            AppLanguage.ARABIC to "اجمع رموز Miner من الإعلانات والمهام لفتح عمال مناجم جدد!",
+            AppLanguage.JAPANESE to "広告とミッションでマイナートークンを集めて新しいマイナーを解除しよう！"
+        ),
+        // ============ Profile Mining (NEW) ============
+        "profile_rate_day" to mapOf(
+            AppLanguage.INDONESIAN to "Rate/hari",
+            AppLanguage.ENGLISH to "Rate/day",
+            AppLanguage.SPANISH to "Tarifa/día",
+            AppLanguage.CHINESE to "每日速率",
+            AppLanguage.ARABIC to "المعدل/اليوم",
+            AppLanguage.JAPANESE to "レート/日"
+        ),
+        "profile_unclaimed" to mapOf(
+            AppLanguage.INDONESIAN to "Unclaimed",
+            AppLanguage.ENGLISH to "Unclaimed",
+            AppLanguage.SPANISH to "No reclamado",
+            AppLanguage.CHINESE to "未领取",
+            AppLanguage.ARABIC to "غير مطالب به",
+            AppLanguage.JAPANESE to "未請求"
+        ),
+        "profile_bonus" to mapOf(
+            AppLanguage.INDONESIAN to "Bonus",
+            AppLanguage.ENGLISH to "Bonus",
+            AppLanguage.SPANISH to "Bono",
+            AppLanguage.CHINESE to "奖励",
+            AppLanguage.ARABIC to "مكافأة",
+            AppLanguage.JAPANESE to "ボーナス"
+        ),
+                "referral_invited_friends" to mapOf(
             AppLanguage.INDONESIAN to "Teman yang Diundang",
             AppLanguage.ENGLISH to "Invited Friends",
             AppLanguage.SPANISH to "Amigos invitados",

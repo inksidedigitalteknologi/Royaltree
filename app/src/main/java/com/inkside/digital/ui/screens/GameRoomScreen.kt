@@ -1179,12 +1179,12 @@ private fun ItemShopTab(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Unlock Miner dengan Token",
+                            text = LanguageManager.translate("game_unlock_miner", currentLanguage, "Unlock Miner dengan Token"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
                         )
                         Text(
-                            text = "Kumpulkan Miner Token dari iklan & misi untuk membuka miner baru!",
+                            text = LanguageManager.translate("game_unlock_miner_desc", currentLanguage, "Kumpulkan Miner Token dari iklan & misi untuk membuka miner baru!"),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

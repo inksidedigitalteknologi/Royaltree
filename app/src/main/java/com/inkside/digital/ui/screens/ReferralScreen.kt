@@ -199,8 +199,8 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
 
         item {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                StatCard(Modifier.weight(1f), "Teman", referredCount.toString(), "Diundang")
-                StatCard(Modifier.weight(1f), "Komisi", "Rp ${affiliateBalance.toInt()}", "Total")
+                StatCard(Modifier.weight(1f), LanguageManager.translate("referral_friends", currentLanguage, "Teman"), referredCount.toString(), LanguageManager.translate("referral_invited", currentLanguage, "Diundang"))
+                StatCard(Modifier.weight(1f), LanguageManager.translate("referral_commission", currentLanguage, "Komisi"), "Rp ${affiliateBalance.toInt()}", LanguageManager.translate("referral_total", currentLanguage, "Total"))
             }
         }
 
@@ -245,7 +245,7 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
                         text = if (referredCount > 0)
                             "🎉 Hebat! Anda sudah mengundang $referredCount teman. Komisi 5% akan masuk otomatis."
                         else
-                            "Belum ada teman yang diundang. Ayo bagikan kode kamu!",
+                            LanguageManager.translate("referral_empty_message", currentLanguage, "Belum ada teman yang diundang. Ayo bagikan kode kamu!"),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
