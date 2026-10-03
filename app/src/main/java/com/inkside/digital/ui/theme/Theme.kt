@@ -6,6 +6,11 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.core.view.WindowCompat
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.SideEffect
+import android.app.Activity
 
 private val DarkColorScheme = darkColorScheme(
     primary = EmeraldLight,
@@ -47,6 +52,29 @@ private val LightColorScheme = lightColorScheme(
     outline = SlateBorder
 )
 
+/**
+ * SyncStatusBar — pastikan warna icon status bar & navigation bar
+ * sesuai dengan dark/light mode. Tanpa ini, icon bisa "hilang"
+ * di background yang sama warnanya.
+ */
+@Composable
+fun SyncStatusBar(darkTheme: Boolean) {
+    val context = LocalContext.current
+    val view = LocalView.current
+
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (context as Activity).window
+            val controller = WindowCompat.getInsetsController(window, view)
+
+            // Dark mode → icon putih (light = false)
+            // Light mode → icon hitam (light = true)
+            controller.isAppearanceLightStatusBars = !darkTheme
+            controller.isAppearanceLightNavigationBars = !darkTheme
+        }
+    }
+}
+
 @Composable
 fun MyApplicationTheme(
     darkTheme: Boolean = false, // default light, di-override dari AppThemePreferences
@@ -54,6 +82,7 @@ fun MyApplicationTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    SyncStatusBar(darkTheme = darkTheme)  // ← tambah ni
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
