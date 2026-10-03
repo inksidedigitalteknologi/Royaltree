@@ -533,6 +533,15 @@ private fun MiningStatsCard(
                 MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), "${powerGhs.toInt()} GH/s", ElectricBlue, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_token", currentLanguage, "Token"), "$tokens", GoldVip, Modifier.weight(1f))
             }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format("%.2f", powerGhs * 0.06 * 24)} RTP", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "0.00 RTP", ElectricBlue, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+0 GH/s", GoldVip, Modifier.weight(1f))
+            }
         }
     }
 }
