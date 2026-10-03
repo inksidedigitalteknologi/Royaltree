@@ -20,6 +20,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.collect
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
 import androidx.compose.runtime.collectAsState
@@ -358,8 +359,8 @@ fun MainAffiliateApp(
     // Bila ApiClient detect UnknownHostException / SocketTimeout (DNS block),
     // trigger AdBlockedDialog secara automatik.
     androidx.compose.runtime.LaunchedEffect(Unit) {
-        androidx.compose.runtime.snapshotFlow { com.inkside.digital.data.network.ApiClient.adBlockDetected }
-            .collect { detected ->
+        androidx.compose.runtime.snapshotFlow<Boolean> { com.inkside.digital.data.network.ApiClient.adBlockDetected }
+            .collect { detected: Boolean ->
                 if (detected) {
                     android.util.Log.w("MainActivity", "⚠️ AdGuard detected - trigger dialog")
                     adBlockedReason = "NO_FILL"
