@@ -38,10 +38,10 @@ object ApiClient {
     // ============ AdGuard Detection Flag ============
     // Set true bila UnknownHostException / SocketTimeoutException (DNS block)
     // Global observable — trigger AdBlockedDialog di MainActivity
-    var adBlockDetected by androidx.compose.runtime.mutableStateOf(false)
-        private set
+    private val _adBlockDetected = androidx.compose.runtime.mutableStateOf(false)
+    val adBlockDetected: Boolean get() = _adBlockDetected.value
     
-    fun resetAdBlockFlag() { adBlockDetected = false }
+    fun resetAdBlockFlag() { _adBlockDetected.value = false }
 
     private const val PREFS_NAME = "royaltree_portal_prefs"
     private const val KEY_BASE_URL = "portal_base_url"
@@ -426,11 +426,11 @@ object ApiClient {
             Result.success(json)
         } catch (e: UnknownHostException) {
             // DNS fail = AdGuard block API
-            adBlockDetected = true
+            _adBlockDetected.value = true
             Result.failure(e)
         } catch (e: SocketTimeoutException) {
             // Timeout = kemungkinan AdGuard slow-block
-            adBlockDetected = true
+            _adBlockDetected.value = true
             Result.failure(e)
         } catch (e: Exception) {
             Result.failure(e)
