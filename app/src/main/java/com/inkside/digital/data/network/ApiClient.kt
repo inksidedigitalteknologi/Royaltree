@@ -23,6 +23,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.tasks.await
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody
@@ -52,6 +54,15 @@ object ApiClient {
 
     private var currentBaseUrl: String = DEFAULT_BASE_URL
     private var currentApiKey: String = DEFAULT_API_KEY
+
+    // Helper: ambil Firebase ID token (untuk endpoint yang verifyFirebaseToken)
+    private suspend fun getFirebaseToken(): String {
+        return try {
+            FirebaseAuth.getInstance().currentUser?.getIdToken(false)?.await()?.token ?: ""
+        } catch (e: Exception) {
+            ""
+        }
+    }
 
     private val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
@@ -167,21 +178,21 @@ object ApiClient {
     }
 
     suspend fun getNotifications(
-        userId: String,
-        token: String = currentApiKey
+        userId: String
     ): Result<ApiNotificationListResponse> = withContext(Dispatchers.IO) {
         try {
-            val bearer = if (token.startsWith("Bearer ")) token else "Bearer $token"
+            val firebaseToken = getFirebaseToken()
+            val bearer = "Bearer $firebaseToken"
             Result.success(apiService.getNotifications(bearer, userId))
         } catch (e: Exception) { Result.failure(e) }
     }
 
     suspend fun getUnreadCount(
-        userId: String,
-        token: String = currentApiKey
+        userId: String
     ): Result<ApiUnreadResponse> = withContext(Dispatchers.IO) {
         try {
-            val bearer = if (token.startsWith("Bearer ")) token else "Bearer $token"
+            val firebaseToken = getFirebaseToken()
+            val bearer = "Bearer $firebaseToken"
             Result.success(apiService.getUnreadCount(bearer, userId))
         } catch (e: Exception) { Result.failure(e) }
     }

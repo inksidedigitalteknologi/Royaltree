@@ -6,6 +6,7 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 const { checkFraud } = require('../middleware/antiFraud');
+const { createNotification } = require('../utils/notifications');
 
 const db = admin.firestore();
 
@@ -310,6 +311,14 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
             points: claimAmount,
             timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
+
+        // Notifikasi
+        await createNotification(
+            uid,
+            '⛏️ Mining Berhasil!',
+            `Klaim ${claimAmount.toFixed(8)} RTP dari rak mining.`,
+            'REWARD'
+        );
 
         return res.json({
             success: true,

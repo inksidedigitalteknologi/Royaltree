@@ -6,6 +6,7 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 const { checkFraud } = require('../middleware/antiFraud');
+const { createNotification } = require('../utils/notifications');
 
 const db = admin.firestore();
 
@@ -208,6 +209,14 @@ router.post('/check-in', verifyFirebaseToken, checkFraud, async (req, res) => {
             ip: req.ip || 'unknown',
             deviceId: req.headers['x-device-id'] || 'unknown'
         });
+
+        // Notifikasi
+        await createNotification(
+            uid,
+            `🎁 Check-in Hari ke-${streak}`,
+            `+${points} RTP · Streak ${streak} hari 🔥`,
+            'REWARD'
+        );
 
         return res.json({
             success: true,

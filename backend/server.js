@@ -24,6 +24,7 @@ const sweepstakesRoutes = require('./routes/sweepstakes');
 const transferRoutes = require('./routes/transfer');
 const sweepstakesJob = require('./jobs/sweepstakesJob');
 const { releasePendingCommission } = require('./services/affiliate');
+const { verifyFirebaseToken } = require('./middleware/firebaseAuth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -62,6 +63,9 @@ function authenticateToken(req, res, next) {
 // -------------------------------------------------------------
 // ENDPOINTS
 // -------------------------------------------------------------
+
+// Import notifications helper
+const { createNotification } = require('./utils/notifications');
 
 // 1. Health Check
 app.get('/api/v1/health', (req, res) => {
@@ -767,9 +771,9 @@ app.get('/api/v1/analytics/global', authenticateToken, async (req, res) => {
 
 // ============ NOTIFICATIONS ============
 
-app.get('/api/v1/notifications/:userId', authenticateToken, async (req, res) => {
+app.get('/api/v1/notifications/:userId', verifyFirebaseToken, async (req, res) => {
     try {
-        const { userId } = req.params;
+        const userId = req.firebaseUser.uid;  // ← UID dari token, bukan URL
         const limit = parseInt(req.query.limit) || 50;
         const snapshot = await db.collection('notifications')
             .where('userId', '==', userId)
@@ -781,9 +785,9 @@ app.get('/api/v1/notifications/:userId', authenticateToken, async (req, res) => 
     } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-app.get('/api/v1/notifications/:userId/unread', authenticateToken, async (req, res) => {
+app.get('/api/v1/notifications/:userId/unread', verifyFirebaseToken, async (req, res) => {
     try {
-        const { userId } = req.params;
+        const userId = req.firebaseUser.uid;  // ← UID dari token
         const snapshot = await db.collection('notifications')
             .where('userId', '==', userId)
             .where('read', '==', false)
@@ -792,7 +796,7 @@ app.get('/api/v1/notifications/:userId/unread', authenticateToken, async (req, r
     } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-app.post('/api/v1/notifications', authenticateToken, async (req, res) => {
+app.post('/api/v1/notifications', verifyFirebaseToken, async (req, res) => {
     try {
         const { userId, title, message, type, referenceId } = req.body;
         if (!userId || !title) {
@@ -808,7 +812,7 @@ app.post('/api/v1/notifications', authenticateToken, async (req, res) => {
     } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-app.put('/api/v1/notifications/:id/read', authenticateToken, async (req, res) => {
+app.put('/api/v1/notifications/:id/read', verifyFirebaseToken, async (req, res) => {
     try {
         const docRef = db.collection('notifications').doc(req.params.id);
         const doc = await docRef.get();
@@ -819,9 +823,9 @@ app.put('/api/v1/notifications/:id/read', authenticateToken, async (req, res) =>
     } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-app.put('/api/v1/notifications/:userId/read-all', authenticateToken, async (req, res) => {
+app.put('/api/v1/notifications/:userId/read-all', verifyFirebaseToken, async (req, res) => {
     try {
-        const { userId } = req.params;
+        const userId = req.firebaseUser.uid;  // ← UID dari token
         const snapshot = await db.collection('notifications')
             .where('userId', '==', userId)
             .where('read', '==', false)
@@ -835,7 +839,7 @@ app.put('/api/v1/notifications/:userId/read-all', authenticateToken, async (req,
     } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-app.delete('/api/v1/notifications/:id', authenticateToken, async (req, res) => {
+app.delete('/api/v1/notifications/:id', verifyFirebaseToken, async (req, res) => {
     try {
         const docRef = db.collection('notifications').doc(req.params.id);
         const doc = await docRef.get();
@@ -1096,3 +1100,6 @@ app.listen(PORT, () => {
     // Start sweepstakes auto-draw job (cek setiap 1 jam)
     sweepstakesJob.start();
 });
+
+module.exports = app;
+module.exports.createNotification = createNotification;
