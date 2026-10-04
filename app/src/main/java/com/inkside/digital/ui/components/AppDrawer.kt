@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.CardGiftcard
+import androidx.compose.material.icons.filled.Casino
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.History
@@ -115,6 +116,12 @@ fun AppDrawer(
                 label = LanguageManager.translate("daily_title", currentLanguage, "Login Harian"),
                 selected = currentScreen == AppScreen.DAILY_CHECK_IN,
                 onClick = { onNavigate(AppScreen.DAILY_CHECK_IN); onCloseDrawer() }
+            )
+            DrawerItem(
+                icon = Icons.Default.Casino,
+                label = LanguageManager.translate("nav_sweepstakes", currentLanguage, "Sweepstakes"),
+                selected = currentScreen == AppScreen.SWEEPSTAKES,
+                onClick = { onNavigate(AppScreen.SWEEPSTAKES); onCloseDrawer() }
             )
             DrawerItem(
                 icon = Icons.Default.MonetizationOn,

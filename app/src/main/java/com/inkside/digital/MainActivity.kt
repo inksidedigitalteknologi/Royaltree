@@ -84,6 +84,7 @@ import com.inkside.digital.ui.screens.GameRoomScreenContent
 import com.inkside.digital.ui.screens.GameHubScreen
 import com.inkside.digital.ui.screens.LeaderboardScreen
 import com.inkside.digital.ui.screens.WithdrawalScreen
+import com.inkside.digital.ui.screens.SweepstakesScreen
 import com.inkside.digital.ui.theme.MyApplicationTheme
 import com.inkside.digital.ui.screens.auth.AuthScreen
 import com.inkside.digital.ui.screens.auth.AuthViewModel
@@ -872,6 +873,13 @@ fun MainAffiliateAppContent(
                         notifications = notifications,
                         currentLanguage = currentLanguage,
                         onMarkAllRead = onMarkAllNotifsRead
+                    )
+                }
+
+                AppScreen.SWEEPSTAKES -> {
+                    SweepstakesScreen(
+                        currentLanguage = currentLanguage,
+                        onBack = { onNavigate(AppScreen.HOME) }
                     )
                 }
 
