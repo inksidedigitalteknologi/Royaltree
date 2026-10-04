@@ -460,6 +460,69 @@ router.post('/mining/unplace', verifyFirebaseToken, async (req, res) => {
 // GET /api/v1/game/leaderboard
 // Top 20 global mining
 // ============================================================
+// ============================================================
+// POST /api/v1/game/minigame/finish
+// Sync reward mini-game ke backend
+// Body: { score }
+// ============================================================
+router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+        const { score } = req.body;
+
+        if (typeof score !== 'number' || score < 0 || score > 10000) {
+            return res.status(400).json({ success: false, message: 'Score tidak valid' });
+        }
+
+        // Hitung reward (sama dengan formula Android)
+        const bonusPoints = Math.min(Math.max(Math.floor(score / 10), 15), 60);
+        const boostGhs = 80.0;
+        const boostExpiry = Date.now() + 7200000;  // 2 jam
+
+        const userRef = db.collection('users').doc(uid);
+        const roomRef = db.collection('game_rooms').doc(uid);
+
+        const batch = db.batch();
+
+        // 1. Tambah points ke user
+        batch.update(userRef, {
+            points: admin.firestore.FieldValue.increment(bonusPoints)
+        });
+
+        // 2. Update room state (boost power)
+        batch.set(roomRef, {
+            tempPowerBonusGhs: admin.firestore.FieldValue.increment(boostGhs),
+            bonusExpiryTimestamp: boostExpiry,
+            lastMiniGameAt: Date.now()
+        }, { merge: true });
+
+        // 3. Audit log
+        const auditRef = db.collection('audit_logs').doc();
+        batch.set(auditRef, {
+            userId: uid,
+            action: 'MINIGAME_FINISH',
+            score,
+            bonusPoints,
+            boostGhs,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        await batch.commit();
+
+        return res.json({
+            success: true,
+            data: {
+                bonusPoints,
+                boostGhs,
+                boostExpiry
+            }
+        });
+    } catch (error) {
+        console.error('Mini game finish error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 router.get('/leaderboard', verifyFirebaseToken, async (req, res) => {
     try {
         // Ambil dari users, sort by points (atau field baru)
