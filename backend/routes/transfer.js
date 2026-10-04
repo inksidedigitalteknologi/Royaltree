@@ -10,6 +10,7 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 const { checkFraud } = require('../middleware/antiFraud');
+const { createNotification } = require('../utils/notifications');
 
 const db = admin.firestore();
 
@@ -235,6 +236,22 @@ router.post('/send', verifyFirebaseToken, checkFraud, async (req, res) => {
         });
 
         await batch.commit();
+
+        // Notifikasi SENDER
+        await createNotification(
+            uid,
+            '📤 Transfer Terkirim',
+            `${amountNum} RTP dikirim ke ${recipientData.name || 'user'}`,
+            'TRANSFER'
+        );
+
+        // Notifikasi RECIPIENT
+        await createNotification(
+            recipientId,
+            '📥 Terima Transfer',
+            `${amountNum} RTP dari ${senderData.name || 'user'}`,
+            'TRANSFER'
+        );
 
         res.json({
             success: true,

@@ -14,6 +14,7 @@ const admin = require('firebase-admin');
 const crypto = require('crypto');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 const { checkFraud } = require('../middleware/antiFraud');
+const { createNotification } = require('../utils/notifications');
 
 const db = admin.firestore();
 
@@ -253,6 +254,14 @@ router.post('/buy', verifyFirebaseToken, checkFraud, async (req, res) => {
     
     await batch.commit();
     
+    // Notifikasi
+    await createNotification(
+        uid,
+        '🎟️ Kupon Terbeli',
+        `${totalNew} kupon sweepstakes` + (bonus > 0 ? ` (+${bonus} bonus)` : ''),
+        'SWEEPSTAKES'
+    );
+
     // Get updated user points
     const updatedUserDoc = await userRef.get();
     const remainingRtp = updatedUserDoc.data().points || 0;
@@ -541,6 +550,17 @@ async function drawSweepstakes(sweepstakesId = null) {
   
   await batch.commit();
   
+  // Notifikasi ke pemenang
+  for (const w of resultWinners) {
+    const medal = w.rank === 1 ? '🥇' : w.rank === 2 ? '🥈' : w.rank === 3 ? '🥉' : '🎁';
+    await createNotification(
+      w.uid,
+      `${medal} SELAMAT! Anda Menang!`,
+      `Juara ${w.rank} — ${w.amount} RTP dari sweepstakes! 🎉`,
+      'SWEEPSTAKES'
+    );
+  }
+
   // 8. Buat sweepstakes baru
   const newSweep = await getOrCreateActiveSweepstakes();
   
