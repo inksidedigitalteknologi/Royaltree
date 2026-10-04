@@ -249,6 +249,10 @@ interface RoyaltreeApiService {
     @GET("sweepstakes/my-tickets")
     suspend fun getMyTickets(): ResponseBody
 
+    // ============ MINI GAME ============
+    @POST("game/minigame/finish")
+    suspend fun finishMiniGame(@Body body: RequestBody): ResponseBody
+
     // ============ TRANSFER ============
     @GET("transfer/search-user")
     suspend fun searchTransferUser(@Query("q") query: String): ResponseBody

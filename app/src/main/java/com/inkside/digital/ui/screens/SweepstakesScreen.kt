@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
+import com.inkside.digital.ui.components.BannerAdView
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
@@ -48,7 +49,6 @@ fun SweepstakesScreen(
     val userTickets by viewModel.userTickets.collectAsState()
     val userChance by viewModel.userChance.collectAsState()
     val rewards by viewModel.rewards.collectAsState()
-    val topHolders by viewModel.topHolders.collectAsState()
     val history by viewModel.history.collectAsState()
 
     var showBuyModal by remember { mutableStateOf(false) }
@@ -140,20 +140,6 @@ fun SweepstakesScreen(
                                 color = Color.White
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Column {
-                                    Text("Kupon Terjual", fontSize = 10.sp, color = Color.White.copy(alpha = 0.7f))
-                                    Text("$totalTickets", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                                }
-                                Column(horizontalAlignment = Alignment.End) {
-                                    Text("Peserta", fontSize = 10.sp, color = Color.White.copy(alpha = 0.7f))
-                                    Text("${topHolders.size}+", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                                }
-                            }
 
                             // Timer
                             Spacer(modifier = Modifier.height(14.dp))
@@ -258,50 +244,6 @@ fun SweepstakesScreen(
                 }
             }
 
-            // ============ TOP HOLDERS ============
-            if (topHolders.isNotEmpty()) {
-                item {
-                    Text(
-                        "👑 Top Peserta",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                }
-                items(topHolders) { holder ->
-                    Card(
-                        shape = RoundedCornerShape(10.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            val rank = topHolders.indexOf(holder) + 1
-                            Text(
-                                "#$rank",
-                                fontWeight = FontWeight.Black,
-                                fontSize = 12.sp,
-                                color = if (rank <= 3) GoldVip else MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.width(36.dp)
-                            )
-                            Text(
-                                holder.name,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Text(
-                                "${holder.tickets} kupon",
-                                fontSize = 12.sp,
-                                color = EmeraldLight
-                            )
-                        }
-                    }
-                }
-            }
-
             // ============ HISTORY ============
             if (history.isNotEmpty()) {
                 item {
@@ -348,6 +290,15 @@ fun SweepstakesScreen(
                         }
                     }
                 }
+            }
+
+            // ============ BANNER AD ============
+            item {
+                BannerAdView(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                )
             }
 
             item { Spacer(modifier = Modifier.height(24.dp)) }

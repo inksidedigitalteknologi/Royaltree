@@ -124,33 +124,8 @@ router.get('/current', verifyFirebaseToken, async (req, res) => {
       ? (userTickets / sweep.totalTickets * 100).toFixed(4) 
       : '0.0000';
     
-    // Top 10 holder
-    const topSnap = await db.collection('tickets')
-      .where('sweepstakesId', '==', sweep.id)
-      .limit(1000)
-      .get();
-    
-    const holderMap = new Map();
-    topSnap.forEach(doc => {
-      const d = doc.data();
-      holderMap.set(d.uid, (holderMap.get(d.uid) || 0) + 1);
-    });
-    
-    const topHolders = Array.from(holderMap.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
-      .map(([userId, count]) => ({ uid: userId, tickets: count }));
-    
-    // Get usernames
-    const topHoldersWithNames = await Promise.all(
-      topHolders.map(async (h) => {
-        const userDoc = await db.collection('users').doc(h.uid).get();
-        return {
-          ...h,
-          name: userDoc.exists ? (userDoc.data().name || 'Anonim') : 'Anonim'
-        };
-      })
-    );
+    // PRIVASI: tidak compute top holders
+
     
     res.json({
       success: true,
@@ -160,15 +135,15 @@ router.get('/current', verifyFirebaseToken, async (req, res) => {
         startTime: sweep.startTime,
         endTime: sweep.endTime,
         ticketPrice: sweep.ticketPrice,
-        totalTickets: sweep.totalTickets,
+        // totalTickets: DISEMBUNYIKAN untuk privasi
         totalPool: sweep.totalPool,
         userTickets,
         userChance: userChance + '%',
         minTickets: SWEEPSTAKES_CONFIG.minTickets,
         rewards: SWEEPSTAKES_CONFIG.rewards,
         bonusPackages: SWEEPSTAKES_CONFIG.bonusPackages,
-        maxTicketsPerUser: SWEEPSTAKES_CONFIG.maxTicketsPerUser,
-        topHolders: topHoldersWithNames
+        maxTicketsPerUser: SWEEPSTAKES_CONFIG.maxTicketsPerUser
+        // topHolders: DISEMBUNYIKAN untuk privasi
       }
     });
   } catch (error) {
