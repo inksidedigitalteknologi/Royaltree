@@ -53,7 +53,8 @@ enum class AppScreen {
     DAILY_CHECK_IN,
     PROFILE,
     NOTIFICATIONS,
-    SWEEPSTAKES
+    SWEEPSTAKES,
+    TRANSFER
 }
 
 // ==== Ad Button State ====

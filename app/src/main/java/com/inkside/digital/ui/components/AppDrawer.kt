@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.CardGiftcard
 import androidx.compose.material.icons.filled.Casino
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.History
@@ -122,6 +123,12 @@ fun AppDrawer(
                 label = LanguageManager.translate("nav_sweepstakes", currentLanguage, "Sweepstakes"),
                 selected = currentScreen == AppScreen.SWEEPSTAKES,
                 onClick = { onNavigate(AppScreen.SWEEPSTAKES); onCloseDrawer() }
+            )
+            DrawerItem(
+                icon = Icons.AutoMirrored.Filled.Send,
+                label = LanguageManager.translate("nav_transfer", currentLanguage, "Transfer"),
+                selected = currentScreen == AppScreen.TRANSFER,
+                onClick = { onNavigate(AppScreen.TRANSFER); onCloseDrawer() }
             )
             DrawerItem(
                 icon = Icons.Default.MonetizationOn,

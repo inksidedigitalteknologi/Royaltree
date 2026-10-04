@@ -620,6 +620,41 @@ object ApiClient {
             Result.failure(e)
         }
     }
+
+    // ============ TRANSFER ============
+
+    suspend fun searchTransferUser(query: String): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response: ResponseBody = apiService.searchTransferUser(query)
+            Result.success(JSONObject(response.string()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun sendTransfer(recipientId: String, amount: Int, note: String): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().apply {
+                put("recipientId", recipientId)
+                put("amount", amount)
+                put("note", note)
+            }
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
+            val response: ResponseBody = apiService.sendTransfer(requestBody)
+            Result.success(JSONObject(response.string()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getTransferHistory(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response: ResponseBody = apiService.getTransferHistory()
+            Result.success(JSONObject(response.string()))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
 
 
