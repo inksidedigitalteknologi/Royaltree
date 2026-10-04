@@ -50,6 +50,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.inkside.digital.ui.theme.EmeraldLight
+import com.inkside.digital.ui.theme.CoralRed
+import com.inkside.digital.ui.theme.PurpleSecondary
+import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.components.AnimatedGradientBackground
 
 @Composable
@@ -107,7 +111,7 @@ fun ForgotPasswordScreen(
                         colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.15f)),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .shadow(24.dp, RoundedCornerShape(24.dp), ambientColor = Color(0xFF6366F1).copy(alpha = 0.5f), spotColor = Color(0xFF8B5CF6).copy(alpha = 0.5f))
+                            .shadow(24.dp, RoundedCornerShape(24.dp), ambientColor = ElectricBlue.copy(alpha = 0.5f), spotColor = PurpleSecondary.copy(alpha = 0.5f))
                     ) {
                         Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
                             // Tombol back
@@ -152,14 +156,14 @@ fun ForgotPasswordScreen(
                             Spacer(modifier = Modifier.height(16.dp))
 
                             if (errorMessage != null) {
-                                Box(modifier = Modifier.fillMaxWidth().background(Color(0xFFEF4444).copy(alpha = 0.2f), RoundedCornerShape(10.dp)).padding(12.dp)) {
+                                Box(modifier = Modifier.fillMaxWidth().background(CoralRed.copy(alpha = 0.2f), RoundedCornerShape(10.dp)).padding(12.dp)) {
                                     Text(errorMessage, color = Color(0xFFFECACA), fontSize = 12.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
                                 }
                                 Spacer(modifier = Modifier.height(12.dp))
                             }
 
                             if (successMessage != null) {
-                                Box(modifier = Modifier.fillMaxWidth().background(Color(0xFF10B981).copy(alpha = 0.2f), RoundedCornerShape(10.dp)).padding(12.dp)) {
+                                Box(modifier = Modifier.fillMaxWidth().background(EmeraldLight.copy(alpha = 0.2f), RoundedCornerShape(10.dp)).padding(12.dp)) {
                                     Text(successMessage, color = Color(0xFFA7F3D0), fontSize = 12.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
                                 }
                                 Spacer(modifier = Modifier.height(12.dp))
@@ -176,7 +180,7 @@ fun ForgotPasswordScreen(
                                     shape = RoundedCornerShape(14.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = Color.White,
-                                        contentColor = Color(0xFF6366F1),
+                                        contentColor = ElectricBlue,
                                         disabledContainerColor = Color.White.copy(alpha = 0.3f),
                                         disabledContentColor = Color.White.copy(alpha = 0.5f)
                                     ),
