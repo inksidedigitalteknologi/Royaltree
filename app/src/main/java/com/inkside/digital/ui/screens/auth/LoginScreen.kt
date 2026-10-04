@@ -59,6 +59,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.inkside.digital.ui.theme.ElectricBlue
+import com.inkside.digital.ui.theme.PurpleSecondary
+import com.inkside.digital.ui.theme.CoralRed
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.CustomCredential
@@ -143,8 +146,8 @@ fun LoginScreen(
                             .shadow(
                                 elevation = 24.dp,
                                 shape = RoundedCornerShape(24.dp),
-                                ambientColor = Color(0xFF6366F1).copy(alpha = 0.5f),
-                                spotColor = Color(0xFF8B5CF6).copy(alpha = 0.5f)
+                                ambientColor = ElectricBlue.copy(alpha = 0.5f),
+                                spotColor = PurpleSecondary.copy(alpha = 0.5f)
                             )
                     ) {
                         Column(
@@ -251,7 +254,7 @@ fun LoginScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .background(
-                                            Color(0xFFEF4444).copy(alpha = 0.2f),
+                                            CoralRed.copy(alpha = 0.2f),
                                             RoundedCornerShape(10.dp)
                                         )
                                         .padding(12.dp)
@@ -282,7 +285,7 @@ fun LoginScreen(
                                     shape = RoundedCornerShape(14.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = Color.White,
-                                        contentColor = Color(0xFF6366F1),
+                                        contentColor = ElectricBlue,
                                         disabledContainerColor = Color.White.copy(alpha = 0.3f),
                                         disabledContentColor = Color.White.copy(alpha = 0.5f)
                                     ),

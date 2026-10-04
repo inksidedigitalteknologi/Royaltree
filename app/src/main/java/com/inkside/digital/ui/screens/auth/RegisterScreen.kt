@@ -62,6 +62,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.inkside.digital.ui.theme.EmeraldLight
+import com.inkside.digital.ui.theme.CoralRed
+import com.inkside.digital.ui.theme.PurpleSecondary
+import com.inkside.digital.ui.theme.ElectricBlue
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.CustomCredential
@@ -144,7 +148,7 @@ fun RegisterScreen(
                         colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.15f)),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .shadow(24.dp, RoundedCornerShape(24.dp), ambientColor = Color(0xFF6366F1).copy(alpha = 0.5f), spotColor = Color(0xFF8B5CF6).copy(alpha = 0.5f))
+                            .shadow(24.dp, RoundedCornerShape(24.dp), ambientColor = ElectricBlue.copy(alpha = 0.5f), spotColor = PurpleSecondary.copy(alpha = 0.5f))
                     ) {
                         Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
                             Text("Buat Akun", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
@@ -218,7 +222,7 @@ fun RegisterScreen(
                             // Error / Success
                             if (errorMessage != null) {
                                 Box(
-                                    modifier = Modifier.fillMaxWidth().background(Color(0xFFEF4444).copy(alpha = 0.2f), RoundedCornerShape(10.dp)).padding(12.dp)
+                                    modifier = Modifier.fillMaxWidth().background(CoralRed.copy(alpha = 0.2f), RoundedCornerShape(10.dp)).padding(12.dp)
                                 ) {
                                     Text(errorMessage, color = Color(0xFFFECACA), fontSize = 12.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
                                 }
@@ -227,7 +231,7 @@ fun RegisterScreen(
 
                             if (successMessage != null) {
                                 Box(
-                                    modifier = Modifier.fillMaxWidth().background(Color(0xFF10B981).copy(alpha = 0.2f), RoundedCornerShape(10.dp)).padding(12.dp)
+                                    modifier = Modifier.fillMaxWidth().background(EmeraldLight.copy(alpha = 0.2f), RoundedCornerShape(10.dp)).padding(12.dp)
                                 ) {
                                     Text(successMessage, color = Color(0xFFA7F3D0), fontSize = 12.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
                                 }
@@ -246,7 +250,7 @@ fun RegisterScreen(
                                     shape = RoundedCornerShape(14.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = Color.White,
-                                        contentColor = Color(0xFF6366F1),
+                                        contentColor = ElectricBlue,
                                         disabledContainerColor = Color.White.copy(alpha = 0.3f),
                                         disabledContentColor = Color.White.copy(alpha = 0.5f)
                                     ),
@@ -331,9 +335,9 @@ private fun outlinedColors() = OutlinedTextFieldDefaults.colors(
 @Composable
 private fun StrengthBar(strength: Int, label: String) {
     val (color, _) = when (strength) {
-        1 -> Color(0xFFEF4444) to 0.25f
+        1 -> CoralRed to 0.25f
         2 -> Color(0xFFF59E0B) to 0.5f
-        3 -> Color(0xFF10B981) to 0.75f
+        3 -> EmeraldLight to 0.75f
         4 -> Color(0xFF059669) to 1f
         else -> Color(0xFF6B7280) to 0f
     }
@@ -367,7 +371,7 @@ private fun PasswordChecklist(validation: PasswordValidator.ValidationResult) {
                     imageVector = if (ok) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
                     contentDescription = null,
                     tint = when {
-                        ok -> Color(0xFF10B981)
+                        ok -> EmeraldLight
                         required -> Color.White.copy(alpha = 0.5f)
                         else -> Color.White.copy(alpha = 0.3f)
                     },
