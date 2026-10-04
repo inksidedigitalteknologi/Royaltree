@@ -71,6 +71,18 @@ fun SyncStatusBar(darkTheme: Boolean) {
             // Light mode → icon hitam (light = true)
             controller.isAppearanceLightStatusBars = !darkTheme
             controller.isAppearanceLightNavigationBars = !darkTheme
+
+            // Set warna background status bar & navigation bar
+            // Light mode → putih, Dark mode → dark blue
+            val barColor = if (darkTheme) {
+                android.graphics.Color.parseColor("#0F172A")  // dark blue
+            } else {
+                android.graphics.Color.parseColor("#FFFFFF")  // white
+            }
+            @Suppress("DEPRECATION")
+            window.statusBarColor = barColor
+            @Suppress("DEPRECATION")
+            window.navigationBarColor = barColor
         }
     }
 }
