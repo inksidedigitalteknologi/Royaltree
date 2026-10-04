@@ -240,7 +240,7 @@ fun DailyCheckInScreen(
                                         else -> DayStatus.FUTURE
                                     }
 
-                                    val points = if (isWeekend) 100 else 50
+                                    val points = if (isWeekend) 10 else 5
 
                                     Box(
                                         modifier = Modifier
