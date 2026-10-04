@@ -20,6 +20,8 @@ const adminRoutes = require('./routes/admin');
 const gameRoutes = require('./routes/game');
 const purchaseRoutes = require('./routes/purchase');
 const affiliateRoutes = require('./routes/affiliate');
+const sweepstakesRoutes = require('./routes/sweepstakes');
+const sweepstakesJob = require('./jobs/sweepstakesJob');
 const { releasePendingCommission } = require('./services/affiliate');
 
 const app = express();
@@ -34,6 +36,7 @@ app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/game', gameRoutes);
 app.use('/api/v1/purchase', purchaseRoutes);
 app.use('/api/v1/affiliate', affiliateRoutes);
+app.use('/api/v1/sweepstakes', sweepstakesRoutes);
 
 // Serve admin panel
 app.use('/admin', express.static('/root/Royaltree/admin'));
@@ -1087,4 +1090,7 @@ app.listen(PORT, () => {
     console.log(` Endpoint: http://localhost:${PORT}/api/v1`);
     console.log(` Health:   http://localhost:${PORT}/api/v1/health`);
     console.log(`====================================================`);
+
+    // Start sweepstakes auto-draw job (cek setiap 1 jam)
+    sweepstakesJob.start();
 });
