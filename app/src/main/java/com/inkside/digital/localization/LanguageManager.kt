@@ -1489,6 +1489,96 @@ object LanguageManager {
             AppLanguage.JAPANESE to "大当たり！"
         ),
 
+        // ============ Transfer (NEW) ============
+        "nav_transfer" to mapOf(
+            AppLanguage.INDONESIAN to "Transfer",
+            AppLanguage.ENGLISH to "Transfer",
+            AppLanguage.SPANISH to "Transferir",
+            AppLanguage.CHINESE to "转账",
+            AppLanguage.ARABIC to "تحويل",
+            AppLanguage.JAPANESE to "転送"
+        ),
+        "transfer_title" to mapOf(
+            AppLanguage.INDONESIAN to "Transfer RTP",
+            AppLanguage.ENGLISH to "Transfer RTP",
+            AppLanguage.SPANISH to "Transferir RTP",
+            AppLanguage.CHINESE to "转账 RTP",
+            AppLanguage.ARABIC to "تحويل RTP",
+            AppLanguage.JAPANESE to "RTP 転送"
+        ),
+        "transfer_subtitle" to mapOf(
+            AppLanguage.INDONESIAN to "Kirim saldo poin ke user lain",
+            AppLanguage.ENGLISH to "Send points to other users",
+            AppLanguage.SPANISH to "Envía puntos a otros usuarios",
+            AppLanguage.CHINESE to "向其他用户发送积分",
+            AppLanguage.ARABIC to "أرسل النقاط لمستخدمين آخرين",
+            AppLanguage.JAPANESE to "他のユーザーにポイントを送信"
+        ),
+        "transfer_balance" to mapOf(
+            AppLanguage.INDONESIAN to "Saldo Anda",
+            AppLanguage.ENGLISH to "Your Balance",
+            AppLanguage.SPANISH to "Tu Saldo",
+            AppLanguage.CHINESE to "您的余额",
+            AppLanguage.ARABIC to "رصيدك",
+            AppLanguage.JAPANESE to "あなたの残高"
+        ),
+        "transfer_recipient" to mapOf(
+            AppLanguage.INDONESIAN to "Penerima",
+            AppLanguage.ENGLISH to "Recipient",
+            AppLanguage.SPANISH to "Destinatario",
+            AppLanguage.CHINESE to "收件人",
+            AppLanguage.ARABIC to "المستلم",
+            AppLanguage.JAPANESE to "受取人"
+        ),
+        "transfer_search_hint" to mapOf(
+            AppLanguage.INDONESIAN to "@username / kode referral",
+            AppLanguage.ENGLISH to "@username / referral code",
+            AppLanguage.SPANISH to "@usuario / código",
+            AppLanguage.CHINESE to "@用户名 / 推荐码",
+            AppLanguage.ARABIC to "@اسم المستخدم / رمز",
+            AppLanguage.JAPANESE to "@ユーザー名 / コード"
+        ),
+        "transfer_search" to mapOf(
+            AppLanguage.INDONESIAN to "Cari",
+            AppLanguage.ENGLISH to "Search",
+            AppLanguage.SPANISH to "Buscar",
+            AppLanguage.CHINESE to "搜索",
+            AppLanguage.ARABIC to "بحث",
+            AppLanguage.JAPANESE to "検索"
+        ),
+        "transfer_amount" to mapOf(
+            AppLanguage.INDONESIAN to "Jumlah Transfer",
+            AppLanguage.ENGLISH to "Transfer Amount",
+            AppLanguage.SPANISH to "Cantidad",
+            AppLanguage.CHINESE to "转账金额",
+            AppLanguage.ARABIC to "مبلغ التحويل",
+            AppLanguage.JAPANESE to "転送額"
+        ),
+        "transfer_note" to mapOf(
+            AppLanguage.INDONESIAN to "Catatan (opsional)",
+            AppLanguage.ENGLISH to "Note (optional)",
+            AppLanguage.SPANISH to "Nota (opcional)",
+            AppLanguage.CHINESE to "备注（可选）",
+            AppLanguage.ARABIC to "ملاحظة (اختياري)",
+            AppLanguage.JAPANESE to "メモ（オプション）"
+        ),
+        "transfer_send" to mapOf(
+            AppLanguage.INDONESIAN to "KIRIM",
+            AppLanguage.ENGLISH to "SEND",
+            AppLanguage.SPANISH to "ENVIAR",
+            AppLanguage.CHINESE to "发送",
+            AppLanguage.ARABIC to "إرسال",
+            AppLanguage.JAPANESE to "送信"
+        ),
+        "transfer_history" to mapOf(
+            AppLanguage.INDONESIAN to "Riwayat Transfer",
+            AppLanguage.ENGLISH to "Transfer History",
+            AppLanguage.SPANISH to "Historial",
+            AppLanguage.CHINESE to "转账记录",
+            AppLanguage.ARABIC to "سجل التحويلات",
+            AppLanguage.JAPANESE to "転送履歴"
+        ),
+
         "profile_bonus" to mapOf(
             AppLanguage.INDONESIAN to "Bonus",
             AppLanguage.ENGLISH to "Bonus",

@@ -21,6 +21,7 @@ const gameRoutes = require('./routes/game');
 const purchaseRoutes = require('./routes/purchase');
 const affiliateRoutes = require('./routes/affiliate');
 const sweepstakesRoutes = require('./routes/sweepstakes');
+const transferRoutes = require('./routes/transfer');
 const sweepstakesJob = require('./jobs/sweepstakesJob');
 const { releasePendingCommission } = require('./services/affiliate');
 
@@ -37,6 +38,7 @@ app.use('/api/v1/game', gameRoutes);
 app.use('/api/v1/purchase', purchaseRoutes);
 app.use('/api/v1/affiliate', affiliateRoutes);
 app.use('/api/v1/sweepstakes', sweepstakesRoutes);
+app.use('/api/v1/transfer', transferRoutes);
 
 // Serve admin panel
 app.use('/admin', express.static('/root/Royaltree/admin'));

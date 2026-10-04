@@ -248,6 +248,16 @@ interface RoyaltreeApiService {
 
     @GET("sweepstakes/my-tickets")
     suspend fun getMyTickets(): ResponseBody
+
+    // ============ TRANSFER ============
+    @GET("transfer/search-user")
+    suspend fun searchTransferUser(@Query("q") query: String): ResponseBody
+
+    @POST("transfer/send")
+    suspend fun sendTransfer(@Body body: RequestBody): ResponseBody
+
+    @GET("transfer/history")
+    suspend fun getTransferHistory(): ResponseBody
 }
 
 
