@@ -879,9 +879,33 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun buyGameMinerItem(itemId: String) {
         viewModelScope.launch {
+            // 1. Beli lokal (Room DB)
             val result = repository.buyGameMinerItem(itemId)
             result.onSuccess { msg ->
                 showSnackbar(msg)
+
+                // 2. Sync ke backend (CRITICAL FIX)
+                val item = repository.getGameMinerItemByIdSync(itemId)
+                if (item != null) {
+                    val body = org.json.JSONObject().apply {
+                        put("minerId", item.id)
+                        put("tier", item.tier)
+                        put("name", item.name)
+                        put("pricePoints", item.pricePoints)
+                        put("powerGhs", item.powerGhs)
+                        put("pointsPerMinute", item.pointsPerMinute)
+                        put("iconEmoji", item.iconEmoji)
+                    }
+                    ApiClient.buyMiner(body)
+                        .onSuccess {
+                            android.util.Log.d("BuyMiner", "✅ Miner synced to backend")
+                            loadGameState()
+                        }
+                        .onFailure { err ->
+                            android.util.Log.e("BuyMiner", "❌ Sync failed: ${err.message}")
+                            showSnackbar("⚠️ Gagal sync ke server")
+                        }
+                }
             }.onFailure { error ->
                 showSnackbar(error.message ?: "Gagal membeli item penambang")
             }
@@ -890,9 +914,24 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun toggleMinerSlot(itemId: String, targetSlot: Int) {
         viewModelScope.launch {
+            // 1. Update lokal (Room DB)
             val result = repository.toggleMinerSlot(itemId, targetSlot)
             result.onSuccess { msg ->
                 showSnackbar(msg)
+
+                // 2. Sync ke backend (CRITICAL FIX)
+                val body = org.json.JSONObject().apply {
+                    put("minerId", itemId)
+                    put("slotIndex", targetSlot)
+                }
+                ApiClient.placeMiner(body)
+                    .onSuccess {
+                        android.util.Log.d("PlaceMiner", "✅ Place synced to backend")
+                        loadGameState()
+                    }
+                    .onFailure { err ->
+                        android.util.Log.e("PlaceMiner", "❌ Sync failed: ${err.message}")
+                    }
             }.onFailure { error ->
                 showSnackbar(error.message ?: "Gagal memindahkan item")
             }
@@ -901,9 +940,20 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun finishMiniGame(score: Int) {
         viewModelScope.launch {
+            // 1. Update lokal (Room DB)
             val result = repository.playMiniGameFinish(score)
             result.onSuccess { (bonusPoints, boostGhs) ->
                 showSnackbar("Game Selesai! Skor: $score (+${bonusPoints} Poin & Power Boost +${boostGhs.toInt()} GH/s) 🎮")
+
+                // 2. Sync ke backend (CRITICAL FIX)
+                ApiClient.finishMiniGame(score)
+                    .onSuccess {
+                        android.util.Log.d("MiniGame", "✅ MiniGame reward synced to backend")
+                        loadGameState()
+                    }
+                    .onFailure { err ->
+                        android.util.Log.e("MiniGame", "❌ Sync failed: ${err.message}")
+                    }
             }.onFailure { error ->
                 showSnackbar(error.message ?: "Gagal memproses reward game")
             }
@@ -1200,11 +1250,13 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     val remaining = (nextClaimAt - System.currentTimeMillis()).coerceAtLeast(0L)
                     _miningCooldownRemainingMs.value = remaining
                     showSnackbar("🎉 Berhasil klaim $points RTP! Klaim lagi dalam 1 jam.")
-                    // Refresh user + game state
+
+                    // CRITICAL FIX: Reset Room DB DULU (sebelum refresh)
+                    repository.resetMiningAfterClaim(nextClaimAt)
+
+                    // Kemudian refresh user + game state dari backend
                     loadUserFromBackend()
                     loadGameState()
-                    // Update Room local
-                    repository.resetMiningAfterClaim(nextClaimAt)
                 } else {
                     val msg = json.optString("message", "Gagal klaim")
                     val remaining = json.optLong("cooldownRemainingMs", 0L)
@@ -1230,11 +1282,17 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     showSnackbar("Berhasil klaim ${points.toInt()} RTP! ⛏️")
                 }.onFailure {
                     showSnackbar(it.message ?: "Gagal claim")
+                    return@launch
                 }
 
                 // 2. Sync ke backend
                 ApiClient.claimMining().onSuccess { json ->
                     if (json.optBoolean("success", false)) {
+                        // CRITICAL FIX: Reset Room DB state SEBELUM loadGameState
+                        val nextClaimAt = json.optLong("nextClaimAt", System.currentTimeMillis() + 3600000L)
+                        repository.resetMiningAfterClaim(nextClaimAt)
+
+                        // Kemudian refresh dari backend
                         loadGameState()
                         loadUserFromBackend()
                     }
