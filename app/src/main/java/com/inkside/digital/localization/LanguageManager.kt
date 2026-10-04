@@ -1463,6 +1463,32 @@ object LanguageManager {
             AppLanguage.ARABIC to "غير مطالب به",
             AppLanguage.JAPANESE to "未請求"
         ),
+        // ============ Sweepstakes (NEW) ============
+        "nav_sweepstakes" to mapOf(
+            AppLanguage.INDONESIAN to "Sweepstakes",
+            AppLanguage.ENGLISH to "Sweepstakes",
+            AppLanguage.SPANISH to "Sorteos",
+            AppLanguage.CHINESE to "抽奖",
+            AppLanguage.ARABIC to "السحوبات",
+            AppLanguage.JAPANESE to "スイープステークス"
+        ),
+        "sweepstakes_title" to mapOf(
+            AppLanguage.INDONESIAN to "🎟️ Sweepstakes",
+            AppLanguage.ENGLISH to "🎟️ Sweepstakes",
+            AppLanguage.SPANISH to "🎟️ Sorteos",
+            AppLanguage.CHINESE to "🎟️ 抽奖",
+            AppLanguage.ARABIC to "🎟️ السحوبات",
+            AppLanguage.JAPANESE to "🎟️ スイープステークス"
+        ),
+        "sweepstakes_subtitle" to mapOf(
+            AppLanguage.INDONESIAN to "Menang besar!",
+            AppLanguage.ENGLISH to "Win big!",
+            AppLanguage.SPANISH to "¡Gana en grande!",
+            AppLanguage.CHINESE to "赢大奖！",
+            AppLanguage.ARABIC to "اربح كثيراً!",
+            AppLanguage.JAPANESE to "大当たり！"
+        ),
+
         "profile_bonus" to mapOf(
             AppLanguage.INDONESIAN to "Bonus",
             AppLanguage.ENGLISH to "Bonus",

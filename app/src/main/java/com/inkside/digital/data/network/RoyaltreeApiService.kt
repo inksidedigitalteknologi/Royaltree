@@ -232,6 +232,22 @@ interface RoyaltreeApiService {
         @Path("id") id: String,
         @Body body: RequestBody
     ): ResponseBody
+
+    // ============ SWEEPSTAKES ============
+    @GET("sweepstakes/current")
+    suspend fun getSweepstakesCurrent(): ResponseBody
+
+    @POST("sweepstakes/buy")
+    suspend fun buySweepstakesTickets(@Body body: RequestBody): ResponseBody
+
+    @GET("sweepstakes/history")
+    suspend fun getSweepstakesHistory(): ResponseBody
+
+    @GET("sweepstakes/winners/{id}")
+    suspend fun getSweepstakesWinners(@Path("id") id: String): ResponseBody
+
+    @GET("sweepstakes/my-tickets")
+    suspend fun getMyTickets(): ResponseBody
 }
 
 
