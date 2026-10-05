@@ -1,5 +1,8 @@
 package com.inkside.digital.ui.screens
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.Image
 import com.inkside.digital.data.model.GameRoomStateEntity
 import java.util.Locale
 import androidx.compose.foundation.layout.Arrangement
@@ -112,18 +115,12 @@ fun ProfileScreen(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    androidx.compose.foundation.layout.Box(
-                        modifier = Modifier.size(60.dp).clip(CircleShape)
-                            .background(ElectricBlue),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            (user?.name?.firstOrNull()?.uppercase() ?: "U"),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Black,
-                            color = Color.White
-                        )
-                    }
+                    // M47: Avatar dengan frame tier
+                    ProfileAvatarWithFrame(
+                        userName = user?.name,
+                        tier = user?.tier ?: "FREE",
+                        size = 100.dp
+                    )
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(user?.name ?: "User", fontSize = 16.sp, fontWeight = FontWeight.Bold)
@@ -561,6 +558,64 @@ private fun MiningStatsCard(
                 MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", ElectricBlue, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+${String.format(Locale.US, "%.0f", roomState?.tempPowerBonusGhs ?: 0.0)} GH/s", GoldVip, Modifier.weight(1f))
             }
+        }
+    }
+}
+
+// ============================================================
+// M47: Avatar dengan Frame Tier (dragon, lion, star, dll)
+// ============================================================
+@Composable
+private fun ProfileAvatarWithFrame(
+    userName: String?,
+    tier: String,
+    size: Dp = 120.dp
+) {
+    // Frame resource per tier (fallback null kalau tiada)
+    val frameRes: Int? = when (tier) {
+        "ROYAL" -> R.drawable.frame_dragon_royal
+        // "VIP" -> R.drawable.frame_lion_vip
+        // "PREMIUM" -> R.drawable.frame_star_premium
+        // "STARTER" -> R.drawable.frame_bronze_starter
+        // "FREE" -> R.drawable.frame_leaf_free
+        else -> R.drawable.frame_dragon_royal  // Fallback untuk testing
+    }
+    
+    Box(
+        modifier = Modifier.size(size),
+        contentAlignment = Alignment.Center
+    ) {
+        // Avatar bulat di tengah (68% dari frame)
+        Box(
+            modifier = Modifier
+                .size(size * 0.68f)
+                .clip(CircleShape)
+                .background(
+                    when (tier) {
+                        "ROYAL" -> ElectricBlue
+                        "VIP" -> GoldVip
+                        "PREMIUM" -> Color(0xFFC0C0C0)
+                        "STARTER" -> Color(0xFFCD7F32)
+                        else -> EmeraldLight
+                    }
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = userName?.firstOrNull()?.uppercase() ?: "U",
+                fontSize = (size.value / 4).sp,
+                fontWeight = FontWeight.Black,
+                color = Color.White
+            )
+        }
+        
+        // Frame overlay (kalau ada)
+        if (frameRes != null) {
+            Image(
+                painter = painterResource(frameRes),
+                contentDescription = "Frame $tier",
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }
