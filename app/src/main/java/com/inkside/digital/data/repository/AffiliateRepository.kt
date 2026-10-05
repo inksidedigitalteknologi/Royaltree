@@ -1487,7 +1487,7 @@ class AffiliateRepository(private val dao: AppDao) {
                         iconEmoji = m.optString("iconEmoji", "⛏️"),
                         pricePoints = m.optInt("tokenCost", 0),  // token cost
                         powerGhs = m.optDouble("powerGhs", 0.0),
-                        pointsPerMinute = m.optDouble("pointsPerDay", 0.0),  // per hari
+                        pointsPerMinute = m.optDouble("pointsPerMinute", 0.0),  // M43 FIX: fix dari pointsPerDay
                         isOwned = false,  // Catalog != owned. Instance dari /game/state yang owned.
                         isPlacedInRoom = false,
                         placedSlotIndex = -1,
