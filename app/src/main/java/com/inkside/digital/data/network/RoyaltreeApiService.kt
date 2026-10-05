@@ -253,6 +253,10 @@ interface RoyaltreeApiService {
     @POST("game/minigame/finish")
     suspend fun finishMiniGame(@Body body: RequestBody): ResponseBody
 
+    // ============ UNLOCK SLOT ============
+    @POST("game/mining/unlock-slot")
+    suspend fun unlockSlot(@Body body: RequestBody): ResponseBody
+
     // ============ TRANSFER ============
     @GET("transfer/search-user")
     suspend fun searchTransferUser(@Query("q") query: String): ResponseBody

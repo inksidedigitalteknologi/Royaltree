@@ -216,7 +216,9 @@ data class GameRoomStateEntity(
     val miniGameHighScore: Int = 0,
     // Cooldown 1 jam + timestamp update
     val lastMiningClaimAt: Long = 0L,
-    val lastMiningUpdateTimestamp: Long = System.currentTimeMillis()
+    val lastMiningUpdateTimestamp: Long = System.currentTimeMillis(),
+    // M36 + M37 — Slot unlock (default 2 slot free)
+    val unlockedSlots: Int = 2
 )
 
 @Entity(tableName = "app_download_ads")

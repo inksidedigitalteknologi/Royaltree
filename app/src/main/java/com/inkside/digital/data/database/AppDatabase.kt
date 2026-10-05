@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
         GameMinerItemEntity::class,
         GameRoomStateEntity::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = false  // No-op, sudah ada migration manual
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -58,6 +58,13 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE game_room_state ADD COLUMN lastMiningClaimAt INTEGER NOT NULL DEFAULT 0")
                 db.execSQL("ALTER TABLE game_room_state ADD COLUMN lastMiningUpdateTimestamp INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        // Migration 8 -> 9: tambah unlockedSlots ke game_room_state
+        private val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE game_room_state ADD COLUMN unlockedSlots INTEGER NOT NULL DEFAULT 2")
             }
         }
 
@@ -152,7 +159,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "royaltree.db"
                 )
-                    .addMigrations(MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
+                    .addMigrations(MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
                     .addCallback(DatabaseCallback(scope))
                     .build()
                 INSTANCE = instance

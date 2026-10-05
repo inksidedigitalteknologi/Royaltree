@@ -752,6 +752,28 @@ object ApiClient {
             Result.failure(e)
         }
     }
+
+    // ============ UNLOCK SLOT ============
+
+    suspend fun unlockSlot(slotIndex: Int): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().apply { put("slotIndex", slotIndex) }
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
+            val response: ResponseBody = apiService.unlockSlot(requestBody)
+            Result.success(JSONObject(response.string()))
+        } catch (e: retrofit2.HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val json = JSONObject(errorBody)
+                json.put("httpCode", e.code())
+                Result.success(json)
+            } catch (parseErr: Exception) {
+                Result.failure(e)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
 
 

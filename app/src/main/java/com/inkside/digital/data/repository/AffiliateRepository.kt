@@ -1523,7 +1523,8 @@ class AffiliateRepository(private val dao: AppDao) {
                     tempPowerBonusGhs = roomJson.optDouble("tempPowerBonusGhs", 0.0),
                     bonusExpiryTimestamp = roomJson.optLong("bonusExpiryTimestamp", 0L),
                     miniGameHighScore = roomJson.optInt("miniGameHighScore", 0),
-                    lastMiningClaimAt = existing?.lastMiningClaimAt ?: 0L
+                    lastMiningClaimAt = existing?.lastMiningClaimAt ?: 0L,
+                    unlockedSlots = roomJson.optInt("unlockedSlots", existing?.unlockedSlots ?: 2)
                 )
                 dao.insertGameRoomState(room)
             }

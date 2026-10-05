@@ -135,7 +135,8 @@ fun GameRoomScreen(
         onFinishGame = { score -> viewModel.finishMiniGame(score) },
         onNavigateToMissions = onNavigateToMissions,
         onBack = onBack,
-        currentLanguage = currentLanguage
+        currentLanguage = currentLanguage,
+        onUnlockSlot = { slotIndex -> viewModel.unlockSlot(slotIndex) }
     )
 }
 
@@ -155,7 +156,8 @@ fun GameRoomScreenContent(
     currentLanguage: AppLanguage,
     minerTokens: Int = 0,
     onClaimMinerToken: (String) -> Unit = {},
-    onUnlockMiner: (String) -> Unit = {}
+    onUnlockMiner: (String) -> Unit = {},
+    onUnlockSlot: (Int) -> Unit = {}
 ) {
     var activeTab by remember { mutableIntStateOf(0) } // 0: Ruang Rak, 1: Toko Item, 2: Mini-Game
     var selectedItemToBuy by remember { mutableStateOf<GameMinerItemEntity?>(null) }
@@ -307,7 +309,8 @@ fun GameRoomScreenContent(
                         onUnplaceMiner = { minerId, slot -> onToggleMinerSlot(minerId, slot) },
                         onOpenShop = { activeTab = 1 },
                         onOpenAssignSlotModal = { slot -> slotToAssignItem = slot },
-                        onOpenMiniGame = { activeTab = 2 }
+                        onOpenMiniGame = { activeTab = 2 },
+                        onUnlockSlot = onUnlockSlot
                     )
                 }
                 1 -> {
@@ -644,8 +647,10 @@ private fun MiningRoomTab(
     onUnplaceMiner: (minerId: String, slot: Int) -> Unit,
     onOpenShop: () -> Unit,
     onOpenAssignSlotModal: (slotIndex: Int) -> Unit,
-    onOpenMiniGame: () -> Unit
+    onOpenMiniGame: () -> Unit,
+    onUnlockSlot: (slotIndex: Int) -> Unit = {}
 ) {
+    val unlockedSlots = roomState?.unlockedSlots ?: 2
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseAlpha by infiniteTransition.animateFloat(
         initialValue = 0.3f,
@@ -911,7 +916,7 @@ private fun MiningRoomTab(
             }
         }
 
-        // 6 Slots in Rack Room — Grid 2x3
+        // 6 Slots in Rack Room — Grid 2x3 (M36 + M37: locked by unlock)
         val occupiedMap = placedMiners.associateBy { it.placedSlotIndex }
         items(3) { rowIndex ->
             Row(
@@ -920,18 +925,28 @@ private fun MiningRoomTab(
             ) {
                 for (colIndex in 0 until 2) {
                     val slotIndex = rowIndex * 2 + colIndex
+                    val isLocked = slotIndex >= unlockedSlots
                     Box(modifier = Modifier.weight(1f)) {
-                        RackSlotItemCard(
-                            slotIndex = slotIndex,
-                            miner = occupiedMap[slotIndex],
-                            pulseAlpha = pulseAlpha,
-                            onUnplace = {
-                                occupiedMap[slotIndex]?.let { miner ->
-                                    onUnplaceMiner(miner.id, slotIndex)
-                                }
-                            },
-                            onAssign = { onOpenAssignSlotModal(slotIndex) }
-                        )
+                        if (isLocked) {
+                            // Slot locked — perlu beli
+                            LockedSlotCard(
+                                slotIndex = slotIndex,
+                                currentLanguage = currentLanguage,
+                                onClick = { onUnlockSlot(slotIndex) }
+                            )
+                        } else {
+                            RackSlotItemCard(
+                                slotIndex = slotIndex,
+                                miner = occupiedMap[slotIndex],
+                                pulseAlpha = pulseAlpha,
+                                onUnplace = {
+                                    occupiedMap[slotIndex]?.let { miner ->
+                                        onUnplaceMiner(miner.id, slotIndex)
+                                    }
+                                },
+                                onAssign = { onOpenAssignSlotModal(slotIndex) }
+                            )
+                        }
                     }
                 }
             }
@@ -981,6 +996,60 @@ private fun MiningRoomTab(
                         Text(LanguageManager.translate("game_play", currentLanguage, "Main"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LockedSlotCard(
+    slotIndex: Int,
+    currentLanguage: AppLanguage,
+    onClick: () -> Unit
+) {
+    val price = when (slotIndex) {
+        2 -> 500
+        3 -> 1500
+        4 -> 3000
+        5 -> 5000
+        else -> 500
+    }
+
+    Card(
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1F2E)),
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .clickable { onClick() }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text("🔒", fontSize = 32.sp)
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = LanguageManager.translate("slot_locked", currentLanguage, "Terkunci"),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF94A3B8)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Surface(
+                color = RetroGold,
+                shape = RoundedCornerShape(6.dp)
+            ) {
+                Text(
+                    text = "$price RTP",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Color.Black,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                )
             }
         }
     }

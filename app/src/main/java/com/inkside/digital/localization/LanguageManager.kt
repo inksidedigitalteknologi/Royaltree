@@ -1570,6 +1570,40 @@ object LanguageManager {
             AppLanguage.ARABIC to "إرسال",
             AppLanguage.JAPANESE to "送信"
         ),
+        // ============ Slot Unlock (NEW) ============
+        "slot_locked" to mapOf(
+            AppLanguage.INDONESIAN to "Terkunci",
+            AppLanguage.ENGLISH to "Locked",
+            AppLanguage.SPANISH to "Bloqueado",
+            AppLanguage.CHINESE to "已锁定",
+            AppLanguage.ARABIC to "مقفل",
+            AppLanguage.JAPANESE to "ロック中"
+        ),
+        "slot_unlock_title" to mapOf(
+            AppLanguage.INDONESIAN to "Buka Slot",
+            AppLanguage.ENGLISH to "Unlock Slot",
+            AppLanguage.SPANISH to "Desbloquear Ranura",
+            AppLanguage.CHINESE to "解锁插槽",
+            AppLanguage.ARABIC to "فتح الفتحة",
+            AppLanguage.JAPANESE to "スロットを解除"
+        ),
+        "slot_unlock_message" to mapOf(
+            AppLanguage.INDONESIAN to "Buka slot ini untuk tambah kapasitas mining kamu!",
+            AppLanguage.ENGLISH to "Unlock this slot to expand your mining capacity!",
+            AppLanguage.SPANISH to "¡Desbloquea esta ranura para ampliar tu capacidad!",
+            AppLanguage.CHINESE to "解锁此插槽以扩展您的挖矿容量！",
+            AppLanguage.ARABIC to "افتح هذه الفتحة لتوسيع سعة التعدين!",
+            AppLanguage.JAPANESE to "このスロットを解除してマイニング容量を拡張！"
+        ),
+        "slot_buy" to mapOf(
+            AppLanguage.INDONESIAN to "BELI",
+            AppLanguage.ENGLISH to "BUY",
+            AppLanguage.SPANISH to "COMPRAR",
+            AppLanguage.CHINESE to "购买",
+            AppLanguage.ARABIC to "شراء",
+            AppLanguage.JAPANESE to "購入"
+        ),
+
         "transfer_history" to mapOf(
             AppLanguage.INDONESIAN to "Riwayat Transfer",
             AppLanguage.ENGLISH to "Transfer History",
