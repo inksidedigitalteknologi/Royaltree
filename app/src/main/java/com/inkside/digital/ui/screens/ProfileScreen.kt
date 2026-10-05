@@ -1,5 +1,6 @@
 package com.inkside.digital.ui.screens
 
+import androidx.compose.ui.unit.TextUnit
 import com.inkside.digital.R
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.res.painterResource
@@ -573,13 +574,12 @@ private fun ProfileAvatarWithFrame(
     size: Dp = 120.dp
 ) {
     // Frame resource per tier (fallback null kalau tiada)
-    val frameRes: Int? = when (tier) {
+    val frameRes: Int = when (tier) {
         "ROYAL" -> R.drawable.frame_dragon_royal
-        // "VIP" -> R.drawable.frame_lion_vip
-        // "PREMIUM" -> R.drawable.frame_star_premium
-        // "STARTER" -> R.drawable.frame_bronze_starter
-        // "FREE" -> R.drawable.frame_leaf_free
-        else -> R.drawable.frame_dragon_royal  // Fallback untuk testing
+        "VIP" -> R.drawable.frame_lion_vip
+        "PREMIUM" -> R.drawable.frame_star_premium
+        "STARTER" -> R.drawable.frame_bronze_starter
+        else -> R.drawable.frame_leaf_free  // FREE default
     }
     
     Box(
@@ -611,13 +611,41 @@ private fun ProfileAvatarWithFrame(
         }
         
         // Frame overlay (kalau ada)
-        if (frameRes != null) {
-            Image(
-                painter = painterResource(frameRes),
-                contentDescription = "Frame $tier",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+        Image(
+            painter = painterResource(frameRes),
+            contentDescription = "Frame $tier",
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+// ============================================================
+// M48: RTP Amount dengan Coin Icon
+// Guna di mana-mana untuk konsisten display RTP
+// ============================================================
+@Composable
+fun RtpAmount(
+    amount: String,
+    fontSize: TextUnit = 14.sp,
+    iconSize: Dp = 16.dp,
+    color: Color = Color.Unspecified,
+    fontWeight: FontWeight = FontWeight.Bold
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_rtp),
+            contentDescription = "RTP",
+            modifier = Modifier.size(iconSize)
+        )
+        Text(
+            text = amount,
+            fontSize = fontSize,
+            color = color,
+            fontWeight = fontWeight
+        )
     }
 }
 
