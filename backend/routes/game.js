@@ -190,7 +190,10 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
         // ============ M41 FIX: Compute unclaimedMiningPoints ============
         // Guna lastMiningUpdateTimestamp (kalau ada) atau lastClaimTimestamp
         const placedMiners = miners.filter(m => m.isPlacedInRoom === true);
-        const ratePerMin = placedMiners.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
+        // M43: Guna calculateFinalRate untuk masukkan bonus dalam display
+        const baseRateForState = placedMiners.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
+        const rateInfoForState = calculateFinalRate(baseRateForState, room, placedMiners);
+        const ratePerMin = rateInfoForState.finalRate;
         
         const lastUpdate = room.lastMiningUpdateTimestamp 
             || room.lastClaimTimestamp 
@@ -228,7 +231,13 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
                     lastMiningClaimAt: room.lastMiningClaimAt || 0,
                     unlockedSlots: room.unlockedSlots || 2,
                     totalPowerGhs: totalPowerGhs,
-                    pointsPerDay: pointsPerDay
+                    pointsPerDay: pointsPerDay,
+                    // M43: Rate info breakdown untuk Android display
+                    ratePerMin: rateInfoForState.finalRate,
+                    baseRate: rateInfoForState.baseRate,
+                    permanentBonusPct: rateInfoForState.permanentBonusPct,
+                    miniGameBonusPct: rateInfoForState.miniGameBonusPct,
+                    totalBonusPct: rateInfoForState.totalBonusPct
                 },
                 miners: miners,
                 catalog: MINER_CATALOG
