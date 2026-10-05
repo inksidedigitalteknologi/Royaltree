@@ -370,6 +370,7 @@ fun MainAffiliateApp(
             }
     }
 
+    val vmAlias: AffiliateViewModel = viewModel
     MainAffiliateAppContent(
         user = user,
         campaigns = campaigns,
@@ -458,7 +459,7 @@ fun MainAffiliateApp(
         onDailyCheckInClaim = { viewModel.performDailyCheckIn() },
         onDailyCheckInWithAd = { txId, vendor -> viewModel.performDailyCheckInWithAd(txId, vendor) },
         onLoadGameState = { viewModel.loadGameState() },
-        onUnlockSlot = { slotIndex -> this@MainAffiliateApp.viewModel.unlockSlot(slotIndex) },
+        onUnlockSlot = { slotIndex -> vmAlias.unlockSlot(slotIndex) },
         onBuyCouponDismiss = { viewModel.showBuyCouponModal.value = null },
         onBuyCouponConfirm = { coupon, qty -> viewModel.buyCoupon(coupon, qty) },
         onListCouponDismiss = { viewModel.showListCouponModal.value = null },
