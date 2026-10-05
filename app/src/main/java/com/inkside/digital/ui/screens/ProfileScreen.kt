@@ -1,5 +1,7 @@
 package com.inkside.digital.ui.screens
 
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.ui.unit.TextUnit
 import com.inkside.digital.R
 import androidx.compose.ui.unit.Dp
@@ -522,6 +524,38 @@ private fun ReferralStatsCard(
 // ==========================================================
 // MINING STATS — slot, power, token
 // ==========================================================
+// ============================================================
+// M48: FramedCard — Card dengan PNG frame overlay
+// ============================================================
+@Composable
+fun FramedCard(
+    frameRes: Int,
+    modifier: Modifier = Modifier,
+    contentPadding: Dp = 40.dp,
+    content: @Composable BoxScope.() -> Unit
+) {
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        // Content di dalam (dengan padding supaya tak keluar dari frame)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(contentPadding),
+            content = content
+        )
+        
+        // Frame overlay di atas
+        Image(
+            painter = painterResource(frameRes),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillBounds
+        )
+    }
+}
+
 @Composable
 private fun MiningStatsCard(
     currentLanguage: AppLanguage,
@@ -531,10 +565,9 @@ private fun MiningStatsCard(
     tokens: Int,
     roomState: GameRoomStateEntity? = null  // M46: Data sinkron dari server
 ) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        modifier = Modifier.fillMaxWidth()
+    FramedCard(
+        frameRes = R.drawable.card_frame_mining,
+        contentPadding = 40.dp
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Text(
