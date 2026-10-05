@@ -1260,13 +1260,19 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 } else {
                     val msg = json.optString("message", "Gagal klaim")
                     val remaining = json.optLong("cooldownRemainingMs", 0L)
+                    val httpCode = json.optInt("httpCode", 0)
+                    
+                    android.util.Log.w("ClaimMining", "Failed: HTTP $httpCode — $msg")
+                    
                     if (remaining > 0) {
                         _miningCooldownRemainingMs.value = remaining
                     }
-                    showSnackbar(msg)
+                    
+                    showSnackbar("⚠️ $msg")
                 }
             }.onFailure {
-                showSnackbar("Error: ${it.message}")
+                android.util.Log.e("ClaimMining", "Network error: ${it.message}")
+                showSnackbar("Error: ${it.message ?: "Network error"}")
             }
 
             _miningClaimInProgress.value = false

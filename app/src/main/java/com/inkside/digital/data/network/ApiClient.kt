@@ -457,6 +457,16 @@ object ApiClient {
             val reqBody = body.toString().toRequestBody(JSON_MEDIA)
             val resp = apiService.claimMiningWithAd(reqBody)
             Result.success(JSONObject(resp.string()))
+        } catch (e: retrofit2.HttpException) {
+            // Parse error body untuk dapat mesej dari backend
+            try {
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val json = JSONObject(errorBody)
+                json.put("httpCode", e.code())
+                Result.success(json)  // Return as success (dengan success: false)
+            } catch (parseErr: Exception) {
+                Result.failure(e)
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -467,6 +477,15 @@ object ApiClient {
             val response: ResponseBody = apiService.claimMining()
             val json = JSONObject(response.string())
             Result.success(json)
+        } catch (e: retrofit2.HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val json = JSONObject(errorBody)
+                json.put("httpCode", e.code())
+                Result.success(json)
+            } catch (parseErr: Exception) {
+                Result.failure(e)
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -478,6 +497,15 @@ object ApiClient {
             val response: ResponseBody = apiService.buyMiner(requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
+        } catch (e: retrofit2.HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val json = JSONObject(errorBody)
+                json.put("httpCode", e.code())
+                Result.success(json)
+            } catch (parseErr: Exception) {
+                Result.failure(e)
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -489,6 +517,15 @@ object ApiClient {
             val response: ResponseBody = apiService.placeMiner(requestBody)
             val json = JSONObject(response.string())
             Result.success(json)
+        } catch (e: retrofit2.HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val json = JSONObject(errorBody)
+                json.put("httpCode", e.code())
+                Result.success(json)
+            } catch (parseErr: Exception) {
+                Result.failure(e)
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -600,6 +637,15 @@ object ApiClient {
             val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.buySweepstakesTickets(requestBody)
             Result.success(JSONObject(response.string()))
+        } catch (e: retrofit2.HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val json = JSONObject(errorBody)
+                json.put("httpCode", e.code())
+                Result.success(json)
+            } catch (parseErr: Exception) {
+                Result.failure(e)
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -627,6 +673,15 @@ object ApiClient {
         try {
             val response: ResponseBody = apiService.getMyTickets()
             Result.success(JSONObject(response.string()))
+        } catch (e: retrofit2.HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val json = JSONObject(errorBody)
+                json.put("httpCode", e.code())
+                Result.success(json)
+            } catch (parseErr: Exception) {
+                Result.failure(e)
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -653,6 +708,15 @@ object ApiClient {
             val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.sendTransfer(requestBody)
             Result.success(JSONObject(response.string()))
+        } catch (e: retrofit2.HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val json = JSONObject(errorBody)
+                json.put("httpCode", e.code())
+                Result.success(json)
+            } catch (parseErr: Exception) {
+                Result.failure(e)
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -675,6 +739,15 @@ object ApiClient {
             val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.finishMiniGame(requestBody)
             Result.success(JSONObject(response.string()))
+        } catch (e: retrofit2.HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val json = JSONObject(errorBody)
+                json.put("httpCode", e.code())
+                Result.success(json)
+            } catch (parseErr: Exception) {
+                Result.failure(e)
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
