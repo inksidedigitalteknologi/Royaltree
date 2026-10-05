@@ -205,7 +205,7 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
 // Claim mining points — WAJIB nonton iklan dulu
 // Body: { transactionId, vendor }
 // ============================================================
-const MINING_CLAIM_COOLDOWN_MS = 60 * 60 * 1000; // 1 jam
+const MINING_CLAIM_COOLDOWN_MS = 3 * 60 * 60 * 1000; // 3 jam
 
 router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req, res) => {
     try {
@@ -234,17 +234,19 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
         const roomDoc = await roomRef.get();
         const room = roomDoc.exists ? roomDoc.data() : {};
 
-        // Cek cooldown
-        const lastClaimAt = room.lastMiningClaimAt || 0;
+        // ============ M42 FIX: /mining/claim-with-ad BYPASS cooldown ============
+        // User "bayar" dengan tonton iklan, jadi tak perlu tunggu 3 jam.
+        // Tapi ada rate limit harian untuk cegah abuse.
         const now = Date.now();
-        const cooldownRemaining = (lastClaimAt + MINING_CLAIM_COOLDOWN_MS) - now;
+        const today = new Date(now).toISOString().slice(0, 10);
+        const adClaimsMap = room.adClaimsMap || {};
+        const adClaimsToday = adClaimsMap[today] || 0;
+        const AD_CLAIM_LIMIT_PER_DAY = 5;
 
-        if (cooldownRemaining > 0) {
+        if (adClaimsToday >= AD_CLAIM_LIMIT_PER_DAY) {
             return res.status(429).json({
                 success: false,
-                message: `Tunggu ${Math.ceil(cooldownRemaining / 60000)} menit lagi untuk klaim berikutnya.`,
-                cooldownRemainingMs: cooldownRemaining,
-                nextClaimAt: lastClaimAt + MINING_CLAIM_COOLDOWN_MS
+                message: `Limit klaim iklan harian (${AD_CLAIM_LIMIT_PER_DAY}) telah dicapai. Sila tunggu cooldown biasa.`
             });
         }
 
@@ -272,10 +274,10 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
         
         console.log(`[CLAIM-AD] User ${uid}: unclaimed=${unclaimed}, rate=${ratePerMinFresh}/min`);
         
-        if (unclaimed < 0.0001) {
+        if (unclaimed < 0.01) {
             return res.status(400).json({
                 success: false,
-                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min 0.0001).`
+                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min 0.01).`
             });
         }
 
@@ -287,7 +289,12 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
             points: admin.firestore.FieldValue.increment(claimAmount)
         });
 
-        // Reset room + set cooldown
+        // Reset room + set cooldown + increment ad claim count
+        const updatedAdClaimsMap = {
+            ...adClaimsMap,
+            [today]: adClaimsToday + 1
+        };
+
         await roomRef.set({
             unclaimedMiningPoints: unclaimed - claimAmount,
             lastClaimTimestamp: now,
@@ -295,7 +302,8 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
             totalMinedPointsClaimed: totalClaimed,
             tempPowerBonusGhs: room.tempPowerBonusGhs || 0,
             bonusExpiryTimestamp: room.bonusExpiryTimestamp || 0,
-            miniGameHighScore: room.miniGameHighScore || 0
+            miniGameHighScore: room.miniGameHighScore || 0,
+            adClaimsMap: updatedAdClaimsMap
         }, { merge: true });
 
         // Simpan transaction (anti-replay)
@@ -322,7 +330,7 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
 
         return res.json({
             success: true,
-            message: `Berhasil klaim ${claimAmount} RTP! Iklan + cooldown 1 jam.`,
+            message: `Berhasil klaim ${claimAmount} RTP! Iklan + cooldown 3 jam.`,
             points: claimAmount,
             nextClaimAt,
             cooldownRemainingMs: MINING_CLAIM_COOLDOWN_MS
@@ -369,10 +377,10 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
         
         console.log(`[CLAIM] User ${uid}: unclaimed=${unclaimed}, rate=${ratePerMin}/min`);
         
-        if (unclaimed < 0.0001) {
+        if (unclaimed < 0.01) {
             return res.status(400).json({
                 success: false,
-                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min 0.0001).`
+                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min 0.01).`
             });
         }
 
