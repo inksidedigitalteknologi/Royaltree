@@ -43,6 +43,30 @@ object LanguageManager {
             AppLanguage.ARABIC to "غرفة الألعاب",
             AppLanguage.JAPANESE to "ゲームルーム"
         ),
+        "badge_passive" to mapOf(
+            AppLanguage.INDONESIAN to "PASIF",
+            AppLanguage.ENGLISH to "PASSIVE",
+            AppLanguage.SPANISH to "PASIVO",
+            AppLanguage.CHINESE to "被动",
+            AppLanguage.ARABIC to "سلبي",
+            AppLanguage.JAPANESE to "パッシブ"
+        ),
+        "game_room_title" to mapOf(
+            AppLanguage.INDONESIAN to "Ruang Mining Royaltree",
+            AppLanguage.ENGLISH to "Royaltree Mining Room",
+            AppLanguage.SPANISH to "Sala de Minería Royaltree",
+            AppLanguage.CHINESE to "Royaltree 挖矿室",
+            AppLanguage.ARABIC to "غرفة تعدين Royaltree",
+            AppLanguage.JAPANESE to "Royaltree マイニングルーム"
+        ),
+        "game_room_subtitle" to mapOf(
+            AppLanguage.INDONESIAN to "Beli item penambang pakai RTP & panen hasil pasif",
+            AppLanguage.ENGLISH to "Buy miners with RTP & earn passive income",
+            AppLanguage.SPANISH to "Compra mineros con RTP y gana ingresos pasivos",
+            AppLanguage.CHINESE to "用 RTP 购买矿工并赚取被动收入",
+            AppLanguage.ARABIC to "اشترِ المعدنين بـ RTP واكسب دخلاً سلبياً",
+            AppLanguage.JAPANESE to "RTP でマイナーを購入し、受動的収入を得る"
+        ),
         "nav_analytics" to mapOf(
             AppLanguage.INDONESIAN to "Analitik",
             AppLanguage.ENGLISH to "Analytics",

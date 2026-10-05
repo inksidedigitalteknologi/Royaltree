@@ -199,7 +199,7 @@ fun GameRoomScreenContent(
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "Ruang Mining Royaltree",
+                                text = LanguageManager.translate("game_room_title", currentLanguage, "Royaltree Mining Room"),
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
@@ -208,16 +208,18 @@ fun GameRoomScreenContent(
                                 shape = RoundedCornerShape(4.dp)
                             ) {
                                 Text(
-                                    text = "PASSIVE",
+                                    text = LanguageManager.translate("badge_passive", currentLanguage, "PASSIVE"),
                                     fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = EmeraldLight,
+                                    maxLines = 1,
+                                    softWrap = false,
                                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
                                 )
                             }
                         }
                         Text(
-                            text = "Beli item penambang pakai poin & panen hasil pasif",
+                            text = LanguageManager.translate("game_room_subtitle", currentLanguage, "Buy miners with RTP & earn passive income"),
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 11.sp
@@ -819,7 +821,7 @@ private fun MiningRoomTab(
                                         color = EmeraldLight
                                     )
                                     Text(
-                                        text = "≈ +${String.format(Locale.US, "%.1f", generationRatePerMin * 60)} Poin/Jam",
+                                        text = "≈ +${String.format(Locale.US, "%.1f", generationRatePerMin * 60)} RTP/Jam",
                                         fontSize = 9.sp,
                                         color = Color(0xFF94A3B8)
                                     )
