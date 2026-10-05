@@ -1,5 +1,6 @@
 package com.inkside.digital.ui.screens
 
+import com.inkside.digital.data.model.GameRoomStateEntity
 import java.util.Locale
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -79,7 +80,8 @@ fun ProfileScreen(
     minerSlotsUsed: Int = 0,
     minerSlotsMax: Int = 6,
     minerPowerGhs: Double = 0.0,
-    minerTokens: Int = 0
+    minerTokens: Int = 0,
+    roomState: GameRoomStateEntity? = null  // M46: Sinkron data dengan Mining Room
 ) {
     var name by remember { mutableStateOf(user?.name ?: "") }
     var email by remember { mutableStateOf(user?.email ?: "") }
@@ -266,7 +268,8 @@ fun ProfileScreen(
                 slotsUsed = minerSlotsUsed,
                 slotsMax = minerSlotsMax,
                 powerGhs = minerPowerGhs,
-                tokens = minerTokens
+                tokens = minerTokens,
+                roomState = roomState  // M46: Pass roomState untuk sinkron
             )
         }
 
@@ -526,7 +529,8 @@ private fun MiningStatsCard(
     slotsUsed: Int,
     slotsMax: Int,
     powerGhs: Double,
-    tokens: Int
+    tokens: Int,
+    roomState: GameRoomStateEntity? = null  // M46: Data sinkron dari server
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -553,9 +557,9 @@ private fun MiningStatsCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format(Locale.US, "%.4f", powerGhs * 0.0144)} RTP", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "0.00 RTP", ElectricBlue, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+0 GH/s", GoldVip, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format(Locale.US, "%.4f", (roomState?.ratePerMin ?: (powerGhs * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", ElectricBlue, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+${String.format(Locale.US, "%.0f", roomState?.tempPowerBonusGhs ?: 0.0)} GH/s", GoldVip, Modifier.weight(1f))
             }
         }
     }

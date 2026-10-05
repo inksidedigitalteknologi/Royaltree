@@ -804,7 +804,8 @@ fun MainAffiliateAppContent(
                             else -> 6
                         },
                         minerPowerGhs = placedMiners.sumOf { it.powerGhs },
-                        minerTokens = 0
+                        minerTokens = 0,
+                        roomState = roomState
                     )
                 }
 
