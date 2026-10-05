@@ -293,7 +293,7 @@ fun AdminScreen(
             1 -> {
                 // User Management
                 items(userList) { u ->
-                    AdminUserCard(user = u)
+                    AdminUserCard(user = u, currentLanguage = currentLanguage)
                 }
             }
 
@@ -534,7 +534,7 @@ fun AdminScreen(
 }
 
 @Composable
-fun AdminUserCard(user: UserEntity) {
+fun AdminUserCard(user: UserEntity, currentLanguage: AppLanguage) {
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
