@@ -960,6 +960,39 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    /**
+     * M36 + M37 — Unlock slot tambahan (slot 3-6).
+     * @param slotIndex 0-indexed slot (2=slot3, 3=slot4, 4=slot5, 5=slot6)
+     */
+    fun unlockSlot(slotIndex: Int) {
+        viewModelScope.launch {
+            ApiClient.unlockSlot(slotIndex)
+                .onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
+                        val dataObj = json.optJSONObject("data")
+                        val unlockedSlots = dataObj?.optInt("unlockedSlots", 0) ?: 0
+                        val pricePaid = dataObj?.optInt("pricePaid", 0) ?: 0
+
+                        showSnackbar("🔓 Slot ${slotIndex + 1} terbuka! (-${pricePaid} RTP)")
+                        android.util.Log.d("UnlockSlot", "✅ Slot ${slotIndex + 1} unlocked")
+
+                        // Refresh game state
+                        loadGameState()
+                        loadUserFromBackend()
+                    } else {
+                        val msg = json.optString("message", "Gagal membuka slot")
+                        val httpCode = json.optInt("httpCode", 0)
+                        android.util.Log.w("UnlockSlot", "Failed: HTTP $httpCode — $msg")
+                        showSnackbar("⚠️ $msg")
+                    }
+                }
+                .onFailure { err ->
+                    android.util.Log.e("UnlockSlot", "❌ Error: ${err.message}")
+                    showSnackbar("Error: ${err.message ?: "Network error"}")
+                }
+        }
+    }
+
     fun updateProfile(name: String, email: String, phone: String, region: String) {
         viewModelScope.launch {
             val currentUser = user.value

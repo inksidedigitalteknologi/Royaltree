@@ -913,7 +913,8 @@ fun MainAffiliateAppContent(
                         onFinishGame = onFinishGame,
                         onNavigateToMissions = { onNavigate(AppScreen.MISSIONS) },
                         onBack = { onNavigate(AppScreen.GAME_ROOM) },
-                        currentLanguage = currentLanguage
+                        currentLanguage = currentLanguage,
+                        onUnlockSlot = { slotIndex -> viewModel.unlockSlot(slotIndex) }
                     )
                 }
 

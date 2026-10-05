@@ -158,6 +158,7 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
                 },
                 room: {
                     ...room,
+                    unlockedSlots: room.unlockedSlots || 2,
                     totalPowerGhs: totalPowerGhs,
                     pointsPerDay: pointsPerDay
                 },
@@ -449,6 +450,114 @@ router.post('/mining/place', verifyFirebaseToken, async (req, res) => {
         return res.json({ success: true, message: 'Miner dipasang.' });
     } catch (error) {
         console.error('Place miner error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// POST /api/v1/game/mining/unlock-slot
+// Beli slot mining tambahan (slot 3-6)
+// Body: { slotIndex }  // 2, 3, 4, 5 (0-indexed)
+// ============================================================
+const SLOT_PRICES = {
+    2: 500,      // slot 3
+    3: 1500,     // slot 4
+    4: 3000,     // slot 5
+    5: 5000      // slot 6
+};
+
+router.post('/mining/unlock-slot', verifyFirebaseToken, checkFraud, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+        const { slotIndex } = req.body;
+
+        // Validasi slot index (2-5 = slot 3-6)
+        if (slotIndex === undefined || !SLOT_PRICES.hasOwnProperty(slotIndex)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Slot tidak valid. Hanya slot 3-6 yang perlu dibeli.'
+            });
+        }
+
+        const price = SLOT_PRICES[slotIndex];
+
+        // Cek user points
+        const userRef = db.collection('users').doc(uid);
+        const userDoc = await userRef.get();
+        if (!userDoc.exists) {
+            return res.status(404).json({ success: false, message: 'User tidak ditemukan' });
+        }
+        const userData = userDoc.data();
+        const userPoints = userData.points || 0;
+
+        if (userPoints < price) {
+            return res.status(400).json({
+                success: false,
+                message: `Saldo tidak cukup. Butuh ${price} RTP, saldo Anda ${userPoints} RTP.`
+            });
+        }
+
+        // Cek unlockedSlots sekarang
+        const roomRef = db.collection('game_rooms').doc(uid);
+        const roomDoc = await roomRef.get();
+        const room = roomDoc.exists ? roomDoc.data() : {};
+        const currentUnlocked = room.unlockedSlots || 2;
+
+        // Cek sudah unlock atau belum
+        if (slotIndex < currentUnlocked) {
+            return res.status(400).json({
+                success: false,
+                message: 'Slot ini sudah terbuka.'
+            });
+        }
+
+        // Slot unlock harus berurutan
+        if (slotIndex > currentUnlocked) {
+            return res.status(400).json({
+                success: false,
+                message: `Slot harus dibuka secara berurutan. Buka slot ${currentUnlocked + 1} dulu.`
+            });
+        }
+
+        // Potong points + unlock slot
+        const batch = db.batch();
+        batch.update(userRef, {
+            points: admin.firestore.FieldValue.increment(-price)
+        });
+        batch.set(roomRef, {
+            unlockedSlots: slotIndex + 1
+        }, { merge: true });
+
+        // Audit log
+        const auditRef = db.collection('audit_logs').doc();
+        batch.set(auditRef, {
+            userId: uid,
+            action: 'MINING_UNLOCK_SLOT',
+            slotIndex,
+            price,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        await batch.commit();
+
+        // Notifikasi
+        await createNotification(
+            uid,
+            '🔓 Slot Terbuka!',
+            `Slot ${slotIndex + 1} berhasil dibuka (-${price} RTP)`,
+            'REWARD'
+        );
+
+        return res.json({
+            success: true,
+            message: `Slot ${slotIndex + 1} berhasil dibuka!`,
+            data: {
+                unlockedSlots: slotIndex + 1,
+                pricePaid: price
+            }
+        });
+    } catch (error) {
+        console.error('Unlock slot error:', error);
         return res.status(500).json({ success: false, message: error.message });
     }
 });
