@@ -388,11 +388,11 @@ private fun UpgradeTierCard(
     onClick: () -> Unit
 ) {
     val tierInfo = when (currentTier.uppercase()) {
-        "ROYAL" -> Triple("💎", "Royal", Color(0xFFB9F2FF))
-        "VIP" -> Triple("🥇", "VIP", GoldVip)
-        "PREMIUM" -> Triple("🥈", "Premium", Color(0xFFC0C0C0))
-        "STARTER" -> Triple("🥉", "Pemula", Color(0xFFCD7F32))
-        else -> Triple("🌱", "Gratis", EmeraldLight)
+        "ROYAL" -> Triple("💎", LanguageManager.translate("tier_royal", currentLanguage, "Royal"), Color(0xFFB9F2FF))
+        "VIP" -> Triple("🥇", LanguageManager.translate("tier_vip", currentLanguage, "VIP"), GoldVip)
+        "PREMIUM" -> Triple("🥈", LanguageManager.translate("tier_premium", currentLanguage, "Premium"), Color(0xFFC0C0C0))
+        "STARTER" -> Triple("🥉", LanguageManager.translate("tier_starter", currentLanguage, "Pemula"), Color(0xFFCD7F32))
+        else -> Triple("🌱", LanguageManager.translate("tier_free", currentLanguage, "Gratis"), EmeraldLight)
     }
 
     Card(
@@ -538,7 +538,7 @@ private fun MiningStatsCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format("%.2f", powerGhs * 0.06 * 24)} RTP", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format("%.8f", powerGhs * 0.00144)} RTP", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "0.00 RTP", ElectricBlue, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+0 GH/s", GoldVip, Modifier.weight(1f))
             }

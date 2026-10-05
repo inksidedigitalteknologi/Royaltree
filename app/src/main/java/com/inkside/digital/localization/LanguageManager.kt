@@ -1613,6 +1613,56 @@ object LanguageManager {
             AppLanguage.JAPANESE to "転送履歴"
         ),
 
+        // ============ Tier Labels (NEW) ============
+        "tier_royal" to mapOf(
+            AppLanguage.INDONESIAN to "Royal",
+            AppLanguage.ENGLISH to "Royal",
+            AppLanguage.SPANISH to "Real",
+            AppLanguage.CHINESE to "皇家",
+            AppLanguage.ARABIC to "ملكي",
+            AppLanguage.JAPANESE to "ロイヤル"
+        ),
+        "tier_vip" to mapOf(
+            AppLanguage.INDONESIAN to "VIP",
+            AppLanguage.ENGLISH to "VIP",
+            AppLanguage.SPANISH to "VIP",
+            AppLanguage.CHINESE to "VIP",
+            AppLanguage.ARABIC to "VIP",
+            AppLanguage.JAPANESE to "VIP"
+        ),
+        "tier_premium" to mapOf(
+            AppLanguage.INDONESIAN to "Premium",
+            AppLanguage.ENGLISH to "Premium",
+            AppLanguage.SPANISH to "Premium",
+            AppLanguage.CHINESE to "高级",
+            AppLanguage.ARABIC to "بريميوم",
+            AppLanguage.JAPANESE to "プレミアム"
+        ),
+        "tier_starter" to mapOf(
+            AppLanguage.INDONESIAN to "Pemula",
+            AppLanguage.ENGLISH to "Starter",
+            AppLanguage.SPANISH to "Principiante",
+            AppLanguage.CHINESE to "入门",
+            AppLanguage.ARABIC to "مبتدئ",
+            AppLanguage.JAPANESE to "スターター"
+        ),
+        "tier_free" to mapOf(
+            AppLanguage.INDONESIAN to "Gratis",
+            AppLanguage.ENGLISH to "Free",
+            AppLanguage.SPANISH to "Gratis",
+            AppLanguage.CHINESE to "免费",
+            AppLanguage.ARABIC to "مجاني",
+            AppLanguage.JAPANESE to "無料"
+        ),
+        "profile_default_user" to mapOf(
+            AppLanguage.INDONESIAN to "User",
+            AppLanguage.ENGLISH to "User",
+            AppLanguage.SPANISH to "Usuario",
+            AppLanguage.CHINESE to "用户",
+            AppLanguage.ARABIC to "مستخدم",
+            AppLanguage.JAPANESE to "ユーザー"
+        ),
+
         "profile_bonus" to mapOf(
             AppLanguage.INDONESIAN to "Bonus",
             AppLanguage.ENGLISH to "Bonus",
