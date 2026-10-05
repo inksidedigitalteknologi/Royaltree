@@ -23,6 +23,7 @@ const MINER_CATALOG = [
         powerGhs: 10,
         pointsPerDay: 0.144,
         pointsPerMinute: 0.0001,
+        bonusPermanentPct: 0,
         description: 'Miner dasar untuk pemula'
     },
     {
@@ -34,6 +35,7 @@ const MINER_CATALOG = [
         powerGhs: 50,
         pointsPerDay: 0.72,
         pointsPerMinute: 0.0005,
+        bonusPermanentPct: 0.10,
         description: 'Miner dengan power lebih besar'
     },
     {
@@ -45,6 +47,7 @@ const MINER_CATALOG = [
         powerGhs: 200,
         pointsPerDay: 2.88,
         pointsPerMinute: 0.002,
+        bonusPermanentPct: 0.23,
         description: 'Miner dengan teknologi quantum'
     },
     {
@@ -56,6 +59,7 @@ const MINER_CATALOG = [
         powerGhs: 1000,
         pointsPerDay: 14.4,
         pointsPerMinute: 0.01,
+        bonusPermanentPct: 1.20,
         description: 'Miner raksasa dengan power luar biasa'
     },
     {
@@ -67,6 +71,7 @@ const MINER_CATALOG = [
         powerGhs: 5000,
         pointsPerDay: 72,
         pointsPerMinute: 0.05,
+        bonusPermanentPct: 3.00,
         description: 'Miner legendaris dengan power tak terbatas'
     }
 ];
@@ -88,11 +93,46 @@ function getTokenReward(source) {
 // HELPER: Hitung poin dari total power
 // ============================================================
 function calculatePointsPerDay(totalPowerGhs, miners = []) {
-    // M34 FIX (Updated): Formula rate realistic
-    // 10 GH/s → 0.144 RTP/hari (setara 0.0001 RTP/menit)
-    // 50 GH/s → 0.72 RTP/hari
-    // 5000 GH/s → 72 RTP/hari
     return totalPowerGhs * 0.0144;
+}
+
+// ============================================================
+// M43 FEATURE: Bonus Speed System
+// - Permanent bonus dari miner (bonusPermanentPct)
+// - Temporary bonus dari mini-game (miniGameBonusPct)
+// Formula: finalRate = baseRate * (1 + permanent% + miniGame%)
+// Cap mini-game: 20%/hari (INTERNAL — jangan dedahkan ke client)
+// ============================================================
+const MINI_GAME_BONUS_CAP_PCT = 20.0;   // Hidden cap harian
+const MINI_GAME_BONUS_DURATION_MS = 24 * 60 * 60 * 1000;  // 24 jam
+
+function calculateFinalRate(baseRate, room, placedMiners) {
+    // 1. Bonus permanen dari miner yang placed
+    let permanentBonusPct = 0;
+    (placedMiners || []).forEach(m => {
+        if (m.bonusPermanentPct) permanentBonusPct += m.bonusPermanentPct;
+    });
+
+    // 2. Bonus dari mini-game (jika belum expiry)
+    let miniGameBonusPct = 0;
+    if (room.miniGameBonusExpiry && room.miniGameBonusExpiry > Date.now()) {
+        miniGameBonusPct = room.miniGameBonusPct || 0;
+        // Safety: cap di MINI_GAME_BONUS_CAP_PCT
+        if (miniGameBonusPct > MINI_GAME_BONUS_CAP_PCT) {
+            miniGameBonusPct = MINI_GAME_BONUS_CAP_PCT;
+        }
+    }
+
+    const totalBonusPct = permanentBonusPct + miniGameBonusPct;
+    const finalRate = baseRate * (1 + totalBonusPct / 100);
+
+    return {
+        baseRate: parseFloat(baseRate.toFixed(10)),
+        permanentBonusPct: parseFloat(permanentBonusPct.toFixed(4)),
+        miniGameBonusPct: parseFloat(miniGameBonusPct.toFixed(4)),
+        totalBonusPct: parseFloat(totalBonusPct.toFixed(4)),
+        finalRate: parseFloat(finalRate.toFixed(10))
+    };
 }
 
 // ============================================================
@@ -261,7 +301,10 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
             placedMinersArr.push({ id: doc.id, ...doc.data() });
         });
         
-        const ratePerMinFresh = placedMinersArr.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
+        // M43: Guna calculateFinalRate untuk masukkan bonus permanen + minigame
+        const baseRateFresh = placedMinersArr.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
+        const rateCalcFresh = calculateFinalRate(baseRateFresh, room, placedMinersArr);
+        const ratePerMinFresh = rateCalcFresh.finalRate;
         const lastUpdateFresh = room.lastMiningUpdateTimestamp 
             || room.lastClaimTimestamp 
             || Date.now();
@@ -272,7 +315,7 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
         const computedUnclaimedFresh = elapsedMinFresh * ratePerMinFresh;
         const unclaimed = parseFloat((storedUnclaimedFresh + computedUnclaimedFresh).toFixed(8));
         
-        console.log(`[CLAIM-AD] User ${uid}: unclaimed=${unclaimed}, rate=${ratePerMinFresh}/min`);
+        console.log(`[CLAIM-AD] User ${uid}: unclaimed=${unclaimed}, base=${rateCalcFresh.baseRate}, perm=${rateCalcFresh.permanentBonusPct}%, mini=${rateCalcFresh.miniGameBonusPct}%, final=${ratePerMinFresh}/min`);
         
         if (unclaimed < 0.01) {
             return res.status(400).json({
@@ -364,7 +407,10 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
             placedMiners.push({ id: doc.id, ...doc.data() });
         });
         
-        const ratePerMin = placedMiners.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
+        // M43: Guna calculateFinalRate untuk masukkan bonus permanen + minigame
+        const baseRate = placedMiners.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
+        const rateCalc = calculateFinalRate(baseRate, room, placedMiners);
+        const ratePerMin = rateCalc.finalRate;
         const lastUpdate = room.lastMiningUpdateTimestamp 
             || room.lastClaimTimestamp 
             || Date.now();
@@ -375,7 +421,7 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
         const computedUnclaimed = elapsedMin * ratePerMin;
         const unclaimed = parseFloat((storedUnclaimed + computedUnclaimed).toFixed(8));
         
-        console.log(`[CLAIM] User ${uid}: unclaimed=${unclaimed}, rate=${ratePerMin}/min`);
+        console.log(`[CLAIM] User ${uid}: unclaimed=${unclaimed}, base=${rateCalc.baseRate}, perm=${rateCalc.permanentBonusPct}%, mini=${rateCalc.miniGameBonusPct}%, final=${ratePerMin}/min`);
         
         if (unclaimed < 0.01) {
             return res.status(400).json({
@@ -482,14 +528,16 @@ router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => 
 
         // Simpan miner ke inventory
         const minerRef = db.collection('game_miners').doc(minerId);
+        // M43 FIX: Guna field dari CATALOG (server-side), bukan req.body
         await minerRef.set({
             userId: uid,
-            name: name || 'Miner',
-            tier: tier || 'COMMON',
-            iconEmoji: iconEmoji || '⛏️',
+            name: name,
+            tier: tier,
+            iconEmoji: iconEmoji,
             pricePoints: pricePoints,
-            powerGhs: powerGhs || 0,
+            powerGhs: powerGhs,
             pointsPerMinute: pointsPerMinute || 0,
+            bonusPermanentPct: bonusPermanentPct || 0,
             isOwned: true,
             isPlacedInRoom: false,
             placedSlotIndex: -1,
@@ -508,10 +556,50 @@ router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => 
         return res.json({
             success: true,
             message: `Berhasil beli ${name}!`,
-            data: { id: minerId, ...req.body }
+            data: {
+                id: minerId,
+                name, tier, iconEmoji,
+                pricePoints, powerGhs, pointsPerMinute,
+                bonusPermanentPct: bonusPermanentPct || 0
+            }
         });
     } catch (error) {
         console.error('Buy miner error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// GET /api/v1/game/mining/rate-info
+// Return breakdown rate + bonus untuk Android display
+// ============================================================
+router.get('/mining/rate-info', verifyFirebaseToken, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+
+        const roomDoc = await db.collection('game_rooms').doc(uid).get();
+        const room = roomDoc.exists ? roomDoc.data() : {};
+
+        const minersSnap = await db.collection('game_miners')
+            .where('userId', '==', uid)
+            .where('isPlacedInRoom', '==', true)
+            .get();
+
+        const placedMiners = [];
+        minersSnap.forEach(doc => {
+            placedMiners.push({ id: doc.id, ...doc.data() });
+        });
+
+        const baseRate = placedMiners.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
+        const rateInfo = calculateFinalRate(baseRate, room, placedMiners);
+
+        return res.json({
+            success: true,
+            ...rateInfo,
+            placedMinerCount: placedMiners.length
+        });
+    } catch (error) {
+        console.error('Rate info error:', error);
         return res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -718,6 +806,30 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
         const userRef = db.collection('users').doc(uid);
         const roomRef = db.collection('game_rooms').doc(uid);
 
+        // M43: Random speed bonus drop (0.01% - 0.03%)
+        // 60% common (+0.01%), 30% uncommon (+0.02%), 10% rare (+0.03%)
+        const roll = Math.random();
+        let speedBonusDropped = 0.01;
+        if (roll >= 0.90) {
+            speedBonusDropped = 0.03;      // 10% rare
+        } else if (roll >= 0.60) {
+            speedBonusDropped = 0.02;      // 30% uncommon
+        } else {
+            speedBonusDropped = 0.01;      // 60% common
+        }
+
+        // Baca current state untuk stack + cap
+        const roomDoc = await roomRef.get();
+        const roomData = roomDoc.exists ? roomDoc.data() : {};
+        const currentMiniBonus = roomData.miniGameBonusPct || 0;
+        const currentExpiry = roomData.miniGameBonusExpiry || 0;
+        const now = Date.now();
+
+        // Jika expiry dah lepas, reset dari 0
+        const baseBonus = (currentExpiry > now) ? currentMiniBonus : 0;
+        const newMiniBonus = Math.min(baseBonus + speedBonusDropped, MINI_GAME_BONUS_CAP_PCT);
+        const newExpiry = now + MINI_GAME_BONUS_DURATION_MS;
+
         const batch = db.batch();
 
         // 1. Tambah points ke user
@@ -725,11 +837,13 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
             points: admin.firestore.FieldValue.increment(bonusPoints)
         });
 
-        // 2. Update room state (boost power)
+        // 2. Update room state (boost power + speed bonus)
         batch.set(roomRef, {
             tempPowerBonusGhs: admin.firestore.FieldValue.increment(boostGhs),
             bonusExpiryTimestamp: boostExpiry,
-            lastMiniGameAt: Date.now()
+            miniGameBonusPct: newMiniBonus,
+            miniGameBonusExpiry: newExpiry,
+            lastMiniGameAt: now
         }, { merge: true });
 
         // 3. Audit log
@@ -740,17 +854,24 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
             score,
             bonusPoints,
             boostGhs,
+            speedBonusDropped,
+            newMiniBonus,
             timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
 
         await batch.commit();
+
+        console.log(`[MINIGAME] User ${uid}: score=${score}, +${speedBonusDropped}% bonus, total=${newMiniBonus}%, expiry=${new Date(newExpiry).toISOString()}`);
 
         return res.json({
             success: true,
             data: {
                 bonusPoints,
                 boostGhs,
-                boostExpiry
+                boostExpiry,
+                speedBonusDropped,
+                totalSpeedBonus: newMiniBonus,
+                speedBonusExpiry: newExpiry
             }
         });
     } catch (error) {
