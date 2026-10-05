@@ -21,7 +21,8 @@ const MINER_CATALOG = [
         iconEmoji: '⛏️',
         tokenCost: 10,
         powerGhs: 10,
-        pointsPerDay: 1,
+        pointsPerDay: 0.0144,
+        pointsPerMinute: 0.00001,
         description: 'Miner dasar untuk pemula'
     },
     {
@@ -31,7 +32,8 @@ const MINER_CATALOG = [
         iconEmoji: '🔧',
         tokenCost: 50,
         powerGhs: 50,
-        pointsPerDay: 4,
+        pointsPerDay: 0.072,
+        pointsPerMinute: 0.00005,
         description: 'Miner dengan power lebih besar'
     },
     {
@@ -41,7 +43,8 @@ const MINER_CATALOG = [
         iconEmoji: '⚡',
         tokenCost: 200,
         powerGhs: 200,
-        pointsPerDay: 15,
+        pointsPerDay: 0.288,
+        pointsPerMinute: 0.0002,
         description: 'Miner dengan teknologi quantum'
     },
     {
@@ -51,7 +54,8 @@ const MINER_CATALOG = [
         iconEmoji: '💎',
         tokenCost: 1000,
         powerGhs: 1000,
-        pointsPerDay: 60,
+        pointsPerDay: 1.44,
+        pointsPerMinute: 0.001,
         description: 'Miner raksasa dengan power luar biasa'
     },
     {
@@ -61,7 +65,8 @@ const MINER_CATALOG = [
         iconEmoji: '🌌',
         tokenCost: 5000,
         powerGhs: 5000,
-        pointsPerDay: 300,
+        pointsPerDay: 7.2,
+        pointsPerMinute: 0.005,
         description: 'Miner legendaris dengan power tak terbatas'
     }
 ];
@@ -83,13 +88,11 @@ function getTokenReward(source) {
 // HELPER: Hitung poin dari total power
 // ============================================================
 function calculatePointsPerDay(totalPowerGhs, miners = []) {
-    // Utamakan sum pointsPerDay dari catalog (tepat)
-    if (Array.isArray(miners) && miners.length > 0) {
-        const sum = miners.reduce((s, m) => s + (m.pointsPerDay || 0), 0);
-        if (sum > 0) return sum;
-    }
-    // Fallback: formula ratio (kalau miners array kosong)
-    return totalPowerGhs * 0.06;
+    // M34 FIX: Formula rate realistis 8 desimal
+    // 10 GH/s → 0.0144 RTP/hari (setara 0.00001 RTP/menit)
+    // 50 GH/s → 0.072 RTP/hari
+    // 5000 GH/s → 7.2 RTP/hari
+    return totalPowerGhs * 0.00144;
 }
 
 // ============================================================
@@ -110,7 +113,7 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
         // Ambil game room state
         const roomRef = db.collection('game_rooms').doc(uid);
         const roomDoc = await roomRef.get();
-        const room = roomDoc.exists ? roomDoc.data() : {
+        let room = roomDoc.exists ? roomDoc.data() : {
             unclaimedMiningPoints: 0,
             lastClaimTimestamp: Date.now(),
             totalMinedPointsClaimed: 0,
@@ -118,6 +121,17 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
             bonusExpiryTimestamp: 0,
             miniGameHighScore: 0
         };
+
+        // M35 FIX: Check bonus expiry (24 jam)
+        if (room.bonusExpiryTimestamp && room.bonusExpiryTimestamp < Date.now()) {
+            await roomRef.set({
+                tempPowerBonusGhs: 0,
+                bonusExpiryTimestamp: 0
+            }, { merge: true });
+            room.tempPowerBonusGhs = 0;
+            room.bonusExpiryTimestamp = 0;
+            console.log(`[MINING] Bonus expired untuk ${uid}`);
+        }
 
         // Ambil miner items
         const minersSnapshot = await db.collection('game_miners')
