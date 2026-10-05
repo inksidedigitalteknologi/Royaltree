@@ -1,5 +1,6 @@
 package com.inkside.digital.ui.screens
 
+import java.util.Locale
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Surface

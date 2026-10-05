@@ -518,7 +518,7 @@ fun MainAffiliateApp(
         onClaimMining = { viewModel.setPendingMiningClaim(true); viewModel.showAdRewardModal.value = true },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
-        onFinishGame = { score -> viewModel.finishMiniGame(score) },
+        onFinishGame = { score, duration, nonce -> viewModel.finishMiniGame(score, duration, nonce) },
         onLogout = onLogout
     )
 }
@@ -645,7 +645,7 @@ fun MainAffiliateAppContent(
     onClaimMining: () -> Unit,
     onToggleMinerSlot: (String, Int) -> Unit,
     onBuyGameMinerItem: (String) -> Unit,
-    onFinishGame: (Int) -> Unit,
+    onFinishGame: (Int, Long, String) -> Unit,
     onUnlockSlot: (Int) -> Unit = {},
     onLogout: () -> Unit = {}
 ) {
@@ -1225,7 +1225,7 @@ fun MainAffiliateAppPreview() {
             onClaimMining = {},
             onToggleMinerSlot = { _, _ -> },
             onBuyGameMinerItem = {},
-            onFinishGame = {}
+            onFinishGame = { _, _, _ -> }
         )
     }
 }
