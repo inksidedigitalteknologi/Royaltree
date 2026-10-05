@@ -147,6 +147,31 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
         const totalPowerGhs = miners.reduce((sum, m) => sum + (m.powerGhs || 0), 0);
         const pointsPerDay = calculatePointsPerDay(totalPowerGhs, miners);
 
+        // ============ M41 FIX: Compute unclaimedMiningPoints ============
+        // Guna lastMiningUpdateTimestamp (kalau ada) atau lastClaimTimestamp
+        const placedMiners = miners.filter(m => m.isPlacedInRoom === true);
+        const ratePerMin = placedMiners.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
+        
+        const lastUpdate = room.lastMiningUpdateTimestamp 
+            || room.lastClaimTimestamp 
+            || Date.now();
+        const elapsedMs = Math.max(0, Date.now() - lastUpdate);
+        const elapsedMin = elapsedMs / 60000;
+        
+        // Kalau backend punya unclaimedMiningPoints, guna. Kalau tak, compute.
+        const storedUnclaimed = room.unclaimedMiningPoints || 0;
+        const computedUnclaimed = elapsedMin * ratePerMin;
+        const unclaimedMiningPoints = parseFloat((storedUnclaimed + computedUnclaimed).toFixed(8));
+        
+        // Update lastMiningUpdateTimestamp supaya tidak double-count
+        await roomRef.set({
+            unclaimedMiningPoints: unclaimedMiningPoints,
+            lastMiningUpdateTimestamp: Date.now(),
+            lastClaimTimestamp: room.lastClaimTimestamp || Date.now()
+        }, { merge: true });
+        
+        console.log(`[MINING] User ${uid}: unclaimed=${unclaimedMiningPoints}, rate=${ratePerMin}/min, elapsed=${elapsedMin.toFixed(2)}min`);
+
         return res.json({
             success: true,
             data: {
@@ -158,6 +183,9 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
                 },
                 room: {
                     ...room,
+                    unclaimedMiningPoints: unclaimedMiningPoints,
+                    lastClaimTimestamp: room.lastClaimTimestamp || Date.now(),
+                    lastMiningClaimAt: room.lastMiningClaimAt || 0,
                     unlockedSlots: room.unlockedSlots || 2,
                     totalPowerGhs: totalPowerGhs,
                     pointsPerDay: pointsPerDay
@@ -220,11 +248,34 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
             });
         }
 
-        const unclaimed = room.unclaimedMiningPoints || 0;
+        // ============ M41 FIX: Compute fresh unclaimed ============
+        const minersSnap = await db.collection('game_miners')
+            .where('userId', '==', uid)
+            .where('isPlacedInRoom', '==', true)
+            .get();
+        
+        const placedMinersArr = [];
+        minersSnap.forEach(doc => {
+            placedMinersArr.push({ id: doc.id, ...doc.data() });
+        });
+        
+        const ratePerMinFresh = placedMinersArr.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
+        const lastUpdateFresh = room.lastMiningUpdateTimestamp 
+            || room.lastClaimTimestamp 
+            || Date.now();
+        const elapsedMsFresh = Math.max(0, Date.now() - lastUpdateFresh);
+        const elapsedMinFresh = elapsedMsFresh / 60000;
+        
+        const storedUnclaimedFresh = room.unclaimedMiningPoints || 0;
+        const computedUnclaimedFresh = elapsedMinFresh * ratePerMinFresh;
+        const unclaimed = parseFloat((storedUnclaimedFresh + computedUnclaimedFresh).toFixed(8));
+        
+        console.log(`[CLAIM-AD] User ${uid}: unclaimed=${unclaimed}, rate=${ratePerMinFresh}/min`);
+        
         if (unclaimed < 1) {
             return res.status(400).json({
                 success: false,
-                message: 'Belum ada poin yang bisa diklaim.'
+                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min 1).`
             });
         }
 
@@ -294,11 +345,34 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
         const roomDoc = await roomRef.get();
         const room = roomDoc.exists ? roomDoc.data() : {};
 
-        const unclaimed = room.unclaimedMiningPoints || 0;
+        // ============ M41 FIX: Compute fresh unclaimed ============
+        const minersSnap = await db.collection('game_miners')
+            .where('userId', '==', uid)
+            .where('isPlacedInRoom', '==', true)
+            .get();
+        
+        const placedMiners = [];
+        minersSnap.forEach(doc => {
+            placedMiners.push({ id: doc.id, ...doc.data() });
+        });
+        
+        const ratePerMin = placedMiners.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
+        const lastUpdate = room.lastMiningUpdateTimestamp 
+            || room.lastClaimTimestamp 
+            || Date.now();
+        const elapsedMs = Math.max(0, Date.now() - lastUpdate);
+        const elapsedMin = elapsedMs / 60000;
+        
+        const storedUnclaimed = room.unclaimedMiningPoints || 0;
+        const computedUnclaimed = elapsedMin * ratePerMin;
+        const unclaimed = parseFloat((storedUnclaimed + computedUnclaimed).toFixed(8));
+        
+        console.log(`[CLAIM] User ${uid}: unclaimed=${unclaimed}, rate=${ratePerMin}/min`);
+        
         if (unclaimed < 1) {
             return res.status(400).json({
                 success: false,
-                message: 'Belum ada poin yang bisa diklaim.'
+                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min 1).`
             });
         }
 
