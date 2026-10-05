@@ -559,14 +559,20 @@ fun AdminUserCard(user: UserEntity) {
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .background(if (user.tier == "PREMIUM") GoldVip else MaterialTheme.colorScheme.surfaceVariant)
+                        .background(if (user.tier in listOf("PREMIUM", "VIP", "ROYAL")) GoldVip else MaterialTheme.colorScheme.surfaceVariant)
                         .padding(horizontal = 8.dp, vertical = 3.dp)
                 ) {
                     Text(
-                        text = if (user.tier == "PREMIUM") "👑 VIP" else "FREE",
+                        text = when (user.tier) {
+                            "STARTER" -> "🥉 " + LanguageManager.translate("tier_starter", currentLanguage, "Pemula")
+                            "PREMIUM" -> "🥈 " + LanguageManager.translate("tier_premium", currentLanguage, "Premium")
+                            "VIP" -> "🥇 " + LanguageManager.translate("tier_vip", currentLanguage, "VIP")
+                            "ROYAL" -> "💎 " + LanguageManager.translate("tier_royal", currentLanguage, "Royal")
+                            else -> LanguageManager.translate("tier_free", currentLanguage, "Free")
+                        },
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (user.tier == "PREMIUM") Color.Black else MaterialTheme.colorScheme.onSurface
+                        color = if (user.tier in listOf("PREMIUM", "VIP", "ROYAL")) Color.Black else MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -756,13 +762,13 @@ fun AdminLocationTrackingSection(
 
                             // Heatmap pulse aura
                             drawCircle(
-                                color = if (log.userTier == "PREMIUM") GoldVip.copy(alpha = 0.35f) else EmeraldLight.copy(alpha = 0.3f),
+                                color = if (log.userTier in listOf("PREMIUM", "VIP", "ROYAL")) GoldVip.copy(alpha = 0.35f) else EmeraldLight.copy(alpha = 0.3f),
                                 radius = 18f,
                                 center = Offset(pinX, pinY)
                             )
                             // Solid center pinpoint
                             drawCircle(
-                                color = if (log.userTier == "PREMIUM") GoldVip else EmeraldLight,
+                                color = if (log.userTier in listOf("PREMIUM", "VIP", "ROYAL")) GoldVip else EmeraldLight,
                                 radius = 6f,
                                 center = Offset(pinX, pinY)
                             )
@@ -890,7 +896,7 @@ fun AdminLocationTrackingSection(
                                     Icon(
                                         imageVector = Icons.Default.LocationOn,
                                         contentDescription = null,
-                                        tint = if (log.userTier == "PREMIUM") GoldVip else ElectricBlue,
+                                        tint = if (log.userTier in listOf("PREMIUM", "VIP", "ROYAL")) GoldVip else ElectricBlue,
                                         modifier = Modifier.size(20.dp)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))

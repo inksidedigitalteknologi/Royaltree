@@ -159,7 +159,7 @@ fun AppTopBar(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.width(5.dp))
-                        if (user?.tier == "PREMIUM") {
+                        if (user?.tier in listOf("PREMIUM", "VIP", "ROYAL")) {
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(5.dp))
@@ -181,7 +181,7 @@ fun AppTopBar(
                                     .padding(horizontal = 5.dp, vertical = 1.dp)
                             ) {
                                 Text(
-                                    text = "FREE",
+                                    text = LanguageManager.translate("tier_free", currentLanguage, "Free"),
                                     fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant

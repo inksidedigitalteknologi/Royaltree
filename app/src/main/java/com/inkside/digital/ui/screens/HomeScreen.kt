@@ -74,7 +74,7 @@ fun HomeScreen(
     adButtonState: AdButtonState = AdButtonState.LOADING,
     onRetryAdLoad: () -> Unit = {}
 ) {
-    val isPremium = user?.tier == "PREMIUM"
+    val isPremium = user?.tier in listOf("PREMIUM", "VIP", "ROYAL")
 
     LazyColumn(
         modifier = Modifier
@@ -123,7 +123,13 @@ fun HomeScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = user?.tier ?: "FREE",
+                            text = when (user?.tier) {
+                                "STARTER" -> LanguageManager.translate("tier_starter", currentLanguage, "Pemula")
+                                "PREMIUM" -> LanguageManager.translate("tier_premium", currentLanguage, "Premium")
+                                "VIP" -> LanguageManager.translate("tier_vip", currentLanguage, "VIP")
+                                "ROYAL" -> LanguageManager.translate("tier_royal", currentLanguage, "Royal")
+                                else -> LanguageManager.translate("tier_free", currentLanguage, "Free")
+                            },
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (isPremium) GoldAccent else MaterialTheme.colorScheme.onSurfaceVariant
