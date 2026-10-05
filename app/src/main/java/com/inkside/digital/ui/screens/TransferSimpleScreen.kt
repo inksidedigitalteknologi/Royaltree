@@ -86,7 +86,7 @@ fun TransferSimpleScreen(
                             )
                         )
                         Text(
-                            text = LanguageManager.translate("transfer_subtitle", currentLanguage, "Kirim saldo poin ke user lain"),
+                            text = LanguageManager.translate("transfer_subtitle", currentLanguage, "Kirim RTP ke user lain"),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

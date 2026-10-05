@@ -118,7 +118,7 @@ fun HistoryScreen(
                     "COMMISSION" to "Komisi",
                     "WITHDRAWAL" to "Tarik Dana",
                     "COUPON" to "Kupon",
-                    "REWARD" to "Poin"
+                    "REWARD" to "RTP"
                 ).forEach { (type, label) ->
                     val isSel = filterType == type
                     Box(

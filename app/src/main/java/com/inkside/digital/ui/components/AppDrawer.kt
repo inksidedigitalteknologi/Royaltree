@@ -321,7 +321,7 @@ private fun DrawerHeader(user: UserEntity?) {
                 )
                 InfoChip(
                     modifier = Modifier.weight(1f),
-                    label = "Poin",
+                    label = "RTP",
                     value = formatNumber((user?.points ?: 0).toDouble())
                 )
             }
