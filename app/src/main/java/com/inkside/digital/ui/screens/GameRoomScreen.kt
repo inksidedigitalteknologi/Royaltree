@@ -173,8 +173,12 @@ fun GameRoomScreenContent(
     val bonusPowerGhs = roomState?.tempPowerBonusGhs ?: 0.0
     val totalPowerGhs = basePowerGhs + bonusPowerGhs
 
-    val generationRatePerMin = remember(placedMiners) {
-        placedMiners.sumOf { it.pointsPerMinute }
+    // M43 ANTI-FRAUD: Guna ratePerMin dari server
+    // Fallback ke client-side kira kalau server belum hantar
+    val generationRatePerMin = remember(roomState?.ratePerMin, placedMiners) {
+        val serverRate = roomState?.ratePerMin ?: 0.0
+        if (serverRate > 0.0) serverRate
+        else placedMiners.sumOf { it.pointsPerMinute }  // fallback
     }
 
     LaunchedEffect(roomState, placedMiners) {
@@ -195,7 +199,7 @@ fun GameRoomScreenContent(
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "Ruang Mining RollerCoin",
+                                text = "Ruang Mining Royaltree",
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
@@ -371,7 +375,7 @@ fun GameRoomScreenContent(
                             }
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                 Text(LanguageManager.translate("game_rate_points", currentLanguage, "Rate Poin:"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("+${item.pointsPerMinute} Poin/Menit", fontWeight = FontWeight.Bold, color = EmeraldLight, fontSize = 12.sp)
+                                Text("+${String.format(Locale.US, "%.4f", item.pointsPerMinute)} RTP/mnt", fontWeight = FontWeight.Bold, color = EmeraldLight, fontSize = 12.sp)
                             }
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                 Text(LanguageManager.translate("game_your_points", currentLanguage, "Saldo Poin Anda:"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -473,7 +477,7 @@ fun GameRoomScreenContent(
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(miner.name, fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                                        Text("+${miner.powerGhs} GH/s • +${miner.pointsPerMinute} Poin/mnt", fontSize = 10.sp, color = EmeraldLight)
+                                        Text("+${miner.powerGhs} GH/s • +${String.format(Locale.US, "%.4f", miner.pointsPerMinute)} RTP/mnt", fontSize = 10.sp, color = EmeraldLight)
                                     }
                                     Button(
                                         onClick = {
@@ -586,7 +590,7 @@ private fun HeroBanner(
                 RetroStatBox(
                     emoji = "⚡",
                     label = "RATE",
-                    value = "${String.format("%.2f", generationRatePerMin)}/m",
+                    value = "${String.format(Locale.US, "%.4f", generationRatePerMin)}/m",
                     color = EmeraldLight,
                     modifier = Modifier.weight(1f)
                 )
@@ -809,7 +813,7 @@ private fun MiningRoomTab(
                                     }
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = "+${String.format(Locale.US, "%.2f", generationRatePerMin)} /mnt",
+                                        text = "+${String.format(Locale.US, "%.4f", generationRatePerMin)} /mnt",
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = EmeraldLight
@@ -819,6 +823,15 @@ private fun MiningRoomTab(
                                         fontSize = 9.sp,
                                         color = Color(0xFF94A3B8)
                                     )
+                                    // M43: Bonus breakdown (dari server)
+                                    if ((roomState?.totalBonusPct ?: 0.0) > 0.0) {
+                                        Text(
+                                            text = "+${String.format(Locale.US, "%.2f", roomState?.totalBonusPct ?: 0.0)}% bonus",
+                                            fontSize = 9.sp,
+                                            color = Color(0xFFFFB800),
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -1149,7 +1162,7 @@ private fun RackSlotItemCard(
                         )
                     }
                     Text(
-                        text = "+${miner.pointsPerMinute} poin/mnt",
+                        text = "+${String.format(Locale.US, "%.4f", miner.pointsPerMinute)} RTP/mnt",
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
                         color = EmeraldLight
@@ -1249,7 +1262,7 @@ private fun ItemShopTab(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = LanguageManager.translate("game_unlock_miner", currentLanguage, "Unlock Miner dengan Token"),
+                            text = LanguageManager.translate("game_unlock_miner", currentLanguage, "Unlock Miner dengan RTP"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
                         )
@@ -1267,7 +1280,7 @@ private fun ItemShopTab(
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(LanguageManager.translate("profile_token", currentLanguage, "Token") + ": ", fontSize = 11.sp, color = RetroGold)
+                                Text("RTP: ", fontSize = 11.sp, color = RetroGold)
                                 Text(
                                     text = "$minerTokens",
                                     fontSize = 12.sp,
@@ -1443,7 +1456,7 @@ private fun ShopMinerCard(
                         Text("💰", fontSize = 11.sp)
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "+${item.pointsPerMinute}/mnt",
+                            text = "+${String.format(Locale.US, "%.4f", item.pointsPerMinute)} RTP/mnt",
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = EmeraldLight
@@ -1602,7 +1615,7 @@ private fun MiniGameArcadeTab(
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Column {
                                     Text(LanguageManager.translate("game_coinrush_title", currentLanguage, "Crypto Coin Tap Rush"), fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
-                                    Text(LanguageManager.translate("game_coinrush_subtitle", currentLanguage, "Mini-Game Penghasil Power RollerCoin"), fontSize = 11.sp, color = Color(0xFFC7D2FE))
+                                    Text(LanguageManager.translate("game_coinrush_subtitle", currentLanguage, "Mini-Game Penghasil Power Royaltree"), fontSize = 11.sp, color = Color(0xFFC7D2FE))
                                 }
                             }
                             Surface(

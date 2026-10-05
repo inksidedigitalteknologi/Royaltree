@@ -28,8 +28,8 @@ object LanguageManager {
             AppLanguage.JAPANESE to "キャンペーン"
         ),
         "nav_missions" to mapOf(
-            AppLanguage.INDONESIAN to "Misi Poin",
-            AppLanguage.ENGLISH to "Point Missions",
+            AppLanguage.INDONESIAN to "Misi RTP",
+            AppLanguage.ENGLISH to "RTP Missions",
             AppLanguage.SPANISH to "Misiones",
             AppLanguage.CHINESE to "积分任务",
             AppLanguage.ARABIC to "مهام النقاط",
@@ -132,7 +132,7 @@ object LanguageManager {
             AppLanguage.JAPANESE to "累計受取額"
         ),
         "activity_points" to mapOf(
-            AppLanguage.INDONESIAN to "Poin Aktivitas",
+            AppLanguage.INDONESIAN to "Aktivitas RTP",
             AppLanguage.ENGLISH to "Activity Points",
             AppLanguage.SPANISH to "Puntos de Actividad",
             AppLanguage.CHINESE to "活跃积分",
@@ -221,7 +221,7 @@ object LanguageManager {
             AppLanguage.JAPANESE to "広告を見る"
         ),
         "recover_pay_points" to mapOf(
-            AppLanguage.INDONESIAN to "Bayar %d Poin",
+            AppLanguage.INDONESIAN to "Bayar %d RTP",
             AppLanguage.ENGLISH to "Pay %d Points",
             AppLanguage.SPANISH to "Pagar %d Puntos",
             AppLanguage.CHINESE to "支付 %d 积分",
@@ -307,7 +307,7 @@ object LanguageManager {
             AppLanguage.JAPANESE to "ようこそ"
         ),
         "onboarding_welcome_desc" to mapOf(
-            AppLanguage.INDONESIAN to "Royaltree adalah platform afiliasi rewarding yang memberi kamu poin dari aktivitas sehari-hari.",
+            AppLanguage.INDONESIAN to "Royaltree adalah platform afiliasi rewarding yang memberi kamu RTP dari aktivitas sehari-hari.",
             AppLanguage.ENGLISH to "Royaltree is a rewarding affiliate platform that gives you points from daily activities.",
             AppLanguage.SPANISH to "Royaltree es una plataforma de afiliados que te da puntos por actividades diarias.",
             AppLanguage.CHINESE to "Royaltree 是一个奖励联盟平台，通过日常活动为您赚取积分。",
@@ -315,7 +315,7 @@ object LanguageManager {
             AppLanguage.JAPANESE to "Royaltreeは日常活動でポイントが貯まるアフィリエイトプラットフォームです。"
         ),
         "onboarding_points_title" to mapOf(
-            AppLanguage.INDONESIAN to "Banyak Cara Dapat Poin",
+            AppLanguage.INDONESIAN to "Banyak Cara Dapat RTP",
             AppLanguage.ENGLISH to "Many Ways to Earn Points",
             AppLanguage.SPANISH to "Muchas Formas de Ganar Puntos",
             AppLanguage.CHINESE to "多种赚取积分的方式",
@@ -323,7 +323,7 @@ object LanguageManager {
             AppLanguage.JAPANESE to "ポイントを稼ぐ多くの方法"
         ),
         "onboarding_points_desc" to mapOf(
-            AppLanguage.INDONESIAN to "Langkah kaki, misi harian, game, dan offerwall — semua bisa jadi poin.",
+            AppLanguage.INDONESIAN to "Langkah kaki, misi harian, game, dan offerwall — semua bisa jadi RTP.",
             AppLanguage.ENGLISH to "Steps, daily missions, games, and offerwall — everything becomes points.",
             AppLanguage.SPANISH to "Pasos, misiones diarias, juegos y offerwall: todo se convierte en puntos.",
             AppLanguage.CHINESE to "步数、每日任务、游戏和 offerwall——一切都能变成积分。",
@@ -339,7 +339,7 @@ object LanguageManager {
             AppLanguage.JAPANESE to "銀行へ出金"
         ),
         "onboarding_withdraw_desc" to mapOf(
-            AppLanguage.INDONESIAN to "Tukar poin jadi saldo, lalu tarik ke e-wallet atau bank favoritmu.",
+            AppLanguage.INDONESIAN to "Tukar RTP jadi Balance, lalu tarik ke e-wallet atau bank favoritmu.",
             AppLanguage.ENGLISH to "Convert points to balance, then withdraw to your favorite e-wallet or bank.",
             AppLanguage.SPANISH to "Convierte puntos en saldo y retíralos a tu billetera o banco favorito.",
             AppLanguage.CHINESE to "将积分转换为余额，然后提现到您最喜欢的电子钱包或银行。",
@@ -430,8 +430,8 @@ object LanguageManager {
             AppLanguage.JAPANESE to "残高"
         ),
         "home_points" to mapOf(
-            AppLanguage.INDONESIAN to "Poin",
-            AppLanguage.ENGLISH to "Points",
+            AppLanguage.INDONESIAN to "RTP",
+            AppLanguage.ENGLISH to "RTP",
             AppLanguage.SPANISH to "Puntos",
             AppLanguage.CHINESE to "积分",
             AppLanguage.ARABIC to "النقاط",
@@ -973,7 +973,7 @@ object LanguageManager {
             AppLanguage.JAPANESE to "視聴完了! ✓"
         ),
         "mission_game_promo" to mapOf(
-            AppLanguage.INDONESIAN to "Buka Ruang Game RollerCoin untuk menaruh item dan memproduksi poin pasif 24/7!",
+            AppLanguage.INDONESIAN to "Buka Ruang Mining Royaltree untuk menaruh item dan menghasilkan RTP pasif 24/7!",
             AppLanguage.ENGLISH to "Open Game Room to place items and generate passive points 24/7!",
             AppLanguage.SPANISH to "¡Abre Game Room para colocar objetos y generar puntos pasivos 24/7!",
             AppLanguage.CHINESE to "打开游戏室放置物品，24/7 产生被动积分！",
@@ -1222,7 +1222,7 @@ object LanguageManager {
         ),
         "game_rate_points" to mapOf(
             AppLanguage.INDONESIAN to "Rate Poin:",
-            AppLanguage.ENGLISH to "Point Rate:",
+            AppLanguage.ENGLISH to "Rate RTP:",
             AppLanguage.SPANISH to "Tasa de puntos:",
             AppLanguage.CHINESE to "积分速率：",
             AppLanguage.ARABIC to "معدل النقاط:",
@@ -1277,8 +1277,8 @@ object LanguageManager {
             AppLanguage.JAPANESE to "合計ハッシュレート"
         ),
         "game_point_speed" to mapOf(
-            AppLanguage.INDONESIAN to "Kecepatan Poin",
-            AppLanguage.ENGLISH to "Point Speed",
+            AppLanguage.INDONESIAN to "Kecepatan RTP",
+            AppLanguage.ENGLISH to "Rate RTP",
             AppLanguage.SPANISH to "Velocidad de puntos",
             AppLanguage.CHINESE to "积分速度",
             AppLanguage.ARABIC to "سرعة النقاط",
@@ -1333,12 +1333,12 @@ object LanguageManager {
             AppLanguage.JAPANESE to "クリプトコインタップラッシュ"
         ),
         "game_coinrush_subtitle" to mapOf(
-            AppLanguage.INDONESIAN to "Mini-Game Penghasil Power RollerCoin",
-            AppLanguage.ENGLISH to "RollerCoin Power Minigame",
-            AppLanguage.SPANISH to "Minijuego de poder RollerCoin",
-            AppLanguage.CHINESE to "RollerCoin 算力小游戏",
+            AppLanguage.INDONESIAN to "Mini-Game Penghasil Power Royaltree",
+            AppLanguage.ENGLISH to "Royaltree Power Minigame",
+            AppLanguage.SPANISH to "Minijuego de poder Royaltree",
+            AppLanguage.CHINESE to "Royaltree 算力小游戏",
             AppLanguage.ARABIC to "لعبة مصغرة لتوليد القوة",
-            AppLanguage.JAPANESE to "RollerCoin パワーミニゲーム"
+            AppLanguage.JAPANESE to "Royaltree パワーミニゲーム"
         ),
         "game_start_now" to mapOf(
             AppLanguage.INDONESIAN to "Mulai Game Sekarang (15s)",

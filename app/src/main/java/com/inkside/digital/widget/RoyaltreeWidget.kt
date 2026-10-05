@@ -162,7 +162,7 @@ class RoyaltreeWidget : GlanceAppWidget() {
                 StatItem(
                     emoji = "⭐",
                     value = points,
-                    label = "Poin",
+                    label = "RTP",
                     color = EmeraldLight,
                     modifier = GlanceModifier.defaultWeight()
                 )

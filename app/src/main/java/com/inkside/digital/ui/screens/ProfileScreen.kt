@@ -165,7 +165,7 @@ fun ProfileScreen(
                     modifier = Modifier.weight(1f)
                 ) {
                     Column(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
-                        Text(LanguageManager.translate("profile_points", currentLanguage, "Poin"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("RTP", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             "${user?.points ?: 0}",
                             fontSize = 16.sp, fontWeight = FontWeight.Black, color = ElectricBlue
@@ -531,7 +531,7 @@ private fun MiningStatsCard(
             ) {
                 MiniStatBox(LanguageManager.translate("profile_slot", currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), "${powerGhs.toInt()} GH/s", ElectricBlue, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_token", currentLanguage, "Token"), "$tokens", GoldVip, Modifier.weight(1f))
+                MiniStatBox("RTP", "$tokens", GoldVip, Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(

@@ -218,7 +218,13 @@ data class GameRoomStateEntity(
     val lastMiningClaimAt: Long = 0L,
     val lastMiningUpdateTimestamp: Long = System.currentTimeMillis(),
     // M36 + M37 — Slot unlock (default 2 slot free)
-    val unlockedSlots: Int = 2
+    val unlockedSlots: Int = 2,
+    // M43: Rate + bonus info (server-authoritative, display sahaja)
+    val ratePerMin: Double = 0.0,
+    val baseRate: Double = 0.0,
+    val permanentBonusPct: Double = 0.0,
+    val miniGameBonusPct: Double = 0.0,
+    val totalBonusPct: Double = 0.0
 )
 
 @Entity(tableName = "app_download_ads")

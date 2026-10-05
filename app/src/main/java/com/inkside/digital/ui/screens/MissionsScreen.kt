@@ -310,7 +310,7 @@ fun MissionsScreen(
                         "LIKE_SUB" to "❤️ Like & Sub",
                         "VIEW_WATCH" to "👁️ View & Nonton",
                         "WEB" to "🌐 Melayari Web",
-                        "GAME" to "🎮 Game RollerCoin",
+                        "GAME" to "🎮 Game Royaltree",
                         "DAILY" to "⭐ Tugas Harian",
                         "MILESTONE" to "🏆 Pencapaian"
                     )
@@ -622,7 +622,7 @@ fun InteractiveMissionDialog(
                         "VIEW" -> "👁️ Misi Lihat Promo"
                         "WATCH" -> "🎬 Misi Tonton Video"
                         "WEB" -> "🌐 Misi Melayari Website"
-                        "GAME" -> "🎮 Misi Game RollerCoin"
+                        "GAME" -> "🎮 Misi Game Royaltree"
                         else -> "⭐ Misi Hadiah RTP"
                     },
                     fontWeight = FontWeight.Bold,
@@ -822,7 +822,7 @@ fun InteractiveMissionDialog(
                         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                             Text("🎮", fontSize = 32.sp)
                             Spacer(modifier = Modifier.height(6.dp))
-                            Text(LanguageManager.translate("mission_game_promo", currentLanguage, "Buka Ruang Game RollerCoin untuk menaruh item dan memproduksi poin pasif 24/7!"), fontSize = 11.sp)
+                            Text(LanguageManager.translate("mission_game_promo", currentLanguage, "Buka Ruang Mining Royaltree untuk menghasilkan RTP pasif 24/7!"), fontSize = 11.sp)
                         }
                     }
                 }

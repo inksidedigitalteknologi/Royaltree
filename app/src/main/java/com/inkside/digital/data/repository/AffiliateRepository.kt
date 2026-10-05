@@ -1194,7 +1194,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 id = "tx_game_" + UUID.randomUUID().toString().take(8),
                 type = "POINT_REWARD",
                 title = "Klaim Hasil Pasif Ruang Game 🎮",
-                description = "Panen +$pointsAwarded Poin dari ${placedMiners.size} item penambang aktif di rak RollerCoin",
+                description = "Panen +$pointsAwarded RTP dari ${placedMiners.size} item penambang aktif di rak Royaltree",
                 amount = pointsAwarded.toDouble(),
                 currency = "POIN",
                 isCredit = true,
@@ -1207,7 +1207,7 @@ class AffiliateRepository(private val dao: AppDao) {
             NotificationEntity(
                 id = "notif_game_" + UUID.randomUUID().toString().take(8),
                 title = "Poin Mining Ruang Game Diklaim! ⛏️",
-                message = "Selamat! +$pointsAwarded Poin berhasil dipanen dari generator rak RollerCoin Anda.",
+                message = "Selamat! +$pointsAwarded RTP berhasil dipanen dari generator rak Royaltree Anda.",
                 type = "REWARD",
                 timestamp = System.currentTimeMillis()
             )
@@ -1329,7 +1329,7 @@ class AffiliateRepository(private val dao: AppDao) {
             TransactionEntity(
                 id = "tx_game_reward_" + UUID.randomUUID().toString().take(8),
                 type = "POINT_REWARD",
-                title = "Reward Mini-Game RollerCoin 🎯",
+                title = "Reward Mini-Game Royaltree 🎯",
                 description = "Skor $score: +$bonusPoints Poin & Boost Mining Power +$boostGhs GH/s (2 Jam)",
                 amount = bonusPoints.toDouble(),
                 currency = "POIN",
@@ -1524,7 +1524,13 @@ class AffiliateRepository(private val dao: AppDao) {
                     bonusExpiryTimestamp = roomJson.optLong("bonusExpiryTimestamp", 0L),
                     miniGameHighScore = roomJson.optInt("miniGameHighScore", 0),
                     lastMiningClaimAt = existing?.lastMiningClaimAt ?: 0L,
-                    unlockedSlots = roomJson.optInt("unlockedSlots", existing?.unlockedSlots ?: 2)
+                    unlockedSlots = roomJson.optInt("unlockedSlots", existing?.unlockedSlots ?: 2),
+                    // M43: Rate info dari server (anti-fraud, display sahaja)
+                    ratePerMin = roomJson.optDouble("ratePerMin", 0.0),
+                    baseRate = roomJson.optDouble("baseRate", 0.0),
+                    permanentBonusPct = roomJson.optDouble("permanentBonusPct", 0.0),
+                    miniGameBonusPct = roomJson.optDouble("miniGameBonusPct", 0.0),
+                    totalBonusPct = roomJson.optDouble("totalBonusPct", 0.0)
                 )
                 dao.insertGameRoomState(room)
             }

@@ -214,7 +214,7 @@ fun HomeScreen(
                     icon = Icons.Filled.Star,
                     iconColor = GoldAccent,
                     value = "${user?.points ?: 0}",
-                    label = LanguageManager.translate("home_points", currentLanguage, "Poin"),
+                    label = "RTP",
                     modifier = Modifier.weight(1f)
                 )
                 StatCard(
