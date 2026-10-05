@@ -1278,11 +1278,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
             result.onSuccess { json ->
                 if (json.optBoolean("success", false)) {
-                    val points = json.optInt("points", 0)
+                    val points = json.optDouble("points", 0.0)  // FIX: guna optDouble untuk 8 decimals
                     val nextClaimAt = json.optLong("nextClaimAt", 0L)
                     val remaining = (nextClaimAt - System.currentTimeMillis()).coerceAtLeast(0L)
                     _miningCooldownRemainingMs.value = remaining
-                    showSnackbar("🎉 Berhasil klaim $points RTP! Klaim lagi dalam 1 jam.")
+                    showSnackbar("🎉 Berhasil klaim ${String.format(java.util.Locale.US, "%.8f", points)} RTP! Cooldown 3 jam.")
 
                     // CRITICAL FIX: Reset Room DB DULU (sebelum refresh)
                     repository.resetMiningAfterClaim(nextClaimAt)
