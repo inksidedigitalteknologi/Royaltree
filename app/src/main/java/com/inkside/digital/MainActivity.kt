@@ -458,6 +458,7 @@ fun MainAffiliateApp(
         onDailyCheckInClaim = { viewModel.performDailyCheckIn() },
         onDailyCheckInWithAd = { txId, vendor -> viewModel.performDailyCheckInWithAd(txId, vendor) },
         onLoadGameState = { viewModel.loadGameState() },
+        onUnlockSlot = { slotIndex -> viewModel.unlockSlot(slotIndex) },
         onBuyCouponDismiss = { viewModel.showBuyCouponModal.value = null },
         onBuyCouponConfirm = { coupon, qty -> viewModel.buyCoupon(coupon, qty) },
         onListCouponDismiss = { viewModel.showListCouponModal.value = null },
@@ -644,6 +645,7 @@ fun MainAffiliateAppContent(
     onToggleMinerSlot: (String, Int) -> Unit,
     onBuyGameMinerItem: (String) -> Unit,
     onFinishGame: (Int) -> Unit,
+    onUnlockSlot: (Int) -> Unit = {},
     onLogout: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -914,7 +916,7 @@ fun MainAffiliateAppContent(
                         onNavigateToMissions = { onNavigate(AppScreen.MISSIONS) },
                         onBack = { onNavigate(AppScreen.GAME_ROOM) },
                         currentLanguage = currentLanguage,
-                        onUnlockSlot = { slotIndex -> viewModel.unlockSlot(slotIndex) }
+                        onUnlockSlot = onUnlockSlot
                     )
                 }
 
