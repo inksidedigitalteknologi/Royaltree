@@ -103,8 +103,37 @@ function calculatePointsPerDay(totalPowerGhs, miners = []) {
 // Formula: finalRate = baseRate * (1 + permanent% + miniGame%)
 // Cap mini-game: 20%/hari (INTERNAL — jangan dedahkan ke client)
 // ============================================================
-const MINI_GAME_BONUS_CAP_PCT = 20.0;   // Hidden cap harian
-const MINI_GAME_BONUS_DURATION_MS = 24 * 60 * 60 * 1000;  // 24 jam
+const MINI_GAME_BONUS_CAP_PCT = 20.0;
+const MINI_GAME_BONUS_DURATION_MS = 24 * 60 * 60 * 1000;
+
+// ============================================================
+// M46: Game Config Cache (5 minit)
+// Baca config dari Firestore, cache untuk performance
+// ============================================================
+let gameConfigCache = { data: null, timestamp: 0 };
+const GAME_CONFIG_CACHE_MS = 5 * 60 * 1000;
+
+async function getGameConfig() {
+    const now = Date.now();
+    if (gameConfigCache.data && (now - gameConfigCache.timestamp) < GAME_CONFIG_CACHE_MS) {
+        return gameConfigCache.data;
+    }
+    try {
+        const doc = await db.collection('app_config').doc('game_config').get();
+        gameConfigCache.data = doc.exists ? doc.data() : {};
+        gameConfigCache.timestamp = now;
+        return gameConfigCache.data;
+    } catch (e) {
+        console.error('[CONFIG] Gagal baca config:', e.message);
+        return gameConfigCache.data || {};
+    }
+}
+
+// Reset cache (dipanggil bila admin update config)
+global.__resetGameConfigCache = () => {
+    gameConfigCache = { data: null, timestamp: 0 };
+    console.log('[CONFIG] Cache reset');
+};
 
 function calculateFinalRate(baseRate, room, placedMiners) {
     // 1. Bonus permanen dari miner yang placed
@@ -254,7 +283,8 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
 // Claim mining points — WAJIB nonton iklan dulu
 // Body: { transactionId, vendor }
 // ============================================================
-const MINING_CLAIM_COOLDOWN_MS = 3 * 60 * 60 * 1000; // 3 jam
+// M46: Default cooldown (boleh override dari config)
+const MINING_CLAIM_COOLDOWN_MS_DEFAULT = 3 * 60 * 60 * 1000;
 
 router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req, res) => {
     try {
@@ -283,14 +313,13 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
         const roomDoc = await roomRef.get();
         const room = roomDoc.exists ? roomDoc.data() : {};
 
-        // ============ M42 FIX: /mining/claim-with-ad BYPASS cooldown ============
-        // User "bayar" dengan tonton iklan, jadi tak perlu tunggu 3 jam.
-        // Tapi ada rate limit harian untuk cegah abuse.
+        // ============ M46: Baca config dari Firestore ============
+        const gameConfig = await getGameConfig();
         const now = Date.now();
         const today = new Date(now).toISOString().slice(0, 10);
         const adClaimsMap = room.adClaimsMap || {};
         const adClaimsToday = adClaimsMap[today] || 0;
-        const AD_CLAIM_LIMIT_PER_DAY = 5;
+        const AD_CLAIM_LIMIT_PER_DAY = gameConfig.adClaimLimitPerDay || 5;
 
         if (adClaimsToday >= AD_CLAIM_LIMIT_PER_DAY) {
             return res.status(429).json({
@@ -326,10 +355,10 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
         
         console.log(`[CLAIM-AD] User ${uid}: unclaimed=${unclaimed}, base=${rateCalcFresh.baseRate}, perm=${rateCalcFresh.permanentBonusPct}%, mini=${rateCalcFresh.miniGameBonusPct}%, final=${ratePerMinFresh}/min`);
         
-        if (unclaimed < 0.01) {
+        if (unclaimed < MIN_CLAIM_RTP) {
             return res.status(400).json({
                 success: false,
-                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min 0.01).`
+                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min ${MIN_CLAIM_RTP}).`
             });
         }
 
@@ -405,6 +434,11 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
         const roomDoc = await roomRef.get();
         const room = roomDoc.exists ? roomDoc.data() : {};
 
+        // M46: Baca config
+        const gameConfig = await getGameConfig();
+        const MINING_CLAIM_COOLDOWN_MS = gameConfig.claimCooldownMs || MINING_CLAIM_COOLDOWN_MS_DEFAULT;
+        const MIN_CLAIM_RTP = gameConfig.minClaimRtp || 0.01;
+
         // ============ M41 FIX: Compute fresh unclaimed ============
         const minersSnap = await db.collection('game_miners')
             .where('userId', '==', uid)
@@ -432,10 +466,10 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
         
         console.log(`[CLAIM] User ${uid}: unclaimed=${unclaimed}, base=${rateCalc.baseRate}, perm=${rateCalc.permanentBonusPct}%, mini=${rateCalc.miniGameBonusPct}%, final=${ratePerMin}/min`);
         
-        if (unclaimed < 0.01) {
+        if (unclaimed < MIN_CLAIM_RTP) {
             return res.status(400).json({
                 success: false,
-                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min 0.01).`
+                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min ${MIN_CLAIM_RTP}).`
             });
         }
 
@@ -900,8 +934,10 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
         const roomRef = db.collection('game_rooms').doc(uid);
 
         // ============ M44 FIX: Rate limit minigame ============
-        const MINIGAME_COOLDOWN_MS = 5 * 60 * 1000;        // 5 minit
-        const MINIGAME_DAILY_LIMIT = 10;                    // max 10/hari
+        const gameConfig = await getGameConfig();
+        const MINIGAME_COOLDOWN_MS = gameConfig.minigameCooldownMs || (5 * 60 * 1000);
+        const MINIGAME_DAILY_LIMIT = gameConfig.minigameLimitPerDay || 10;
+        const MINI_GAME_BONUS_CAP = gameConfig.minigameBonusCap || MINI_GAME_BONUS_CAP_PCT;
 
         const roomDocCheck = await roomRef.get();
         const roomCheck = roomDocCheck.exists ? roomDocCheck.data() : {};
@@ -956,7 +992,7 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
 
         // Jika expiry dah lepas, reset dari 0
         const baseBonus = (currentExpiry > now) ? currentMiniBonus : 0;
-        const newMiniBonus = Math.min(baseBonus + speedBonusDropped, MINI_GAME_BONUS_CAP_PCT);
+        const newMiniBonus = Math.min(baseBonus + speedBonusDropped, MINI_GAME_BONUS_CAP);
         const newExpiry = now + MINI_GAME_BONUS_DURATION_MS;
 
         // Update daily counter

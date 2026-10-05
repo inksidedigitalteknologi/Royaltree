@@ -114,6 +114,7 @@
     <button class="tab" data-tab="withdrawals" onclick="switchTab('withdrawals')">💰 Withdrawals</button>
     <button class="tab" data-tab="campaigns" onclick="switchTab('campaigns')">📢 Campaigns</button>
     <button class="tab" data-tab="missions" onclick="switchTab('missions')">🎯 Missions</button>
+    <button class="tab" data-tab="game" onclick="switchTab('game')">🎮 Game Config</button>
     <button class="tab" data-tab="config" onclick="switchTab('config')">⚙️ Config</button>
     <button class="tab" data-tab="daily" onclick="switchTab('daily')">🎁 Daily Reward</button>
     <button class="tab" data-tab="ads" onclick="switchTab('ads')">📺 Ad Vendors</button>
@@ -221,6 +222,7 @@ function switchTab(tab) {
   else if (tab === 'withdrawals') loadWithdrawals();
   else if (tab === 'campaigns') loadCampaigns();
   else if (tab === 'missions') loadMissions();
+  else if (tab === 'game') loadGameConfig();
   else if (tab === 'config') loadConfig();
   else if (tab === 'daily') loadDailyConfig();
   else if (tab === 'ads') loadAdConfig();
@@ -1002,5 +1004,123 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 </div>
+
+<!-- ============================================================ -->
+<!-- GAME CONFIG PANEL -->
+<!-- ============================================================ -->
+<div id="game" class="panel" style="display:none;">
+  <h2>🎮 Game Configuration</h2>
+  <p style="color:#666; margin-bottom:20px;">Atur parameter game mining, exchange rate, dan rate limit.</p>
+
+  <fieldset style="border:1px solid #ddd; border-radius:8px; padding:20px; margin-bottom:20px;">
+    <legend style="font-weight:bold; padding:0 8px;">💰 Exchange Rate</legend>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <label>USD → IDR
+        <input type="number" id="gcUsdToIdr" placeholder="15000" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
+      </label>
+      <label>RTP → USD (rate)
+        <input type="number" id="gcRtpToUsd" placeholder="500" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
+      </label>
+    </div>
+    <p style="margin-top:8px; font-size:12px; color:#666;">
+      1 RTP = $<span id="gcRtpToUsdPreview">0.002</span> = Rp <span id="gcRtpToIdrPreview">30</span>
+    </p>
+  </fieldset>
+
+  <fieldset style="border:1px solid #ddd; border-radius:8px; padding:20px; margin-bottom:20px;">
+    <legend style="font-weight:bold; padding:0 8px;">⛏️ Mining</legend>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <label>Rate per GH/s
+        <input type="number" id="gcMiningRate" step="0.0001" placeholder="0.0144" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
+      </label>
+      <label>Min Claim (RTP)
+        <input type="number" id="gcMinClaim" step="0.001" placeholder="0.01" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
+      </label>
+      <label>Cooldown (jam)
+        <input type="number" id="gcClaimCooldown" placeholder="3" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset style="border:1px solid #ddd; border-radius:8px; padding:20px; margin-bottom:20px;">
+    <legend style="font-weight:bold; padding:0 8px;">🛡️ Rate Limits</legend>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <label>Ad Claim / hari
+        <input type="number" id="gcAdLimit" placeholder="5" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
+      </label>
+      <label>Minigame / hari
+        <input type="number" id="gcMinigameLimit" placeholder="10" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
+      </label>
+      <label>Minigame cooldown (minit)
+        <input type="number" id="gcMinigameCooldown" placeholder="5" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset style="border:1px solid #ddd; border-radius:8px; padding:20px; margin-bottom:20px;">
+    <legend style="font-weight:bold; padding:0 8px;">🎁 Bonus</legend>
+    <label>Minigame bonus cap (%)
+      <input type="number" id="gcBonusCap" step="0.1" placeholder="20" style="width:200px; padding:8px; border:1px solid #ddd; border-radius:6px;">
+    </label>
+  </fieldset>
+
+  <button onclick="saveGameConfig()" style="padding:12px 24px; background:#1a73e8; color:white; border:none; border-radius:8px; font-size:15px; font-weight:600; cursor:pointer;">
+    💾 Simpan Config
+  </button>
+
+  <p style="margin-top:16px; font-size:12px; color:#666;">
+    <strong>Nota:</strong> Config akan diambil server dalam masa 5 minit. Restart server untuk kesan serta-merta.
+  </p>
+</div>
+
+<script>
+async function loadGameConfig() {
+  try {
+    const data = await api('/admin/game-config', 'GET', null, true);
+    if (!data || !data.data) return alert('Gagal load config');
+    const d = data.data;
+    document.getElementById('gcUsdToIdr').value = d.usdToIdr || 15000;
+    document.getElementById('gcRtpToUsd').value = d.rtpToUsd || 500;
+    document.getElementById('gcMiningRate').value = d.miningRatePerGhs || 0.0144;
+    document.getElementById('gcMinClaim').value = d.minClaimRtp || 0.01;
+    document.getElementById('gcClaimCooldown').value = (d.claimCooldownMs || 10800000) / 3600000;
+    document.getElementById('gcAdLimit').value = d.adClaimLimitPerDay || 5;
+    document.getElementById('gcMinigameLimit').value = d.minigameLimitPerDay || 10;
+    document.getElementById('gcMinigameCooldown').value = (d.minigameCooldownMs || 300000) / 60000;
+    document.getElementById('gcBonusCap').value = d.minigameBonusCap || 20;
+    updateRatePreview();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+function updateRatePreview() {
+  const usdToIdr = parseFloat(document.getElementById('gcUsdToIdr').value) || 15000;
+  const rtpToUsd = parseFloat(document.getElementById('gcRtpToUsd').value) || 500;
+  document.getElementById('gcRtpToUsdPreview').textContent = (1 / rtpToUsd).toFixed(5);
+  document.getElementById('gcRtpToIdrPreview').textContent = (usdToIdr / rtpToUsd).toFixed(2);
+}
+
+document.addEventListener('input', function(e) {
+  if (e.target.id === 'gcUsdToIdr' || e.target.id === 'gcRtpToUsd') updateRatePreview();
+});
+
+async function saveGameConfig() {
+  const body = {
+    usdToIdr: parseFloat(document.getElementById('gcUsdToIdr').value),
+    rtpToUsd: parseFloat(document.getElementById('gcRtpToUsd').value),
+    miningRatePerGhs: parseFloat(document.getElementById('gcMiningRate').value),
+    minClaimRtp: parseFloat(document.getElementById('gcMinClaim').value),
+    claimCooldownMs: parseFloat(document.getElementById('gcClaimCooldown').value) * 3600000,
+    adClaimLimitPerDay: parseInt(document.getElementById('gcAdLimit').value),
+    minigameLimitPerDay: parseInt(document.getElementById('gcMinigameLimit').value),
+    minigameCooldownMs: parseFloat(document.getElementById('gcMinigameCooldown').value) * 60000,
+    minigameBonusCap: parseFloat(document.getElementById('gcBonusCap').value)
+  };
+  const data = await api('/admin/game-config', 'PUT', body, true);
+  alert(data.success ? '✅ Config disimpan' : '❌ Gagal: ' + (data.message || 'Unknown'));
+}
+</script>
+
 </body>
 </html>

@@ -1008,7 +1008,8 @@ app.get('/api/v1/profile/:userId/security-log', authenticateToken, async (req, r
 // ============ ADMIN AUTHENTICATION ============
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'royaltree_admin_2026';
-const activeSessions = new Map(); // token -> { createdAt, expiresAt }
+if (!global.__adminTokens) global.__adminTokens = new Map();
+const activeSessions = global.__adminTokens; // token -> { createdAt, expiresAt }
 
 function generateToken() {
     return 'adm_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
