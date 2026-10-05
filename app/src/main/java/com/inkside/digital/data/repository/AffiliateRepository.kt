@@ -1505,17 +1505,25 @@ class AffiliateRepository(private val dao: AppDao) {
         try {
             val data = json.optJSONObject("data") ?: return@withContext
 
-            // 1. Update room state
+            // 1. Update room state (M33 FIX: preserve lastClaimTimestamp)
             val roomJson = data.optJSONObject("room")
             if (roomJson != null) {
+                val existing = dao.getGameRoomStateSync()
+                val backendLastClaim = roomJson.optLong("lastClaimTimestamp", 0L)
+                
+                // CRITICAL: kalau backend return 0, guna local timestamp (jangan reset)
+                val lastClaim = if (backendLastClaim > 0) backendLastClaim
+                    else existing?.lastClaimTimestamp ?: System.currentTimeMillis()
+                
                 val room = com.inkside.digital.data.model.GameRoomStateEntity(
                     id = "default_room",
                     unclaimedMiningPoints = roomJson.optDouble("unclaimedMiningPoints", 0.0),
-                    lastClaimTimestamp = roomJson.optLong("lastClaimTimestamp", System.currentTimeMillis()),
+                    lastClaimTimestamp = lastClaim,
                     totalMinedPointsClaimed = roomJson.optDouble("totalMinedPointsClaimed", 0.0),
                     tempPowerBonusGhs = roomJson.optDouble("tempPowerBonusGhs", 0.0),
                     bonusExpiryTimestamp = roomJson.optLong("bonusExpiryTimestamp", 0L),
-                    miniGameHighScore = roomJson.optInt("miniGameHighScore", 0)
+                    miniGameHighScore = roomJson.optInt("miniGameHighScore", 0),
+                    lastMiningClaimAt = existing?.lastMiningClaimAt ?: 0L
                 )
                 dao.insertGameRoomState(room)
             }
