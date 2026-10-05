@@ -125,6 +125,14 @@ fun GameRoomScreen(
     val placedMiners by viewModel.placedMinerItems.collectAsState()
     val roomState by viewModel.gameRoomState.collectAsState()
 
+    // M46 FIX: Reload catalog bila data kosong (first launch race condition)
+    androidx.compose.runtime.LaunchedEffect(minerItems.size) {
+        if (minerItems.isEmpty()) {
+            viewModel.loadMinerCatalog()
+            viewModel.loadGameState()
+        }
+    }
+
     GameRoomScreenContent(
         user = user,
         minerItems = minerItems,
@@ -299,38 +307,46 @@ fun GameRoomScreenContent(
             when (activeTab) {
                 0 -> {
                     // TAB 0: RUANG RAK MINING & POWER STATS
-                    MiningRoomTab(
-                        currentLanguage = currentLanguage,
-                        placedMiners = placedMiners,
-                        allMiners = minerItems,
-                        totalPowerGhs = totalPowerGhs,
-                        basePowerGhs = basePowerGhs,
-                        bonusPowerGhs = bonusPowerGhs,
-                        generationRatePerMin = generationRatePerMin,
-                        liveUnclaimedPoints = liveUnclaimedPoints,
-                        roomState = roomState,
-                        minerTokens = minerTokens,
-                        onClaimMining = onClaimMining,
-                        onClaimMinerToken = onClaimMinerToken,
-                        onUnlockMiner = onUnlockMiner,
-                        onUnplaceMiner = { minerId, slot -> onToggleMinerSlot(minerId, slot) },
-                        onOpenShop = { activeTab = 1 },
-                        onOpenAssignSlotModal = { slot -> slotToAssignItem = slot },
-                        onOpenMiniGame = { activeTab = 2 },
-                        onUnlockSlot = onUnlockSlot
-                    )
+                    if (minerItems.isEmpty()) {
+                        LoadingState(currentLanguage)
+                    } else {
+                        MiningRoomTab(
+                            currentLanguage = currentLanguage,
+                            placedMiners = placedMiners,
+                            allMiners = minerItems,
+                            totalPowerGhs = totalPowerGhs,
+                            basePowerGhs = basePowerGhs,
+                            bonusPowerGhs = bonusPowerGhs,
+                            generationRatePerMin = generationRatePerMin,
+                            liveUnclaimedPoints = liveUnclaimedPoints,
+                            roomState = roomState,
+                            minerTokens = minerTokens,
+                            onClaimMining = onClaimMining,
+                            onClaimMinerToken = onClaimMinerToken,
+                            onUnlockMiner = onUnlockMiner,
+                            onUnplaceMiner = { minerId, slot -> onToggleMinerSlot(minerId, slot) },
+                            onOpenShop = { activeTab = 1 },
+                            onOpenAssignSlotModal = { slot -> slotToAssignItem = slot },
+                            onOpenMiniGame = { activeTab = 2 },
+                            onUnlockSlot = onUnlockSlot
+                        )
+                    }
                 }
                 1 -> {
                     // TAB 1: TOKO ITEM (SHOP)
-                    ItemShopTab(
-                        currentLanguage = currentLanguage,
-                        minerItems = minerItems,
-                        userPoints = user?.points ?: 0,
-                        minerTokens = minerTokens,
-                        onBuyItem = { item -> selectedItemToBuy = item },
-                        onUnlockMiner = onUnlockMiner,
-                        onNavigateToMissions = onNavigateToMissions
-                    )
+                    if (minerItems.isEmpty()) {
+                        LoadingState(currentLanguage)
+                    } else {
+                        ItemShopTab(
+                            currentLanguage = currentLanguage,
+                            minerItems = minerItems,
+                            userPoints = user?.points ?: 0,
+                            minerTokens = minerTokens,
+                            onBuyItem = { item -> selectedItemToBuy = item },
+                            onUnlockMiner = onUnlockMiner,
+                            onNavigateToMissions = onNavigateToMissions
+                        )
+                    }
                 }
                 2 -> {
                     // TAB 2: MINI-GAME ARCADE
@@ -1223,6 +1239,42 @@ private fun RackSlotItemCard(
                     color = RetroAmber.copy(alpha = 0.9f)
                 )
             }
+        }
+    }
+}
+
+// -------------------------------------------------------------
+// LOADING STATE
+// -------------------------------------------------------------
+@Composable
+private fun LoadingState(currentLanguage: AppLanguage) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            CircularProgressIndicator(
+                color = EmeraldLight,
+                strokeWidth = 3.dp,
+                modifier = Modifier.size(48.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = LanguageManager.translate("common_loading", currentLanguage, "Memuat data..."),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 14.sp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = LanguageManager.translate("common_loading_desc", currentLanguage, "Menyinkronkan data dari server"),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                fontSize = 11.sp
+            )
         }
     }
 }
