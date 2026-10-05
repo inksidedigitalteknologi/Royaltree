@@ -538,7 +538,7 @@ private fun MiningStatsCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format("%.8f", powerGhs * 0.00144)} RTP", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format("%.8f", powerGhs * 0.0144)} RTP", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "0.00 RTP", ElectricBlue, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+0 GH/s", GoldVip, Modifier.weight(1f))
             }

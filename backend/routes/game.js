@@ -21,8 +21,8 @@ const MINER_CATALOG = [
         iconEmoji: '⛏️',
         tokenCost: 10,
         powerGhs: 10,
-        pointsPerDay: 0.0144,
-        pointsPerMinute: 0.00001,
+        pointsPerDay: 0.144,
+        pointsPerMinute: 0.0001,
         description: 'Miner dasar untuk pemula'
     },
     {
@@ -32,8 +32,8 @@ const MINER_CATALOG = [
         iconEmoji: '🔧',
         tokenCost: 50,
         powerGhs: 50,
-        pointsPerDay: 0.072,
-        pointsPerMinute: 0.00005,
+        pointsPerDay: 0.72,
+        pointsPerMinute: 0.0005,
         description: 'Miner dengan power lebih besar'
     },
     {
@@ -43,8 +43,8 @@ const MINER_CATALOG = [
         iconEmoji: '⚡',
         tokenCost: 200,
         powerGhs: 200,
-        pointsPerDay: 0.288,
-        pointsPerMinute: 0.0002,
+        pointsPerDay: 2.88,
+        pointsPerMinute: 0.002,
         description: 'Miner dengan teknologi quantum'
     },
     {
@@ -54,8 +54,8 @@ const MINER_CATALOG = [
         iconEmoji: '💎',
         tokenCost: 1000,
         powerGhs: 1000,
-        pointsPerDay: 1.44,
-        pointsPerMinute: 0.001,
+        pointsPerDay: 14.4,
+        pointsPerMinute: 0.01,
         description: 'Miner raksasa dengan power luar biasa'
     },
     {
@@ -65,8 +65,8 @@ const MINER_CATALOG = [
         iconEmoji: '🌌',
         tokenCost: 5000,
         powerGhs: 5000,
-        pointsPerDay: 7.2,
-        pointsPerMinute: 0.005,
+        pointsPerDay: 72,
+        pointsPerMinute: 0.05,
         description: 'Miner legendaris dengan power tak terbatas'
     }
 ];
@@ -88,11 +88,11 @@ function getTokenReward(source) {
 // HELPER: Hitung poin dari total power
 // ============================================================
 function calculatePointsPerDay(totalPowerGhs, miners = []) {
-    // M34 FIX: Formula rate realistis 8 desimal
-    // 10 GH/s → 0.0144 RTP/hari (setara 0.00001 RTP/menit)
-    // 50 GH/s → 0.072 RTP/hari
-    // 5000 GH/s → 7.2 RTP/hari
-    return totalPowerGhs * 0.00144;
+    // M34 FIX (Updated): Formula rate realistic
+    // 10 GH/s → 0.144 RTP/hari (setara 0.0001 RTP/menit)
+    // 50 GH/s → 0.72 RTP/hari
+    // 5000 GH/s → 72 RTP/hari
+    return totalPowerGhs * 0.0144;
 }
 
 // ============================================================
@@ -272,10 +272,10 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
         
         console.log(`[CLAIM-AD] User ${uid}: unclaimed=${unclaimed}, rate=${ratePerMinFresh}/min`);
         
-        if (unclaimed < 1) {
+        if (unclaimed < 0.0001) {
             return res.status(400).json({
                 success: false,
-                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min 1).`
+                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min 0.0001).`
             });
         }
 
@@ -369,10 +369,10 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
         
         console.log(`[CLAIM] User ${uid}: unclaimed=${unclaimed}, rate=${ratePerMin}/min`);
         
-        if (unclaimed < 1) {
+        if (unclaimed < 0.0001) {
             return res.status(400).json({
                 success: false,
-                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min 1).`
+                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min 0.0001).`
             });
         }
 
@@ -428,11 +428,33 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
 router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => {
     try {
         const { uid } = req.firebaseUser;
-        const { minerId, tier, name, pricePoints, powerGhs, pointsPerMinute, iconEmoji } = req.body;
+        const { minerId, catalogId } = req.body;
+        const lookupId = catalogId || minerId;
 
-        if (!minerId || !pricePoints) {
-            return res.status(400).json({ success: false, message: 'Data miner tidak lengkap' });
+        if (!lookupId) {
+            return res.status(400).json({ success: false, message: 'catalogId wajib diisi' });
         }
+
+        // SECURITY: Cari catalog (server-side) — JANGAN percaya req.body
+        const catalogItem = MINER_CATALOG.find(m => m.id === lookupId);
+        if (!catalogItem) {
+            return res.status(400).json({ success: false, message: 'Miner tidak valid' });
+        }
+
+        // Override semua field dari catalog
+        const {
+            name,
+            tier,
+            pricePoints,
+            powerGhs,
+            pointsPerDay,
+            iconEmoji
+        } = catalogItem;
+
+        // Compute pointsPerMinute dari catalog (bukan dari request)
+        const pointsPerMinute = parseFloat((pointsPerDay / (24 * 60)).toFixed(8));
+
+        console.log(`[BUY] User ${uid} beli ${lookupId} — rate=${pointsPerMinute}/min, price=${pricePoints}`);
 
         const userRef = db.collection('users').doc(uid);
         const userDoc = await userRef.get();
