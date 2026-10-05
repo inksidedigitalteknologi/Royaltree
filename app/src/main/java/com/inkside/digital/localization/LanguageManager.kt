@@ -1141,12 +1141,12 @@ object LanguageManager {
             AppLanguage.JAPANESE to "サイコロ"
         ),
         "game_hub_spin" to mapOf(
-            AppLanguage.INDONESIAN to "Spin Wheel",
-            AppLanguage.ENGLISH to "Spin Wheel",
-            AppLanguage.SPANISH to "Ruleta",
-            AppLanguage.CHINESE to "幸运转盘",
-            AppLanguage.ARABIC to "عجلة الحظ",
-            AppLanguage.JAPANESE to "スピンホイール"
+            AppLanguage.INDONESIAN to "Sweepstakes",
+            AppLanguage.ENGLISH to "Sweepstakes",
+            AppLanguage.SPANISH to "Sorteos",
+            AppLanguage.CHINESE to "抽奖",
+            AppLanguage.ARABIC to "السحوبات",
+            AppLanguage.JAPANESE to "スイープステークス"
         ),
         "game_hub_shop" to mapOf(
             AppLanguage.INDONESIAN to "Shop",

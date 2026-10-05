@@ -192,11 +192,11 @@ fun GameHubScreen(
                         modifier = Modifier.weight(1f)
                     )
                     GameGridCard(
-                        title = LanguageManager.translate("game_hub_spin", currentLanguage, "Spin Wheel"),
-                        emoji = "🎯",
+                        title = LanguageManager.translate("nav_sweepstakes", currentLanguage, "Sweepstakes"),
+                        emoji = "🎟️",
                         gradient = listOf(Color(0xFF10B981), Color(0xFF059669)),
-                        available = false,
-                        onClick = { },
+                        available = true,
+                        onClick = { onNavigate(AppScreen.SWEEPSTAKES) },
                         modifier = Modifier.weight(1f)
                     )
                 }
