@@ -938,7 +938,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun finishMiniGame(score: Int) {
+    fun finishMiniGame(score: Int, durationMs: Long = 15000, gameNonce: String = "") {
         viewModelScope.launch {
             // 1. Update lokal (Room DB)
             val result = repository.playMiniGameFinish(score)
@@ -946,7 +946,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 showSnackbar("Game Selesai! Skor: $score (+${bonusPoints} Poin & Power Boost +${boostGhs.toInt()} GH/s) 🎮")
 
                 // 2. Sync ke backend (CRITICAL FIX)
-                ApiClient.finishMiniGame(score)
+                ApiClient.finishMiniGame(score, durationMs, gameNonce)
                     .onSuccess {
                         android.util.Log.d("MiniGame", "✅ MiniGame reward synced to backend")
                         loadGameState()

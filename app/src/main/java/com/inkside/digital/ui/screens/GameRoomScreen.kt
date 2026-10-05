@@ -133,7 +133,7 @@ fun GameRoomScreen(
         onClaimMining = { viewModel.showAdRewardModal.value = true; viewModel.setPendingMiningClaim(true) },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
-        onFinishGame = { score -> viewModel.finishMiniGame(score) },
+        onFinishGame = { score, duration, nonce -> viewModel.finishMiniGame(score, duration, nonce) },
         onNavigateToMissions = onNavigateToMissions,
         onBack = onBack,
         currentLanguage = currentLanguage,
@@ -151,7 +151,7 @@ fun GameRoomScreenContent(
     onClaimMining: () -> Unit,
     onToggleMinerSlot: (String, Int) -> Unit,
     onBuyGameMinerItem: (String) -> Unit,
-    onFinishGame: (Int) -> Unit,
+    onFinishGame: (score: Int, durationMs: Long, gameNonce: String) -> Unit,
     onNavigateToMissions: () -> Unit,
     onBack: () -> Unit,
     currentLanguage: AppLanguage,
@@ -336,7 +336,7 @@ fun GameRoomScreenContent(
                     // TAB 2: MINI-GAME ARCADE
                     MiniGameArcadeTab(
                         currentLanguage = currentLanguage,
-                        onFinishGame = { score -> onFinishGame(score) },
+                        onFinishGame = { score, duration, nonce -> onFinishGame(score, duration, nonce) },
                         highScore = roomState?.miniGameHighScore ?: 0
                     )
                 }
@@ -1541,7 +1541,7 @@ private fun ShopMinerCard(
 @Composable
 private fun MiniGameArcadeTab(
     currentLanguage: AppLanguage,
-    onFinishGame: (score: Int) -> Unit,
+    onFinishGame: (score: Int, durationMs: Long, gameNonce: String) -> Unit,
     highScore: Int
 ) {
     var isPlaying by remember { mutableStateOf(false) }
@@ -1563,7 +1563,11 @@ private fun MiniGameArcadeTab(
             }
             if (isPlaying) {
                 isPlaying = false
-                onFinishGame(score)
+                onFinishGame(
+                    score,
+                    (15 - secondsRemaining).toLong() * 1000L,
+                    java.util.UUID.randomUUID().toString()
+                )
             }
         }
     }

@@ -733,9 +733,17 @@ object ApiClient {
 
     // ============ MINI GAME ============
 
-    suspend fun finishMiniGame(score: Int): Result<JSONObject> = withContext(Dispatchers.IO) {
+    suspend fun finishMiniGame(
+        score: Int,
+        durationMs: Long = 0,
+        gameNonce: String = ""
+    ): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
-            val body = JSONObject().apply { put("score", score) }
+            val body = JSONObject().apply {
+                put("score", score)
+                put("durationMs", durationMs)
+                put("gameNonce", gameNonce)
+            }
             val requestBody = body.toString().toRequestBody(JSON_MEDIA)
             val response: ResponseBody = apiService.finishMiniGame(requestBody)
             Result.success(JSONObject(response.string()))
