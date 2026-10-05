@@ -288,19 +288,25 @@ private fun DrawerHeader(user: UserEntity?) {
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(6.dp))
-                            .background(if (user?.tier == "PREMIUM") GoldVip else MaterialTheme.colorScheme.surfaceVariant)
+                            .background(if (user?.tier in listOf("PREMIUM", "VIP", "ROYAL")) GoldVip else MaterialTheme.colorScheme.surfaceVariant)
                             .padding(horizontal = 8.dp, vertical = 2.dp)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            if (user?.tier == "PREMIUM") {
+                            if (user?.tier in listOf("PREMIUM", "VIP", "ROYAL")) {
                                 Icon(Icons.Default.Star, null, tint = Color.Black, modifier = Modifier.size(10.dp))
                                 Spacer(modifier = Modifier.width(3.dp))
                             }
                             Text(
-                                text = if (user?.tier == "PREMIUM") "VIP" else "FREE",
+                                text = when (user?.tier) {
+                                    "STARTER" -> "STARTER"
+                                    "PREMIUM" -> "PREMIUM"
+                                    "VIP" -> "VIP"
+                                    "ROYAL" -> "ROYAL"
+                                    else -> "FREE"
+                                },
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = if (user?.tier == "PREMIUM") Color.Black else MaterialTheme.colorScheme.onSurfaceVariant
+                                color = if (user?.tier in listOf("PREMIUM", "VIP", "ROYAL")) Color.Black else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }

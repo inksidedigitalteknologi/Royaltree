@@ -125,26 +125,44 @@ fun ProfileSecurityScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
-                                imageVector = if (user?.tier == "PREMIUM") Icons.Default.Star else Icons.Default.VerifiedUser,
+                                imageVector = if (user?.tier in listOf("STARTER", "PREMIUM", "VIP", "ROYAL")) Icons.Default.Star else Icons.Default.VerifiedUser,
                                 contentDescription = null,
-                                tint = if (user?.tier == "PREMIUM") GoldVip else EmeraldLight
+                                tint = when (user?.tier) {
+                                    "STARTER" -> Color(0xFFCD7F32)  // Bronze
+                                    "PREMIUM" -> Color(0xFFC0C0C0)  // Silver
+                                    "VIP" -> GoldVip
+                                    "ROYAL" -> Color(0xFFB9F2FF)    // Diamond
+                                    else -> EmeraldLight
+                                }
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = if (user?.tier == "PREMIUM") "Status: VIP PREMIUM (2.5x Komisi)" else "Status: AKUN GRATIS (Standar)",
+                                text = when (user?.tier) {
+                                    "STARTER" -> "Status: STARTER (Komisi 10%)"
+                                    "PREMIUM" -> "Status: PREMIUM (Komisi 15%)"
+                                    "VIP" -> "Status: VIP (Komisi 25%)"
+                                    "ROYAL" -> "Status: ROYAL (Komisi 35%)"
+                                    else -> "Status: AKUN GRATIS (Standar)"
+                                },
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 13.sp
                             )
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = if (user?.tier == "PREMIUM") "Anda menikmati komisi 30%, 0% fee penarikan, dan prioritas pencairan." else "Tingkat komisi standar 12%. Upgrade ke VIP untuk melipatgandakan penghasilan.",
+                            text = when (user?.tier) {
+                                "STARTER" -> "Anda menikmati komisi 10% dari setiap referral."
+                                "PREMIUM" -> "Anda menikmati komisi 15%, prioritas pencairan."
+                                "VIP" -> "Anda menikmati komisi 25%, 0% fee penarikan, prioritas pencairan."
+                                "ROYAL" -> "Anda menikmati komisi 35%, semua fitur eksklusif Royaltree."
+                                else -> "Tingkat komisi standar 12%. Upgrade untuk melipatgandakan penghasilan."
+                            },
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
-                    if (user?.tier != "PREMIUM") {
+                    if (user?.tier !in listOf("PREMIUM", "VIP", "ROYAL")) {
                         Button(
                             onClick = onOpenUpgrade,
                             colors = ButtonDefaults.buttonColors(containerColor = GoldVip),

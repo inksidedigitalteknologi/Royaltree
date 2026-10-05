@@ -107,7 +107,7 @@ class AffiliateRepository(private val dao: AppDao) {
             return@withContext Result.failure(Exception("Saldo komisi Anda tidak mencukupi"))
         }
 
-        val fee = if (user.tier == "PREMIUM") 0.0 else when (channelType) {
+        val fee = if (user.tier in listOf("PREMIUM", "VIP", "ROYAL")) 0.0 else when (channelType) {
             "CRYPTO" -> 15000.0
             "BANK" -> 4500.0
             else -> 2000.0
@@ -294,7 +294,7 @@ class AffiliateRepository(private val dao: AppDao) {
     suspend fun simulateLiveConversion(link: AffiliateLinkEntity) = withContext(Dispatchers.IO) {
         val user = dao.getUserSync(_activeUserId.value) ?: return@withContext
         val baseCommission = 85000.0 * user.commissionRateMultiplier
-        val isPremium = user.tier == "PREMIUM"
+        val isPremium = user.tier in listOf("PREMIUM", "VIP", "ROYAL")
         val actualEarned = if (isPremium) baseCommission * 1.5 else baseCommission
 
         // Update link stats

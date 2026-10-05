@@ -128,14 +128,28 @@ fun ProfileScreen(
                         Spacer(modifier = Modifier.height(4.dp))
                         androidx.compose.foundation.layout.Box(
                             modifier = Modifier.clip(RoundedCornerShape(6.dp))
-                                .background(if (user?.tier == "PREMIUM") GoldVip else MaterialTheme.colorScheme.surfaceVariant)
+                                .background(
+                                    when (user?.tier) {
+                                        "STARTER" -> Color(0xFFCD7F32)
+                                        "PREMIUM" -> Color(0xFFC0C0C0)
+                                        "VIP" -> GoldVip
+                                        "ROYAL" -> Color(0xFFB9F2FF)
+                                        else -> MaterialTheme.colorScheme.surfaceVariant
+                                    }
+                                )
                                 .padding(horizontal = 8.dp, vertical = 2.dp)
                         ) {
                             Text(
-                                if (user?.tier == "PREMIUM") "VIP" else "FREE",
+                                when (user?.tier) {
+                                    "STARTER" -> LanguageManager.translate("tier_starter", currentLanguage, "Pemula")
+                                    "PREMIUM" -> LanguageManager.translate("tier_premium", currentLanguage, "Premium")
+                                    "VIP" -> LanguageManager.translate("tier_vip", currentLanguage, "VIP")
+                                    "ROYAL" -> LanguageManager.translate("tier_royal", currentLanguage, "Royal")
+                                    else -> LanguageManager.translate("tier_free", currentLanguage, "Free")
+                                },
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = if (user?.tier == "PREMIUM") Color.Black else MaterialTheme.colorScheme.onSurfaceVariant
+                                color = if (user?.tier in listOf("PREMIUM", "VIP", "ROYAL")) Color.Black else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -538,7 +552,7 @@ private fun MiningStatsCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format("%.8f", powerGhs * 0.0144)} RTP", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format(Locale.US, "%.4f", powerGhs * 0.0144)} RTP", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "0.00 RTP", ElectricBlue, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+0 GH/s", GoldVip, Modifier.weight(1f))
             }

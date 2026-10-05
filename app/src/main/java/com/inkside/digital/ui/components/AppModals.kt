@@ -117,7 +117,7 @@ fun WithdrawDialog(
     }
 
     val amount = amountText.toDoubleOrNull() ?: 0.0
-    val fee = if (user?.tier == "PREMIUM") 0.0 else when (selectedChannel) {
+    val fee = if (user?.tier in listOf("PREMIUM", "VIP", "ROYAL")) 0.0 else when (selectedChannel) {
         "CRYPTO" -> 15000.0
         "BANK" -> 4500.0
         else -> 2000.0
