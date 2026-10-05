@@ -1,5 +1,8 @@
 package com.inkside.digital.ui.screens
 
+import com.inkside.digital.data.preferences.AppThemePreferences
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -118,8 +121,11 @@ fun AdminScreen(
     onSyncPortal: () -> Unit = {},
     onBackToUserMode: () -> Unit
 ) {
-    var selectedTab by remember { mutableIntStateOf(0) } // 0: Antrean Payout, 1: Pengguna & Saldo, 2: Lacak Lokasi & Heatmap, 3: Pengaturan Platform, 4: Endpoint & Portal
+    var selectedTab by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
+    
+    // M46: currentLanguage dari global state
+    val currentLanguage = AppThemePreferences.currentLanguage
 
     val effectiveSettings = systemSettings ?: SystemSettingsEntity()
 
