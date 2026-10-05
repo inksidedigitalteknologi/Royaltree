@@ -579,6 +579,69 @@ router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => 
 });
 
 // ============================================================
+// GET /api/v1/game/config/exchange-rate
+// Return exchange rate config (USD↔IDR, RTP↔USD)
+// ============================================================
+router.get('/config/exchange-rate', async (req, res) => {
+    try {
+        const configDoc = await db.collection('app_config').doc('exchange_rates').get();
+        const config = configDoc.exists ? configDoc.data() : {};
+
+        return res.json({
+            success: true,
+            data: {
+                usdToIdr: config.usdToIdr || 15000,        // $1 = Rp 15.000
+                rtpToUsd: config.rtpToUsd || 100,           // 100 RTP = $1
+                rtpToIdr: config.rtpToIdr || 150,           // 100 RTP × 15000/100 = Rp 150
+                updatedAt: config.updatedAt || Date.now()
+            }
+        });
+    } catch (error) {
+        console.error('Exchange rate config error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// POST /api/v1/game/config/exchange-rate (admin only)
+// Update exchange rate (admin only)
+// ============================================================
+router.post('/config/exchange-rate', verifyFirebaseToken, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+        const { usdToIdr, rtpToUsd } = req.body;
+
+        // Cek admin
+        const userDoc = await db.collection('users').doc(uid).get();
+        const userData = userDoc.exists ? userDoc.data() : {};
+
+        if (userData.role !== 'admin' && userData.isAdmin !== true) {
+            return res.status(403).json({ success: false, message: 'Admin access required' });
+        }
+
+        if (typeof usdToIdr !== 'number' || usdToIdr <= 0) {
+            return res.status(400).json({ success: false, message: 'usdToIdr tidak valid' });
+        }
+        if (typeof rtpToUsd !== 'number' || rtpToUsd <= 0) {
+            return res.status(400).json({ success: false, message: 'rtpToUsd tidak valid' });
+        }
+
+        await db.collection('app_config').doc('exchange_rates').set({
+            usdToIdr,
+            rtpToUsd,
+            rtpToIdr: usdToIdr / rtpToUsd,
+            updatedAt: Date.now(),
+            updatedBy: uid
+        }, { merge: true });
+
+        return res.json({ success: true, message: 'Exchange rate updated' });
+    } catch (error) {
+        console.error('Update exchange rate error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
 // GET /api/v1/game/mining/rate-info
 // Return breakdown rate + bonus untuk Android display
 // ============================================================
@@ -801,19 +864,79 @@ router.post('/mining/unplace', verifyFirebaseToken, async (req, res) => {
 router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res) => {
     try {
         const { uid } = req.firebaseUser;
-        const { score } = req.body;
+        const { score, durationMs, gameNonce } = req.body;
 
         if (typeof score !== 'number' || score < 0 || score > 10000) {
             return res.status(400).json({ success: false, message: 'Score tidak valid' });
         }
 
-        // Hitung reward (sama dengan formula Android)
-        const bonusPoints = Math.min(Math.max(Math.floor(score / 10), 15), 60);
-        const boostGhs = 80.0;
-        const boostExpiry = Date.now() + 7200000;  // 2 jam
+        // M45 ANTI-FRAUD: Validate duration & nonce
+        const MIN_DURATION_MS = 10000;
+        const MAX_SCORE_PER_SECOND = 100;
+
+        if (typeof durationMs !== 'number' || durationMs < MIN_DURATION_MS) {
+            console.warn(`[MINIGAME-FRAUD] User ${uid}: duration terlalu cepat ${durationMs}ms`);
+            return res.status(400).json({ success: false, message: 'Game terlalu cepat' });
+        }
+
+        const maxScoreAllowed = (durationMs / 1000) * MAX_SCORE_PER_SECOND;
+        if (score > maxScoreAllowed) {
+            console.warn(`[MINIGAME-FRAUD] User ${uid}: score ${score} > max ${maxScoreAllowed}`);
+            return res.status(400).json({ success: false, message: 'Score tidak wajar' });
+        }
+
+        // Cek nonce (anti-replay)
+        if (gameNonce && typeof gameNonce === 'string') {
+            const nonceRef = db.collection('minigame_nonces').doc(gameNonce);
+            const nonceDoc = await nonceRef.get();
+            if (nonceDoc.exists) {
+                console.warn(`[MINIGAME-FRAUD] User ${uid}: replay nonce ${gameNonce}`);
+                return res.status(400).json({ success: false, message: 'Replay terdeteksi' });
+            }
+            await nonceRef.set({ uid, createdAt: Date.now() });
+        }
 
         const userRef = db.collection('users').doc(uid);
         const roomRef = db.collection('game_rooms').doc(uid);
+
+        // ============ M44 FIX: Rate limit minigame ============
+        const MINIGAME_COOLDOWN_MS = 5 * 60 * 1000;        // 5 minit
+        const MINIGAME_DAILY_LIMIT = 10;                    // max 10/hari
+
+        const roomDocCheck = await roomRef.get();
+        const roomCheck = roomDocCheck.exists ? roomDocCheck.data() : {};
+
+        const now = Date.now();
+
+        // Cek cooldown
+        const lastMiniGame = roomCheck.lastMiniGameAt || 0;
+        const cooldownRemaining = (lastMiniGame + MINIGAME_COOLDOWN_MS) - now;
+        if (cooldownRemaining > 0) {
+            const minsLeft = Math.ceil(cooldownRemaining / 60000);
+            return res.status(429).json({
+                success: false,
+                message: `Tunggu ${minsLeft} menit lagi untuk main mini-game berikutnya.`,
+                cooldownRemainingMs: cooldownRemaining
+            });
+        }
+
+        // Cek rate limit harian
+        const today = new Date(now).toISOString().slice(0, 10);
+        const miniGameDailyMap = roomCheck.miniGameDailyMap || {};
+        const miniGameToday = miniGameDailyMap[today] || 0;
+
+        if (miniGameToday >= MINIGAME_DAILY_LIMIT) {
+            return res.status(429).json({
+                success: false,
+                message: `Limit mini-game harian (${MINIGAME_DAILY_LIMIT}) telah dicapai. Coba lagi besok.`,
+                dailyLimit: MINIGAME_DAILY_LIMIT
+            });
+        }
+
+        // Hitung reward (sama dengan formula Android)
+        const bonusPoints = Math.min(Math.max(Math.floor(score / 10), 15), 60);
+        const boostGhs = 80.0;
+        const boostExpiry = now + 7200000;  // 2 jam
 
         // M43: Random speed bonus drop (0.01% - 0.03%)
         // 60% common (+0.01%), 30% uncommon (+0.02%), 10% rare (+0.03%)
@@ -828,16 +951,19 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
         }
 
         // Baca current state untuk stack + cap
-        const roomDoc = await roomRef.get();
-        const roomData = roomDoc.exists ? roomDoc.data() : {};
-        const currentMiniBonus = roomData.miniGameBonusPct || 0;
-        const currentExpiry = roomData.miniGameBonusExpiry || 0;
-        const now = Date.now();
+        const currentMiniBonus = roomCheck.miniGameBonusPct || 0;
+        const currentExpiry = roomCheck.miniGameBonusExpiry || 0;
 
         // Jika expiry dah lepas, reset dari 0
         const baseBonus = (currentExpiry > now) ? currentMiniBonus : 0;
         const newMiniBonus = Math.min(baseBonus + speedBonusDropped, MINI_GAME_BONUS_CAP_PCT);
         const newExpiry = now + MINI_GAME_BONUS_DURATION_MS;
+
+        // Update daily counter
+        const updatedMiniGameDailyMap = {
+            ...miniGameDailyMap,
+            [today]: miniGameToday + 1
+        };
 
         const batch = db.batch();
 
@@ -846,13 +972,14 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
             points: admin.firestore.FieldValue.increment(bonusPoints)
         });
 
-        // 2. Update room state (boost power + speed bonus)
+        // 2. Update room state (boost power + speed bonus + daily counter)
         batch.set(roomRef, {
             tempPowerBonusGhs: admin.firestore.FieldValue.increment(boostGhs),
             bonusExpiryTimestamp: boostExpiry,
             miniGameBonusPct: newMiniBonus,
             miniGameBonusExpiry: newExpiry,
-            lastMiniGameAt: now
+            lastMiniGameAt: now,
+            miniGameDailyMap: updatedMiniGameDailyMap
         }, { merge: true });
 
         // 3. Audit log
@@ -870,7 +997,7 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
 
         await batch.commit();
 
-        console.log(`[MINIGAME] User ${uid}: score=${score}, +${speedBonusDropped}% bonus, total=${newMiniBonus}%, expiry=${new Date(newExpiry).toISOString()}`);
+        console.log(`[MINIGAME] User ${uid}: score=${score}, +${speedBonusDropped}% bonus, total=${newMiniBonus}%, today=${miniGameToday + 1}/${MINIGAME_DAILY_LIMIT}, expiry=${new Date(newExpiry).toISOString()}`);
 
         return res.json({
             success: true,
