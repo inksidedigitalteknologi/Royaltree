@@ -5,88 +5,670 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Royaltree Admin Panel</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a1a; }
-  .header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 100; }
-  .header h1 { font-size: 20px; display: flex; align-items: center; gap: 8px; }
-  .header-actions { display: flex; gap: 8px; }
-  .container { max-width: 1400px; margin: 24px auto; padding: 0 16px; }
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-  .stat { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); transition: transform 0.2s; }
-  .stat:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-  .stat .num { font-size: 32px; font-weight: 700; color: #1a73e8; }
-  .stat .label { font-size: 13px; color: #666; margin-top: 4px; }
-  .stat .icon { font-size: 24px; margin-bottom: 8px; }
-  .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; background: white; padding: 6px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-  .tab { padding: 10px 20px; background: transparent; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; color: #555; transition: all 0.2s; }
-  .tab:hover { background: #f0f2f5; }
-  .tab.active { background: #1a73e8; color: white; }
-  .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-  .card-header h2 { font-size: 18px; color: #1a1a1a; }
-  .search-box { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; width: 250px; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
-  th { background: #fafbfc; font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-  tr:hover { background: #f8f9fa; }
-  .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-  .badge-green { background: #e6f4ea; color: #137333; }
-  .badge-yellow { background: #fef7e0; color: #b06000; }
-  .badge-red { background: #fce8e6; color: #c5221f; }
-  .badge-blue { background: #e8f0fe; color: #1a73e8; }
-  .badge-gray { background: #f0f0f0; color: #666; }
-  .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; }
-  .btn-sm { padding: 5px 10px; font-size: 12px; }
-  .btn-primary { background: #1a73e8; color: white; }
-  .btn-primary:hover { background: #1557b0; }
-  .btn-success { background: #137333; color: white; }
-  .btn-success:hover { background: #0d5c28; }
-  .btn-danger { background: #c5221f; color: white; }
-  .btn-danger:hover { background: #a01b18; }
-  .btn-secondary { background: #f0f2f5; color: #333; }
-  .btn-secondary:hover { background: #e0e2e5; }
-  .loading { text-align: center; padding: 40px; color: #999; }
-  .notification { position: fixed; top: 80px; right: 24px; padding: 14px 20px; border-radius: 8px; color: white; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 2000; display: none; animation: slideIn 0.3s; }
-  @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-  .notification.success { background: #137333; }
-  .notification.error { background: #c5221f; }
-  .notification.info { background: #1a73e8; }
-  .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 16px; }
-  .modal-overlay.active { display: flex; }
-  .modal { background: white; border-radius: 12px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-  .modal-header { padding: 20px 24px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-  .modal-header h3 { font-size: 18px; color: #1a1a1a; }
-  .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; line-height: 1; }
-  .modal-close:hover { color: #333; }
-  .modal-body { padding: 24px; }
-  .modal-footer { padding: 16px 24px; border-top: 1px solid #f0f0f0; display: flex; gap: 8px; justify-content: flex-end; }
-  .form-group { margin-bottom: 16px; }
-  .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #333; }
-  .form-group label .required { color: #c5221f; }
-  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: inherit; transition: border 0.2s; }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #1a73e8; box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
-  .form-group input:disabled { background: #f5f5f5; color: #999; cursor: not-allowed; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .empty-state { text-align: center; padding: 60px 20px; color: #999; }
-  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
-  .empty-state p { font-size: 14px; }
-  @media (max-width: 768px) {
-    .header h1 { font-size: 16px; }
-    .stats { grid-template-columns: 1fr 1fr; }
-    .form-row { grid-template-columns: 1fr; }
-    .search-box { width: 100%; }
-  }
-  .login-screen { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #1a73e8, #0d47a1); padding: 16px; }
-  .login-box { background: white; border-radius: 12px; padding: 40px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-  .login-box h1 { font-size: 24px; margin-bottom: 8px; color: #1a73e8; text-align: center; }
-  .login-box p { font-size: 14px; color: #666; text-align: center; margin-bottom: 24px; }
-  .login-box input { width: 100%; padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; margin-bottom: 16px; }
-  .login-box input:focus { outline: none; border-color: #1a73e8; box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
-  .login-box button { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
-  .login-box button:hover { background: #1557b0; }
-  .login-box button:disabled { background: #ccc; cursor: not-allowed; }
-  .login-error { background: #fce8e6; color: #c5221f; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; display: none; }
-  .hidden { display: none !important; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0a0e1a;
+  background-image:
+    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(251, 191, 36, 0.06) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(59, 130, 246, 0.05) 0px, transparent 50%);
+  color: #e2e8f0;
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ============ LOGIN SCREEN ============ */
+.login-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 16px;
+  background: radial-gradient(circle at center, #1e293b 0%, #0a0e1a 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-screen::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(16, 185, 129, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(251, 191, 36, 0.10) 0%, transparent 40%);
+  animation: rotate 30s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.login-box {
+  position: relative;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 24px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(16, 185, 129, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.login-box h1 {
+  font-size: 28px;
+  margin-bottom: 8px;
+  text-align: center;
+  background: linear-gradient(135deg, #10b981 0%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.login-box p {
+  font-size: 14px;
+  color: #94a3b8;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  font-size: 15px;
+  margin-bottom: 16px;
+  color: #e2e8f0;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.login-box input::placeholder {
+  color: #64748b;
+}
+
+.login-box input:focus {
+  outline: none;
+  border-color: #10b981;
+  background: rgba(30, 41, 59, 0.9);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.login-box button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+  letter-spacing: 0.3px;
+}
+
+.login-box button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
+}
+
+.login-box button:disabled {
+  background: #334155;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.login-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+}
+
+/* ============ APP LAYOUT ============ */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============ HEADER ============ */
+.header {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.header h1 {
+  font-size: 20px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #10b981 0%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.3px;
+}
+
+.header .user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.header .user-info strong {
+  color: #10b981;
+  font-weight: 600;
+}
+
+/* ============ TABS ============ */
+.tabs {
+  display: flex;
+  gap: 6px;
+  padding: 20px 32px 0 32px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.tab {
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-radius: 12px 12px 0 0;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+  transition: all 0.2s;
+  font-family: inherit;
+  position: relative;
+  margin-bottom: -1px;
+}
+
+.tab:hover {
+  color: #e2e8f0;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.tab.active {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border-bottom: 2px solid #10b981;
+}
+
+/* ============ CONTENT ============ */
+.content {
+  flex: 1;
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.panel h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #f1f5f9;
+  letter-spacing: -0.3px;
+}
+
+.panel > p {
+  color: #94a3b8;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+/* ============ CARDS ============ */
+.card {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+}
+
+.card:hover {
+  border-color: rgba(16, 185, 129, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ============ STATS ============ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(15, 23, 42, 0.6) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+}
+
+.stat-card .label {
+  font-size: 12px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.stat-card .value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #f1f5f9;
+  letter-spacing: -0.5px;
+}
+
+.stat-card .value.gold {
+  color: #fbbf24;
+}
+
+.stat-card .value.emerald {
+  color: #10b981;
+}
+
+/* ============ FIELDSET ============ */
+fieldset {
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  background: rgba(15, 23, 42, 0.4);
+}
+
+fieldset legend {
+  padding: 0 12px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #10b981;
+  letter-spacing: 0.3px;
+}
+
+/* ============ INPUTS ============ */
+label {
+  display: block;
+  font-size: 13px;
+  color: #cbd5e1;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="email"],
+select,
+textarea {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  font-size: 14px;
+  color: #e2e8f0;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #10b981;
+  background: rgba(30, 41, 59, 0.9);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+/* ============ BUTTONS ============ */
+button {
+  font-family: inherit;
+}
+
+.btn-primary {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+  letter-spacing: 0.3px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+}
+
+.btn-secondary {
+  padding: 10px 20px;
+  background: rgba(30, 41, 59, 0.8);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-right: 8px;
+}
+
+.btn-secondary:hover {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
+}
+
+/* ============ TABLES ============ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+thead {
+  background: rgba(16, 185, 129, 0.1);
+  border-bottom: 2px solid rgba(16, 185, 129, 0.2);
+}
+
+th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #10b981;
+  font-weight: 700;
+}
+
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+  color: #cbd5e1;
+}
+
+tbody tr {
+  transition: all 0.15s;
+}
+
+tbody tr:hover {
+  background: rgba(16, 185, 129, 0.05);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============ BADGES ============ */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.badge-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-warning {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.badge-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-info {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* ============ SCROLLBAR ============ */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.3);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.5);
+}
+
+/* ============ ANIMATIONS ============ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.panel {
+  animation: fadeIn 0.3s ease;
+}
+
+/* ============ MODAL ============ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: none;  /* Default hidden */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-overlay.active {
+  display: flex;  /* Tunjuk bila ada .show class */
+}
+
+.modal {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal h3 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #f1f5f9;
+  font-weight: 700;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .header { padding: 12px 16px; }
+  .content { padding: 16px; }
+  .tabs { padding: 12px 16px 0 16px; }
+  .tab { padding: 10px 14px; font-size: 12px; }
+  .panel h2 { font-size: 20px; }
+  .stat-card .value { font-size: 22px; }
+}
+
+.hidden {
+  display: none !important;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.header-actions .btn-secondary,
+.header-actions .btn-danger {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+/* ============ LEGACY BTN ALIASES ============ */
+.btn {
+  padding: 10px 20px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.btn.btn-primary,
+.btn-primary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.btn.btn-primary:hover,
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+}
+
+.btn.btn-secondary,
+.btn-secondary {
+  background: rgba(30, 41, 59, 0.8);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.btn.btn-secondary:hover,
+.btn-secondary:hover {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.btn.btn-danger,
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
+.btn.btn-danger:hover,
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+}
+
+.btn.btn-sm.btn-primary {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.btn.btn-sm.btn-danger {
+  padding: 6px 12px;
+  font-size: 12px;
+}
 </style>
 </head>
 <body>
@@ -103,12 +685,12 @@
 <div class="header">
   <h1>🌳 Royaltree Admin Panel</h1>
   <div class="header-actions">
-    <button class="btn btn-secondary" onclick="loadAll()">🔄 Refresh</button>
-    <button class="btn btn-danger" onclick="doLogout()">🚪 Logout</button>
+    <button class="btn-secondary" onclick="loadAll()">🔄 Refresh</button>
+    <button class="btn-danger" onclick="doLogout()">🚪 Logout</button>
   </div>
 </div>
-<div class="container">
-  <div class="stats" id="stats"></div>
+<div class="content">
+  <div class="stats-grid" id="stats"></div>
   <div class="tabs">
     <button class="tab active" data-tab="users" onclick="switchTab('users')">👥 Users</button>
     <button class="tab" data-tab="withdrawals" onclick="switchTab('withdrawals')">💰 Withdrawals</button>
@@ -1010,65 +1592,103 @@ window.addEventListener('DOMContentLoaded', () => {
 <!-- ============================================================ -->
 <div id="game" class="panel" style="display:none;">
   <h2>🎮 Game Configuration</h2>
-  <p style="color:#666; margin-bottom:20px;">Atur parameter game mining, exchange rate, dan rate limit.</p>
+  <p>Atur parameter game mining, exchange rate, dan rate limit. Perubahan akan diambil oleh server dalam masa 5 minit.</p>
 
-  <fieldset style="border:1px solid #ddd; border-radius:8px; padding:20px; margin-bottom:20px;">
-    <legend style="font-weight:bold; padding:0 8px;">💰 Exchange Rate</legend>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-      <label>USD → IDR
-        <input type="number" id="gcUsdToIdr" placeholder="15000" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
-      </label>
-      <label>RTP → USD (rate)
-        <input type="number" id="gcRtpToUsd" placeholder="500" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
-      </label>
+  <!-- Info Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="label">💵 Exchange Rate</div>
+      <div class="value gold">1 RTP = Rp <span id="statRtpIdr">30</span></div>
     </div>
-    <p style="margin-top:8px; font-size:12px; color:#666;">
-      1 RTP = $<span id="gcRtpToUsdPreview">0.002</span> = Rp <span id="gcRtpToIdrPreview">30</span>
+    <div class="stat-card">
+      <div class="label">⛏️ Mining Rate</div>
+      <div class="value emerald"><span id="statMiningRate">0.0144</span> /GH/s</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">🛡️ Ad Limit</div>
+      <div class="value"><span id="statAdLimit">5</span> /hari</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">🎮 Minigame Limit</div>
+      <div class="value"><span id="statMiniLimit">10</span> /hari</div>
+    </div>
+  </div>
+
+  <!-- Exchange Rate -->
+  <fieldset>
+    <legend>💰 Exchange Rate</legend>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div>
+        <label>USD → IDR (Rupiah per $1)</label>
+        <input type="number" id="gcUsdToIdr" placeholder="15000">
+      </div>
+      <div>
+        <label>RTP → USD (Berapa RTP = $1)</label>
+        <input type="number" id="gcRtpToUsd" placeholder="500">
+      </div>
+    </div>
+    <p style="margin-top:12px; font-size:12px; color:#94a3b8; padding:12px; background:rgba(16,185,129,0.05); border-radius:8px;">
+      ℹ️ <strong>Preview:</strong> 1 RTP = $<span id="gcRtpToUsdPreview">0.002</span> = Rp <span id="gcRtpToIdrPreview">30</span>
     </p>
   </fieldset>
 
-  <fieldset style="border:1px solid #ddd; border-radius:8px; padding:20px; margin-bottom:20px;">
-    <legend style="font-weight:bold; padding:0 8px;">⛏️ Mining</legend>
+  <!-- Mining -->
+  <fieldset>
+    <legend>⛏️ Mining Configuration</legend>
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
-      <label>Rate per GH/s
-        <input type="number" id="gcMiningRate" step="0.0001" placeholder="0.0144" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
-      </label>
-      <label>Min Claim (RTP)
-        <input type="number" id="gcMinClaim" step="0.001" placeholder="0.01" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
-      </label>
-      <label>Cooldown (jam)
-        <input type="number" id="gcClaimCooldown" placeholder="3" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
-      </label>
+      <div>
+        <label>Rate per GH/s</label>
+        <input type="number" id="gcMiningRate" step="0.0001" placeholder="0.0144">
+      </div>
+      <div>
+        <label>Min Claim (RTP)</label>
+        <input type="number" id="gcMinClaim" step="0.001" placeholder="0.01">
+      </div>
+      <div>
+        <label>Claim Cooldown (jam)</label>
+        <input type="number" id="gcClaimCooldown" placeholder="3">
+      </div>
     </div>
   </fieldset>
 
-  <fieldset style="border:1px solid #ddd; border-radius:8px; padding:20px; margin-bottom:20px;">
-    <legend style="font-weight:bold; padding:0 8px;">🛡️ Rate Limits</legend>
+  <!-- Rate Limits -->
+  <fieldset>
+    <legend>🛡️ Rate Limits</legend>
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
-      <label>Ad Claim / hari
-        <input type="number" id="gcAdLimit" placeholder="5" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
-      </label>
-      <label>Minigame / hari
-        <input type="number" id="gcMinigameLimit" placeholder="10" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
-      </label>
-      <label>Minigame cooldown (minit)
-        <input type="number" id="gcMinigameCooldown" placeholder="5" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
-      </label>
+      <div>
+        <label>Ad Claim / hari</label>
+        <input type="number" id="gcAdLimit" placeholder="5">
+      </div>
+      <div>
+        <label>Minigame / hari</label>
+        <input type="number" id="gcMinigameLimit" placeholder="10">
+      </div>
+      <div>
+        <label>Minigame Cooldown (minit)</label>
+        <input type="number" id="gcMinigameCooldown" placeholder="5">
+      </div>
     </div>
   </fieldset>
 
-  <fieldset style="border:1px solid #ddd; border-radius:8px; padding:20px; margin-bottom:20px;">
-    <legend style="font-weight:bold; padding:0 8px;">🎁 Bonus</legend>
-    <label>Minigame bonus cap (%)
-      <input type="number" id="gcBonusCap" step="0.1" placeholder="20" style="width:200px; padding:8px; border:1px solid #ddd; border-radius:6px;">
-    </label>
+  <!-- Bonus -->
+  <fieldset>
+    <legend>🎁 Bonus Configuration</legend>
+    <div style="max-width:300px;">
+      <label>Minigame Bonus Cap (%)</label>
+      <input type="number" id="gcBonusCap" step="0.1" placeholder="20">
+      <p style="margin-top:8px; font-size:12px; color:#94a3b8;">
+        Had maksimum bonus dari mini-game (hidden dari user).
+      </p>
+    </div>
   </fieldset>
 
-  <button onclick="saveGameConfig()" style="padding:12px 24px; background:#1a73e8; color:white; border:none; border-radius:8px; font-size:15px; font-weight:600; cursor:pointer;">
-    💾 Simpan Config
-  </button>
+  <!-- Save Button -->
+  <div style="display:flex; gap:12px; margin-top:24px;">
+    <button class="btn-primary" onclick="saveGameConfig()">💾 Simpan Config</button>
+    <button class="btn-secondary" onclick="loadGameConfig()">🔄 Reset</button>
+  </div>
 
-  <p style="margin-top:16px; font-size:12px; color:#666;">
+  <p style="margin-top:16px; font-size:12px; color:#64748b;">
     <strong>Nota:</strong> Config akan diambil server dalam masa 5 minit. Restart server untuk kesan serta-merta.
   </p>
 </div>
@@ -1088,6 +1708,13 @@ async function loadGameConfig() {
     document.getElementById('gcMinigameLimit').value = d.minigameLimitPerDay || 10;
     document.getElementById('gcMinigameCooldown').value = (d.minigameCooldownMs || 300000) / 60000;
     document.getElementById('gcBonusCap').value = d.minigameBonusCap || 20;
+    
+    // Update stats
+    document.getElementById('statRtpIdr').textContent = (d.rtpToIdr || 30).toFixed(0);
+    document.getElementById('statMiningRate').textContent = d.miningRatePerGhs || 0.0144;
+    document.getElementById('statAdLimit').textContent = d.adClaimLimitPerDay || 5;
+    document.getElementById('statMiniLimit').textContent = d.minigameLimitPerDay || 10;
+    
     updateRatePreview();
   } catch (e) {
     alert('Error: ' + e.message);
