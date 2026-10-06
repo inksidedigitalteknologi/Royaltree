@@ -144,11 +144,10 @@ fun HomeScreen(
 
         // ==== 2. Balance Hero ====
         item {
-            Card(
-    shape = RoundedCornerShape(16.dp),
-    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-    modifier = Modifier.fillMaxWidth()
-) {
+            FramedCard(
+                frameRes = R.drawable.card_frame_balance,
+                paddingPercent = 0.12f
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()

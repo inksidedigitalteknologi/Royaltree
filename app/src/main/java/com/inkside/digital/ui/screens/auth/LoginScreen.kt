@@ -115,7 +115,7 @@ fun LoginScreen(
                             color = Color.White,
                             style = MaterialTheme.typography.headlineLarge.copy(
                                 brush = Brush.linearGradient(
-                                    colors = listOf(Color.White, Color(0xFFE0E7FF))
+                                    colors = listOf(Color.White, Color(0xFF10B981))
                                 )
                             )
                         )
