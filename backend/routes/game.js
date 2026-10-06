@@ -155,13 +155,25 @@ function calculateFinalRate(baseRate, room, placedMiners) {
     const totalBonusPct = permanentBonusPct + miniGameBonusPct;
     const finalRate = baseRate * (1 + totalBonusPct / 100);
 
-    return {
-        baseRate: parseFloat(baseRate.toFixed(10)),
-        permanentBonusPct: parseFloat(permanentBonusPct.toFixed(4)),
-        miniGameBonusPct: parseFloat(miniGameBonusPct.toFixed(4)),
-        totalBonusPct: parseFloat(totalBonusPct.toFixed(4)),
-        finalRate: parseFloat(finalRate.toFixed(10))
-    };
+    
+        // ============ BOOST MULTIPLIER (auto-claim patch) ============
+        // Kalau boost aktif (boostExpiryTimestamp > now), apply multiplier
+        let finalRateWithBoost = finalRate;
+        if (room && room.boostExpiryTimestamp && room.boostExpiryTimestamp > Date.now()) {
+            const mult = room.boostMultiplier || 1.0;
+            finalRateWithBoost = finalRate * mult;
+            console.log(`[BOOST-APPLY] mult=${mult}, rate=${finalRate} → ${finalRateWithBoost}`);
+        }
+        
+        return {
+            finalRate: finalRateWithBoost,
+            baseRate: baseRate,
+            permanentBonusPct: permanentBonusPct || 0,
+            miniGameBonusPct: miniGameBonusPct || 0,
+            totalBonusPct: totalBonusPct || 0,
+            boostMultiplier: (room && room.boostExpiryTimestamp > Date.now()) ? (room.boostMultiplier || 1.0) : 1.0,
+            boostActive: (room && room.boostExpiryTimestamp > Date.now()) ? true : false
+        };
 }
 
 // ============================================================
