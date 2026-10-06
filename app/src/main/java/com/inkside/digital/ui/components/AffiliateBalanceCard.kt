@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.inkside.digital.ui.components.FramedCard
 import com.inkside.digital.viewmodel.AffiliateViewModel
 import com.inkside.digital.localization.LanguageManager
 
@@ -49,12 +50,9 @@ fun AffiliateBalanceCard(
     onWithdraw: () -> Unit = {},
     onHistory: () -> Unit = {}
 ) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        modifier = Modifier.fillMaxWidth()
+    FramedCard(
+        frameRes = com.inkside.digital.R.drawable.card_frame_affiliate,
+        contentPadding = 40.dp
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Header
