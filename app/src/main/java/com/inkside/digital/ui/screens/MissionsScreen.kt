@@ -165,8 +165,8 @@ fun MissionsScreen(
             item {
                 FramedCard(
                     frameRes = R.drawable.card_frame_mission,
-                    paddingPercentHorizontal = 0.16f,
-                    paddingPercentVertical = 0.24f,
+                    paddingPercentHorizontal = 0.10f,
+                    paddingPercentVertical = 0.14f,
                 ) {
                     Box(
                         modifier = Modifier
@@ -387,8 +387,8 @@ fun MissionItemCard(
 
     FramedCard(
         frameRes = R.drawable.card_frame_mission,
-        paddingPercentHorizontal = 0.14f,
-        paddingPercentVertical = 0.22f,
+        paddingPercentHorizontal = 0.10f,
+        paddingPercentVertical = 0.14f,
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Row(
