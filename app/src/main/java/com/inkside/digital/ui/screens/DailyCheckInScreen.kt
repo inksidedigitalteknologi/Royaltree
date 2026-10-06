@@ -46,6 +46,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.inkside.digital.ui.components.FramedCard
 import com.inkside.digital.ui.components.CalendarDayItem
 import com.inkside.digital.ui.components.DayStatus
 import com.inkside.digital.ui.components.RecoveryDialog
@@ -116,10 +117,9 @@ fun DailyCheckInScreen(
 
         // Streak Card
         item {
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = GoldVip.copy(alpha = 0.15f)),
-                modifier = Modifier.fillMaxWidth()
+            FramedCard(
+                frameRes = R.drawable.card_frame_daily,
+                contentPadding = 40.dp
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -156,10 +156,9 @@ fun DailyCheckInScreen(
 
         // Info Weekend
         item {
-            Card(
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = ElectricBlue.copy(alpha = 0.1f)),
-                modifier = Modifier.fillMaxWidth()
+            FramedCard(
+                frameRes = R.drawable.card_frame_daily,
+                contentPadding = 40.dp
             ) {
                 Text(
                     text = "💡 " + LanguageManager.translate("daily_weekend_info", currentLanguage, "Weekend = bigger rewards!"),
@@ -177,10 +176,9 @@ fun DailyCheckInScreen(
 
         // Kalender
         item {
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                modifier = Modifier.fillMaxWidth()
+            FramedCard(
+                frameRes = R.drawable.card_frame_calendar,
+                contentPadding = 40.dp
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
                     // Header hari
