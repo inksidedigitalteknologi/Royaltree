@@ -78,8 +78,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     private val repository: AffiliateRepository
 
     init {
+        val database = AppDatabase.getDatabase(application, viewModelScope)
+        repository = AffiliateRepository(database.appDao())
+
         // ============ AUTO WIDGET SYNC (SEMUA transaksi) ============
-        // Observe user state — bila points/balance berubah, widget auto update
+        // Observe user state — SELEPAS repository diinisialisasi
+        // (elak NullPointerException: repository.user adalah null dalam init awal)
         viewModelScope.launch {
             user
                 .filterNotNull()
@@ -96,9 +100,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                 }
         }
-
-        val database = AppDatabase.getDatabase(application, viewModelScope)
-        repository = AffiliateRepository(database.appDao())
         // Tidak ada seed data dummy — user di-load dari backend.
         // Set active user ID dari Firebase Auth
         viewModelScope.launch {
