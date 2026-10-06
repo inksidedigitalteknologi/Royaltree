@@ -512,6 +512,44 @@ private fun ReferralStatsCard(
 // ==========================================================
 // MINING STATS — slot, power, token
 // ==========================================================
+@Composable
+private fun MiningStatsCard(
+    currentLanguage: AppLanguage,
+    slotsUsed: Int,
+    slotsMax: Int,
+    powerGhs: Double,
+    tokens: Int,
+    roomState: GameRoomStateEntity? = null
+) {
+    FramedCard(
+        frameRes = R.drawable.card_frame_mining,
+        contentPadding = 40.dp
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            Text(
+                LanguageManager.translate("profile_mining_status", currentLanguage, "⛏️ Status Mining"),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                MiniStatBox(LanguageManager.translate("profile_slot", currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), "${powerGhs.toInt()} GH/s", ElectricBlue, Modifier.weight(1f))
+                MiniStatBox("RTP", "$tokens", GoldVip, Modifier.weight(1f))
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format(Locale.US, "%.4f", (roomState?.ratePerMin ?: (powerGhs * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", ElectricBlue, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+${String.format(Locale.US, "%.0f", roomState?.tempPowerBonusGhs ?: 0.0)} GH/s", GoldVip, Modifier.weight(1f))
+            }
+        }
     }
 }
 

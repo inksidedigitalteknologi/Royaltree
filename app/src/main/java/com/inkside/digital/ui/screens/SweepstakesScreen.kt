@@ -49,6 +49,7 @@ fun SweepstakesScreen(
     val totalPool by viewModel.totalPool.collectAsState()
     val userTickets by viewModel.userTickets.collectAsState()
     val userChance by viewModel.userChance.collectAsState()
+    val maxTicketsPerUser by viewModel.maxTicketsPerUser.collectAsState()
     val rewards by viewModel.rewards.collectAsState()
     val history by viewModel.history.collectAsState()
 
