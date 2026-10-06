@@ -590,31 +590,36 @@ private fun MiningStatsCard(
     tokens: Int,
     roomState: GameRoomStateEntity? = null
 ) {
+    // M55: Aspect ratio lebih tinggi + layout 2 kolom × 3 baris
     FramedCard(
         frameRes = R.drawable.card_frame_mining,
-        aspectRatioOverride = 2.0f,
+        aspectRatioOverride = 1.5f,  // ← Lebar:tinggi 3:2 (rendah sikit dari 2.0f)
         paddingPercentHorizontal = 0.10f,
-        paddingPercentVertical = 0.10f,
+        paddingPercentVertical = 0.08f,
     ) {
-        Column(modifier = Modifier.padding(10.dp)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
             Text(
                 LanguageManager.translate("profile_mining_status", currentLanguage, "⛏️ Status Mining"),
-                fontSize = 11.sp,
+                fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Baris 1 — 3 kolom
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 MiniStatBox(LanguageManager.translate("profile_slot", currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), "${powerGhs.toInt()} GH/s", ElectricBlue, Modifier.weight(1f))
                 MiniStatBox("RTP", "$tokens", GoldVip, Modifier.weight(1f))
             }
-            Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // Baris 2 — 3 kolom
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format(Locale.US, "%.4f", (roomState?.ratePerMin ?: (powerGhs * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", ElectricBlue, Modifier.weight(1f))
