@@ -67,19 +67,21 @@ fun FramedCard(
             ?: contentPadding
             ?: (maxHeight * verticalPct)
 
+        // 1. Frame PNG (background)
+        Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillBounds
+        )
+
+        // 2. Content (overlay atas frame)
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = horizontalPadding, vertical = verticalPadding),
             contentAlignment = Alignment.Center,
             content = content
-        )
-
-        Image(
-            painter = painter,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
         )
     }
 }
