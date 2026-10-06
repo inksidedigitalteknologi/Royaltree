@@ -1,5 +1,6 @@
 package com.inkside.digital.ui.screens
 
+import com.inkside.digital.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing

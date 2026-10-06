@@ -1,5 +1,6 @@
 package com.inkside.digital.ui.screens
 
+import com.inkside.digital.R
 import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
