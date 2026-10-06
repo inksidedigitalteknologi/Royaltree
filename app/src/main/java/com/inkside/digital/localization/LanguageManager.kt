@@ -43,6 +43,78 @@ object LanguageManager {
             AppLanguage.ARABIC to "غرفة الألعاب",
             AppLanguage.JAPANESE to "ゲームルーム"
         ),
+        "history_title" to mapOf(
+            AppLanguage.INDONESIAN to "Riwayat Buku Besar & Transaksi",
+            AppLanguage.ENGLISH to "Ledger History & Transactions",
+            AppLanguage.SPANISH to "Historial de Transacciones",
+            AppLanguage.CHINESE to "账本历史与交易",
+            AppLanguage.ARABIC to "سجل المعاملات",
+            AppLanguage.JAPANESE to "取引履歴"
+        ),
+        "history_subtitle" to mapOf(
+            AppLanguage.INDONESIAN to "Audit lengkap penerimaan komisi, penarikan dana, dan investasi",
+            AppLanguage.ENGLISH to "Complete audit of commissions, withdrawals, and investments",
+            AppLanguage.SPANISH to "Auditoría completa de comisiones, retiros e inversiones",
+            AppLanguage.CHINESE to "佣金、提现和投资的完整审计",
+            AppLanguage.ARABIC to "مراجعة كاملة للعمولات والسحوبات والاستثمارات",
+            AppLanguage.JAPANESE to "手数料、出金、投資の完全な監査"
+        ),
+        "history_filter_all" to mapOf(
+            AppLanguage.INDONESIAN to "Semua",
+            AppLanguage.ENGLISH to "All",
+            AppLanguage.SPANISH to "Todos",
+            AppLanguage.CHINESE to "全部",
+            AppLanguage.ARABIC to "الكل",
+            AppLanguage.JAPANESE to "すべて"
+        ),
+        "history_filter_commission" to mapOf(
+            AppLanguage.INDONESIAN to "Komisi",
+            AppLanguage.ENGLISH to "Commission",
+            AppLanguage.SPANISH to "Comisión",
+            AppLanguage.CHINESE to "佣金",
+            AppLanguage.ARABIC to "عمولة",
+            AppLanguage.JAPANESE to "手数料"
+        ),
+        "history_filter_withdraw" to mapOf(
+            AppLanguage.INDONESIAN to "Tarik Dana",
+            AppLanguage.ENGLISH to "Withdraw",
+            AppLanguage.SPANISH to "Retirar",
+            AppLanguage.CHINESE to "提现",
+            AppLanguage.ARABIC to "سحب",
+            AppLanguage.JAPANESE to "出金"
+        ),
+        "history_filter_coupon" to mapOf(
+            AppLanguage.INDONESIAN to "Kupon",
+            AppLanguage.ENGLISH to "Coupon",
+            AppLanguage.SPANISH to "Cupón",
+            AppLanguage.CHINESE to "优惠券",
+            AppLanguage.ARABIC to "قسيمة",
+            AppLanguage.JAPANESE to "クーポン"
+        ),
+        "history_filter_rtp" to mapOf(
+            AppLanguage.INDONESIAN to "RTP",
+            AppLanguage.ENGLISH to "RTP",
+            AppLanguage.SPANISH to "RTP",
+            AppLanguage.CHINESE to "RTP",
+            AppLanguage.ARABIC to "RTP",
+            AppLanguage.JAPANESE to "RTP"
+        ),
+        "inbox_filter_all" to mapOf(
+            AppLanguage.INDONESIAN to "Semua",
+            AppLanguage.ENGLISH to "All",
+            AppLanguage.SPANISH to "Todos",
+            AppLanguage.CHINESE to "全部",
+            AppLanguage.ARABIC to "الكل",
+            AppLanguage.JAPANESE to "すべて"
+        ),
+        "inbox_filter_unread" to mapOf(
+            AppLanguage.INDONESIAN to "Belum Dibaca",
+            AppLanguage.ENGLISH to "Unread",
+            AppLanguage.SPANISH to "No leído",
+            AppLanguage.CHINESE to "未读",
+            AppLanguage.ARABIC to "غير مقروء",
+            AppLanguage.JAPANESE to "未読"
+        ),
         "badge_passive" to mapOf(
             AppLanguage.INDONESIAN to "PASIF",
             AppLanguage.ENGLISH to "PASSIVE",

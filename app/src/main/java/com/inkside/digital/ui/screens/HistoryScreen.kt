@@ -82,14 +82,14 @@ fun HistoryScreen(
         item {
             Column {
                 Text(
-                    text = "Riwayat Buku Besar & Transaksi",
+                    text = LanguageManager.translate("history_title", currentLanguage, "Riwayat Buku Besar & Transaksi"),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
                 )
                 Text(
-                    text = "Audit lengkap penerimaan komisi, penarikan dana, dan investasi",
+                    text = LanguageManager.translate("history_subtitle", currentLanguage, "Audit lengkap penerimaan komisi, penarikan dana, dan investasi"),
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -114,11 +114,11 @@ fun HistoryScreen(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 listOf(
-                    "ALL" to "Semua",
-                    "COMMISSION" to "Komisi",
-                    "WITHDRAWAL" to "Tarik Dana",
-                    "COUPON" to "Kupon",
-                    "REWARD" to "RTP"
+                    "ALL" to LanguageManager.translate("history_filter_all", currentLanguage, "Semua"),
+                    "COMMISSION" to LanguageManager.translate("history_filter_commission", currentLanguage, "Komisi"),
+                    "WITHDRAWAL" to LanguageManager.translate("history_filter_withdraw", currentLanguage, "Tarik Dana"),
+                    "COUPON" to LanguageManager.translate("history_filter_coupon", currentLanguage, "Kupon"),
+                    "REWARD" to LanguageManager.translate("history_filter_rtp", currentLanguage, "RTP")
                 ).forEach { (type, label) ->
                     val isSel = filterType == type
                     Box(

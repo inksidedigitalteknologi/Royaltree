@@ -124,12 +124,12 @@ fun InboxScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FilterChip(
-                    label = "Semua",
+                    label = LanguageManager.translate("inbox_filter_all", currentLanguage, "Semua"),
                     selected = filter == "ALL",
                     onClick = { filter = "ALL" }
                 )
                 FilterChip(
-                    label = "Belum Dibaca",
+                    label = LanguageManager.translate("inbox_filter_unread", currentLanguage, "Belum Dibaca"),
                     selected = filter == "UNREAD",
                     onClick = { filter = "UNREAD" }
                 )
