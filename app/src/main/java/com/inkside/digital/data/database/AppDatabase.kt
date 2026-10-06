@@ -59,7 +59,7 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                     // No migrations — fresh DB
                     .addCallback(DatabaseCallback(scope))
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration(dropAllTables = true)
                     .build()
                 INSTANCE = instance
                 instance

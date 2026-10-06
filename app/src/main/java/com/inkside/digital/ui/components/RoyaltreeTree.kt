@@ -207,7 +207,7 @@ private fun DrawScope.drawBranch(
     val midY = (start.y + end.y) / 2f + curveOffset * 0.5f
     val branchPath = Path().apply {
         moveTo(start.x, start.y)
-        quadraticBezierTo(midX, midY, end.x, end.y)
+        quadraticTo(midX, midY, end.x, end.y)
     }
     drawPath(
         path = branchPath,
