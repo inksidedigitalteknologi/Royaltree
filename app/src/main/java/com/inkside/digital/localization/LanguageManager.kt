@@ -1496,6 +1496,110 @@ object LanguageManager {
             AppLanguage.ARABIC to "السحوبات",
             AppLanguage.JAPANESE to "スイープステークス"
         ),
+        "sweepstakes_ends_at" to mapOf(
+            AppLanguage.INDONESIAN to "Berakhir",
+            AppLanguage.ENGLISH to "Ends",
+            AppLanguage.SPANISH to "Termina",
+            AppLanguage.CHINESE to "结束于",
+            AppLanguage.ARABIC to "ينتهي",
+            AppLanguage.JAPANESE to "終了"
+        ),
+        "sweepstakes_no_winners" to mapOf(
+            AppLanguage.INDONESIAN to "Belum ada pemenang",
+            AppLanguage.ENGLISH to "No winners yet",
+            AppLanguage.SPANISH to "Aún no hay ganadores",
+            AppLanguage.CHINESE to "还没有获奖者",
+            AppLanguage.ARABIC to "لا يوجد فائزون بعد",
+            AppLanguage.JAPANESE to "まだ当選者なし"
+        ),
+        "sweepstakes_first_period" to mapOf(
+            AppLanguage.INDONESIAN to "Periode pertama sedang berjalan",
+            AppLanguage.ENGLISH to "First period is running",
+            AppLanguage.SPANISH to "El primer período está en curso",
+            AppLanguage.CHINESE to "第一周期进行中",
+            AppLanguage.ARABIC to "الفترة الأولى قيد التشغيل",
+            AppLanguage.JAPANESE to "最初の期間が進行中"
+        ),
+        "sweepstakes_rank" to mapOf(
+            AppLanguage.INDONESIAN to "Juara",
+            AppLanguage.ENGLISH to "Rank",
+            AppLanguage.SPANISH to "Puesto",
+            AppLanguage.CHINESE to "排名",
+            AppLanguage.ARABIC to "المرتبة",
+            AppLanguage.JAPANESE to "順位"
+        ),
+        "sweepstakes_you_won" to mapOf(
+            AppLanguage.INDONESIAN to "🎉 Anda menang!",
+            AppLanguage.ENGLISH to "🎉 You won!",
+            AppLanguage.SPANISH to "🎉 ¡Ganaste!",
+            AppLanguage.CHINESE to "🎉 你赢了！",
+            AppLanguage.ARABIC to "🎉 لقد فزت!",
+            AppLanguage.JAPANESE to "🎉 当選！"
+        ),
+        "sweepstakes_completed" to mapOf(
+            AppLanguage.INDONESIAN to "Selesai",
+            AppLanguage.ENGLISH to "Completed",
+            AppLanguage.SPANISH to "Completado",
+            AppLanguage.CHINESE to "已完成",
+            AppLanguage.ARABIC to "مكتمل",
+            AppLanguage.JAPANESE to "完了"
+        ),
+        "sweepstakes_total" to mapOf(
+            AppLanguage.INDONESIAN to "Total",
+            AppLanguage.ENGLISH to "Total",
+            AppLanguage.SPANISH to "Total",
+            AppLanguage.CHINESE to "总计",
+            AppLanguage.ARABIC to "الإجمالي",
+            AppLanguage.JAPANESE to "合計"
+        ),
+        "sweepstakes_you_have" to mapOf(
+            AppLanguage.INDONESIAN to "Anda punya",
+            AppLanguage.ENGLISH to "You have",
+            AppLanguage.SPANISH to "Tienes",
+            AppLanguage.CHINESE to "你有",
+            AppLanguage.ARABIC to "لديك",
+            AppLanguage.JAPANESE to "あなたは持っています"
+        ),
+        "sweepstakes_buy" to mapOf(
+            AppLanguage.INDONESIAN to "BELI",
+            AppLanguage.ENGLISH to "BUY",
+            AppLanguage.SPANISH to "COMPRAR",
+            AppLanguage.CHINESE to "购买",
+            AppLanguage.ARABIC to "شراء",
+            AppLanguage.JAPANESE to "購入"
+        ),
+        "sweepstakes_cancel" to mapOf(
+            AppLanguage.INDONESIAN to "Batal",
+            AppLanguage.ENGLISH to "Cancel",
+            AppLanguage.SPANISH to "Cancelar",
+            AppLanguage.CHINESE to "取消",
+            AppLanguage.ARABIC to "إلغاء",
+            AppLanguage.JAPANESE to "キャンセル"
+        ),
+        "sweepstakes_winners_last" to mapOf(
+            AppLanguage.INDONESIAN to "🏆 Pemenang Lalu",
+            AppLanguage.ENGLISH to "🏆 Past Winners",
+            AppLanguage.SPANISH to "🏆 Ganadores Pasados",
+            AppLanguage.CHINESE to "🏆 历届获奖者",
+            AppLanguage.ARABIC to "🏆 الفائزون السابقون",
+            AppLanguage.JAPANESE to "🏆 過去の当選者"
+        ),
+        "sweepstakes_ticket_info" to mapOf(
+            AppLanguage.INDONESIAN to "kupon",
+            AppLanguage.ENGLISH to "tickets",
+            AppLanguage.SPANISH to "boletos",
+            AppLanguage.CHINESE to "票",
+            AppLanguage.ARABIC to "تذاكر",
+            AppLanguage.JAPANESE to "チケット"
+        ),
+        "sweepstakes_winner_info" to mapOf(
+            AppLanguage.INDONESIAN to "pemenang",
+            AppLanguage.ENGLISH to "winners",
+            AppLanguage.SPANISH to "ganadores",
+            AppLanguage.CHINESE to "获奖者",
+            AppLanguage.ARABIC to "الفائزين",
+            AppLanguage.JAPANESE to "当選者"
+        ),
         "sweepstakes_title" to mapOf(
             AppLanguage.INDONESIAN to "🎟️ Sweepstakes",
             AppLanguage.ENGLISH to "🎟️ Sweepstakes",
