@@ -61,13 +61,21 @@ class SweepstakesViewModel(application: Application) : AndroidViewModel(applicat
     // ============ DATA CLASSES ============
     data class TopHolder(val uid: String, val name: String, val tickets: Int)
     data class RewardTier(val rank: Int, val count: Int, val amount: Int)
+    data class TopWinner(
+        val rank: Int,
+        val uid: String,
+        val name: String,
+        val amount: Int,
+        val ticketNumber: String? = null
+    )
     data class HistoryItem(
         val id: String,
         val endTime: Long,
         val totalTickets: Int,
         val totalPool: Int,
         val winnerCount: Int,
-        val userWon: Boolean
+        val userWon: Boolean,
+        val topWinners: List<TopWinner> = emptyList()
     )
 
     // ============ INIT ============
@@ -151,6 +159,25 @@ class SweepstakesViewModel(application: Application) : AndroidViewModel(applicat
                         val list = mutableListOf<HistoryItem>()
                         for (i in 0 until arr.length()) {
                             val h = arr.optJSONObject(i) ?: continue
+
+                            // Parse topWinners (M49)
+                            val topWinners = mutableListOf<TopWinner>()
+                            val twArr = h.optJSONArray("topWinners")
+                            if (twArr != null) {
+                                for (j in 0 until twArr.length()) {
+                                    val w = twArr.optJSONObject(j) ?: continue
+                                    topWinners.add(
+                                        TopWinner(
+                                            rank = w.optInt("rank", 0),
+                                            uid = w.optString("uid", ""),
+                                            name = w.optString("name", "Anonim"),
+                                            amount = w.optInt("amount", 0),
+                                            ticketNumber = w.optString("ticketNumber", null)
+                                        )
+                                    )
+                                }
+                            }
+
                             list.add(
                                 HistoryItem(
                                     id = h.optString("id", ""),
@@ -158,7 +185,8 @@ class SweepstakesViewModel(application: Application) : AndroidViewModel(applicat
                                     totalTickets = h.optInt("totalTickets", 0),
                                     totalPool = h.optInt("totalPool", 0),
                                     winnerCount = h.optInt("winnerCount", 0),
-                                    userWon = h.optJSONObject("userWon") != null
+                                    userWon = h.optJSONObject("userWon") != null,
+                                    topWinners = topWinners
                                 )
                             )
                         }

@@ -1,5 +1,6 @@
 package com.inkside.digital.ui.screens
 
+import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -99,59 +100,55 @@ fun SweepstakesScreen(
                 }
             }
 
-            // ============ POOL CARD ============
+            // ============ ROYAL JACKPOT CARD ============
             item {
-                Card(
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                    modifier = Modifier.fillMaxWidth()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(Color(0xFF1E3A8A), Color(0xFF0F172A))
+                            )
+                        )
+                        .border(
+                            width = 1.5.dp,
+                            brush = Brush.verticalGradient(
+                                listOf(GoldVip, Color(0xFFD97706))
+                            ),
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                        .padding(24.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                Brush.linearGradient(
-                                    listOf(
-                                        ElectricBlue,
-                                        ElectricBlue.copy(alpha = 0.85f),
-                                        Color(0xFF7C3AED)
-                                    )
-                                )
-                            )
-                            .padding(20.dp)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Column {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Casino, null, tint = Color.White, modifier = Modifier.size(20.dp))
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    "TOTAL POOL",
-                                    fontSize = 11.sp,
-                                    color = Color.White.copy(alpha = 0.8f),
-                                    fontWeight = FontWeight.Bold,
-                                    letterSpacing = 2.sp
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
+                        Text("\uD83D\uDC51", fontSize = 32.sp)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            "ROYAL JACKPOT",
+                            fontSize = 12.sp,
+                            color = GoldVip,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 3.sp
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            "$totalPool RTP",
+                            fontSize = 36.sp,
+                            fontWeight = FontWeight.Black,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Timer, null, tint = GoldVip, modifier = Modifier.size(14.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                "$totalPool RTP",
-                                fontSize = 32.sp,
-                                fontWeight = FontWeight.Black,
-                                color = Color.White
+                                "Berakhir: ${formatCountdown(endTime)}",
+                                fontSize = 11.sp,
+                                color = Color.White.copy(alpha = 0.8f)
                             )
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            // Timer
-                            Spacer(modifier = Modifier.height(14.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Timer, null, tint = Color.White, modifier = Modifier.size(16.dp))
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    "Berakhir: ${formatCountdown(endTime)}",
-                                    fontSize = 12.sp,
-                                    color = Color.White.copy(alpha = 0.9f)
-                                )
-                            }
                         }
                     }
                 }
@@ -164,18 +161,22 @@ fun SweepstakesScreen(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column {
-                            Text("Kupon Anda", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Text("$userTickets", fontSize = 22.sp, fontWeight = FontWeight.Black, color = EmeraldLight)
+                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("🎟️ Kupon Anda", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+                            Text("$userTickets / $maxTicketsPerUser", fontSize = 14.sp, fontWeight = FontWeight.Black, color = EmeraldLight)
                         }
-                        Column(horizontalAlignment = Alignment.End) {
-                            Text("Peluang Menang", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Text(userChance, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = GoldVip)
-                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        LinearProgressIndicator(
+                            progress = { (userTickets.toFloat() / maxTicketsPerUser.coerceAtLeast(1)).coerceIn(0f, 1f) },
+                            modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp)),
+                            color = EmeraldLight,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
                     }
                 }
             }
@@ -195,6 +196,53 @@ fun SweepstakesScreen(
                         fontWeight = FontWeight.Black,
                         fontSize = 14.sp
                     )
+                }
+            }
+
+            // ============ PODIUM WINNERS (M49) ============
+            val lastWinners = history.firstOrNull()?.topWinners ?: emptyList()
+            if (lastWinners.isNotEmpty()) {
+                item {
+                    Text(
+                        "🏆 Pemenang Periode Lalu",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+                item {
+                    PodiumRow(winners = lastWinners)
+                }
+            } else {
+                item {
+                    Text(
+                        "🏆 Pemenang Periode Lalu",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+                item {
+                    Card(
+                        shape = RoundedCornerShape(14.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth().padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("📭", fontSize = 32.sp)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("Belum ada pemenang", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                "Periode pertama sedang berjalan",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
             }
 
@@ -414,6 +462,126 @@ fun BuyTicketModal(
             }
         }
     )
+}
+
+// ============ HELPER: Podium Winners ============
+@Composable
+fun PodiumRow(winners: List<SweepstakesViewModel.TopWinner>) {
+    val rank1 = winners.firstOrNull { it.rank == 1 }
+    val rank2 = winners.firstOrNull { it.rank == 2 }
+    val rank3 = winners.firstOrNull { it.rank == 3 }
+
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.Bottom
+    ) {
+        // Juara 2 (kiri, rendah)
+        if (rank2 != null) {
+            PodiumItem(
+                winner = rank2,
+                medal = "\uD83E\uDD48",
+                color = Color(0xFFC0C0C0),
+                height = 100.dp,
+                modifier = Modifier.weight(1f)
+            )
+        } else {
+            Spacer(modifier = Modifier.weight(1f))
+        }
+
+        // Juara 1 (tengah, tinggi)
+        if (rank1 != null) {
+            PodiumItem(
+                winner = rank1,
+                medal = "\uD83E\uDD47",
+                color = GoldVip,
+                height = 130.dp,
+                modifier = Modifier.weight(1f)
+            )
+        } else {
+            Spacer(modifier = Modifier.weight(1f))
+        }
+
+        // Juara 3 (kanan, paling rendah)
+        if (rank3 != null) {
+            PodiumItem(
+                winner = rank3,
+                medal = "\uD83E\uDD49",
+                color = Color(0xFFCD7F32),
+                height = 80.dp,
+                modifier = Modifier.weight(1f)
+            )
+        } else {
+            Spacer(modifier = Modifier.weight(1f))
+        }
+    }
+}
+
+@Composable
+private fun PodiumItem(
+    winner: SweepstakesViewModel.TopWinner,
+    medal: String,
+    color: Color,
+    height: Dp,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(medal, fontSize = 28.sp)
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(height)
+                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            color.copy(alpha = 0.25f),
+                            color.copy(alpha = 0.10f)
+                        )
+                    )
+                )
+                .border(
+                    width = 1.dp,
+                    color = color.copy(alpha = 0.6f),
+                    shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
+                )
+                .padding(8.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = winner.name,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "${winner.amount}",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Black,
+                    color = color,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = "RTP",
+                    fontSize = 8.sp,
+                    color = Color.White.copy(alpha = 0.6f)
+                )
+            }
+        }
+    }
 }
 
 // ============ HELPER: Countdown ============
