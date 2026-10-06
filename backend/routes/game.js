@@ -887,6 +887,58 @@ router.post('/mining/unplace', verifyFirebaseToken, async (req, res) => {
 });
 
 // ============================================================
+// GET /api/v1/game/notifications/:userId
+// Notifications user (from Firestore)
+// ============================================================
+router.get('/notifications/:userId', verifyFirebaseToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { uid } = req.firebaseUser;
+        
+        // Security: user hanya boleh lihat notif sendiri
+        if (uid !== userId) {
+            return res.status(403).json({
+                success: false,
+                message: 'Akses ditolak'
+            });
+        }
+        
+        const limit = parseInt(req.query.limit) || 50;
+        
+        const snap = await db.collection('notifications')
+            .where('userId', '==', userId)
+            .orderBy('timestamp', 'desc')
+            .limit(limit)
+            .get();
+        
+        const notifications = [];
+        snap.forEach(doc => {
+            const data = doc.data();
+            notifications.push({
+                id: doc.id,
+                userId: data.userId,
+                title: data.title || '',
+                body: data.body || data.message || '',
+                type: data.type || 'INFO',
+                isRead: data.isRead || false,
+                timestamp: data.timestamp?.toMillis() || data.timestampMs || Date.now()
+            });
+        });
+        
+        return res.json({
+            success: true,
+            data: notifications
+        });
+    } catch (error) {
+        console.error('[GAME-NOTIFICATIONS] Error:', error);
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// ============================================================
 // GET /api/v1/game/history/:userId
 // History transaksi user (from Firestore transactions)
 // ============================================================

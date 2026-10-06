@@ -83,6 +83,8 @@ class AffiliateRepository(private val dao: AppDao) {
 
     suspend fun insertTransactions(transactions: List<TransactionEntity>) = dao.insertTransactions(transactions)
     
+    suspend fun insertNotifications(notifications: List<NotificationEntity>) = dao.insertNotifications(notifications)
+    
     suspend fun requestWithdrawal(
         amount: Double,
         currency: String,

@@ -98,6 +98,12 @@ interface AppDao {
     // Notifications
     @Query("SELECT * FROM notifications ORDER BY timestamp DESC")
     fun getAllNotifications(): Flow<List<NotificationEntity>>
+    
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNotifications(notifications: List<NotificationEntity>)
+    
+    @Query("DELETE FROM notifications")
+    suspend fun deleteAllNotifications()
 
     @Query("SELECT COUNT(*) FROM notifications WHERE isRead = 0")
     fun getUnreadNotificationCount(): Flow<Int>
