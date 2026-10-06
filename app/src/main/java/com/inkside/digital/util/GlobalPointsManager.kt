@@ -133,7 +133,7 @@ object GlobalPointsManager {
     fun formatBalanceIdr(balanceIdr: Double, languageCode: String): String {
         val currencyCode = getCurrencyCodeForLanguage(languageCode)
         return when (currencyCode) {
-            "IDR" -> "Rp ${String.format(Locale("id", "ID"), "%,.0f", balanceIdr)}"
+            "IDR" -> "Rp ${String.format(Locale.forLanguageTag("id-ID"), "%,.0f", balanceIdr)}"
             else -> {
                 // Convert IDR → USD → target currency
                 val usd = balanceIdr / RATE_USD_TO_IDR

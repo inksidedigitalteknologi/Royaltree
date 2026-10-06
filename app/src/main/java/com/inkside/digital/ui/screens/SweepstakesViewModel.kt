@@ -172,7 +172,7 @@ class SweepstakesViewModel(application: Application) : AndroidViewModel(applicat
                                             uid = w.optString("uid", ""),
                                             name = w.optString("name", "Anonim"),
                                             amount = w.optInt("amount", 0),
-                                            ticketNumber = w.optString("ticketNumber", null)
+                                            ticketNumber = if (w.has("ticketNumber")) w.optString("ticketNumber") else null
                                         )
                                     )
                                 }
