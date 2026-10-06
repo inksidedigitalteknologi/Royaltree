@@ -115,6 +115,222 @@ object LanguageManager {
             AppLanguage.ARABIC to "غير مقروء",
             AppLanguage.JAPANESE to "未読"
         ),
+        "snackbar_portal_connected" to mapOf(
+            AppLanguage.INDONESIAN to "Berhasil terhubung ke portal Anda! 🟢",
+            AppLanguage.ENGLISH to "Successfully connected to your portal! 🟢",
+            AppLanguage.SPANISH to "¡Conectado exitosamente a tu portal! 🟢",
+            AppLanguage.CHINESE to "成功连接到您的门户！🟢",
+            AppLanguage.ARABIC to "تم الاتصال بالبوابة بنجاح! 🟢",
+            AppLanguage.JAPANESE to "ポータルに接続しました！🟢"
+        ),
+        "snackbar_portal_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Koneksi gagal: %s 🔴",
+            AppLanguage.ENGLISH to "Connection failed: %s 🔴",
+            AppLanguage.SPANISH to "Conexión fallida: %s 🔴",
+            AppLanguage.CHINESE to "连接失败：%s 🔴",
+            AppLanguage.ARABIC to "فشل الاتصال: %s 🔴",
+            AppLanguage.JAPANESE to "接続に失敗しました：%s 🔴"
+        ),
+        "snackbar_config_saved" to mapOf(
+            AppLanguage.INDONESIAN to "Konfigurasi URL & API Key Portal berhasil disimpan!",
+            AppLanguage.ENGLISH to "URL & API Key Portal configuration saved successfully!",
+            AppLanguage.SPANISH to "¡Configuración de URL y API Key del Portal guardada!",
+            AppLanguage.CHINESE to "门户 URL 和 API 密钥配置已保存！",
+            AppLanguage.ARABIC to "تم حفظ إعدادات URL و API Key للبوابة!",
+            AppLanguage.JAPANESE to "ポータルのURLとAPIキー設定を保存しました！"
+        ),
+        "snackbar_sync_started" to mapOf(
+            AppLanguage.INDONESIAN to "Memulai sinkronisasi data ke portal...",
+            AppLanguage.ENGLISH to "Starting data sync to portal...",
+            AppLanguage.SPANISH to "Iniciando sincronización al portal...",
+            AppLanguage.CHINESE to "正在同步数据到门户...",
+            AppLanguage.ARABIC to "بدء مزامنة البيانات مع البوابة...",
+            AppLanguage.JAPANESE to "ポータルへのデータ同期を開始しています..."
+        ),
+        "snackbar_sync_success" to mapOf(
+            AppLanguage.INDONESIAN to "Sinkronisasi sukses! Data terkirim ke portal. ✓",
+            AppLanguage.ENGLISH to "Sync success! Data sent to portal. ✓",
+            AppLanguage.SPANISH to "¡Sincronización exitosa! Datos enviados. ✓",
+            AppLanguage.CHINESE to "同步成功！数据已发送。✓",
+            AppLanguage.ARABIC to "تمت المزامنة بنجاح! تم إرسال البيانات. ✓",
+            AppLanguage.JAPANESE to "同期成功！データを送信しました。✓"
+        ),
+        "snackbar_sync_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Sinkronisasi gagal: %s (Data tetap tersimpan offline)",
+            AppLanguage.ENGLISH to "Sync failed: %s (Data saved offline)",
+            AppLanguage.SPANISH to "Sincronización fallida: %s (Datos guardados offline)",
+            AppLanguage.CHINESE to "同步失败：%s（数据已离线保存）",
+            AppLanguage.ARABIC to "فشلت المزامنة: %s (تم حفظ البيانات محلياً)",
+            AppLanguage.JAPANESE to "同期に失敗：%s（データはオフライン保存）"
+        ),
+        "snackbar_language_changed" to mapOf(
+            AppLanguage.INDONESIAN to "Bahasa diubah ke %s %s",
+            AppLanguage.ENGLISH to "Language changed to %s %s",
+            AppLanguage.SPANISH to "Idioma cambiado a %s %s",
+            AppLanguage.CHINESE to "语言已切换为 %s %s",
+            AppLanguage.ARABIC to "تم تغيير اللغة إلى %s %s",
+            AppLanguage.JAPANESE to "言語を %s %s に変更しました"
+        ),
+        "snackbar_withdraw_sent" to mapOf(
+            AppLanguage.INDONESIAN to "Pengajuan penarikan dana berhasil dikirim ke Admin!",
+            AppLanguage.ENGLISH to "Withdrawal request sent to Admin successfully!",
+            AppLanguage.SPANISH to "¡Solicitud de retiro enviada al Administrador!",
+            AppLanguage.CHINESE to "提现请求已发送给管理员！",
+            AppLanguage.ARABIC to "تم إرسال طلب السحب إلى المسؤول!",
+            AppLanguage.JAPANESE to "出金リクエストを管理者に送信しました！"
+        ),
+        "snackbar_affiliate_link_ready" to mapOf(
+            AppLanguage.INDONESIAN to "Tautan affiliasi siap: %s",
+            AppLanguage.ENGLISH to "Affiliate link ready: %s",
+            AppLanguage.SPANISH to "Enlace de afiliado listo: %s",
+            AppLanguage.CHINESE to "联盟链接已就绪：%s",
+            AppLanguage.ARABIC to "رابط الإحالة جاهز: %s",
+            AppLanguage.JAPANESE to "アフィリエイトリンク準備完了：%s"
+        ),
+        "snackbar_redeem_success" to mapOf(
+            AppLanguage.INDONESIAN to "Sukses tukar poin global! +Rp %s masuk ke saldo.",
+            AppLanguage.ENGLISH to "Points redeemed! +Rp %s added to balance.",
+            AppLanguage.SPANISH to "¡Puntos canjeados! +Rp %s al saldo.",
+            AppLanguage.CHINESE to "积分兑换成功！+Rp %s 已添加到余额。",
+            AppLanguage.ARABIC to "تم استبدال النقاط! +Rp %s إلى الرصيد.",
+            AppLanguage.JAPANESE to "ポイント交換成功！+Rp %s を残高に追加。"
+        ),
+        "snackbar_coupon_bought" to mapOf(
+            AppLanguage.INDONESIAN to "Kupon investasi berhasil dibeli! Cek portofolio Anda.",
+            AppLanguage.ENGLISH to "Investment coupon purchased! Check your portfolio.",
+            AppLanguage.SPANISH to "¡Cupón de inversión comprado! Revisa tu portafolio.",
+            AppLanguage.CHINESE to "投资券购买成功！请查看您的投资组合。",
+            AppLanguage.ARABIC to "تم شراء قسيمة الاستثمار! تحقق من محفظتك.",
+            AppLanguage.JAPANESE to "投資クーポンを購入しました！ポートフォリオを確認してください。"
+        ),
+        "snackbar_dividend_paid" to mapOf(
+            AppLanguage.INDONESIAN to "Hasil return dividen +Rp %s dicairkan ke saldo!",
+            AppLanguage.ENGLISH to "Dividend return +Rp %s cashed out to balance!",
+            AppLanguage.SPANISH to "¡Dividendo +Rp %s cobrado al saldo!",
+            AppLanguage.CHINESE to "股息 +Rp %s 已兑现到余额！",
+            AppLanguage.ARABIC to "تم صرف الأرباح +Rp %s إلى الرصيد!",
+            AppLanguage.JAPANESE to "配当 +Rp %s を残高に換金しました！"
+        ),
+        "snackbar_reward_success" to mapOf(
+            AppLanguage.INDONESIAN to "Reward berhasil, tapi gagal refresh: %s",
+            AppLanguage.ENGLISH to "Reward successful, but refresh failed: %s",
+            AppLanguage.SPANISH to "Recompensa exitosa, pero falló la actualización: %s",
+            AppLanguage.CHINESE to "奖励成功，但刷新失败：%s",
+            AppLanguage.ARABIC to "المكافأة ناجحة، لكن فشل التحديث: %s",
+            AppLanguage.JAPANESE to "報酬は成功しましたが、更新に失敗：%s"
+        ),
+        "snackbar_mining_harvest" to mapOf(
+            AppLanguage.INDONESIAN to "Panen Berhasil! +%s Poin masuk ke saldo Anda 🎉",
+            AppLanguage.ENGLISH to "Harvest Success! +%s Points added to balance 🎉",
+            AppLanguage.SPANISH to "¡Cosecha exitosa! +%s puntos al saldo 🎉",
+            AppLanguage.CHINESE to "收获成功！+%s 积分已添加到余额 🎉",
+            AppLanguage.ARABIC to "نجح الحصاد! +%s نقطة إلى رصيدك 🎉",
+            AppLanguage.JAPANESE to "収穫成功！+%s ポイントを残高に追加 🎉"
+        ),
+        "snackbar_minigame_finished" to mapOf(
+            AppLanguage.INDONESIAN to "Game Selesai! Skor: %s (+%s Poin & Power Boost +%s GH/s) 🎮",
+            AppLanguage.ENGLISH to "Game Finished! Score: %s (+%s Points & Power Boost +%s GH/s) 🎮",
+            AppLanguage.SPANISH to "¡Juego terminado! Puntuación: %s (+%s puntos & Power +%s GH/s) 🎮",
+            AppLanguage.CHINESE to "游戏结束！分数：%s（+%s 积分 & 算力 +%s GH/s）🎮",
+            AppLanguage.ARABIC to "انتهت اللعبة! النتيجة: %s (+%s نقطة و +%s GH/s) 🎮",
+            AppLanguage.JAPANESE to "ゲーム終了！スコア：%s（+%s ポイント & +%s GH/s）🎮"
+        ),
+        "snackbar_mining_claim_success" to mapOf(
+            AppLanguage.INDONESIAN to "🎉 Berhasil klaim %s RTP! Klaim lagi dalam 3 jam.",
+            AppLanguage.ENGLISH to "🎉 Successfully claimed %s RTP! Claim again in 3 hours.",
+            AppLanguage.SPANISH to "🎉 ¡Reclamaste %s RTP! Reclama en 3 horas.",
+            AppLanguage.CHINESE to "🎉 成功领取 %s RTP！3 小时后可再次领取。",
+            AppLanguage.ARABIC to "🎉 تم استلام %s RTP! المطالبة مرة أخرى في 3 ساعات.",
+            AppLanguage.JAPANESE to "🎉 %s RTP を請求しました！3時間後に再度請求してください。"
+        ),
+        "snackbar_claim_cooldown" to mapOf(
+            AppLanguage.INDONESIAN to "Tunggu %d menit lagi untuk klaim berikutnya.",
+            AppLanguage.ENGLISH to "Wait %d more minutes for next claim.",
+            AppLanguage.SPANISH to "Espera %d minutos más para el próximo reclamo.",
+            AppLanguage.CHINESE to "等待 %d 分钟后再次领取。",
+            AppLanguage.ARABIC to "انتظر %d دقيقة أخرى للمطالبة التالية.",
+            AppLanguage.JAPANESE to "次の請求まで %d 分お待ちください。"
+        ),
+        "snackbar_ad_limit_reached" to mapOf(
+            AppLanguage.INDONESIAN to "Limit klaim iklan harian (%d) telah dicapai. Sila tunggu cooldown biasa.",
+            AppLanguage.ENGLISH to "Daily ad claim limit (%d) reached. Please wait for regular cooldown.",
+            AppLanguage.SPANISH to "Límite diario de anuncios (%d) alcanzado. Espera el cooldown.",
+            AppLanguage.CHINESE to "每日广告领取限制（%d）已达。请等待冷却。",
+            AppLanguage.ARABIC to "تم الوصول إلى الحد اليومي (%d). انتظر فترة الانتظار.",
+            AppLanguage.JAPANESE to "1日の広告請求上限（%d）に達しました。クールダウンをお待ちください。"
+        ),
+        "snackbar_network_error" to mapOf(
+            AppLanguage.INDONESIAN to "Error: %s",
+            AppLanguage.ENGLISH to "Error: %s",
+            AppLanguage.SPANISH to "Error: %s",
+            AppLanguage.CHINESE to "错误：%s",
+            AppLanguage.ARABIC to "خطأ: %s",
+            AppLanguage.JAPANESE to "エラー：%s"
+        ),
+        "snackbar_backend_error" to mapOf(
+            AppLanguage.INDONESIAN to "Backend error: %s",
+            AppLanguage.ENGLISH to "Backend error: %s",
+            AppLanguage.SPANISH to "Error del backend: %s",
+            AppLanguage.CHINESE to "后端错误：%s",
+            AppLanguage.ARABIC to "خطأ في الخادم: %s",
+            AppLanguage.JAPANESE to "バックエンドエラー：%s"
+        ),
+        "snackbar_generic_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal: %s",
+            AppLanguage.ENGLISH to "Failed: %s",
+            AppLanguage.SPANISH to "Fallido: %s",
+            AppLanguage.CHINESE to "失败：%s",
+            AppLanguage.ARABIC to "فشل: %s",
+            AppLanguage.JAPANESE to "失敗：%s"
+        ),
+        "snackbar_mining_rate_info" to mapOf(
+            AppLanguage.INDONESIAN to "Rate mining diperbarui: %s RTP/mnt",
+            AppLanguage.ENGLISH to "Mining rate updated: %s RTP/min",
+            AppLanguage.SPANISH to "Tasa de minería actualizada: %s RTP/min",
+            AppLanguage.CHINESE to "挖矿速率已更新：%s RTP/分钟",
+            AppLanguage.ARABIC to "تم تحديث معدل التعدين: %s RTP/دقيقة",
+            AppLanguage.JAPANESE to "マイニングレート更新：%s RTP/分"
+        ),
+        "snackbar_loading_data" to mapOf(
+            AppLanguage.INDONESIAN to "Memuat data...",
+            AppLanguage.ENGLISH to "Loading data...",
+            AppLanguage.SPANISH to "Cargando datos...",
+            AppLanguage.CHINESE to "加载数据中...",
+            AppLanguage.ARABIC to "جارٍ تحميل البيانات...",
+            AppLanguage.JAPANESE to "データを読み込んでいます..."
+        ),
+        "snackbar_mission_reward" to mapOf(
+            AppLanguage.INDONESIAN to "Berhasil klaim hadiah misi! +%s RTP 🏆",
+            AppLanguage.ENGLISH to "Mission reward claimed! +%s RTP 🏆",
+            AppLanguage.SPANISH to "¡Recompensa de misión reclamada! +%s RTP 🏆",
+            AppLanguage.CHINESE to "任务奖励已领取！+%s RTP 🏆",
+            AppLanguage.ARABIC to "تم استلام مكافأة المهمة! +%s RTP 🏆",
+            AppLanguage.JAPANESE to "ミッション報酬を受け取りました！+%s RTP 🏆"
+        ),
+        "snackbar_ad_reward" to mapOf(
+            AppLanguage.INDONESIAN to "🎉 Selamat! +%s RTP dari iklan sponsor!",
+            AppLanguage.ENGLISH to "🎉 Congratulations! +%s RTP from sponsor ad!",
+            AppLanguage.SPANISH to "🎉 ¡Felicidades! +%s RTP de anuncio patrocinado!",
+            AppLanguage.CHINESE to "🎉 恭喜！获得 %s RTP 赞助商广告奖励！",
+            AppLanguage.ARABIC to "🎉 مبروك! +%s RTP من إعلان الراعي!",
+            AppLanguage.JAPANESE to "🎉 おめでとう！スポンサー広告から %s RTP！"
+        ),
+        "snackbar_checkin_success" to mapOf(
+            AppLanguage.INDONESIAN to "🎉 Check-in hari ke-%s! +%s RTP",
+            AppLanguage.ENGLISH to "🎉 Check-in day %s! +%s RTP",
+            AppLanguage.SPANISH to "🎉 ¡Check-in día %s! +%s RTP",
+            AppLanguage.CHINESE to "🎉 第 %s 天签到！+%s RTP",
+            AppLanguage.ARABIC to "🎉 تسجيل يوم %s! +%s RTP",
+            AppLanguage.JAPANESE to "🎉 %s 日目のチェックイン！+%s RTP"
+        ),
+        "snackbar_transfer_success" to mapOf(
+            AppLanguage.INDONESIAN to "Berhasil transfer %s RTP ke %s!",
+            AppLanguage.ENGLISH to "Successfully transferred %s RTP to %s!",
+            AppLanguage.SPANISH to "¡Transferencia exitosa de %s RTP a %s!",
+            AppLanguage.CHINESE to "成功转账 %s RTP 给 %s！",
+            AppLanguage.ARABIC to "تم تحويل %s RTP إلى %s بنجاح!",
+            AppLanguage.JAPANESE to "%s RTP を %s に送金しました！"
+        ),
         "badge_passive" to mapOf(
             AppLanguage.INDONESIAN to "PASIF",
             AppLanguage.ENGLISH to "PASSIVE",
