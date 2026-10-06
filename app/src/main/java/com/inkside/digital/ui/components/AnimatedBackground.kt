@@ -27,7 +27,7 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 // ============ Colors ============
-private val AuroraDeep = Color(0xFF05060A)
+private val AuroraDeep = Color(0xFF0A0E1A)  // M53: soft dark navy
 private val AuroraMid = Color(0xFF0F1729)
 private val AuroraSoft = Color(0xFF1E3A4F)
 private val AuroraTeal = Color(0xFF0D9488)
@@ -65,8 +65,8 @@ fun AnimatedBackground(
     enableStars: Boolean = true,
     enableGlow: Boolean = true,
     enableParticles: Boolean = true,
-    starCount: Int = 60,
-    particleCount: Int = 25,
+    starCount: Int = 35,  // M53: fewer stars
+    particleCount: Int = 10,  // M53: fewer leaves
     enableWind: Boolean = true,  // ← M53: wind effect
     content: @Composable BoxScope.() -> Unit = {}
 ) {
@@ -97,7 +97,7 @@ fun AnimatedBackground(
             Star(
                 x = Random.nextFloat(),
                 y = Random.nextFloat(),
-                size = 1f + Random.nextFloat() * 1.8f,
+                size = 0.8f + Random.nextFloat() * 1.2f,  // M53: smaller stars
                 phase = Random.nextFloat() * 2f * PI.toFloat(),
                 speed = 0.5f + Random.nextFloat() * 1f,
                 isGold = Random.nextFloat() > 0.8f
@@ -110,16 +110,16 @@ fun AnimatedBackground(
             LeafParticle(
                 x = Random.nextFloat(),
                 startY = -Random.nextFloat() * 0.5f,
-                size = 5f + Random.nextFloat() * 8f,  // 5-13px
+                size = 3f + Random.nextFloat() * 5f,  // M53: 3-8px smaller
                 fallSpeed = 0.25f + Random.nextFloat() * 0.4f,
                 windInfluence = 0.5f + Random.nextFloat() * 1.0f,
                 swayPhase = Random.nextFloat() * 2f * PI.toFloat(),
-                rotationSpeed = (Random.nextFloat() - 0.5f) * 2f,
+                rotationSpeed = (Random.nextFloat() - 0.5f) * 1f,  // M53: slower rotation
                 color = when (i % 4) {
-                    0 -> EmeraldAccent.copy(alpha = 0.5f)
-                    1 -> CyanAccent.copy(alpha = 0.4f)
-                    2 -> GoldAccent.copy(alpha = 0.45f)
-                    else -> Color(0xFF10B981).copy(alpha = 0.35f)  // dark emerald
+                    0 -> EmeraldAccent.copy(alpha = 0.25f)   // M53: subtler
+                    1 -> CyanAccent.copy(alpha = 0.20f)      // M53: subtler
+                    2 -> GoldAccent.copy(alpha = 0.22f)      // M53: subtler
+                    else -> Color(0xFF10B981).copy(alpha = 0.18f)
                 },
                 isLeafShape = i % 3 != 2  // 2/3 daun, 1/3 dot
             )
@@ -138,13 +138,13 @@ fun AnimatedBackground(
 
             // ============ Layer 1: Aurora gradient ============
             if (enableAurora) {
-                val offset = sin(t) * h * 0.3f
+                val offset = sin(t) * h * 0.15f  // M53: subtler movement
                 drawRect(
                     brush = Brush.verticalGradient(
                         colors = listOf(
                             AuroraDeep,
                             AuroraMid,
-                            AuroraSoft.copy(alpha = 0.6f),
+                            AuroraSoft.copy(alpha = 0.35f),  // M53: softer
                             AuroraMid,
                             AuroraDeep
                         ),
@@ -157,7 +157,7 @@ fun AnimatedBackground(
                 drawCircle(
                     brush = Brush.radialGradient(
                         colors = listOf(
-                            accentColor.copy(alpha = 0.08f),
+                            accentColor.copy(alpha = 0.02f),  // M53: subtle  // M53: softer
                             Color.Transparent
                         ),
                         center = Offset(w * 0.5f + accentOffset, h * 0.3f),
@@ -171,7 +171,7 @@ fun AnimatedBackground(
             // ============ Layer 2: Stars ============
             if (enableStars) {
                 stars.forEach { star ->
-                    val alpha = 0.3f + 0.6f * (
+                    val alpha = 0.15f + 0.4f * (  // M53: subtler twinkle
                         0.5f + 0.5f * sin(t * star.speed + star.phase)
                     )
                     val color = if (star.isGold) GoldAccent else Color.White
@@ -185,14 +185,14 @@ fun AnimatedBackground(
 
             // ============ Layer 3: Glow bernafas ============
             if (enableGlow) {
-                val glowScale = 0.95f + 0.15f * sin(t * 0.6f)
+                val glowScale = 0.98f + 0.06f * sin(t * 0.4f)  // M53: subtle pulse
                 val glowRadius = h * 0.55f * glowScale
                 drawCircle(
                     brush = Brush.radialGradient(
                         colors = listOf(
-                            GoldAccent.copy(alpha = 0.22f),
-                            accentColor.copy(alpha = 0.14f),
-                            accentColor.copy(alpha = 0.05f),
+                            GoldAccent.copy(alpha = 0.10f),  // M53: softer glow
+                            accentColor.copy(alpha = 0.07f),  // M53: softer
+                            accentColor.copy(alpha = 0.02f),  // M53: subtle
                             Color.Transparent
                         ),
                         center = Offset(w * 0.5f, h * 0.55f),
@@ -213,10 +213,10 @@ fun AnimatedBackground(
                     val yProgress = (time * p.fallSpeed + p.startY + 1f) % 1f
 
                     // Wind push (horizontal)
-                    val windPush = windStrength * 100f * p.windInfluence
+                    val windPush = windStrength * 40f * p.windInfluence  // M53: gentler wind
 
                     // Individual sway
-                    val swayX = sin(t * 0.9f + p.swayPhase) * w * 0.08f
+                    val swayX = sin(t * 0.6f + p.swayPhase) * w * 0.04f  // M53: gentler
 
                     val x = p.x * w + windPush + swayX
                     val y = yProgress * h
@@ -232,7 +232,7 @@ fun AnimatedBackground(
 
                     if (p.isLeafShape) {
                         // Rotasi daun
-                        val rotation = yProgress * 360f * p.rotationSpeed +
+                        val rotation = yProgress * 180f * p.rotationSpeed +  // M53: slower spin
                                 (if (enableWind) windStrength * 25f * p.windInfluence else 0f)
                         drawLeaf(
                             center = Offset(x, y),
