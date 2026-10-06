@@ -43,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.inkside.digital.ui.components.FramedCard
 import com.inkside.digital.data.model.AffiliateLinkEntity
 import com.inkside.digital.data.model.TransactionEntity
 import com.inkside.digital.data.model.UserEntity
@@ -141,10 +142,9 @@ fun HomeScreen(
 
         // ==== 2. Balance Hero ====
         item {
-            Card(
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                modifier = Modifier.fillMaxWidth()
+            FramedCard(
+                frameRes = R.drawable.card_frame_balance,
+                contentPadding = 40.dp
             ) {
                 Box(
                     modifier = Modifier
@@ -212,61 +212,71 @@ fun HomeScreen(
 
         // ==== 3. Stats Row ====
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            FramedCard(
+                frameRes = R.drawable.card_frame_stats,
+                contentPadding = 40.dp
             ) {
-                StatCard(
-                    icon = Icons.Filled.Star,
-                    iconColor = GoldAccent,
-                    value = "${user?.points ?: 0}",
-                    label = "RTP",
-                    modifier = Modifier.weight(1f)
-                )
-                StatCard(
-                    icon = Icons.Filled.LocalFireDepartment,
-                    iconColor = Color(0xFFF97316),
-                    value = "${user?.checkInStreak ?: 0}",
-                    label = LanguageManager.translate("daily_streak", currentLanguage, "Streak"),
-                    modifier = Modifier.weight(1f)
-                )
-                StatCard(
-                    icon = Icons.AutoMirrored.Filled.DirectionsWalk,
-                    iconColor = ElectricBlue,
-                    value = "${user?.todaySteps ?: 0}",
-                    label = LanguageManager.translate("home_steps_today", currentLanguage, "Langkah"),
-                    modifier = Modifier.weight(1f)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    StatCard(
+                        icon = Icons.Filled.Star,
+                        iconColor = GoldAccent,
+                        value = "${user?.points ?: 0}",
+                        label = "RTP",
+                        modifier = Modifier.weight(1f)
+                    )
+                    StatCard(
+                        icon = Icons.Filled.LocalFireDepartment,
+                        iconColor = Color(0xFFF97316),
+                        value = "${user?.checkInStreak ?: 0}",
+                        label = LanguageManager.translate("daily_streak", currentLanguage, "Streak"),
+                        modifier = Modifier.weight(1f)
+                    )
+                    StatCard(
+                        icon = Icons.AutoMirrored.Filled.DirectionsWalk,
+                        iconColor = ElectricBlue,
+                        value = "${user?.todaySteps ?: 0}",
+                        label = LanguageManager.translate("home_steps_today", currentLanguage, "Langkah"),
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
 
         // ==== 4. Quick Actions ====
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            FramedCard(
+                frameRes = R.drawable.card_frame_quickaction,
+                contentPadding = 40.dp
             ) {
-                QuickActionButton(
-                    icon = Icons.Filled.TaskAlt,
-                    label = LanguageManager.translate("nav_missions", currentLanguage, "Misi"),
-                    color = Color(0xFF8B5CF6),
-                    onClick = { onNavigate(AppScreen.MISSIONS) },
-                    modifier = Modifier.weight(1f)
-                )
-                QuickActionButton(
-                    icon = Icons.Filled.CheckCircle,
-                    label = LanguageManager.translate("daily_title", currentLanguage, "Check-In"),
-                    color = EmeraldLight,
-                    onClick = { onNavigate(AppScreen.DAILY_CHECK_IN) },
-                    modifier = Modifier.weight(1f)
-                )
-                QuickActionButton(
-                    icon = Icons.Filled.ArrowUpward,
-                    label = LanguageManager.translate("nav_withdraw", currentLanguage, "Tarik"),
-                    color = ElectricBlue,
-                    onClick = { onOpenWithdraw() },
-                    modifier = Modifier.weight(1f)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    QuickActionButton(
+                        icon = Icons.Filled.TaskAlt,
+                        label = LanguageManager.translate("nav_missions", currentLanguage, "Misi"),
+                        color = Color(0xFF8B5CF6),
+                        onClick = { onNavigate(AppScreen.MISSIONS) },
+                        modifier = Modifier.weight(1f)
+                    )
+                    QuickActionButton(
+                        icon = Icons.Filled.CheckCircle,
+                        label = LanguageManager.translate("daily_title", currentLanguage, "Check-In"),
+                        color = EmeraldLight,
+                        onClick = { onNavigate(AppScreen.DAILY_CHECK_IN) },
+                        modifier = Modifier.weight(1f)
+                    )
+                    QuickActionButton(
+                        icon = Icons.Filled.ArrowUpward,
+                        label = LanguageManager.translate("nav_withdraw", currentLanguage, "Tarik"),
+                        color = ElectricBlue,
+                        onClick = { onOpenWithdraw() },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
 
@@ -311,20 +321,18 @@ fun HomeScreen(
                 )
             }
 
-            Card(
-                shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .then(
-                        if (isEnabled) Modifier.clickable { onOpenAdReward() }
-                        else Modifier
-                    )
+            FramedCard(
+                frameRes = R.drawable.card_frame_watch,
+                contentPadding = 40.dp
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(16.dp)
+                        .then(
+                            if (isEnabled) Modifier.clickable { onOpenAdReward() }
+                            else Modifier
+                        ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Surface(
