@@ -88,6 +88,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.inkside.digital.ui.components.FramedCard
 import com.inkside.digital.data.model.GameMinerItemEntity
 import com.inkside.digital.data.model.GameRoomStateEntity
 import com.inkside.digital.data.model.UserEntity
@@ -1407,12 +1408,19 @@ private fun ShopMinerCard(
     val rarityColor = tierColor(item.tier)
     val canAfford = userPoints >= item.pricePoints
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
-            .background(RetroCard)
-            .border(2.dp, rarityColor.copy(alpha = 0.6f), RoundedCornerShape(14.dp))
+    // M50: Auto-switch frame ikut tier miner
+    val frameRes = when (item.tier.uppercase()) {
+        "COMMON" -> R.drawable.card_frame_common
+        "RARE" -> R.drawable.card_frame_rare
+        "EPIC" -> R.drawable.card_frame_epic
+        "LEGENDARY" -> R.drawable.card_frame_legendary
+        "MYTHIC" -> R.drawable.card_frame_mythic
+        else -> R.drawable.card_frame_common
+    }
+
+    FramedCard(
+        frameRes = frameRes,
+        contentPadding = 40.dp
     ) {
         Column(
             modifier = Modifier.padding(14.dp),
