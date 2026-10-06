@@ -1,5 +1,7 @@
 package com.inkside.digital.ui.screens
 
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.ui.unit.TextUnit
@@ -186,27 +188,41 @@ fun ProfileScreen(
             }
         }
 
-        // Edit Profil
+        // Edit Profil — Card biasa (bukan frame) supaya TextField tak overlap
         item {
-            FramedCard(
-                frameRes = R.drawable.card_frame_form,
-                paddingPercent = 0.18f,
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = androidx.compose.foundation.BorderStroke(
+                    width = 1.dp,
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            EmeraldLight.copy(alpha = 0.5f),
+                            EmeraldLight.copy(alpha = 0.1f)
+                        )
+                    )
+                ),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text(LanguageManager.translate("profile_edit", currentLanguage, "✏️ Edit Profil"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Edit, null, tint = EmeraldLight, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(LanguageManager.translate("profile_edit", currentLanguage, "Edit Profil"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    }
+                    Spacer(modifier = Modifier.height(14.dp))
                     OutlinedTextField(
                         value = name, onValueChange = { name = it },
                         label = { Text(LanguageManager.translate("profile_name", currentLanguage, "Nama Lengkap")) }, singleLine = true,
                         shape = RoundedCornerShape(10.dp), modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     OutlinedTextField(
                         value = email, onValueChange = { email = it },
                         label = { Text(LanguageManager.translate("profile_email_label", currentLanguage, "Email")) }, singleLine = true,
                         shape = RoundedCornerShape(10.dp), modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     OutlinedTextField(
                         value = phone, onValueChange = { phone = it },
                         label = { Text(LanguageManager.translate("profile_phone", currentLanguage, "Nomor HP")) }, singleLine = true,
