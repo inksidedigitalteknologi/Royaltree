@@ -120,8 +120,7 @@ fun DailyCheckInScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_daily,
-                paddingPercentHorizontal = 0.14f,
-                paddingPercentVertical = 0.18f
+                paddingPercent = 0.18f,
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -160,8 +159,7 @@ fun DailyCheckInScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_daily,
-                paddingPercentHorizontal = 0.14f,
-                paddingPercentVertical = 0.18f
+                paddingPercent = 0.18f,
             ) {
                 Text(
                     text = "💡 " + LanguageManager.translate("daily_weekend_info", currentLanguage, "Weekend = bigger rewards!"),
@@ -181,8 +179,7 @@ fun DailyCheckInScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_calendar,
-                paddingPercentHorizontal = 0.12f,
-                paddingPercentVertical = 0.08f
+                paddingPercent = 0.12f,
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
                     // Header hari
