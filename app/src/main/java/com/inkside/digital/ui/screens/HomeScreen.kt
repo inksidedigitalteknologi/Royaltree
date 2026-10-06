@@ -146,6 +146,7 @@ fun HomeScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_balance,
+                aspectRatioOverride = 1.5f,
                 paddingPercentHorizontal = 0.14f,
                 paddingPercentVertical = 0.20f,
             ) {
@@ -217,6 +218,7 @@ fun HomeScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_stats,
+                aspectRatioOverride = 2.0f,
                 paddingPercentHorizontal = 0.18f,
                 paddingPercentVertical = 0.30f,
             ) {
@@ -253,6 +255,7 @@ fun HomeScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_quickaction,
+                aspectRatioOverride = 1.7f,
                 paddingPercentHorizontal = 0.14f,
                 paddingPercentVertical = 0.22f,
             ) {
@@ -328,6 +331,7 @@ fun HomeScreen(
 
             FramedCard(
                 frameRes = R.drawable.card_frame_watch,
+                aspectRatioOverride = 2.5f,
                 paddingPercentHorizontal = 0.20f,
                 paddingPercentVertical = 0.32f,
             ) {

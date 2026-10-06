@@ -120,6 +120,7 @@ fun DailyCheckInScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_daily,
+                aspectRatioOverride = 2.0f,
                 paddingPercentHorizontal = 0.18f,
                 paddingPercentVertical = 0.28f,
             ) {
@@ -160,6 +161,7 @@ fun DailyCheckInScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_daily,
+                aspectRatioOverride = 2.0f,
                 paddingPercentHorizontal = 0.18f,
                 paddingPercentVertical = 0.28f,
             ) {
@@ -181,6 +183,7 @@ fun DailyCheckInScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_calendar,
+                aspectRatioOverride = 1.8f,
                 paddingPercentHorizontal = 0.14f,
                 paddingPercentVertical = 0.10f,
             ) {

@@ -427,6 +427,7 @@ private fun UpgradeTierCard(
 
     FramedCard(
         frameRes = R.drawable.card_frame_tier,
+        aspectRatioOverride = 1.7f,
         paddingPercentHorizontal = 0.12f,
         paddingPercentVertical = 0.18f,
     ) {
@@ -485,6 +486,7 @@ private fun ReferralStatsCard(
 ) {
     FramedCard(
         frameRes = R.drawable.card_frame_referral,
+        aspectRatioOverride = 1.7f,
         paddingPercentHorizontal = 0.08f,
         paddingPercentVertical = 0.14f,
     ) {
@@ -544,6 +546,7 @@ private fun MiningStatsCard(
 ) {
     FramedCard(
         frameRes = R.drawable.card_frame_mining,
+        aspectRatioOverride = 2.0f,
         paddingPercentHorizontal = 0.10f,
         paddingPercentVertical = 0.10f,
     ) {

@@ -1421,6 +1421,7 @@ private fun ShopMinerCard(
 
     FramedCard(
         frameRes = frameRes,
+        aspectRatioOverride = 1.5f,
         paddingPercentHorizontal = 0.16f,
         paddingPercentVertical = 0.20f,
     ) {

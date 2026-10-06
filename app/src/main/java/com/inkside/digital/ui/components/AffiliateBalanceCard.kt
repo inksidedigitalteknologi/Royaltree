@@ -52,6 +52,7 @@ fun AffiliateBalanceCard(
 ) {
     FramedCard(
         frameRes = com.inkside.digital.R.drawable.card_frame_affiliate,
+        aspectRatioOverride = 1.7f,
         paddingPercentHorizontal = 0.08f,
         paddingPercentVertical = 0.12f,
     ) {
