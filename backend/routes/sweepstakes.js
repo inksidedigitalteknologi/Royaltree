@@ -308,6 +308,18 @@ router.get('/history', verifyFirebaseToken, async (req, res) => {
       // Cek apakah user menang di sweepstakes ini
       const userWon = (data.winners || []).find(w => w.uid === uid);
       
+
+      // M49: Fetch names untuk top 3 winners
+      const topRaw = (data.winners || []).slice(0, 3);
+      const topWithNames = await Promise.all(
+        topRaw.map(async (w) => {
+          const userDoc = await db.collection('users').doc(w.uid).get();
+          return {
+            ...w,
+            name: userDoc.exists ? (userDoc.data().name || 'Anonim') : 'Anonim'
+          };
+        })
+      );
       history.push({
         id: data.id,
         startTime: data.startTime,
@@ -315,7 +327,7 @@ router.get('/history', verifyFirebaseToken, async (req, res) => {
         totalTickets: data.totalTickets,
         totalPool: data.totalPool,
         winnerCount: (data.winners || []).length,
-        topWinners: (data.winners || []).slice(0, 3),
+        topWinners: topWithNames,
         userWon: userWon || null
       });
     }
