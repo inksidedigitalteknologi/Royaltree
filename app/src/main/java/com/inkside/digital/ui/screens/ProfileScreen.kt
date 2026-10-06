@@ -1,5 +1,7 @@
 package com.inkside.digital.ui.screens
 
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.ui.layout.ContentScale
