@@ -1707,10 +1707,10 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             com.inkside.digital.data.model.NotificationEntity(
                                 id = item.id,
                                 title = item.title,
-                                message = item.body,
+                                message = item.message,
                                 type = item.type,
                                 timestamp = item.timestamp,
-                                isRead = item.isRead,
+                                isRead = item.read,
                                 actionDeepLink = ""
                             )
                         }
