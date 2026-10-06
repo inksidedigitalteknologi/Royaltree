@@ -1706,12 +1706,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         val entityList = response.data.map { item ->
                             com.inkside.digital.data.model.NotificationEntity(
                                 id = item.id,
-                                userId = item.userId,
                                 title = item.title,
-                                body = item.body,
+                                message = item.body,
                                 type = item.type,
+                                timestamp = item.timestamp,
                                 isRead = item.isRead,
-                                timestamp = item.timestamp
+                                actionDeepLink = ""
                             )
                         }
                         repository.insertNotifications(entityList)
