@@ -145,7 +145,8 @@ fun HomeScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_balance,
-                paddingPercent = 0.2f,
+                paddingPercentHorizontal = 0.14f,
+                paddingPercentVertical = 0.20f,
             ) {
                 Box(
                     modifier = Modifier
@@ -163,17 +164,17 @@ fun HomeScreen(
                     ) {
                         Text(
                             text = LanguageManager.translate("total_commission", currentLanguage, "Saldo Tersedia"),
-                            fontSize = 12.sp,
+                            fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(3.dp))
                         Text(
                             text = "Rp ${String.format("%,.0f", user?.balance ?: 0.0)}",
-                            fontSize = 30.sp,
+                            fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = GoldAccent
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         Surface(
                             color = EmeraldLight,
                             shape = RoundedCornerShape(14.dp),
@@ -215,7 +216,8 @@ fun HomeScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_stats,
-                paddingPercent = 0.22f,
+                paddingPercentHorizontal = 0.18f,
+                paddingPercentVertical = 0.30f,
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -250,7 +252,8 @@ fun HomeScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_quickaction,
-                paddingPercent = 0.18f,
+                paddingPercentHorizontal = 0.14f,
+                paddingPercentVertical = 0.22f,
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -324,7 +327,8 @@ fun HomeScreen(
 
             FramedCard(
                 frameRes = R.drawable.card_frame_watch,
-                paddingPercent = 0.18f,
+                paddingPercentHorizontal = 0.20f,
+                paddingPercentVertical = 0.32f,
             ) {
                 Row(
                     modifier = Modifier

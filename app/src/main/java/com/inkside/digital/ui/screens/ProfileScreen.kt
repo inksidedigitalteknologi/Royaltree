@@ -115,7 +115,8 @@ fun ProfileScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_profile,
-                paddingPercent = 0.2f,
+                paddingPercentHorizontal = 0.20f,
+                paddingPercentVertical = 0.30f,
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -125,13 +126,13 @@ fun ProfileScreen(
                     ProfileAvatarWithFrame(
                         userName = user?.name,
                         tier = user?.tier ?: "FREE",
-                        size = 100.dp
+                        size = 80.dp
                     )
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(user?.name ?: "User", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                        Text(user?.email ?: "-", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(user?.name ?: "User", fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(user?.email ?: "-", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Spacer(modifier = Modifier.height(3.dp))
                         androidx.compose.foundation.layout.Box(
                             modifier = Modifier.clip(RoundedCornerShape(6.dp))
                                 .background(
@@ -167,21 +168,22 @@ fun ProfileScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_stats,
-                paddingPercent = 0.22f,
+                paddingPercentHorizontal = 0.18f,
+                paddingPercentVertical = 0.30f,
             ) {
-                Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(modifier = Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(LanguageManager.translate("profile_balance", currentLanguage, "Saldo"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("profile_balance", currentLanguage, "Saldo"), fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             "Rp " + String.format("%,.0f", user?.balance ?: 0.0).replace(",", "."),
-                            fontSize = 16.sp, fontWeight = FontWeight.Black, color = EmeraldLight
+                            fontSize = 14.sp, fontWeight = FontWeight.Black, color = EmeraldLight
                         )
                     }
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("RTP", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("RTP", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             "${user?.points ?: 0}",
-                            fontSize = 16.sp, fontWeight = FontWeight.Black, color = ElectricBlue
+                            fontSize = 14.sp, fontWeight = FontWeight.Black, color = ElectricBlue
                         )
                     }
                 }
@@ -424,7 +426,8 @@ private fun UpgradeTierCard(
 
     FramedCard(
         frameRes = R.drawable.card_frame_tier,
-        paddingPercent = 0.2f,
+        paddingPercentHorizontal = 0.14f,
+        paddingPercentVertical = 0.24f,
     ) {
         Row(
             modifier = Modifier
@@ -481,7 +484,8 @@ private fun ReferralStatsCard(
 ) {
     FramedCard(
         frameRes = R.drawable.card_frame_referral,
-        paddingPercent = 0.24f,
+        paddingPercentHorizontal = 0.16f,
+        paddingPercentVertical = 0.28f,
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             // Teman diundang
@@ -539,27 +543,28 @@ private fun MiningStatsCard(
 ) {
     FramedCard(
         frameRes = R.drawable.card_frame_mining,
-        paddingPercent = 0.22f,
+        paddingPercentHorizontal = 0.20f,
+        paddingPercentVertical = 0.12f,
     ) {
-        Column(modifier = Modifier.padding(14.dp)) {
+        Column(modifier = Modifier.padding(10.dp)) {
             Text(
                 LanguageManager.translate("profile_mining_status", currentLanguage, "⛏️ Status Mining"),
-                fontSize = 13.sp,
+                fontSize = 11.sp,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 MiniStatBox(LanguageManager.translate("profile_slot", currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), "${powerGhs.toInt()} GH/s", ElectricBlue, Modifier.weight(1f))
                 MiniStatBox("RTP", "$tokens", GoldVip, Modifier.weight(1f))
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format(Locale.US, "%.4f", (roomState?.ratePerMin ?: (powerGhs * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", ElectricBlue, Modifier.weight(1f))
@@ -667,11 +672,11 @@ private fun MiniStatBox(
         modifier = modifier
     ) {
         Column(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(5.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(label, fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(value, fontSize = 13.sp, fontWeight = FontWeight.Black, color = accent)
+            Text(label, fontSize = 8.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
+            Text(value, fontSize = 11.sp, fontWeight = FontWeight.Black, color = accent, maxLines = 1)
         }
     }
 }
