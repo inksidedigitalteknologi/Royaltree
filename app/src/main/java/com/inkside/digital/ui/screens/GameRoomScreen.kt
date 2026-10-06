@@ -1421,7 +1421,8 @@ private fun ShopMinerCard(
 
     FramedCard(
         frameRes = frameRes,
-        contentPadding = 40.dp
+        paddingPercentHorizontal = 0.14f,
+        paddingPercentVertical = 0.22f
     ) {
         Column(
             modifier = Modifier.padding(14.dp),

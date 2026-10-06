@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -21,35 +20,38 @@ import androidx.compose.ui.unit.dp
  * FramedCard — Card dengan PNG frame overlay.
  *
  * Auto-detect aspect ratio dari PNG intrinsic size.
- * Content padding guna percent (default 14%) supaya konsisten.
+ * Content padding guna percent (default 18% — safety margin).
  *
  * @param frameRes PNG frame dari res/drawable
- * @param paddingPercent padding content sebagai percentage (0.14 = 14%)
- * @param aspectRatioOverride override aspect ratio (kalau PNG tak standard)
- * @param contentPadding backward compat (akan override paddingPercent kalau di-set)
+ * @param paddingPercent padding content percentage (0.18 = 18%)
+ * @param paddingPercentHorizontal override horizontal
+ * @param paddingPercentVertical override vertical
+ * @param aspectRatioOverride override aspect ratio
+ * @param contentPadding backward compat
  */
 @Composable
 fun FramedCard(
     frameRes: Int,
     modifier: Modifier = Modifier,
-    paddingPercent: Float = 0.14f,
+    paddingPercent: Float = 0.18f,
+    paddingPercentHorizontal: Float? = null,
+    paddingPercentVertical: Float? = null,
     aspectRatioOverride: Float? = null,
     contentPadding: Dp? = null,
     contentPaddingHorizontal: Dp? = null,
     contentPaddingVertical: Dp? = null,
     content: @Composable BoxScope.() -> Unit
 ) {
-    val context = LocalContext.current
     val painter = painterResource(frameRes)
 
-    // Auto-detect aspect ratio dari PNG
     val intrinsicSize = painter.intrinsicSize
     val detectedAspectRatio = if (intrinsicSize.width > 0f && intrinsicSize.height > 0f) {
         intrinsicSize.width / intrinsicSize.height
-    } else {
-        1.2f  // fallback
-    }
+    } else 1.2f
     val aspectRatio = aspectRatioOverride ?: detectedAspectRatio
+
+    val horizontalPct = paddingPercentHorizontal ?: paddingPercent
+    val verticalPct = paddingPercentVertical ?: paddingPercent
 
     BoxWithConstraints(
         modifier = modifier
@@ -57,27 +59,22 @@ fun FramedCard(
             .aspectRatio(aspectRatio),
         contentAlignment = Alignment.Center
     ) {
-        // Hitung padding: percent default, atau custom Dp kalau di-set
         val horizontalPadding = contentPaddingHorizontal
             ?: contentPadding
-            ?: (maxWidth * paddingPercent)
+            ?: (maxWidth * horizontalPct)
+
         val verticalPadding = contentPaddingVertical
             ?: contentPadding
-            ?: (maxHeight * paddingPercent)
+            ?: (maxHeight * verticalPct)
 
-        // Content overlay (BELAKANG frame)
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    horizontal = horizontalPadding,
-                    vertical = verticalPadding
-                ),
+                .padding(horizontal = horizontalPadding, vertical = verticalPadding),
             contentAlignment = Alignment.Center,
             content = content
         )
 
-        // Frame PNG overlay (ATAS content)
         Image(
             painter = painter,
             contentDescription = null,
