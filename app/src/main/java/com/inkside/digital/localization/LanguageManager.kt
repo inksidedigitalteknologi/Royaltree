@@ -1678,6 +1678,214 @@ object LanguageManager {
             AppLanguage.ARABIC to "مجاني",
             AppLanguage.JAPANESE to "無料"
         ),
+        "profile_action_checkin" to mapOf(
+            AppLanguage.INDONESIAN to "Check-in",
+            AppLanguage.ENGLISH to "Check-in",
+            AppLanguage.SPANISH to "Check-in",
+            AppLanguage.CHINESE to "签到",
+            AppLanguage.ARABIC to "تسجيل الوصول",
+            AppLanguage.JAPANESE to "チェックイン"
+        ),
+        "profile_action_mining" to mapOf(
+            AppLanguage.INDONESIAN to "Mining",
+            AppLanguage.ENGLISH to "Mining",
+            AppLanguage.SPANISH to "Minería",
+            AppLanguage.CHINESE to "挖矿",
+            AppLanguage.ARABIC to "التعدين",
+            AppLanguage.JAPANESE to "マイニング"
+        ),
+        "profile_action_coinrush" to mapOf(
+            AppLanguage.INDONESIAN to "Coin Rush",
+            AppLanguage.ENGLISH to "Coin Rush",
+            AppLanguage.SPANISH to "Coin Rush",
+            AppLanguage.CHINESE to "金币冲刺",
+            AppLanguage.ARABIC to "Coin Rush",
+            AppLanguage.JAPANESE to "コインラッシュ"
+        ),
+        "profile_action_missions" to mapOf(
+            AppLanguage.INDONESIAN to "Misi",
+            AppLanguage.ENGLISH to "Missions",
+            AppLanguage.SPANISH to "Misiones",
+            AppLanguage.CHINESE to "任务",
+            AppLanguage.ARABIC to "المهام",
+            AppLanguage.JAPANESE to "ミッション"
+        ),
+        "profile_balance" to mapOf(
+            AppLanguage.INDONESIAN to "Saldo",
+            AppLanguage.ENGLISH to "Balance",
+            AppLanguage.SPANISH to "Saldo",
+            AppLanguage.CHINESE to "余额",
+            AppLanguage.ARABIC to "الرصيد",
+            AppLanguage.JAPANESE to "残高"
+        ),
+        "profile_commission" to mapOf(
+            AppLanguage.INDONESIAN to "💰 Komisi",
+            AppLanguage.ENGLISH to "💰 Commission",
+            AppLanguage.SPANISH to "💰 Comisión",
+            AppLanguage.CHINESE to "💰 佣金",
+            AppLanguage.ARABIC to "💰 عمولة",
+            AppLanguage.JAPANESE to "💰 手数料"
+        ),
+        "profile_edit" to mapOf(
+            AppLanguage.INDONESIAN to "✏️ Edit Profil",
+            AppLanguage.ENGLISH to "✏️ Edit Profile",
+            AppLanguage.SPANISH to "✏️ Editar Perfil",
+            AppLanguage.CHINESE to "✏️ 编辑个人资料",
+            AppLanguage.ARABIC to "✏️ تعديل الملف",
+            AppLanguage.JAPANESE to "✏️ プロフィール編集"
+        ),
+        "profile_email_label" to mapOf(
+            AppLanguage.INDONESIAN to "Email",
+            AppLanguage.ENGLISH to "Email",
+            AppLanguage.SPANISH to "Correo",
+            AppLanguage.CHINESE to "邮箱",
+            AppLanguage.ARABIC to "البريد الإلكتروني",
+            AppLanguage.JAPANESE to "メール"
+        ),
+        "profile_language" to mapOf(
+            AppLanguage.INDONESIAN to "Bahasa",
+            AppLanguage.ENGLISH to "Language",
+            AppLanguage.SPANISH to "Idioma",
+            AppLanguage.CHINESE to "语言",
+            AppLanguage.ARABIC to "اللغة",
+            AppLanguage.JAPANESE to "言語"
+        ),
+        "profile_logout" to mapOf(
+            AppLanguage.INDONESIAN to "Keluar",
+            AppLanguage.ENGLISH to "Logout",
+            AppLanguage.SPANISH to "Cerrar sesión",
+            AppLanguage.CHINESE to "退出登录",
+            AppLanguage.ARABIC to "تسجيل الخروج",
+            AppLanguage.JAPANESE to "ログアウト"
+        ),
+        "profile_mining_status" to mapOf(
+            AppLanguage.INDONESIAN to "⛏️ Status Mining",
+            AppLanguage.ENGLISH to "⛏️ Mining Status",
+            AppLanguage.SPANISH to "⛏️ Estado de Minería",
+            AppLanguage.CHINESE to "⛏️ 挖矿状态",
+            AppLanguage.ARABIC to "⛏️ حالة التعدين",
+            AppLanguage.JAPANESE to "⛏️ マイニング状況"
+        ),
+        "profile_name" to mapOf(
+            AppLanguage.INDONESIAN to "Nama Lengkap",
+            AppLanguage.ENGLISH to "Full Name",
+            AppLanguage.SPANISH to "Nombre Completo",
+            AppLanguage.CHINESE to "全名",
+            AppLanguage.ARABIC to "الاسم الكامل",
+            AppLanguage.JAPANESE to "氏名"
+        ),
+        "profile_phone" to mapOf(
+            AppLanguage.INDONESIAN to "Nomor HP",
+            AppLanguage.ENGLISH to "Phone Number",
+            AppLanguage.SPANISH to "Número de Teléfono",
+            AppLanguage.CHINESE to "电话号码",
+            AppLanguage.ARABIC to "رقم الهاتف",
+            AppLanguage.JAPANESE to "電話番号"
+        ),
+        "profile_power" to mapOf(
+            AppLanguage.INDONESIAN to "Power",
+            AppLanguage.ENGLISH to "Power",
+            AppLanguage.SPANISH to "Potencia",
+            AppLanguage.CHINESE to "算力",
+            AppLanguage.ARABIC to "القوة",
+            AppLanguage.JAPANESE to "パワー"
+        ),
+        "profile_quick_actions" to mapOf(
+            AppLanguage.INDONESIAN to "⚡ Aksi Cepat",
+            AppLanguage.ENGLISH to "⚡ Quick Actions",
+            AppLanguage.SPANISH to "⚡ Acciones Rápidas",
+            AppLanguage.CHINESE to "⚡ 快捷操作",
+            AppLanguage.ARABIC to "⚡ إجراءات سريعة",
+            AppLanguage.JAPANESE to "⚡ クイックアクション"
+        ),
+        "profile_referral_friends" to mapOf(
+            AppLanguage.INDONESIAN to "👥 Teman",
+            AppLanguage.ENGLISH to "👥 Friends",
+            AppLanguage.SPANISH to "👥 Amigos",
+            AppLanguage.CHINESE to "👥 朋友",
+            AppLanguage.ARABIC to "👥 الأصدقاء",
+            AppLanguage.JAPANESE to "👥 友達"
+        ),
+        "profile_referral_invited" to mapOf(
+            AppLanguage.INDONESIAN to "Diundang",
+            AppLanguage.ENGLISH to "Invited",
+            AppLanguage.SPANISH to "Invitados",
+            AppLanguage.CHINESE to "已邀请",
+            AppLanguage.ARABIC to "المدعوون",
+            AppLanguage.JAPANESE to "招待済み"
+        ),
+        "profile_save" to mapOf(
+            AppLanguage.INDONESIAN to "Simpan Perubahan",
+            AppLanguage.ENGLISH to "Save Changes",
+            AppLanguage.SPANISH to "Guardar Cambios",
+            AppLanguage.CHINESE to "保存更改",
+            AppLanguage.ARABIC to "حفظ التغييرات",
+            AppLanguage.JAPANESE to "変更を保存"
+        ),
+        "profile_slot" to mapOf(
+            AppLanguage.INDONESIAN to "Slot",
+            AppLanguage.ENGLISH to "Slot",
+            AppLanguage.SPANISH to "Ranura",
+            AppLanguage.CHINESE to "槽位",
+            AppLanguage.ARABIC to "الفتحة",
+            AppLanguage.JAPANESE to "スロット"
+        ),
+        "profile_subtitle" to mapOf(
+            AppLanguage.INDONESIAN to "Kelola akun & informasi pribadi",
+            AppLanguage.ENGLISH to "Manage account & personal info",
+            AppLanguage.SPANISH to "Gestiona tu cuenta e información",
+            AppLanguage.CHINESE to "管理账户和个人信息",
+            AppLanguage.ARABIC to "إدارة الحساب والمعلومات",
+            AppLanguage.JAPANESE to "アカウントと個人情報を管理"
+        ),
+        "profile_tier_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Upgrade untuk slot miner & komisi lebih besar",
+            AppLanguage.ENGLISH to "Upgrade for more slots & commission",
+            AppLanguage.SPANISH to "Mejora para más ranuras y comisión",
+            AppLanguage.CHINESE to "升级以获得更多槽位和佣金",
+            AppLanguage.ARABIC to "ترقية للحصول على المزيد من الفتحات",
+            AppLanguage.JAPANESE to "スロットと手数料をアップグレード"
+        ),
+        "profile_tier_max" to mapOf(
+            AppLanguage.INDONESIAN to "MAX",
+            AppLanguage.ENGLISH to "MAX",
+            AppLanguage.SPANISH to "MÁX",
+            AppLanguage.CHINESE to "最高",
+            AppLanguage.ARABIC to "الأقصى",
+            AppLanguage.JAPANESE to "最大"
+        ),
+        "profile_tier_max_msg" to mapOf(
+            AppLanguage.INDONESIAN to "Tingkat tertinggi tercapai! 🎉",
+            AppLanguage.ENGLISH to "Highest tier reached! 🎉",
+            AppLanguage.SPANISH to "¡Nivel máximo alcanzado! 🎉",
+            AppLanguage.CHINESE to "已达到最高等级！🎉",
+            AppLanguage.ARABIC to "تم الوصول لأعلى مستوى! 🎉",
+            AppLanguage.JAPANESE to "最高レベルに到達！🎉"
+        ),
+        "profile_tier_upgrade" to mapOf(
+            AppLanguage.INDONESIAN to "Upgrade",
+            AppLanguage.ENGLISH to "Upgrade",
+            AppLanguage.SPANISH to "Mejorar",
+            AppLanguage.CHINESE to "升级",
+            AppLanguage.ARABIC to "ترقية",
+            AppLanguage.JAPANESE to "アップグレード"
+        ),
+        "profile_title" to mapOf(
+            AppLanguage.INDONESIAN to "👤 Profil",
+            AppLanguage.ENGLISH to "👤 Profile",
+            AppLanguage.SPANISH to "👤 Perfil",
+            AppLanguage.CHINESE to "👤 个人资料",
+            AppLanguage.ARABIC to "👤 الملف الشخصي",
+            AppLanguage.JAPANESE to "👤 プロフィール"
+        ),
+        "profile_total" to mapOf(
+            AppLanguage.INDONESIAN to "Total",
+            AppLanguage.ENGLISH to "Total",
+            AppLanguage.SPANISH to "Total",
+            AppLanguage.CHINESE to "总计",
+            AppLanguage.ARABIC to "الإجمالي",
+            AppLanguage.JAPANESE to "合計"
+        ),
         "profile_default_user" to mapOf(
             AppLanguage.INDONESIAN to "User",
             AppLanguage.ENGLISH to "User",
