@@ -77,8 +77,10 @@ data class HistoryItem(
     @Json(name = "id") val id: String = "",
     @Json(name = "userId") val userId: String = "",
     @Json(name = "type") val type: String = "",
-    @Json(name = "amount") val amount: Double = 0.0,
+    @Json(name = "title") val title: String = "",
     @Json(name = "description") val description: String = "",
+    @Json(name = "amount") val amount: Double = 0.0,
+    @Json(name = "isCredit") val isCredit: Boolean = true,
     @Json(name = "timestamp") val timestamp: Long = 0L
 )
 

@@ -81,6 +81,8 @@ class AffiliateRepository(private val dao: AppDao) {
     // ensureDefaultUser() dihapus — tidak ada data dummy.
     // User di-load dari backend setelah login Firebase.
 
+    suspend fun insertTransactions(transactions: List<TransactionEntity>) = dao.insertTransactions(transactions)
+    
     suspend fun requestWithdrawal(
         amount: Double,
         currency: String,
@@ -1454,7 +1456,7 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun syncTransactionsFromBackend(transactions: List<TransactionEntity>) = withContext(Dispatchers.IO) {
-        transactions.forEach { dao.insertTransaction(it) }
+        dao.insertTransactions(transactions)
     }
 
     // ============ GAME — SYNC FROM BACKEND ============

@@ -75,6 +75,12 @@ interface AppDao {
     // Transactions
     @Query("SELECT * FROM transactions ORDER BY timestamp DESC")
     fun getAllTransactions(): Flow<List<TransactionEntity>>
+    
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTransactions(transactions: List<TransactionEntity>)
+    
+    @Query("DELETE FROM transactions WHERE referenceId IN (SELECT referenceId FROM transactions WHERE type != 'LOCAL')")
+    suspend fun deleteRemoteTransactions()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTransaction(transaction: TransactionEntity)

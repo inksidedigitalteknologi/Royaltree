@@ -887,6 +887,63 @@ router.post('/mining/unplace', verifyFirebaseToken, async (req, res) => {
 });
 
 // ============================================================
+// GET /api/v1/game/history/:userId
+// History transaksi user (from Firestore transactions)
+// ============================================================
+router.get('/history/:userId', verifyFirebaseToken, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { uid } = req.firebaseUser;
+        
+        // Security: user hanya boleh lihat history sendiri
+        if (uid !== userId) {
+            return res.status(403).json({
+                success: false,
+                message: 'Akses ditolak'
+            });
+        }
+        
+        const limit = parseInt(req.query.limit) || 50;
+        
+        // Query dari Firestore transactions
+        const snap = await db.collection('transactions')
+            .where('userId', '==', userId)
+            .orderBy('timestamp', 'desc')
+            .limit(limit)
+            .get();
+        
+        const transactions = [];
+        snap.forEach(doc => {
+            const data = doc.data();
+            const amount = data.amount || 0;
+            transactions.push({
+                id: doc.id,
+                userId: data.userId,
+                type: data.type || 'UNKNOWN',
+                title: data.title || data.description?.substring(0, 40) || 'Transaksi',
+                description: data.description || '',
+                amount: amount,
+                isCredit: amount > 0 || data.isCredit === true,
+                points: data.points || 0,
+                referenceId: data.referenceId || '',
+                timestamp: data.timestamp?.toMillis() || data.timestampMs || Date.now()
+            });
+        });
+        
+        return res.json({
+            success: true,
+            data: transactions
+        });
+    } catch (error) {
+        console.error('[GAME-HISTORY] Error:', error);
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// ============================================================
 // GET /api/v1/game/leaderboard
 // Top 20 global mining
 // ============================================================

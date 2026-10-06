@@ -82,6 +82,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             if (firebaseUid != null) {
                 repository.switchUser(firebaseUid)
                 loadUserFromBackend()
+                // M56: Auto-load history + notifications bila app launch
+                loadHistory()
+                loadNotifications()
             }
         }
         com.inkside.digital.data.network.ApiClient.init(application)
@@ -1551,7 +1554,30 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             val currentUser = user.value ?: return@launch
             ApiClient.getHistory(currentUser.id).onSuccess { response ->
-                if (response.success) _historyItems.value = response.data
+                if (response.success) {
+                    _historyItems.value = response.data
+                    // M56: Sync API history → Room DB (untuk HistoryScreen)
+                    try {
+                        val entityList = response.data.map { item ->
+                            com.inkside.digital.data.model.TransactionEntity(
+                                id = item.id,
+                                type = item.type,
+                                title = item.title.ifBlank { item.description.take(40) },
+                                description = item.description,
+                                amount = item.amount,
+                                currency = "IDR",
+                                isCredit = item.isCredit,
+                                status = "SUCCESS",
+                                timestamp = item.timestamp,
+                                referenceId = ""
+                            )
+                        }
+                        repository.insertTransactions(entityList)
+                        android.util.Log.d("History", "Synced ${'$'}{entityList.size} transactions to Room DB")
+                    } catch (e: Exception) {
+                        android.util.Log.w("History", "Failed to sync to Room DB: ${'$'}{e.message}")
+                    }
+                }
             }.onFailure { /* offline, pakai data lokal */ }
         }
     }
