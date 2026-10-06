@@ -1586,7 +1586,27 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             val currentUser = user.value ?: return@launch
             ApiClient.getNotifications(currentUser.id).onSuccess { response ->
-                if (response.success) _notificationItems.value = response.data
+                if (response.success) {
+                    _notificationItems.value = response.data
+                    // M57: Sync API notifications → Room DB
+                    try {
+                        val entityList = response.data.map { item ->
+                            com.inkside.digital.data.model.NotificationEntity(
+                                id = item.id,
+                                userId = item.userId,
+                                title = item.title,
+                                body = item.body,
+                                type = item.type,
+                                isRead = item.isRead,
+                                timestamp = item.timestamp
+                            )
+                        }
+                        repository.insertNotifications(entityList)
+                        android.util.Log.d("Notifications", "Synced ${'$'}{entityList.size} notifications to Room DB")
+                    } catch (e: Exception) {
+                        android.util.Log.w("Notifications", "Failed to sync: ${'$'}{e.message}")
+                    }
+                }
             }.onFailure { /* offline */ }
             ApiClient.getUnreadCount(currentUser.id).onSuccess { response ->
                 if (response.success) _unreadCountRemote.value = response.unread
