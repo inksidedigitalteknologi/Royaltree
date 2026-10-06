@@ -114,46 +114,59 @@ fun ProfileScreen(
             }
         }
 
-        // Avatar + Tier (M53: Dynamic frame by tier)
+        // Avatar + Tier (M54: Card dgn gradient border tipis — no PNG frame)
         item {
-            val headerFrameRes = when (user?.tier?.uppercase()) {
-                "ROYAL" -> R.drawable.frame_dragon_royal
-                "VIP" -> R.drawable.frame_lion_vip
-                "PREMIUM" -> R.drawable.frame_star_premium
-                "STARTER" -> R.drawable.frame_bronze_starter
-                else -> R.drawable.frame_leaf_free
+            // Tier color untuk border
+            val tierAccent = when (user?.tier?.uppercase()) {
+                "ROYAL" -> Color(0xFFB9F2FF)
+                "VIP" -> GoldVip
+                "PREMIUM" -> Color(0xFFC0C0C0)
+                "STARTER" -> Color(0xFFCD7F32)
+                else -> EmeraldLight
             }
 
-            FramedCard(
-                frameRes = headerFrameRes,
-                aspectRatioOverride = 2.4f,
-                paddingPercentHorizontal = 0.08f,
-                paddingPercentVertical = 0.12f,
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                border = androidx.compose.foundation.BorderStroke(
+                    width = 1.5.dp,
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            tierAccent.copy(alpha = 0.6f),
+                            GoldVip.copy(alpha = 0.3f),
+                            tierAccent.copy(alpha = 0.6f)
+                        )
+                    )
+                ),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // M47: Avatar dengan frame tier
                     ProfileAvatarWithFrame(
                         userName = user?.name,
                         tier = user?.tier ?: "FREE",
-                        size = 72.dp
+                        size = 80.dp
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(14.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             user?.name ?: "User",
-                            fontSize = 16.sp,
+                            fontSize = 17.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(modifier = Modifier.height(2.dp))
+                        Spacer(modifier = Modifier.height(3.dp))
                         Text(
                             user?.email ?: "-",
-                            fontSize = 11.sp,
+                            fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -484,49 +497,82 @@ private fun ReferralStatsCard(
     commissionIdr: Double,
     currentLanguage: AppLanguage
 ) {
-    FramedCard(
-        frameRes = R.drawable.card_frame_referral,
-        aspectRatioOverride = 1.7f,
-        paddingPercentHorizontal = 0.08f,
-        paddingPercentVertical = 0.14f,
+    // M54: Referral → Card biasa + text besar (fill frame)
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = androidx.compose.foundation.BorderStroke(
+            width = 1.dp,
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    EmeraldLight.copy(alpha = 0.5f),
+                    GoldVip.copy(alpha = 0.3f),
+                    EmeraldLight.copy(alpha = 0.5f)
+                )
+            )
+        ),
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             // Teman diundang
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(14.dp)
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(LanguageManager.translate("profile_referral_friends", currentLanguage, "👥 Teman"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    LanguageManager.translate("profile_referral_friends", currentLanguage, "👥 Teman"),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     "$referredCount",
-                    fontSize = 22.sp,
+                    fontSize = 28.sp,
                     fontWeight = FontWeight.Black,
                     color = EmeraldLight
                 )
-                Text(LanguageManager.translate("profile_referral_invited", currentLanguage, "Diundang"), fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    LanguageManager.translate("profile_referral_invited", currentLanguage, "Diundang"),
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             // Divider
             Box(
                 modifier = Modifier
                     .width(1.dp)
-                    .height(60.dp)
-                    .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                    .height(90.dp)
+                    .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
             )
             // Komisi
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(14.dp)
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(LanguageManager.translate("profile_commission", currentLanguage, "💰 Komisi"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    LanguageManager.translate("profile_commission", currentLanguage, "💰 Komisi"),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     GlobalPointsManager.formatBalanceIdr(commissionIdr, currentLanguage.code),
-                    fontSize = 16.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Black,
                     color = GoldVip
                 )
-                Text(LanguageManager.translate("profile_total", currentLanguage, "Total"), fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    LanguageManager.translate("profile_total", currentLanguage, "Total"),
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
