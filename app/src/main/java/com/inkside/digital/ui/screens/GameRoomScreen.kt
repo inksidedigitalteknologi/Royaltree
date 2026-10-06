@@ -1419,15 +1419,16 @@ private fun ShopMinerCard(
         else -> R.drawable.card_frame_common
     }
 
-    FramedCard(
-        frameRes = frameRes,
-        aspectRatioOverride = 1.5f,
-        paddingPercentHorizontal = 0.16f,
-        paddingPercentVertical = 0.20f,
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(RetroCard)
+            .border(2.dp, rarityColor.copy(alpha = 0.6f), RoundedCornerShape(14.dp))
     ) {
         Column(
-            modifier = Modifier.padding(10.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             // ==== Header: Icon + Name + Tier ====
             Row(
