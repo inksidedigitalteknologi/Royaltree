@@ -117,8 +117,8 @@ fun ProfileScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_profile,
-                paddingPercentHorizontal = 0.20f,
-                paddingPercentVertical = 0.30f,
+                paddingPercentHorizontal = 0.10f,
+                paddingPercentVertical = 0.14f,
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -168,10 +168,12 @@ fun ProfileScreen(
 
         // Saldo & Poin
         item {
-            FramedCard(
-                frameRes = R.drawable.card_frame_stats,
-                paddingPercentHorizontal = 0.18f,
-                paddingPercentVertical = 0.30f,
+            // M51: Stats guna Card biasa (frame terlalu besar)
+            androidx.compose.material3.Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.3f)),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Row(modifier = Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     Column(modifier = Modifier.weight(1f)) {
@@ -428,8 +430,8 @@ private fun UpgradeTierCard(
 
     FramedCard(
         frameRes = R.drawable.card_frame_tier,
-        paddingPercentHorizontal = 0.14f,
-        paddingPercentVertical = 0.24f,
+        paddingPercentHorizontal = 0.12f,
+        paddingPercentVertical = 0.18f,
     ) {
         Row(
             modifier = Modifier
@@ -486,8 +488,8 @@ private fun ReferralStatsCard(
 ) {
     FramedCard(
         frameRes = R.drawable.card_frame_referral,
-        paddingPercentHorizontal = 0.16f,
-        paddingPercentVertical = 0.28f,
+        paddingPercentHorizontal = 0.08f,
+        paddingPercentVertical = 0.14f,
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             // Teman diundang
@@ -545,8 +547,8 @@ private fun MiningStatsCard(
 ) {
     FramedCard(
         frameRes = R.drawable.card_frame_mining,
-        paddingPercentHorizontal = 0.20f,
-        paddingPercentVertical = 0.12f,
+        paddingPercentHorizontal = 0.10f,
+        paddingPercentVertical = 0.10f,
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Text(
