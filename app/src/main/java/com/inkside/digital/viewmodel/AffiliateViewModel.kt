@@ -106,8 +106,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             val firebaseUid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
             if (firebaseUid != null) {
                 repository.switchUser(firebaseUid)
+                // Defer 300ms — elak NPE StateFlow property initializer
+                // (_userState, _historyItems, _notificationItems, dll)
+                // Property initializer Kotlin jalan LEPAS init block
+                kotlinx.coroutines.delay(300L)
                 loadUserFromBackend()
-                // M56: Auto-load history + notifications bila app launch
                 loadHistory()
                 loadNotifications()
             }
