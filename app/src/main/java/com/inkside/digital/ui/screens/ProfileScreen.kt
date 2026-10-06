@@ -113,8 +113,7 @@ fun ProfileScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_profile,
-                paddingPercentHorizontal = 0.16f,
-                paddingPercentVertical = 0.20f
+                paddingPercent = 0.2f,
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -166,8 +165,7 @@ fun ProfileScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_stats,
-                paddingPercentHorizontal = 0.12f,
-                paddingPercentVertical = 0.22f
+                paddingPercent = 0.22f,
             ) {
                 Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Column(modifier = Modifier.weight(1f)) {
@@ -192,8 +190,7 @@ fun ProfileScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_form,
-                paddingPercentHorizontal = 0.15f,
-                paddingPercentVertical = 0.18f
+                paddingPercent = 0.18f,
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(LanguageManager.translate("profile_edit", currentLanguage, "✏️ Edit Profil"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
@@ -411,8 +408,7 @@ private fun UpgradeTierCard(
 
     FramedCard(
         frameRes = R.drawable.card_frame_tier,
-        paddingPercentHorizontal = 0.16f,
-        paddingPercentVertical = 0.20f
+        paddingPercent = 0.2f,
     ) {
         Row(
             modifier = Modifier
@@ -469,8 +465,7 @@ private fun ReferralStatsCard(
 ) {
     FramedCard(
         frameRes = R.drawable.card_frame_referral,
-        paddingPercentHorizontal = 0.14f,
-        paddingPercentVertical = 0.24f
+        paddingPercent = 0.24f,
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             // Teman diundang
@@ -528,8 +523,7 @@ private fun MiningStatsCard(
 ) {
     FramedCard(
         frameRes = R.drawable.card_frame_mining,
-        paddingPercentHorizontal = 0.14f,
-        paddingPercentVertical = 0.22f
+        paddingPercent = 0.22f,
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Text(

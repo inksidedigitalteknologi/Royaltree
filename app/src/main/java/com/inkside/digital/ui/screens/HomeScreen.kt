@@ -145,8 +145,7 @@ fun HomeScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_balance,
-                paddingPercentHorizontal = 0.15f,
-                paddingPercentVertical = 0.20f
+                paddingPercent = 0.2f,
             ) {
                 Box(
                     modifier = Modifier
@@ -216,8 +215,7 @@ fun HomeScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_stats,
-                paddingPercentHorizontal = 0.12f,
-                paddingPercentVertical = 0.22f
+                paddingPercent = 0.22f,
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -252,8 +250,7 @@ fun HomeScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_quickaction,
-                paddingPercentHorizontal = 0.14f,
-                paddingPercentVertical = 0.18f
+                paddingPercent = 0.18f,
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -327,8 +324,7 @@ fun HomeScreen(
 
             FramedCard(
                 frameRes = R.drawable.card_frame_watch,
-                paddingPercentHorizontal = 0.12f,
-                paddingPercentVertical = 0.18f
+                paddingPercent = 0.18f,
             ) {
                 Row(
                     modifier = Modifier
