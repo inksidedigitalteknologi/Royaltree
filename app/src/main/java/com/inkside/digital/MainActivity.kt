@@ -108,7 +108,7 @@ class MainActivity : ComponentActivity() {
         AdManager.init(this)              // Init AdMob SDK
         setContent {
             MyApplicationTheme(
-                darkTheme = AppThemePreferences.isDarkMode
+                darkTheme = true  // Force dark mode
             ) {
                 androidx.compose.foundation.layout.Box(
                     modifier = androidx.compose.ui.Modifier
@@ -693,12 +693,7 @@ fun MainAffiliateAppContent(
                 user = user,
                 unreadNotifs = unreadNotifs,
                 currentLanguage = currentLanguage,
-                isDarkMode = AppThemePreferences.isDarkMode,
                 onOpenDrawer = { coroutineScope.launch { drawerState.open() } },
-                onToggleDarkMode = {
-                    val ctx = context
-                    AppThemePreferences.setDarkMode(ctx, !AppThemePreferences.isDarkMode)
-                },
                 onOpenLanguage = { showLanguageModal = true },
                 onOpenInbox = { onNavigate(AppScreen.INBOX) },
                 onOpenNotifs = { onNavigate(AppScreen.NOTIFICATIONS) }
@@ -839,10 +834,7 @@ fun MainAffiliateAppContent(
                     SettingsScreen(
                         currentLanguage = currentLanguage,
                         onOpenLanguage = { showLanguageModal = true },
-                        onLogout = { onLogout() },
-                        onToggleDarkMode = { enabled ->
-                            AppThemePreferences.setDarkMode(context, enabled)
-                        }
+                        onLogout = { onLogout() }
                     )
                 }
 

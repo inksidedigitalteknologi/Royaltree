@@ -80,8 +80,6 @@ import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.ui.theme.PurpleSecondary
 import com.inkside.digital.viewmodel.AppScreen
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Email
 
 @Composable
@@ -89,9 +87,7 @@ fun AppTopBar(
     user: UserEntity?,
     unreadNotifs: Int,
     currentLanguage: AppLanguage,
-    isDarkMode: Boolean,
     onOpenDrawer: () -> Unit,
-    onToggleDarkMode: () -> Unit,
     onOpenLanguage: () -> Unit,
     onOpenInbox: () -> Unit,
     onOpenNotifs: () -> Unit
@@ -197,22 +193,8 @@ fun AppTopBar(
                 }
             }
 
-            // RIGHT: Dark mode + Language + Inbox + Notif
+            // RIGHT: Language + Inbox + Notif
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // Dark Mode Toggle
-                IconButton(
-                    onClick = onToggleDarkMode,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .testTag("dark_mode_button")
-                ) {
-                    Icon(
-                        imageVector = if (isDarkMode) Icons.Default.LightMode else Icons.Default.DarkMode,
-                        contentDescription = "Theme",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
 
                 // Language
                 IconButton(

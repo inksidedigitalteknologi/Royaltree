@@ -16,8 +16,8 @@ object AppThemePreferences {
     private const val KEY_LANGUAGE = "app_language"
     private const val KEY_ONBOARDED = "is_onboarded"
 
-    // State global untuk UI (auto-update)
-    var isDarkMode by mutableStateOf(false)
+    // Force dark mode only — user tak boleh ubah
+    var isDarkMode by mutableStateOf(true)
         private set
 
     var currentLanguage by mutableStateOf(AppLanguage.ENGLISH)
@@ -28,7 +28,7 @@ object AppThemePreferences {
 
     fun init(context: Context) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        isDarkMode = prefs.getBoolean(KEY_DARK_MODE, false)
+        isDarkMode = true  // Force dark mode
         val langCode = prefs.getString(KEY_LANGUAGE, "EN") ?: "EN"
         currentLanguage = AppLanguage.values().find { it.code == langCode } ?: AppLanguage.ENGLISH
         isOnboarded = prefs.getBoolean(KEY_ONBOARDED, false)
@@ -38,12 +38,6 @@ object AppThemePreferences {
         isOnboarded = value
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putBoolean(KEY_ONBOARDED, value).apply()
-    }
-
-    fun setDarkMode(context: Context, enabled: Boolean) {
-        isDarkMode = enabled
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putBoolean(KEY_DARK_MODE, enabled).apply()
     }
 
     fun setLanguage(context: Context, language: AppLanguage) {
