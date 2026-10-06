@@ -109,4 +109,45 @@ object GlobalPointsManager {
             else -> "Rp ${String.format("%,.0f", amount)}"
         }
     }
+
+    // ============================================================
+    // M52: Currency by Language
+    // Map AppLanguage ke currency code
+    // ============================================================
+    fun getCurrencyCodeForLanguage(languageCode: String): String {
+        return when (languageCode.uppercase()) {
+            "ID" -> "IDR"
+            "EN" -> "USD"
+            "ES" -> "EUR"
+            "ZH" -> "CNY"
+            "AR" -> "SAR"
+            "JA" -> "JPY"
+            else -> "USD"
+        }
+    }
+
+    /**
+     * Format balance IDR ke currency ikut language.
+     * Balance di Firestore disimpan dalam IDR.
+     */
+    fun formatBalanceIdr(balanceIdr: Double, languageCode: String): String {
+        val currencyCode = getCurrencyCodeForLanguage(languageCode)
+        return when (currencyCode) {
+            "IDR" -> "Rp ${String.format(Locale("id", "ID"), "%,.0f", balanceIdr)}"
+            else -> {
+                // Convert IDR → USD → target currency
+                val usd = balanceIdr / RATE_USD_TO_IDR
+                val converted = when (currencyCode) {
+                    "USD" -> usd
+                    "EUR" -> usd * RATE_USD_TO_EUR
+                    "GBP" -> usd * RATE_USD_TO_GBP
+                    "JPY" -> usd * RATE_USD_TO_JPY
+                    "CNY" -> usd * RATE_USD_TO_CNY
+                    "SAR" -> usd * RATE_USD_TO_SAR
+                    else -> usd
+                }
+                formatCurrencyDisplay(converted, currencyCode)
+            }
+        }
+    }
 }

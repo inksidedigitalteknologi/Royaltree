@@ -1,5 +1,6 @@
 package com.inkside.digital.ui.screens
 
+import com.inkside.digital.util.GlobalPointsManager
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material.icons.filled.Edit
@@ -179,7 +180,7 @@ fun ProfileScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(LanguageManager.translate("profile_balance", currentLanguage, "Saldo"), fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
-                            "Rp " + String.format("%,.0f", user?.balance ?: 0.0).replace(",", "."),
+                            GlobalPointsManager.formatBalanceIdr(user?.balance ?: 0.0, currentLanguage.code),
                             fontSize = 14.sp, fontWeight = FontWeight.Black, color = EmeraldLight
                         )
                     }
@@ -522,7 +523,7 @@ private fun ReferralStatsCard(
             ) {
                 Text(LanguageManager.translate("profile_commission", currentLanguage, "💰 Komisi"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(
-                    "Rp ${String.format("%,.0f", commissionIdr).replace(",", ".")}",
+                    GlobalPointsManager.formatBalanceIdr(commissionIdr, currentLanguage.code),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Black,
                     color = GoldVip

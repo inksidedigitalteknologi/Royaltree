@@ -1,5 +1,6 @@
 package com.inkside.digital.ui.screens
 
+import com.inkside.digital.util.GlobalPointsManager
 import com.inkside.digital.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -169,7 +170,7 @@ fun HomeScreen(
                         )
                         Spacer(modifier = Modifier.height(3.dp))
                         Text(
-                            text = "Rp ${String.format("%,.0f", user?.balance ?: 0.0)}",
+                            text = GlobalPointsManager.formatBalanceIdr(user?.balance ?: 0.0, currentLanguage.code),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = GoldAccent
