@@ -1,5 +1,7 @@
 package com.inkside.digital.ui.components
 
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -82,6 +84,40 @@ import com.inkside.digital.viewmodel.AppScreen
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.filled.Email
 
+// ============================================================
+// M52: AnimatedRoyaltreeTitle — text dengan gradient bergerak
+// ============================================================
+@Composable
+fun AnimatedRoyaltreeTitle() {
+    val transition = androidx.compose.animation.core.rememberInfiniteTransition(label = "royaltree_title")
+    val offset by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1000f,
+        animationSpec = androidx.compose.animation.core.infiniteRepeatable(
+            animation = androidx.compose.animation.core.tween(3500, easing = androidx.compose.animation.core.LinearEasing),
+            repeatMode = androidx.compose.animation.core.RepeatMode.Restart
+        ),
+        label = "royaltree_gradient_offset"
+    )
+
+    Text(
+        text = "Royaltree",
+        style = androidx.compose.ui.text.TextStyle(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    Color(0xFF10B981),   // emerald
+                    Color(0xFFFFB800),   // gold
+                    Color(0xFF10B981)    // emerald
+                ),
+                start = androidx.compose.ui.geometry.Offset(offset - 500f, 0f),
+                end = androidx.compose.ui.geometry.Offset(offset, 0f)
+            ),
+            fontWeight = FontWeight.Black,
+            fontSize = 17.sp
+        )
+    )
+}
+
 @Composable
 fun AppTopBar(
     user: UserEntity?,
@@ -123,37 +159,21 @@ fun AppTopBar(
 
                 Spacer(modifier = Modifier.width(2.dp))
 
-                Box(
+                // M52: Logo Royaltree — coin RTP
+                Image(
+                    painter = androidx.compose.ui.res.painterResource(com.inkside.digital.R.drawable.ic_rtp),
+                    contentDescription = "Royaltree Logo",
                     modifier = Modifier
-                        .size(34.dp)
+                        .size(36.dp)
                         .clip(RoundedCornerShape(9.dp))
-                        .background(
-                            Brush.linearGradient(
-                                listOf(ElectricBlue, EmeraldLight)
-                            )
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.MonetizationOn,
-                        contentDescription = "Logo",
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
+                )
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = "Royaltree",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
-                            ),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                        // M52: Animated gradient "Royaltree"
+                        AnimatedRoyaltreeTitle()
                         Spacer(modifier = Modifier.width(5.dp))
                         if (user?.tier in listOf("PREMIUM", "VIP", "ROYAL")) {
                             Box(
@@ -185,11 +205,6 @@ fun AppTopBar(
                             }
                         }
                     }
-                    Text(
-                        text = "E2E Encrypted • 2FA",
-                        fontSize = 9.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
                 }
             }
 
