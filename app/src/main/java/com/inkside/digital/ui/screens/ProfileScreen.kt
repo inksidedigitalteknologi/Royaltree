@@ -114,54 +114,50 @@ fun ProfileScreen(
             }
         }
 
-        // Avatar + Tier
+        // Avatar + Tier (M53: Dynamic frame by tier)
         item {
+            val headerFrameRes = when (user?.tier?.uppercase()) {
+                "ROYAL" -> R.drawable.frame_dragon_royal
+                "VIP" -> R.drawable.frame_lion_vip
+                "PREMIUM" -> R.drawable.frame_star_premium
+                "STARTER" -> R.drawable.frame_bronze_starter
+                else -> R.drawable.frame_leaf_free
+            }
+
             FramedCard(
-                frameRes = R.drawable.card_frame_profile,
-                paddingPercentHorizontal = 0.10f,
-                paddingPercentVertical = 0.14f,
+                frameRes = headerFrameRes,
+                aspectRatioOverride = 2.4f,
+                paddingPercentHorizontal = 0.08f,
+                paddingPercentVertical = 0.12f,
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // M47: Avatar dengan frame tier
                     ProfileAvatarWithFrame(
                         userName = user?.name,
                         tier = user?.tier ?: "FREE",
-                        size = 80.dp
+                        size = 72.dp
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(user?.name ?: "User", fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        Text(user?.email ?: "-", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        Spacer(modifier = Modifier.height(3.dp))
-                        androidx.compose.foundation.layout.Box(
-                            modifier = Modifier.clip(RoundedCornerShape(6.dp))
-                                .background(
-                                    when (user?.tier) {
-                                        "STARTER" -> Color(0xFFCD7F32)
-                                        "PREMIUM" -> Color(0xFFC0C0C0)
-                                        "VIP" -> GoldVip
-                                        "ROYAL" -> Color(0xFFB9F2FF)
-                                        else -> MaterialTheme.colorScheme.surfaceVariant
-                                    }
-                                )
-                                .padding(horizontal = 8.dp, vertical = 2.dp)
-                        ) {
-                            Text(
-                                when (user?.tier) {
-                                    "STARTER" -> LanguageManager.translate("tier_starter", currentLanguage, "Pemula")
-                                    "PREMIUM" -> LanguageManager.translate("tier_premium", currentLanguage, "Premium")
-                                    "VIP" -> LanguageManager.translate("tier_vip", currentLanguage, "VIP")
-                                    "ROYAL" -> LanguageManager.translate("tier_royal", currentLanguage, "Royal")
-                                    else -> LanguageManager.translate("tier_free", currentLanguage, "Free")
-                                },
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = if (user?.tier in listOf("PREMIUM", "VIP", "ROYAL")) Color.Black else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                        Text(
+                            user?.name ?: "User",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            user?.email ?: "-",
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
             }
