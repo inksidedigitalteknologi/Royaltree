@@ -31,6 +31,11 @@ import kotlinx.coroutines.delay
 import org.json.JSONObject
 import com.google.firebase.auth.FirebaseAuth
 import com.inkside.digital.widget.WidgetUpdater
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 enum class AppScreen {
     HOME,
@@ -1351,11 +1356,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     fun boostMiningWithAd(transactionId: String, vendor: String) {
         viewModelScope.launch {
             try {
-                val body = org.json.JSONObject().apply {
-                    put("transactionId", transactionId)
-                    put("vendor", vendor)
-                }
-                ApiClient.boostMiningWithAd(body)
+                ApiClient.boostMiningWithAd(transactionId, vendor)
                     .onSuccess { json ->
                         if (json.optBoolean("success", false)) {
                             val multiplier = json.optDouble("multiplier", 2.0)
