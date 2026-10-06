@@ -3,6 +3,7 @@ package com.inkside.digital.ui.screens
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.ui.unit.TextUnit
+import com.inkside.digital.ui.components.FramedCard
 import com.inkside.digital.R
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.res.painterResource
@@ -110,10 +111,9 @@ fun ProfileScreen(
 
         // Avatar + Tier
         item {
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                modifier = Modifier.fillMaxWidth()
+            FramedCard(
+                frameRes = R.drawable.card_frame_profile,
+                contentPadding = 40.dp
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -163,26 +163,19 @@ fun ProfileScreen(
 
         // Saldo & Poin
         item {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Card(
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = EmeraldLight.copy(alpha = 0.1f)),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
+            FramedCard(
+                frameRes = R.drawable.card_frame_stats,
+                contentPadding = 40.dp
+            ) {
+                Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(LanguageManager.translate("profile_balance", currentLanguage, "Saldo"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             "Rp " + String.format("%,.0f", user?.balance ?: 0.0).replace(",", "."),
                             fontSize = 16.sp, fontWeight = FontWeight.Black, color = EmeraldLight
                         )
                     }
-                }
-                Card(
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = ElectricBlue.copy(alpha = 0.1f)),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text("RTP", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             "${user?.points ?: 0}",
@@ -195,10 +188,9 @@ fun ProfileScreen(
 
         // Edit Profil
         item {
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                modifier = Modifier.fillMaxWidth()
+            FramedCard(
+                frameRes = R.drawable.card_frame_form,
+                contentPadding = 40.dp
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(LanguageManager.translate("profile_edit", currentLanguage, "✏️ Edit Profil"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
@@ -414,12 +406,9 @@ private fun UpgradeTierCard(
         else -> Triple("🌱", LanguageManager.translate("tier_free", currentLanguage, "Gratis"), EmeraldLight)
     }
 
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
+    FramedCard(
+        frameRes = R.drawable.card_frame_tier,
+        contentPadding = 40.dp
     ) {
         Row(
             modifier = Modifier
@@ -474,10 +463,9 @@ private fun ReferralStatsCard(
     commissionIdr: Double,
     currentLanguage: AppLanguage
 ) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        modifier = Modifier.fillMaxWidth()
+    FramedCard(
+        frameRes = R.drawable.card_frame_referral,
+        contentPadding = 40.dp
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             // Teman diundang
@@ -524,76 +512,6 @@ private fun ReferralStatsCard(
 // ==========================================================
 // MINING STATS — slot, power, token
 // ==========================================================
-// ============================================================
-// M48: FramedCard — Card dengan PNG frame overlay
-// ============================================================
-@Composable
-fun FramedCard(
-    frameRes: Int,
-    modifier: Modifier = Modifier,
-    contentPadding: Dp = 40.dp,
-    content: @Composable BoxScope.() -> Unit
-) {
-    Box(
-        modifier = modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        // Content di dalam (dengan padding supaya tak keluar dari frame)
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(contentPadding),
-            content = content
-        )
-        
-        // Frame overlay di atas
-        Image(
-            painter = painterResource(frameRes),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
-        )
-    }
-}
-
-@Composable
-private fun MiningStatsCard(
-    currentLanguage: AppLanguage,
-    slotsUsed: Int,
-    slotsMax: Int,
-    powerGhs: Double,
-    tokens: Int,
-    roomState: GameRoomStateEntity? = null  // M46: Data sinkron dari server
-) {
-    FramedCard(
-        frameRes = R.drawable.card_frame_mining,
-        contentPadding = 40.dp
-    ) {
-        Column(modifier = Modifier.padding(14.dp)) {
-            Text(
-                LanguageManager.translate("profile_mining_status", currentLanguage, "⛏️ Status Mining"),
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                MiniStatBox(LanguageManager.translate("profile_slot", currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), "${powerGhs.toInt()} GH/s", ElectricBlue, Modifier.weight(1f))
-                MiniStatBox("RTP", "$tokens", GoldVip, Modifier.weight(1f))
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format(Locale.US, "%.4f", (roomState?.ratePerMin ?: (powerGhs * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", ElectricBlue, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+${String.format(Locale.US, "%.0f", roomState?.tempPowerBonusGhs ?: 0.0)} GH/s", GoldVip, Modifier.weight(1f))
-            }
-        }
     }
 }
 
