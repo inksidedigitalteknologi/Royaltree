@@ -163,12 +163,11 @@ fun MissionsScreen(
         ) {
             // Hero Balance & Value Card
             item {
-                FramedCard(
-                    frameRes = R.drawable.card_frame_mission,
-                    aspectRatioOverride = 1.8f,
-                    paddingPercentHorizontal = 0.10f,
-                    paddingPercentVertical = 0.10f,
-                ) {
+                Card(
+    shape = RoundedCornerShape(16.dp),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    modifier = Modifier.fillMaxWidth()
+) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -386,12 +385,11 @@ fun MissionItemCard(
         (mission.currentProgress.toFloat() / mission.maxProgress.toFloat()).coerceIn(0f, 1f)
     } else 1f
 
-    FramedCard(
-        frameRes = R.drawable.card_frame_mission,
-        aspectRatioOverride = 1.8f,
-        paddingPercentHorizontal = 0.10f,
-        paddingPercentVertical = 0.10f,
-    ) {
+    Card(
+    shape = RoundedCornerShape(16.dp),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    modifier = Modifier.fillMaxWidth()
+) {
         Column(modifier = Modifier.padding(10.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),

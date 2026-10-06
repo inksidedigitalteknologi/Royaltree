@@ -206,12 +206,11 @@ fun ProfileScreen(
 
         // M56: Edit Profil — guna frame royal vine
         item {
-            FramedCard(
-                frameRes = R.drawable.card_frame_royal_vine,
-                aspectRatioOverride = 1.35f,
-                paddingPercentHorizontal = 0.10f,
-                paddingPercentVertical = 0.08f
-            ) {
+            Card(
+    shape = RoundedCornerShape(16.dp),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    modifier = Modifier.fillMaxWidth()
+) {
                 Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Edit, null, tint = EmeraldLight, modifier = Modifier.size(18.dp))
@@ -443,12 +442,11 @@ private fun UpgradeTierCard(
         else -> Triple("🌱", LanguageManager.translate("tier_free", currentLanguage, "Gratis"), EmeraldLight)
     }
 
-    FramedCard(
-        frameRes = R.drawable.card_frame_tier,
-        aspectRatioOverride = 1.7f,
-        paddingPercentHorizontal = 0.12f,
-        paddingPercentVertical = 0.18f,
-    ) {
+    Card(
+    shape = RoundedCornerShape(16.dp),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    modifier = Modifier.fillMaxWidth()
+) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

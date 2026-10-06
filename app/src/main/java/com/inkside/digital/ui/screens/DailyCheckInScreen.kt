@@ -118,12 +118,11 @@ fun DailyCheckInScreen(
 
         // Streak Card
         item {
-            FramedCard(
-                frameRes = R.drawable.card_frame_daily,
-                aspectRatioOverride = 2.0f,
-                paddingPercentHorizontal = 0.18f,
-                paddingPercentVertical = 0.28f,
-            ) {
+            Card(
+    shape = RoundedCornerShape(16.dp),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    modifier = Modifier.fillMaxWidth()
+) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -159,12 +158,11 @@ fun DailyCheckInScreen(
 
         // Info Weekend
         item {
-            FramedCard(
-                frameRes = R.drawable.card_frame_daily,
-                aspectRatioOverride = 2.0f,
-                paddingPercentHorizontal = 0.18f,
-                paddingPercentVertical = 0.28f,
-            ) {
+            Card(
+    shape = RoundedCornerShape(16.dp),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    modifier = Modifier.fillMaxWidth()
+) {
                 Text(
                     text = "💡 " + LanguageManager.translate("daily_weekend_info", currentLanguage, "Weekend = bigger rewards!"),
                     fontSize = 12.sp,
@@ -181,12 +179,11 @@ fun DailyCheckInScreen(
 
         // Kalender
         item {
-            FramedCard(
-                frameRes = R.drawable.card_frame_calendar,
-                aspectRatioOverride = 1.8f,
-                paddingPercentHorizontal = 0.14f,
-                paddingPercentVertical = 0.10f,
-            ) {
+            Card(
+    shape = RoundedCornerShape(16.dp),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    modifier = Modifier.fillMaxWidth()
+) {
                 Column(modifier = Modifier.padding(12.dp)) {
                     // Header hari
                     Row(modifier = Modifier.fillMaxWidth()) {
