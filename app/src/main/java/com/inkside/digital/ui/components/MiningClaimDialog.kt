@@ -112,7 +112,7 @@ fun MiningClaimDialog(
 
                 // ===== TITLE =====
                 Text(
-                    text = if (isCooldown) "Tunggu Sebentar" else "Klaim Hasil Mining",
+                    text = if (isCooldown) "Boost Cooldown" else "Boost 2× Rate",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Black,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -124,9 +124,9 @@ fun MiningClaimDialog(
                 // ===== SUBTITLE =====
                 Text(
                     text = if (isCooldown)
-                        "Klaim berikutnya tersedia setelah cooldown habis"
+                        "Boost berikutnya tersedia setelah cooldown habis"
                     else
-                        "Tonton iklan dulu untuk klaim hasil mining",
+                        "Tonton iklan → 2× rate mining selama 1 jam",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -178,7 +178,7 @@ fun MiningClaimDialog(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                "Poin Siap Diklaim",
+                                "Boost Aktif Setelah Iklan",
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -191,7 +191,7 @@ fun MiningClaimDialog(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                "Setelah klaim, cooldown 1 jam berlaku",
+                                "Boost 2× selama 1 jam • max 3× sehari",
                                 fontSize = 10.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -236,7 +236,7 @@ fun MiningClaimDialog(
                             )
                         } else {
                             Text(
-                                text = if (isCooldown) "Cooldown" else "🎬 Tonton Iklan",
+                                text = if (isCooldown) "Cooldown" else "🎬 Tonton Iklan Boost",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Black,
                                 color = if (isCooldown) MaterialTheme.colorScheme.onSurfaceVariant else Color.Black

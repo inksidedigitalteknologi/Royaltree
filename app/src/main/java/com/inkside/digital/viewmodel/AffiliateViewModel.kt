@@ -73,6 +73,25 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     private val repository: AffiliateRepository
 
     init {
+        // ============ AUTO WIDGET SYNC (SEMUA transaksi) ============
+        // Observe user state — bila points/balance berubah, widget auto update
+        viewModelScope.launch {
+            user
+                .filterNotNull()
+                .distinctUntilChanged { old, new ->
+                    old.points == new.points && old.balance == new.balance
+                }
+                .debounce(500L)
+                .collect { currentUser ->
+                    try {
+                        WidgetUpdater.refreshFromRoom(getApplication(), currentUser.id)
+                        android.util.Log.d("AffiliateViewModel", "✅ Widget auto-sync (points=${currentUser.points}, balance=${currentUser.balance})")
+                    } catch (e: Exception) {
+                        android.util.Log.w("AffiliateViewModel", "Widget auto-sync gagal: ${e.message}")
+                    }
+                }
+        }
+
         val database = AppDatabase.getDatabase(application, viewModelScope)
         repository = AffiliateRepository(database.appDao())
         // Tidak ada seed data dummy — user di-load dari backend.
@@ -1281,6 +1300,99 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     /**
      * Claim mining dengan iklan. transactionId dari AdMob callback.
      */
+    // ============ AUTO-CLAIM MINING ============
+    private var autoClaimJob: kotlinx.coroutines.Job? = null
+
+    private val _autoClaimActive = MutableStateFlow(false)
+    val autoClaimActive: StateFlow<Boolean> = _autoClaimActive.asStateFlow()
+
+    private val _boostMultiplier = MutableStateFlow(1.0)
+    val boostMultiplier: StateFlow<Double> = _boostMultiplier.asStateFlow()
+
+    private val _boostExpiryMs = MutableStateFlow(0L)
+    val boostExpiryMs: StateFlow<Long> = _boostExpiryMs.asStateFlow()
+
+    private val _boostUsedToday = MutableStateFlow(0)
+    val boostUsedToday: StateFlow<Int> = _boostUsedToday.asStateFlow()
+
+    fun startAutoClaim() {
+        if (autoClaimJob?.isActive == true) return
+        _autoClaimActive.value = true
+        autoClaimJob = viewModelScope.launch {
+            android.util.Log.d("AffiliateViewModel", "▶️ Auto-claim started (60s interval)")
+            while (isActive) {
+                delay(60_000L)
+                try {
+                    val result = ApiClient.claimMining()
+                    result.onSuccess { json ->
+                        if (json.optBoolean("success", false)) {
+                            val points = json.optDouble("points", 0.0)
+                            if (points > 0) {
+                                android.util.Log.d("AffiliateViewModel", "✅ Auto-claim: +$points RTP")
+                                loadUserFromBackend()
+                                loadGameState()
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.w("AffiliateViewModel", "Auto-claim error: ${e.message}")
+                }
+            }
+        }
+    }
+
+    fun stopAutoClaim() {
+        autoClaimJob?.cancel()
+        autoClaimJob = null
+        _autoClaimActive.value = false
+        android.util.Log.d("AffiliateViewModel", "⏸️ Auto-claim stopped")
+    }
+
+    fun boostMiningWithAd(transactionId: String, vendor: String) {
+        viewModelScope.launch {
+            try {
+                val body = org.json.JSONObject().apply {
+                    put("transactionId", transactionId)
+                    put("vendor", vendor)
+                }
+                ApiClient.boostMiningWithAd(body)
+                    .onSuccess { json ->
+                        if (json.optBoolean("success", false)) {
+                            val multiplier = json.optDouble("multiplier", 2.0)
+                            val expiry = json.optLong("boostExpiryTimestamp", 0L)
+                            val used = json.optInt("usedToday", 0)
+                            _boostMultiplier.value = multiplier
+                            _boostExpiryMs.value = expiry
+                            _boostUsedToday.value = used
+                            showSnackbar("⚡ Boost ${multiplier}× aktif 1 jam! ($used/3 hari ini)")
+                            loadGameState()
+                            loadUserFromBackend()
+                        } else {
+                            showSnackbar(json.optString("message", "Gagal boost"))
+                        }
+                    }
+                    .onFailure {
+                        showSnackbar("Error: ${it.message}")
+                    }
+            } catch (e: Exception) {
+                showSnackbar("Boost error: ${e.message}")
+            }
+        }
+    }
+
+    fun refreshBoostState() {
+        viewModelScope.launch {
+            val room = repository.getGameRoomStateOnce() ?: return@launch
+            val now = System.currentTimeMillis()
+            // Baca boost dari room (kalau ada field baru)
+            // Sementara: reset kalau expired
+            if (_boostExpiryMs.value > 0 && _boostExpiryMs.value < now) {
+                _boostMultiplier.value = 1.0
+                _boostExpiryMs.value = 0L
+            }
+        }
+    }
+
     fun claimMiningWithAd(transactionId: String, vendor: String) {
         viewModelScope.launch {
             _miningClaimInProgress.value = true
