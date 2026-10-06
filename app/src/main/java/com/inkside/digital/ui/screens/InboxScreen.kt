@@ -43,6 +43,7 @@ import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.ui.components.BannerAdView
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
+import com.inkside.digital.localization.LanguageManager
 
 data class InboxMessage(
     val id: String,
