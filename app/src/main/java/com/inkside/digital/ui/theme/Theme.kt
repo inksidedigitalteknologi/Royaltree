@@ -89,7 +89,7 @@ fun SyncStatusBar(darkTheme: Boolean) {
 
 @Composable
 fun MyApplicationTheme(
-    darkTheme: Boolean = false, // default light, di-override dari AppThemePreferences
+    darkTheme: Boolean = true, // Force dark mode
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
