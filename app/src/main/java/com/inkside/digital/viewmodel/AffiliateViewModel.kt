@@ -85,7 +85,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         // Observe user state — SELEPAS repository diinisialisasi
         // (elak NullPointerException: repository.user adalah null dalam init awal)
         viewModelScope.launch {
-            user
+            repository.user
                 .filterNotNull()
                 .distinctUntilChanged { old, new ->
                     old.points == new.points && old.balance == new.balance
