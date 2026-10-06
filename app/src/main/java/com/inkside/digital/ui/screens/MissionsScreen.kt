@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import com.inkside.digital.ui.components.FramedCard
 import com.inkside.digital.ui.components.BannerAdView
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -161,10 +162,9 @@ fun MissionsScreen(
         ) {
             // Hero Balance & Value Card
             item {
-                Card(
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                    modifier = Modifier.fillMaxWidth()
+                FramedCard(
+                    frameRes = R.drawable.card_frame_mission,
+                    contentPadding = 40.dp
                 ) {
                     Box(
                         modifier = Modifier
@@ -383,12 +383,9 @@ fun MissionItemCard(
         (mission.currentProgress.toFloat() / mission.maxProgress.toFloat()).coerceIn(0f, 1f)
     } else 1f
 
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (mission.isClaimed) MaterialTheme.colorScheme.surface.copy(alpha = 0.6f) else MaterialTheme.colorScheme.surface
-        ),
-        modifier = Modifier.fillMaxWidth()
+    FramedCard(
+        frameRes = R.drawable.card_frame_mission,
+        contentPadding = 40.dp
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(
