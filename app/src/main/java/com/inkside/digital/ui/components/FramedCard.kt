@@ -17,25 +17,22 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
- * FramedCard — Card dengan PNG frame overlay.
+ * FramedCard — Card dengan PNG frame overlay (content di ATAS frame).
  *
+ * Frame PNG = background border. Content = overlay di atas.
  * Auto-detect aspect ratio dari PNG intrinsic size.
- * Content padding guna percent (default 18% — safety margin).
  *
  * @param frameRes PNG frame dari res/drawable
- * @param paddingPercent padding content percentage (0.18 = 18%)
- * @param paddingPercentHorizontal override horizontal
- * @param paddingPercentVertical override vertical
- * @param aspectRatioOverride override aspect ratio
- * @param contentPadding backward compat
+ * @param paddingPercent padding content percentage (0.12 = 12%)
+ * @param aspectRatioOverride override aspect ratio (kalau perlu)
+ * @param contentPadding backward compat (override paddingPercent)
+ * @param contentPaddingHorizontal / contentPaddingVertical
  */
 @Composable
 fun FramedCard(
     frameRes: Int,
     modifier: Modifier = Modifier,
-    paddingPercent: Float = 0.18f,
-    paddingPercentHorizontal: Float? = null,
-    paddingPercentVertical: Float? = null,
+    paddingPercent: Float = 0.12f,
     aspectRatioOverride: Float? = null,
     contentPadding: Dp? = null,
     contentPaddingHorizontal: Dp? = null,
@@ -47,39 +44,37 @@ fun FramedCard(
     val intrinsicSize = painter.intrinsicSize
     val detectedAspectRatio = if (intrinsicSize.width > 0f && intrinsicSize.height > 0f) {
         intrinsicSize.width / intrinsicSize.height
-    } else 1.2f
+    } else {
+        1.2f
+    }
     val aspectRatio = aspectRatioOverride ?: detectedAspectRatio
 
-    val horizontalPct = paddingPercentHorizontal ?: paddingPercent
-    val verticalPct = paddingPercentVertical ?: paddingPercent
-
     BoxWithConstraints(
-        modifier = modifier
-            .fillMaxWidth()
-            .aspectRatio(aspectRatio),
+        modifier = modifier.fillMaxWidth().aspectRatio(aspectRatio),
         contentAlignment = Alignment.Center
     ) {
         val horizontalPadding = contentPaddingHorizontal
             ?: contentPadding
-            ?: (maxWidth * horizontalPct)
-
+            ?: (maxWidth * paddingPercent)
         val verticalPadding = contentPaddingVertical
             ?: contentPadding
-            ?: (maxHeight * verticalPct)
+            ?: (maxHeight * paddingPercent)
 
+        // 1. Frame PNG (background)
+        Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillBounds
+        )
+
+        // 2. Content (overlay ATAS frame)
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = horizontalPadding, vertical = verticalPadding),
             contentAlignment = Alignment.Center,
             content = content
-        )
-
-        Image(
-            painter = painter,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
         )
     }
 }
