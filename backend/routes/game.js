@@ -423,6 +423,85 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
 });
 
 // ============================================================
+// POST /api/v1/game/mining/boost-with-ad
+// Tonton iklan → boost 2× rate selama 1 jam (max 3× sehari)
+// Body: { transactionId, vendor }
+// ============================================================
+router.post('/mining/boost-with-ad', verifyFirebaseToken, checkFraud, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+        const { transactionId, vendor } = req.body;
+
+        if (!transactionId || !vendor) {
+            return res.status(400).json({
+                success: false,
+                message: 'transactionId dan vendor wajib diisi.'
+            });
+        }
+
+        // Anti-replay
+        const txRef = db.collection('mining_boost_transactions').doc(transactionId);
+        const txDoc = await txRef.get();
+        if (txDoc.exists) {
+            return res.status(400).json({
+                success: false,
+                message: 'Transaksi boost sudah diproses.'
+            });
+        }
+
+        const roomRef = db.collection('game_rooms').doc(uid);
+        const roomDoc = await roomRef.get();
+        const room = roomDoc.exists ? roomDoc.data() : {};
+
+        const now = Date.now();
+        const today = new Date(now).toISOString().slice(0, 10);
+        const boostMap = room.boostCountMap || {};
+        const boostToday = boostMap[today] || 0;
+        const BOOST_LIMIT_PER_DAY = 3;
+
+        if (boostToday >= BOOST_LIMIT_PER_DAY) {
+            return res.status(429).json({
+                success: false,
+                message: `Limit boost harian (${BOOST_LIMIT_PER_DAY}×) telah dicapai.`
+            });
+        }
+
+        const BOOST_DURATION_MS = 60 * 60 * 1000; // 1 jam
+        const boostExpiry = now + BOOST_DURATION_MS;
+
+        const updatedBoostMap = { ...boostMap, [today]: boostToday + 1 };
+
+        // Simpan boost state
+        await roomRef.set({
+            boostMultiplier: 2.0,
+            boostExpiryTimestamp: boostExpiry,
+            boostCountMap: updatedBoostMap
+        }, { merge: true });
+
+        // Simpan transactionId (anti-replay)
+        await txRef.set({
+            userId: uid,
+            vendor: vendor,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        console.log(`[BOOST] User ${uid}: 2× boost aktif sampai ${new Date(boostExpiry).toISOString()}, used ${boostToday + 1}/${BOOST_LIMIT_PER_DAY}`);
+
+        return res.json({
+            success: true,
+            multiplier: 2.0,
+            boostExpiryTimestamp: boostExpiry,
+            usedToday: boostToday + 1,
+            limitToday: BOOST_LIMIT_PER_DAY,
+            message: '⚡ Boost 2× aktif selama 1 jam!'
+        });
+    } catch (error) {
+        console.error('Boost mining error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
 // POST /api/v1/game/mining/claim
 // Claim mining points
 // ============================================================
@@ -466,24 +545,29 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
         
         console.log(`[CLAIM] User ${uid}: unclaimed=${unclaimed}, base=${rateCalc.baseRate}, perm=${rateCalc.permanentBonusPct}%, mini=${rateCalc.miniGameBonusPct}%, final=${ratePerMin}/min`);
         
-        if (unclaimed < MIN_CLAIM_RTP) {
-            return res.status(400).json({
-                success: false,
-                message: `Belum ada poin yang bisa diklaim. Unclaimed: ${unclaimed.toFixed(8)} RTP (min ${MIN_CLAIM_RTP}).`
+        // AUTO-CLAIM: tiada min claim, tiada cooldown
+        // Kalau unclaimed sangat kecil, skip (elak spam Firestore)
+        if (unclaimed < 0.00000001) {
+            return res.json({
+                success: true,
+                points: 0,
+                message: 'Tiada poin baru untuk diklaim.',
+                skipped: true
             });
         }
 
-        const claimAmount = parseFloat(unclaimed.toFixed(8));  // Preserve 8 decimals (BTC-style)
+        const claimAmount = parseFloat(unclaimed.toFixed(8));
 
         // Update user points
         await db.collection('users').doc(uid).update({
             points: admin.firestore.FieldValue.increment(claimAmount)
         });
 
-        // Reset room
+        // Reset room (AUTO-CLAIM: tiada cooldown)
         await roomRef.set({
-            unclaimedMiningPoints: unclaimed - claimAmount,
+            unclaimedMiningPoints: 0,
             lastClaimTimestamp: Date.now(),
+            lastMiningUpdateTimestamp: Date.now(),
             totalMinedPointsClaimed: (room.totalMinedPointsClaimed || 0) + claimAmount,
             tempPowerBonusGhs: room.tempPowerBonusGhs || 0,
             bonusExpiryTimestamp: room.bonusExpiryTimestamp || 0,

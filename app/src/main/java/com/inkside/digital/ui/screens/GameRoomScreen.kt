@@ -889,9 +889,26 @@ private fun MiningRoomTab(
                                     Text("⛏️", fontSize = 28.sp)
                                 }
 
+                                // ===== AUTO-CLAIM INDICATOR =====
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "✅ AUTO-CLAIM AKTIF",
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = EmeraldLight
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                // ===== BOOST BUTTON =====
                                 Button(
                                     onClick = onClaimMining,
-                                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700)),
                                     shape = RoundedCornerShape(10.dp),
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -902,7 +919,7 @@ private fun MiningRoomTab(
                                         Icon(imageVector = Icons.Filled.Bolt, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
                                         Spacer(modifier = Modifier.width(6.dp))
                                         Text(
-                                            text = "Klaim Hasil Mining (${String.format(Locale.US, "%.8f", liveUnclaimedPoints)} RTP)",
+                                            text = "⚡ Boost 2× Rate (1 jam)",
                                             color = Color.Black,
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 13.sp

@@ -107,6 +107,14 @@ object WidgetUpdater {
         }
     }
 
+    /**
+     * Auto-claim helper: refresh widget selepas auto-claim.
+     * Debounce friendly — panggil bila state berubah.
+     */
+    fun refreshFromAutoClaim(context: Context, userId: String) {
+        refreshFromRoom(context, userId)
+    }
+
     // ==== Helper: format angka ====
     private fun formatNumber(value: Double): String {
         return String.format("%,.0f", value).replace(',', '.')
