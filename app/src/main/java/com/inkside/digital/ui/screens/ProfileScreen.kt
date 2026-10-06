@@ -204,54 +204,59 @@ fun ProfileScreen(
             }
         }
 
-        // Edit Profil — Card biasa (bukan frame) supaya TextField tak overlap
+        // M56: Edit Profil — guna frame royal vine
         item {
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                border = androidx.compose.foundation.BorderStroke(
-                    width = 1.dp,
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            EmeraldLight.copy(alpha = 0.5f),
-                            EmeraldLight.copy(alpha = 0.1f)
-                        )
-                    )
-                ),
-                modifier = Modifier.fillMaxWidth()
+            FramedCard(
+                frameRes = R.drawable.card_frame_royal_vine,
+                aspectRatioOverride = 1.35f,
+                paddingPercentHorizontal = 0.10f,
+                paddingPercentVertical = 0.08f
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Edit, null, tint = EmeraldLight, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(LanguageManager.translate("profile_edit", currentLanguage, "Edit Profil"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(
+                            LanguageManager.translate("profile_edit", currentLanguage, "✏️ Edit Profil"),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
                     }
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     OutlinedTextField(
                         value = name, onValueChange = { name = it },
-                        label = { Text(LanguageManager.translate("profile_name", currentLanguage, "Nama Lengkap")) }, singleLine = true,
-                        shape = RoundedCornerShape(10.dp), modifier = Modifier.fillMaxWidth()
+                        label = { Text(LanguageManager.translate("profile_name", currentLanguage, "Nama Lengkap")) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = email, onValueChange = { email = it },
-                        label = { Text(LanguageManager.translate("profile_email_label", currentLanguage, "Email")) }, singleLine = true,
-                        shape = RoundedCornerShape(10.dp), modifier = Modifier.fillMaxWidth()
+                        label = { Text(LanguageManager.translate("profile_email_label", currentLanguage, "Email")) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = phone, onValueChange = { phone = it },
-                        label = { Text(LanguageManager.translate("profile_phone", currentLanguage, "Nomor HP")) }, singleLine = true,
-                        shape = RoundedCornerShape(10.dp), modifier = Modifier.fillMaxWidth()
+                        label = { Text(LanguageManager.translate("profile_phone", currentLanguage, "Nomor HP")) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Button(
                         onClick = { onSaveProfile(name, email, phone) },
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = EmeraldLight),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(LanguageManager.translate("profile_save", currentLanguage, "Simpan Perubahan"), fontWeight = FontWeight.Bold)
+                        Text(
+                            LanguageManager.translate("profile_save", currentLanguage, "Simpan Perubahan"),
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
