@@ -120,10 +120,11 @@ fun DailyCheckInScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_daily,
-                paddingPercent = 0.18f,
+                paddingPercentHorizontal = 0.18f,
+                paddingPercentVertical = 0.28f,
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -132,14 +133,14 @@ fun DailyCheckInScreen(
                             imageVector = Icons.Default.LocalFireDepartment,
                             contentDescription = null,
                             tint = GoldVip,
-                            modifier = Modifier.height(28.dp)
+                            modifier = Modifier.height(22.dp)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Column {
-                            Text(LanguageManager.translate("daily_streak", currentLanguage, "Your Streak"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("daily_streak", currentLanguage, "Your Streak"), fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(
                                 "$streak hari",
-                                fontSize = 20.sp,
+                                fontSize = 16.sp,
                                 fontWeight = FontWeight.Black,
                                 color = GoldVip
                             )
@@ -147,7 +148,7 @@ fun DailyCheckInScreen(
                     }
                     Text(
                         text = "$currentMonth/$currentYear",
-                        fontSize = 14.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -159,7 +160,8 @@ fun DailyCheckInScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_daily,
-                paddingPercent = 0.18f,
+                paddingPercentHorizontal = 0.18f,
+                paddingPercentVertical = 0.28f,
             ) {
                 Text(
                     text = "💡 " + LanguageManager.translate("daily_weekend_info", currentLanguage, "Weekend = bigger rewards!"),
@@ -179,7 +181,8 @@ fun DailyCheckInScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_calendar,
-                paddingPercent = 0.12f,
+                paddingPercentHorizontal = 0.14f,
+                paddingPercentVertical = 0.10f,
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
                     // Header hari

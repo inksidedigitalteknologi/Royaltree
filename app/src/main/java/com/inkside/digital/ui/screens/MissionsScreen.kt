@@ -165,7 +165,8 @@ fun MissionsScreen(
             item {
                 FramedCard(
                     frameRes = R.drawable.card_frame_mission,
-                    paddingPercent = 0.22f,
+                    paddingPercentHorizontal = 0.16f,
+                    paddingPercentVertical = 0.24f,
                 ) {
                     Box(
                         modifier = Modifier
@@ -201,13 +202,13 @@ fun MissionsScreen(
                                     Column {
                                         Text(
                                             text = "Saldo Royaltree Point",
-                                            fontSize = 11.sp,
+                                            fontSize = 9.sp,
                                             color = Color(0xFF94A3B8),
                                             fontWeight = FontWeight.Medium
                                         )
                                         Text(
-                                            text = "RTP Universal Rate (100 RTP = $1.00 USD)",
-                                            fontSize = 9.sp,
+                                            text = "100 RTP = $1.00 USD",
+                                            fontSize = 8.sp,
                                             color = EmeraldLight
                                         )
                                     }
@@ -386,9 +387,10 @@ fun MissionItemCard(
 
     FramedCard(
         frameRes = R.drawable.card_frame_mission,
-        paddingPercent = 0.2f,
+        paddingPercentHorizontal = 0.14f,
+        paddingPercentVertical = 0.22f,
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(modifier = Modifier.padding(10.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,

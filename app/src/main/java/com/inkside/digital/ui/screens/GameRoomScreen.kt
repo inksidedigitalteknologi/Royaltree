@@ -1421,11 +1421,12 @@ private fun ShopMinerCard(
 
     FramedCard(
         frameRes = frameRes,
-        paddingPercent = 0.22f,
+        paddingPercentHorizontal = 0.16f,
+        paddingPercentVertical = 0.20f,
     ) {
         Column(
-            modifier = Modifier.padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.padding(10.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // ==== Header: Icon + Name + Tier ====
             Row(
@@ -1434,7 +1435,7 @@ private fun ShopMinerCard(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(40.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color(0xFF0F0805))
                         .border(1.dp, rarityColor.copy(alpha = 0.5f), RoundedCornerShape(10.dp)),
