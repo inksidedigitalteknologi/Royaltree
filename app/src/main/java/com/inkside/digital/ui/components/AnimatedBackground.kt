@@ -18,6 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.rotate
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -33,40 +36,27 @@ private val CyanAccent = Color(0xFF06B6D4)
 private val GoldAccent = Color(0xFFFFD700)
 
 private data class Star(
-    val x: Float,           // 0..1
-    val y: Float,           // 0..1
-    val size: Float,        // px
-    val phase: Float,       // 0..2π
-    val speed: Float,       // 0.5..1.5
+    val x: Float,
+    val y: Float,
+    val size: Float,
+    val phase: Float,
+    val speed: Float,
     val isGold: Boolean
 )
 
-private data class Particle(
-    val x: Float,           // 0..1
-    val startY: Float,      // 0..1 (bisa di atas dari skrin)
-    val size: Float,        // px
-    val speed: Float,       // px/s relatif
-    val sway: Float,        // horizontal sway
-    val color: Color
+// M53: Leaf particle — daun jatuh dengan wind
+private data class LeafParticle(
+    val x: Float,              // 0..1 (start position)
+    val startY: Float,         // -0.5..0 (start above screen)
+    val size: Float,           // px (small: 4-8, medium: 8-14)
+    val fallSpeed: Float,      // 0.3..0.8
+    val windInfluence: Float,  // 0.5..1.5 (sensitivity to wind)
+    val swayPhase: Float,      // 0..2π
+    val rotationSpeed: Float,  // -1..1
+    val color: Color,
+    val isLeafShape: Boolean   // true = leaf, false = circle dot
 )
 
-/**
- * AnimatedBackground — background animated dengan 4 layer:
- *
- * Layer 1: Aurora gradient bergerak (vertical)
- * Layer 2: Bintang berkelip (background)
- * Layer 3: Glow radial bernafas (tengah)
- * Layer 4: Particle daun berguguran
- *
- * @param accentColor warna accent utama
- * @param enableAurora Layer 1
- * @param enableStars Layer 2
- * @param enableGlow Layer 3
- * @param enableParticles Layer 4
- * @param starCount bilangan bintang (default 40)
- * @param particleCount bilangan partikel (default 20)
- * @param content content di atas background
- */
 @Composable
 fun AnimatedBackground(
     modifier: Modifier = Modifier,
@@ -76,10 +66,10 @@ fun AnimatedBackground(
     enableGlow: Boolean = true,
     enableParticles: Boolean = true,
     starCount: Int = 60,
-    particleCount: Int = 20,
+    particleCount: Int = 25,
+    enableWind: Boolean = true,  // ← M53: wind effect
     content: @Composable BoxScope.() -> Unit = {}
 ) {
-    // Idle animation — time loop
     val infinite = rememberInfiniteTransition(label = "bg")
     val time by infinite.animateFloat(
         initialValue = 0f,
@@ -91,7 +81,17 @@ fun AnimatedBackground(
         label = "time"
     )
 
-    // Seed-based stars — tetap antara recompose
+    // Wind wave — kawal arah angin (sin wave, 24s cycle)
+    val windPhase by infinite.animateFloat(
+        initialValue = 0f,
+        targetValue = (2f * PI).toFloat() * 3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 24000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "wind_phase"
+    )
+
     val stars = remember(starCount) {
         List(starCount) {
             Star(
@@ -105,20 +105,23 @@ fun AnimatedBackground(
         }
     }
 
-    // Seed-based particles — tetap antara recompose
     val particles = remember(particleCount) {
-        List(particleCount) {
-            Particle(
+        List(particleCount) { i ->
+            LeafParticle(
                 x = Random.nextFloat(),
-                startY = -Random.nextFloat() * 0.5f,  // mulai di atas
-                size = 2f + Random.nextFloat() * 4f,
-                speed = 0.3f + Random.nextFloat() * 0.5f,
-                sway = (Random.nextFloat() - 0.5f) * 0.4f,
-                color = when (Random.nextInt(3)) {
-                    0 -> EmeraldAccent.copy(alpha = 0.55f)
-                    1 -> CyanAccent.copy(alpha = 0.45f)
-                    else -> GoldAccent.copy(alpha = 0.4f)
-                }
+                startY = -Random.nextFloat() * 0.5f,
+                size = 5f + Random.nextFloat() * 8f,  // 5-13px
+                fallSpeed = 0.25f + Random.nextFloat() * 0.4f,
+                windInfluence = 0.5f + Random.nextFloat() * 1.0f,
+                swayPhase = Random.nextFloat() * 2f * PI.toFloat(),
+                rotationSpeed = (Random.nextFloat() - 0.5f) * 2f,
+                color = when (i % 4) {
+                    0 -> EmeraldAccent.copy(alpha = 0.5f)
+                    1 -> CyanAccent.copy(alpha = 0.4f)
+                    2 -> GoldAccent.copy(alpha = 0.45f)
+                    else -> Color(0xFF10B981).copy(alpha = 0.35f)  // dark emerald
+                },
+                isLeafShape = i % 3 != 2  // 2/3 daun, 1/3 dot
             )
         }
     }
@@ -131,11 +134,10 @@ fun AnimatedBackground(
         Canvas(modifier = Modifier.fillMaxSize()) {
             val w = size.width
             val h = size.height
-            val t = time * 2f * PI.toFloat()  // full cycle 0..2π
+            val t = time * 2f * PI.toFloat()
 
             // ============ Layer 1: Aurora gradient ============
             if (enableAurora) {
-                // Gradient bergerak vertikal
                 val offset = sin(t) * h * 0.3f
                 drawRect(
                     brush = Brush.verticalGradient(
@@ -151,7 +153,6 @@ fun AnimatedBackground(
                     )
                 )
 
-                // Aksen warna accent bergerak
                 val accentOffset = cos(t * 0.7f) * w * 0.4f
                 drawCircle(
                     brush = Brush.radialGradient(
@@ -202,33 +203,83 @@ fun AnimatedBackground(
                 )
             }
 
-            // ============ Layer 4: Particles (daun gugur) ============
+            // ============ Layer 4: Leaf particles + Wind ============
             if (enableParticles) {
+                // Global wind strength: -1 (kiri) → +1 (kanan)
+                val windStrength = if (enableWind) sin(windPhase) else 0f
+
                 particles.forEach { p ->
-                    // Posisi Y bergerak dari atas ke bawah, loop
-                    val yProgress = (time * p.speed + p.startY + 1f) % 1f
-                    val baseX = p.x * w
-                    val swayX = sin(t * 0.8f + p.startY * 10f) * p.sway * w * 0.1f
-                    val x = baseX + swayX
+                    // Fall progression
+                    val yProgress = (time * p.fallSpeed + p.startY + 1f) % 1f
+
+                    // Wind push (horizontal)
+                    val windPush = windStrength * 100f * p.windInfluence
+
+                    // Individual sway
+                    val swayX = sin(t * 0.9f + p.swayPhase) * w * 0.08f
+
+                    val x = p.x * w + windPush + swayX
                     val y = yProgress * h
 
-                    // Fade in/out di hujung
+                    // Fade in/out
                     val alpha = when {
                         yProgress < 0.1f -> yProgress * 10f
                         yProgress > 0.9f -> (1f - yProgress) * 10f
                         else -> 1f
                     }.coerceIn(0f, 1f)
 
-                    // Sway rotation effect (small)
-                    drawCircle(
-                        color = p.color.copy(alpha = p.color.alpha * alpha),
-                        radius = p.size,
-                        center = Offset(x, y)
-                    )
+                    val finalColor = p.color.copy(alpha = p.color.alpha * alpha)
+
+                    if (p.isLeafShape) {
+                        // Rotasi daun
+                        val rotation = yProgress * 360f * p.rotationSpeed +
+                                (if (enableWind) windStrength * 25f * p.windInfluence else 0f)
+                        drawLeaf(
+                            center = Offset(x, y),
+                            size = p.size,
+                            rotation = rotation,
+                            color = finalColor
+                        )
+                    } else {
+                        // Dot
+                        drawCircle(
+                            color = finalColor,
+                            radius = p.size * 0.6f,
+                            center = Offset(x, y)
+                        )
+                    }
                 }
             }
         }
 
         content()
+    }
+}
+
+/**
+ * Draw leaf shape (pointed ellipse)
+ */
+private fun DrawScope.drawLeaf(
+    center: Offset,
+    size: Float,
+    rotation: Float,
+    color: Color
+) {
+    rotate(degrees = rotation, pivot = center) {
+        val path = Path().apply {
+            moveTo(center.x, center.y - size)
+            cubicTo(
+                center.x + size * 0.8f, center.y - size * 0.3f,
+                center.x + size * 0.5f, center.y + size * 0.4f,
+                center.x, center.y + size
+            )
+            cubicTo(
+                center.x - size * 0.5f, center.y + size * 0.4f,
+                center.x - size * 0.8f, center.y - size * 0.3f,
+                center.x, center.y - size
+            )
+            close()
+        }
+        drawPath(path, color)
     }
 }
