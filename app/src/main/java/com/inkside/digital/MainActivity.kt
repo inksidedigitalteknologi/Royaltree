@@ -110,12 +110,23 @@ class MainActivity : ComponentActivity() {
             MyApplicationTheme(
                 darkTheme = true  // Force dark mode
             ) {
-                androidx.compose.foundation.layout.Box(
-                    modifier = androidx.compose.ui.Modifier
-                        .fillMaxSize()
-                        .systemBarsPadding()
+                com.inkside.digital.ui.components.AnimatedBackground(
+                    accentColor = com.inkside.digital.ui.theme.EmeraldLight,
+                    enableAurora = true,
+                    enableStars = true,
+                    enableGlow = true,
+                    enableParticles = true,
+                    starCount = 40,
+                    particleCount = 20,
+                    enableWind = true
                 ) {
-                    RootNav()
+                    androidx.compose.foundation.layout.Box(
+                        modifier = androidx.compose.ui.Modifier
+                            .fillMaxSize()
+                            .systemBarsPadding()
+                    ) {
+                        RootNav()
+                    }
                 }
             }
         }
