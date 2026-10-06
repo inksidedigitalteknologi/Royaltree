@@ -1,5 +1,14 @@
 package com.inkside.digital.ui.components
 
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -89,28 +98,32 @@ import androidx.compose.material.icons.filled.Email
 // ============================================================
 @Composable
 fun AnimatedRoyaltreeTitle() {
-    val transition = androidx.compose.animation.core.rememberInfiniteTransition(label = "royaltree_title")
+    val transition = androidx.compose.animation.core.rememberInfiniteTransition(label = "title")
+
     val offset by transition.animateFloat(
         initialValue = 0f,
         targetValue = 1000f,
         animationSpec = androidx.compose.animation.core.infiniteRepeatable(
-            animation = androidx.compose.animation.core.tween(3500, easing = androidx.compose.animation.core.LinearEasing),
+            animation = androidx.compose.animation.core.tween(
+                durationMillis = 3500,
+                easing = androidx.compose.animation.core.LinearEasing
+            ),
             repeatMode = androidx.compose.animation.core.RepeatMode.Restart
         ),
-        label = "royaltree_gradient_offset"
+        label = "offset"
     )
 
     Text(
         text = "Royaltree",
-        style = androidx.compose.ui.text.TextStyle(
+        style = TextStyle(
             brush = Brush.linearGradient(
                 colors = listOf(
-                    Color(0xFF10B981),   // emerald
-                    Color(0xFFFFB800),   // gold
-                    Color(0xFF10B981)    // emerald
+                    Color(0xFF10B981),
+                    Color(0xFFFFB800),
+                    Color(0xFF10B981)
                 ),
-                start = androidx.compose.ui.geometry.Offset(offset - 500f, 0f),
-                end = androidx.compose.ui.geometry.Offset(offset, 0f)
+                start = Offset(offset - 500f, 0f),
+                end = Offset(offset, 0f)
             ),
             fontWeight = FontWeight.Black,
             fontSize = 17.sp
