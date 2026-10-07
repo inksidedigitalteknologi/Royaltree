@@ -250,6 +250,10 @@ fun RootNav(
                 isLoading = isLoading,
                 errorMessage = errorMessage,
                 successMessage = successMessage,
+                currentLanguage = currentLanguage,
+                onLanguageChange = { lang ->
+                    affiliateViewModel.setLanguage(lang)
+                },
                 onRegisterEmail = { email, password, name ->
                     authViewModel.registerWithEmail(email, password, name)
                 },
