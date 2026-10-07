@@ -226,6 +226,10 @@ fun RootNav(
             LoginScreen(
                 isLoading = isLoading,
                 errorMessage = errorMessage,
+                currentLanguage = currentLanguage,
+                onLanguageChange = { lang ->
+                    affiliateViewModel.setLanguage(lang)
+                },
                 onLoginEmail = { email, password ->
                     authViewModel.loginWithEmail(email, password)
                 },

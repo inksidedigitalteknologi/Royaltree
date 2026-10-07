@@ -67,13 +67,18 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.CustomCredential
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.inkside.digital.ui.components.AnimatedGradientBackground
+import com.inkside.digital.ui.components.AnimatedBackground
 import kotlinx.coroutines.launch
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
+import com.inkside.digital.ui.components.LanguageSelectionModal
 
 @Composable
 fun LoginScreen(
     isLoading: Boolean,
     errorMessage: String?,
+    currentLanguage: AppLanguage,
+    onLanguageChange: (AppLanguage) -> Unit,
     onLoginEmail: (email: String, password: String) -> Unit,
     onLoginGoogle: (idToken: String) -> Unit,
     onNavigateRegister: () -> Unit,
@@ -87,11 +92,42 @@ fun LoginScreen(
     var passwordVisible by remember { mutableStateOf(false) }
     var googleLoading by remember { mutableStateOf(false) }
     var contentVisible by remember { mutableStateOf(false) }
+    var showLanguageModal by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) { contentVisible = true }
 
-    AnimatedGradientBackground {
+    AnimatedBackground {
         Box(modifier = Modifier.fillMaxSize()) {
+            // ===== LANGUAGE TOGGLE (top-right) =====
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                androidx.compose.material3.Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = Color.White.copy(alpha = 0.15f),
+                    modifier = Modifier.clickable { showLanguageModal = true }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("🌐", fontSize = 14.sp)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(currentLanguage.flag, fontSize = 14.sp)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = currentLanguage.code,
+                            fontSize = 12.sp,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -146,8 +182,8 @@ fun LoginScreen(
                             .shadow(
                                 elevation = 24.dp,
                                 shape = RoundedCornerShape(24.dp),
-                                ambientColor = ElectricBlue.copy(alpha = 0.5f),
-                                spotColor = PurpleSecondary.copy(alpha = 0.5f)
+                                ambientColor = Color(0xFF34D399).copy(alpha = 0.5f),
+                                spotColor = Color(0xFFFFD700).copy(alpha = 0.5f)
                             )
                     ) {
                         Column(
@@ -156,14 +192,14 @@ fun LoginScreen(
                                 .padding(24.dp)
                         ) {
                             Text(
-                                text = "Selamat Datang",
+                                text = LanguageManager.translate("login_welcome", currentLanguage, "Selamat Datang"),
                                 fontSize = 22.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Masuk untuk melanjutkan",
+                                text = LanguageManager.translate("login_subtitle", currentLanguage, "Masuk untuk melanjutkan"),
                                 fontSize = 12.sp,
                                 color = Color.White.copy(alpha = 0.7f)
                             )
@@ -174,7 +210,7 @@ fun LoginScreen(
                             OutlinedTextField(
                                 value = email,
                                 onValueChange = { email = it },
-                                label = { Text("Email", color = Color.White.copy(alpha = 0.7f)) },
+                                label = { Text(LanguageManager.translate("login_email", currentLanguage, "Email"), color = Color.White.copy(alpha = 0.7f)) },
                                 leadingIcon = {
                                     Icon(Icons.Default.Email, null, tint = Color.White.copy(alpha = 0.8f))
                                 },
@@ -200,7 +236,7 @@ fun LoginScreen(
                             OutlinedTextField(
                                 value = password,
                                 onValueChange = { password = it },
-                                label = { Text("Password", color = Color.White.copy(alpha = 0.7f)) },
+                                label = { Text(LanguageManager.translate("login_password", currentLanguage, "Password"), color = Color.White.copy(alpha = 0.7f)) },
                                 leadingIcon = {
                                     Icon(Icons.Default.Lock, null, tint = Color.White.copy(alpha = 0.8f))
                                 },
@@ -238,7 +274,7 @@ fun LoginScreen(
                                 horizontalArrangement = Arrangement.End
                             ) {
                                 Text(
-                                    text = "Lupa Password?",
+                                    text = LanguageManager.translate("login_forgot", currentLanguage, "Lupa Password?"),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color.White.copy(alpha = 0.9f),
@@ -284,16 +320,16 @@ fun LoginScreen(
                                     enabled = email.isNotBlank() && password.isNotBlank(),
                                     shape = RoundedCornerShape(14.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color.White,
-                                        contentColor = ElectricBlue,
-                                        disabledContainerColor = Color.White.copy(alpha = 0.3f),
+                                        containerColor = Color(0xFF10B981),
+                                        contentColor = Color.White,
+                                        disabledContainerColor = Color(0xFF10B981).copy(alpha = 0.3f),
                                         disabledContentColor = Color.White.copy(alpha = 0.5f)
                                     ),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(52.dp)
                                 ) {
-                                    Text("Masuk", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                                    Text(LanguageManager.translate("login_button", currentLanguage, "Masuk"), fontWeight = FontWeight.Bold, fontSize = 15.sp)
                                 }
                             }
 
@@ -372,7 +408,7 @@ fun LoginScreen(
                             ) {
                                 Text("G", fontWeight = FontWeight.Black, fontSize = 18.sp, color = Color.White)
                                 Spacer(modifier = Modifier.width(10.dp))
-                                Text("Masuk dengan Google", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                                Text(LanguageManager.translate("login_google", currentLanguage, "Masuk dengan Google"), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                             }
 
                             Spacer(modifier = Modifier.height(24.dp))
@@ -383,12 +419,12 @@ fun LoginScreen(
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = "Belum punya akun? ",
+                                    text = LanguageManager.translate("login_no_account", currentLanguage, "Belum punya akun? "),
                                     fontSize = 13.sp,
                                     color = Color.White.copy(alpha = 0.7f)
                                 )
                                 Text(
-                                    text = "Daftar",
+                                    text = LanguageManager.translate("login_register", currentLanguage, "Daftar"),
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White,
@@ -400,6 +436,18 @@ fun LoginScreen(
                 }
 
                 Spacer(modifier = Modifier.height(48.dp))
+            }
+
+            // ===== LANGUAGE MODAL =====
+            if (showLanguageModal) {
+                LanguageSelectionModal(
+                    currentLanguage = currentLanguage,
+                    onSelect = { lang ->
+                        onLanguageChange(lang)
+                        showLanguageModal = false
+                    },
+                    onDismiss = { showLanguageModal = false }
+                )
             }
         }
     }
