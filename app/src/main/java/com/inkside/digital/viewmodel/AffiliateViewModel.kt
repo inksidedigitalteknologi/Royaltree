@@ -966,24 +966,46 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun toggleMinerSlot(itemId: String, targetSlot: Int) {
         viewModelScope.launch {
+            // Check condition: place atau unplace?
+            val currentItem = repository.getGameMinerItemByIdSync(itemId)
+            val isUnplacing = currentItem?.isPlacedInRoom == true && currentItem.placedSlotIndex == targetSlot
+
             // 1. Update lokal (Room DB)
             val result = repository.toggleMinerSlot(itemId, targetSlot)
             result.onSuccess { msg ->
                 showSnackbar(msg)
 
-                // 2. Sync ke backend (CRITICAL FIX)
-                val body = org.json.JSONObject().apply {
-                    put("minerId", itemId)
-                    put("slotIndex", targetSlot)
+                // 2. Sync ke backend — conditional endpoint
+                if (isUnplacing) {
+                    // UNPLACE — guna endpoint /mining/unplace
+                    val body = org.json.JSONObject().apply {
+                        put("minerId", itemId)
+                    }
+                    ApiClient.unplaceMiner(body)
+                        .onSuccess {
+                            android.util.Log.d("UnplaceMiner", "✅ Unplace synced to backend")
+                            kotlinx.coroutines.delay(300L)  // defer sync
+                            loadGameState()
+                        }
+                        .onFailure { err ->
+                            android.util.Log.e("UnplaceMiner", "❌ Sync failed: ${err.message}")
+                        }
+                } else {
+                    // PLACE — guna endpoint /mining/place
+                    val body = org.json.JSONObject().apply {
+                        put("minerId", itemId)
+                        put("slotIndex", targetSlot)
+                    }
+                    ApiClient.placeMiner(body)
+                        .onSuccess {
+                            android.util.Log.d("PlaceMiner", "✅ Place synced to backend")
+                            kotlinx.coroutines.delay(300L)  // defer sync
+                            loadGameState()
+                        }
+                        .onFailure { err ->
+                            android.util.Log.e("PlaceMiner", "❌ Sync failed: ${err.message}")
+                        }
                 }
-                ApiClient.placeMiner(body)
-                    .onSuccess {
-                        android.util.Log.d("PlaceMiner", "✅ Place synced to backend")
-                        loadGameState()
-                    }
-                    .onFailure { err ->
-                        android.util.Log.e("PlaceMiner", "❌ Sync failed: ${err.message}")
-                    }
             }.onFailure { error ->
                 showSnackbar(error.message ?: "Gagal memindahkan item")
             }
