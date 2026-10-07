@@ -96,6 +96,16 @@ fun LoginScreen(
 
     LaunchedEffect(Unit) { contentVisible = true }
 
+    // 🔍 DEBUG: Log bila currentLanguage berubah
+    LaunchedEffect(currentLanguage) {
+        android.util.Log.d("LoginScreen", "🌐 currentLanguage CHANGED: ${currentLanguage.code}")
+    }
+
+    // 🔍 DEBUG: Log bila showLanguageModal berubah
+    LaunchedEffect(showLanguageModal) {
+        android.util.Log.d("LoginScreen", "🌐 showLanguageModal = $showLanguageModal")
+    }
+
     AnimatedBackground {
         Box(modifier = Modifier.fillMaxSize()) {
             // ===== LANGUAGE TOGGLE (top-right) =====
