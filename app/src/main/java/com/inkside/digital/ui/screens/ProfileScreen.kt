@@ -197,7 +197,7 @@ fun ProfileScreen(
                         Text("RTP", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             "${user?.points ?: 0}",
-                            fontSize = 14.sp, fontWeight = FontWeight.Black, color = ElectricBlue
+                            fontSize = 14.sp, fontWeight = FontWeight.Black, color = GoldVip
                         )
                     }
                 }
@@ -216,7 +216,7 @@ fun ProfileScreen(
                         Icon(Icons.Default.Edit, null, tint = EmeraldLight, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            LanguageManager.translate("profile_edit", currentLanguage, "✏️ Edit Profil"),
+                            LanguageManager.translate("profile_edit", currentLanguage, "Edit Profil"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
                         )
@@ -654,10 +654,10 @@ private fun ProfileAvatarWithFrame(
         modifier = Modifier.size(size),
         contentAlignment = Alignment.Center
     ) {
-        // Avatar bulat di tengah (68% dari frame)
+        // Avatar bulat di tengah (75% dari frame — lebih proporsional)
         Box(
             modifier = Modifier
-                .size(size * 0.68f)
+                .size(size * 0.75f)
                 .clip(CircleShape)
                 .background(
                     when (tier) {

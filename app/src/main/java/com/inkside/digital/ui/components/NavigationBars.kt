@@ -436,14 +436,14 @@ fun AppBottomNavigationBar(
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(y = (-24).dp)
+                .offset(y = (-32).dp)
         ) {
             Surface(
                 shape = CircleShape,
                 color = Color.Transparent,
                 shadowElevation = 10.dp,
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(56.dp)
                     .clip(CircleShape)
                     .background(
                         Brush.linearGradient(
@@ -460,7 +460,7 @@ fun AppBottomNavigationBar(
                         imageVector = Icons.Filled.CardGiftcard,
                         contentDescription = "Daily Check-In",
                         tint = Color.Black,
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(26.dp)
                     )
                 }
             }
