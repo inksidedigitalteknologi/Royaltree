@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
         GameMinerItemEntity::class,
         GameRoomStateEntity::class
     ],
-    version = 1,  // Reset: fresh start dengan schema terbaru
+    version = 2,  // Bump: minerActiveUntil + minerActivatedAt (GameRoomStateEntity)
     exportSchema = false  // No-op, sudah ada migration manual
 )
 abstract class AppDatabase : RoomDatabase() {
