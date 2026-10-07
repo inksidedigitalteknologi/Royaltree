@@ -144,11 +144,21 @@ fun GameRoomScreen(
         onDispose { viewModel.stopAutoClaim() }
     }
 
+    val minerActiveUntil by viewModel.minerActiveUntil.collectAsState()
+    val minerActiveRemainingMs by viewModel.minerActiveRemainingMs.collectAsState()
+
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.refreshMinerActiveState()
+    }
+
     GameRoomScreenContent(
         user = user,
         minerItems = minerItems,
         placedMiners = placedMiners,
         roomState = roomState,
+        minerActiveUntil = minerActiveUntil,
+        minerActiveRemainingMs = minerActiveRemainingMs,
+        onActivateMiner = { viewModel.setPendingMinerActivate(true); viewModel.showAdRewardModal.value = true },
         onClaimMining = { viewModel.showAdRewardModal.value = true; viewModel.setPendingMiningClaim(true) },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
@@ -167,6 +177,9 @@ fun GameRoomScreenContent(
     minerItems: List<GameMinerItemEntity>,
     placedMiners: List<GameMinerItemEntity>,
     roomState: GameRoomStateEntity?,
+    minerActiveUntil: Long = 0L,
+    minerActiveRemainingMs: Long = 0L,
+    onActivateMiner: () -> Unit = {},
     onClaimMining: () -> Unit,
     onToggleMinerSlot: (String, Int) -> Unit,
     onBuyGameMinerItem: (String) -> Unit,
@@ -331,7 +344,10 @@ fun GameRoomScreenContent(
                             generationRatePerMin = generationRatePerMin,
                             liveUnclaimedPoints = liveUnclaimedPoints,
                             roomState = roomState,
+                            minerActiveUntil = minerActiveUntil,
+                            minerActiveRemainingMs = minerActiveRemainingMs,
                             minerTokens = minerTokens,
+                            onActivateMiner = onActivateMiner,
                             onClaimMining = onClaimMining,
                             onClaimMinerToken = onClaimMinerToken,
                             onUnlockMiner = onUnlockMiner,
@@ -674,7 +690,10 @@ private fun MiningRoomTab(
     generationRatePerMin: Double,
     liveUnclaimedPoints: Double,
     roomState: GameRoomStateEntity?,
+    minerActiveUntil: Long = 0L,
+    minerActiveRemainingMs: Long = 0L,
     minerTokens: Int = 0,
+    onActivateMiner: () -> Unit = {},
     onClaimMining: () -> Unit,
     onClaimMinerToken: (String) -> Unit = {},
     onUnlockMiner: (String) -> Unit = {},
@@ -893,7 +912,7 @@ private fun MiningRoomTab(
                                                 color = EmeraldLight
                                             )
                                             Text(
-                                                text = formatCountdown(minerActiveRemainingMs),
+                                                text = formatMinerCountdown(minerActiveRemainingMs),
                                                 fontSize = 22.sp,
                                                 fontWeight = FontWeight.ExtraBold,
                                                 color = Color.White
@@ -1925,7 +1944,7 @@ private fun tierColor(tier: String): Color {
 /**
  * Format countdown ms → "5j 32m" atau "32m 15s" atau "15s"
  */
-private fun formatCountdown(ms: Long): String {
+private fun formatMinerCountdown(ms: Long): String {
     if (ms <= 0L) return "Tamat"
     val totalSeconds = ms / 1000
     val hours = totalSeconds / 3600
