@@ -10,7 +10,11 @@ plugins {
 }
 
 // App version — single source of truth untuk defaultConfig + APK filename
-val appVersionName = "1.0"
+// ============ VERSIONING ============
+// Format: V1.xx → 1.00, 1.01, 1.02, ..., 1.10, ..., 2.00
+// versionCode = major * 100 + minor (1.00 = 100, 1.01 = 101)
+val appVersionName = "1.00"
+val appVersionCode = 100
 
 android {
   namespace = "com.inkside.digital"
@@ -20,7 +24,7 @@ android {
     applicationId = "com.inkside.digital"
     minSdk = 24
     targetSdk = 36
-    versionCode = 1
+    versionCode = appVersionCode
     versionName = appVersionName
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
