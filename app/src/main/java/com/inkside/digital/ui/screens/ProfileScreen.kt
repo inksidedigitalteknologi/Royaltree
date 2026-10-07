@@ -595,7 +595,7 @@ private fun MiningStatsCard(
 ) {
     // M55: Aspect ratio lebih tinggi + layout 2 kolom × 3 baris
     FramedCard(
-        frameRes = R.drawable.card_frame_mining,
+        frameRes = R.drawable.card_frame_stats,  // Ganti dari mining (tech sci-fi → stats simple)
         aspectRatioOverride = 1.5f,  // ← Lebar:tinggi 3:2 (rendah sikit dari 2.0f)
         paddingPercentHorizontal = 0.10f,
         paddingPercentVertical = 0.08f,

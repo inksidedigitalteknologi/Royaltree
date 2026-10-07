@@ -50,13 +50,27 @@ fun AffiliateBalanceCard(
     onWithdraw: () -> Unit = {},
     onHistory: () -> Unit = {}
 ) {
-    FramedCard(
-        frameRes = com.inkside.digital.R.drawable.card_frame_affiliate,
-        aspectRatioOverride = 1.7f,
-        paddingPercentHorizontal = 0.08f,
-        paddingPercentVertical = 0.12f,
+    androidx.compose.material3.Card(
+        shape = RoundedCornerShape(20.dp),
+        colors = androidx.compose.material3.CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        border = androidx.compose.foundation.BorderStroke(
+            width = 1.5.dp,
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    AffiliateGold.copy(alpha = 0.6f),
+                    AffiliateAmber.copy(alpha = 0.3f),
+                    AffiliateGold.copy(alpha = 0.6f)
+                )
+            )
+        ),
+        elevation = androidx.compose.material3.CardDefaults.cardElevation(
+            defaultElevation = 0.dp
+        ),
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(20.dp)) {
             // Header
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
