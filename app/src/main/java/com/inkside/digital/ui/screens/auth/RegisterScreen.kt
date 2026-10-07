@@ -182,6 +182,7 @@ fun RegisterScreen(
                     Card(
                         shape = RoundedCornerShape(24.dp),
                         colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.15f)),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .shadow(24.dp, RoundedCornerShape(24.dp), ambientColor = Color(0xFF34D399).copy(alpha = 0.5f), spotColor = Color(0xFFFFD700).copy(alpha = 0.5f))
