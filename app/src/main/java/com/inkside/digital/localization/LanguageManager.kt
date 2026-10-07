@@ -699,6 +699,162 @@ object LanguageManager {
             AppLanguage.JAPANESE to "開始"
         ),
 
+        // ============ LOGIN SCREEN KEYS ============
+        "login_welcome" to mapOf(
+            AppLanguage.INDONESIAN to "Selamat Datang",
+            AppLanguage.ENGLISH to "Welcome Back",
+            AppLanguage.SPANISH to "Bienvenido de Nuevo",
+            AppLanguage.CHINESE to "欢迎回来",
+            AppLanguage.ARABIC to "مرحبا بعودتك",
+            AppLanguage.JAPANESE to "おかえりなさい"
+        ),
+        "login_subtitle" to mapOf(
+            AppLanguage.INDONESIAN to "Masuk untuk melanjutkan",
+            AppLanguage.ENGLISH to "Sign in to continue",
+            AppLanguage.SPANISH to "Inicia sesión para continuar",
+            AppLanguage.CHINESE to "登录以继续",
+            AppLanguage.ARABIC to "سجّل الدخول للمتابعة",
+            AppLanguage.JAPANESE to "続行するにはサインイン"
+        ),
+        "login_email" to mapOf(
+            AppLanguage.INDONESIAN to "Email",
+            AppLanguage.ENGLISH to "Email",
+            AppLanguage.SPANISH to "Correo",
+            AppLanguage.CHINESE to "邮箱",
+            AppLanguage.ARABIC to "البريد الإلكتروني",
+            AppLanguage.JAPANESE to "メール"
+        ),
+        "login_password" to mapOf(
+            AppLanguage.INDONESIAN to "Password",
+            AppLanguage.ENGLISH to "Password",
+            AppLanguage.SPANISH to "Contraseña",
+            AppLanguage.CHINESE to "密码",
+            AppLanguage.ARABIC to "كلمة المرور",
+            AppLanguage.JAPANESE to "パスワード"
+        ),
+        "login_forgot" to mapOf(
+            AppLanguage.INDONESIAN to "Lupa Password?",
+            AppLanguage.ENGLISH to "Forgot Password?",
+            AppLanguage.SPANISH to "¿Olvidaste tu contraseña?",
+            AppLanguage.CHINESE to "忘记密码？",
+            AppLanguage.ARABIC to "نسيت كلمة المرور؟",
+            AppLanguage.JAPANESE to "パスワードをお忘れですか？"
+        ),
+        "login_button" to mapOf(
+            AppLanguage.INDONESIAN to "Masuk",
+            AppLanguage.ENGLISH to "Sign In",
+            AppLanguage.SPANISH to "Iniciar Sesión",
+            AppLanguage.CHINESE to "登录",
+            AppLanguage.ARABIC to "تسجيل الدخول",
+            AppLanguage.JAPANESE to "サインイン"
+        ),
+        "login_google" to mapOf(
+            AppLanguage.INDONESIAN to "Masuk dengan Google",
+            AppLanguage.ENGLISH to "Sign in with Google",
+            AppLanguage.SPANISH to "Iniciar sesión con Google",
+            AppLanguage.CHINESE to "使用 Google 登录",
+            AppLanguage.ARABIC to "تسجيل الدخول بـ Google",
+            AppLanguage.JAPANESE to "Google でサインイン"
+        ),
+        "login_no_account" to mapOf(
+            AppLanguage.INDONESIAN to "Belum punya akun? ",
+            AppLanguage.ENGLISH to "Don't have an account? ",
+            AppLanguage.SPANISH to "¿No tienes cuenta? ",
+            AppLanguage.CHINESE to "还没有账户？",
+            AppLanguage.ARABIC to "ليس لديك حساب؟ ",
+            AppLanguage.JAPANESE to "アカウントをお持ちでないですか？"
+        ),
+        "login_register" to mapOf(
+            AppLanguage.INDONESIAN to "Daftar",
+            AppLanguage.ENGLISH to "Sign Up",
+            AppLanguage.SPANISH to "Registrarse",
+            AppLanguage.CHINESE to "注册",
+            AppLanguage.ARABIC to "إنشاء حساب",
+            AppLanguage.JAPANESE to "新規登録"
+        ),
+
+        // ============ REGISTER SCREEN KEYS ============
+        "register_subtitle" to mapOf(
+            AppLanguage.INDONESIAN to "Daftar Akun Baru",
+            AppLanguage.ENGLISH to "Create New Account",
+            AppLanguage.SPANISH to "Crear Nueva Cuenta",
+            AppLanguage.CHINESE to "创建新账户",
+            AppLanguage.ARABIC to "إنشاء حساب جديد",
+            AppLanguage.JAPANESE to "新しいアカウントを作成"
+        ),
+        "register_create" to mapOf(
+            AppLanguage.INDONESIAN to "Buat Akun",
+            AppLanguage.ENGLISH to "Create Account",
+            AppLanguage.SPANISH to "Crear Cuenta",
+            AppLanguage.CHINESE to "创建账户",
+            AppLanguage.ARABIC to "إنشاء حساب",
+            AppLanguage.JAPANESE to "アカウント作成"
+        ),
+        "register_tagline" to mapOf(
+            AppLanguage.INDONESIAN to "Gratis, mulai hasilkan komisi",
+            AppLanguage.ENGLISH to "Free, start earning commissions",
+            AppLanguage.SPANISH to "Gratis, comienza a ganar comisiones",
+            AppLanguage.CHINESE to "免费，开始赚取佣金",
+            AppLanguage.ARABIC to "مجانًا، ابدأ في كسب العمولات",
+            AppLanguage.JAPANESE to "無料でコミッションを稼ごう"
+        ),
+        "register_name" to mapOf(
+            AppLanguage.INDONESIAN to "Nama Lengkap",
+            AppLanguage.ENGLISH to "Full Name",
+            AppLanguage.SPANISH to "Nombre Completo",
+            AppLanguage.CHINESE to "全名",
+            AppLanguage.ARABIC to "الاسم الكامل",
+            AppLanguage.JAPANESE to "フルネーム"
+        ),
+        "register_email" to mapOf(
+            AppLanguage.INDONESIAN to "Email",
+            AppLanguage.ENGLISH to "Email",
+            AppLanguage.SPANISH to "Correo",
+            AppLanguage.CHINESE to "邮箱",
+            AppLanguage.ARABIC to "البريد الإلكتروني",
+            AppLanguage.JAPANESE to "メール"
+        ),
+        "register_password" to mapOf(
+            AppLanguage.INDONESIAN to "Password",
+            AppLanguage.ENGLISH to "Password",
+            AppLanguage.SPANISH to "Contraseña",
+            AppLanguage.CHINESE to "密码",
+            AppLanguage.ARABIC to "كلمة المرور",
+            AppLanguage.JAPANESE to "パスワード"
+        ),
+        "register_button" to mapOf(
+            AppLanguage.INDONESIAN to "Daftar",
+            AppLanguage.ENGLISH to "Sign Up",
+            AppLanguage.SPANISH to "Registrarse",
+            AppLanguage.CHINESE to "注册",
+            AppLanguage.ARABIC to "إنشاء حساب",
+            AppLanguage.JAPANESE to "新規登録"
+        ),
+        "register_google" to mapOf(
+            AppLanguage.INDONESIAN to "Daftar dengan Google",
+            AppLanguage.ENGLISH to "Sign up with Google",
+            AppLanguage.SPANISH to "Registrarse con Google",
+            AppLanguage.CHINESE to "使用 Google 注册",
+            AppLanguage.ARABIC to "التسجيل بـ Google",
+            AppLanguage.JAPANESE to "Google で登録"
+        ),
+        "register_have_account" to mapOf(
+            AppLanguage.INDONESIAN to "Sudah punya akun? ",
+            AppLanguage.ENGLISH to "Already have an account? ",
+            AppLanguage.SPANISH to "¿Ya tienes cuenta? ",
+            AppLanguage.CHINESE to "已经有账户？",
+            AppLanguage.ARABIC to "لديك حساب بالفعل؟ ",
+            AppLanguage.JAPANESE to "すでにアカウントをお持ちですか？"
+        ),
+        "register_login" to mapOf(
+            AppLanguage.INDONESIAN to "Masuk",
+            AppLanguage.ENGLISH to "Sign In",
+            AppLanguage.SPANISH to "Iniciar Sesión",
+            AppLanguage.CHINESE to "登录",
+            AppLanguage.ARABIC to "تسجيل الدخول",
+            AppLanguage.JAPANESE to "サインイン"
+        ),
+
         "sponsor_ad_title" to mapOf(
             AppLanguage.INDONESIAN to "Tonton Iklan Sponsor (+2-5 RTP)",
             AppLanguage.ENGLISH to "Watch Sponsor Ad (+2-5 RTP)",
