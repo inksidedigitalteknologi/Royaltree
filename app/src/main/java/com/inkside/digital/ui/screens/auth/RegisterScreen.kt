@@ -71,15 +71,20 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.CustomCredential
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.inkside.digital.ui.components.AnimatedGradientBackground
+import com.inkside.digital.ui.components.AnimatedBackground
 import com.inkside.digital.ui.components.PasswordValidator
 import kotlinx.coroutines.launch
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
+import com.inkside.digital.ui.components.LanguageSelectionModal
 
 @Composable
 fun RegisterScreen(
     isLoading: Boolean,
     errorMessage: String?,
     successMessage: String?,
+    currentLanguage: AppLanguage,
+    onLanguageChange: (AppLanguage) -> Unit,
     onRegisterEmail: (email: String, password: String, name: String) -> Unit,
     onRegisterGoogle: (idToken: String) -> Unit,
     onNavigateLogin: () -> Unit
@@ -93,13 +98,44 @@ fun RegisterScreen(
     var passwordVisible by remember { mutableStateOf(false) }
     var googleLoading by remember { mutableStateOf(false) }
     var contentVisible by remember { mutableStateOf(false) }
+    var showLanguageModal by remember { mutableStateOf(false) }
 
     val validation = PasswordValidator.validate(password)
 
     LaunchedEffect(Unit) { contentVisible = true }
 
-    AnimatedGradientBackground {
+    AnimatedBackground {
         Box(modifier = Modifier.fillMaxSize()) {
+            // ===== LANGUAGE TOGGLE (top-right) =====
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                androidx.compose.material3.Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = Color.White.copy(alpha = 0.15f),
+                    modifier = Modifier.clickable { showLanguageModal = true }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("🌐", fontSize = 14.sp)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(currentLanguage.flag, fontSize = 14.sp)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = currentLanguage.code,
+                            fontSize = 12.sp,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -123,13 +159,13 @@ fun RegisterScreen(
                             color = Color.White,
                             style = MaterialTheme.typography.headlineLarge.copy(
                                 brush = Brush.linearGradient(
-                                    colors = listOf(Color.White, Color(0xFFE0E7FF))
+                                    colors = listOf(Color.White, Color(0xFFFFD700))
                                 )
                             )
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "Daftar Akun Baru",
+                            text = LanguageManager.translate("register_subtitle", currentLanguage, "Daftar Akun Baru"),
                             fontSize = 13.sp,
                             color = Color.White.copy(alpha = 0.8f),
                             letterSpacing = 1.sp
@@ -148,12 +184,12 @@ fun RegisterScreen(
                         colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.15f)),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .shadow(24.dp, RoundedCornerShape(24.dp), ambientColor = ElectricBlue.copy(alpha = 0.5f), spotColor = PurpleSecondary.copy(alpha = 0.5f))
+                            .shadow(24.dp, RoundedCornerShape(24.dp), ambientColor = Color(0xFF34D399).copy(alpha = 0.5f), spotColor = Color(0xFFFFD700).copy(alpha = 0.5f))
                     ) {
                         Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
-                            Text("Buat Akun", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                            Text(LanguageManager.translate("register_create", currentLanguage, "Buat Akun"), fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text("Gratis, mulai hasilkan komisi", fontSize = 12.sp, color = Color.White.copy(alpha = 0.7f))
+                            Text(LanguageManager.translate("register_tagline", currentLanguage, "Gratis, mulai hasilkan komisi"), fontSize = 12.sp, color = Color.White.copy(alpha = 0.7f))
 
                             Spacer(modifier = Modifier.height(20.dp))
 
@@ -161,7 +197,7 @@ fun RegisterScreen(
                             OutlinedTextField(
                                 value = name,
                                 onValueChange = { name = it },
-                                label = { Text("Nama Lengkap", color = Color.White.copy(alpha = 0.7f)) },
+                                label = { Text(LanguageManager.translate("register_name", currentLanguage, "Nama Lengkap"), color = Color.White.copy(alpha = 0.7f)) },
                                 leadingIcon = { Icon(Icons.Default.Person, null, tint = Color.White.copy(alpha = 0.8f)) },
                                 singleLine = true,
                                 shape = RoundedCornerShape(14.dp),
@@ -175,7 +211,7 @@ fun RegisterScreen(
                             OutlinedTextField(
                                 value = email,
                                 onValueChange = { email = it },
-                                label = { Text("Email", color = Color.White.copy(alpha = 0.7f)) },
+                                label = { Text(LanguageManager.translate("register_email", currentLanguage, "Email"), color = Color.White.copy(alpha = 0.7f)) },
                                 leadingIcon = { Icon(Icons.Default.Email, null, tint = Color.White.copy(alpha = 0.8f)) },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
                                 singleLine = true,
@@ -190,7 +226,7 @@ fun RegisterScreen(
                             OutlinedTextField(
                                 value = password,
                                 onValueChange = { password = it },
-                                label = { Text("Password", color = Color.White.copy(alpha = 0.7f)) },
+                                label = { Text(LanguageManager.translate("register_password", currentLanguage, "Password"), color = Color.White.copy(alpha = 0.7f)) },
                                 leadingIcon = { Icon(Icons.Default.Lock, null, tint = Color.White.copy(alpha = 0.8f)) },
                                 trailingIcon = {
                                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -256,7 +292,7 @@ fun RegisterScreen(
                                     ),
                                     modifier = Modifier.fillMaxWidth().height(52.dp)
                                 ) {
-                                    Text("Daftar", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                                    Text(LanguageManager.translate("register_button", currentLanguage, "Daftar"), fontWeight = FontWeight.Bold, fontSize = 15.sp)
                                 }
                             }
 
@@ -304,20 +340,32 @@ fun RegisterScreen(
                             ) {
                                 Text("G", fontWeight = FontWeight.Black, fontSize = 18.sp, color = Color.White)
                                 Spacer(modifier = Modifier.width(10.dp))
-                                Text("Daftar dengan Google", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                                Text(LanguageManager.translate("register_google", currentLanguage, "Daftar dengan Google"), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                             }
 
                             Spacer(modifier = Modifier.height(24.dp))
 
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                                Text("Sudah punya akun? ", fontSize = 13.sp, color = Color.White.copy(alpha = 0.7f))
-                                Text("Masuk", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color.White, modifier = Modifier.clickable { onNavigateLogin() })
+                                Text(LanguageManager.translate("register_have_account", currentLanguage, "Sudah punya akun? "), fontSize = 13.sp, color = Color.White.copy(alpha = 0.7f))
+                                Text(LanguageManager.translate("register_login", currentLanguage, "Masuk"), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color.White, modifier = Modifier.clickable { onNavigateLogin() })
                             }
                         }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(48.dp))
+            }
+
+            // ===== LANGUAGE MODAL =====
+            if (showLanguageModal) {
+                LanguageSelectionModal(
+                    currentLanguage = currentLanguage,
+                    onSelect = { lang ->
+                        onLanguageChange(lang)
+                        showLanguageModal = false
+                    },
+                    onDismiss = { showLanguageModal = false }
+                )
             }
         }
     }
