@@ -156,23 +156,12 @@ function calculateFinalRate(baseRate, room, placedMiners) {
     const finalRate = baseRate * (1 + totalBonusPct / 100);
 
     
-        // ============ BOOST MULTIPLIER (auto-claim patch) ============
-        // Kalau boost aktif (boostExpiryTimestamp > now), apply multiplier
-        let finalRateWithBoost = finalRate;
-        if (room && room.boostExpiryTimestamp && room.boostExpiryTimestamp > Date.now()) {
-            const mult = room.boostMultiplier || 1.0;
-            finalRateWithBoost = finalRate * mult;
-            console.log(`[BOOST-APPLY] mult=${mult}, rate=${finalRate} → ${finalRateWithBoost}`);
-        }
-        
         return {
-            finalRate: finalRateWithBoost,
+            finalRate: finalRate,
             baseRate: baseRate,
             permanentBonusPct: permanentBonusPct || 0,
             miniGameBonusPct: miniGameBonusPct || 0,
-            totalBonusPct: totalBonusPct || 0,
-            boostMultiplier: (room && room.boostExpiryTimestamp > Date.now()) ? (room.boostMultiplier || 1.0) : 1.0,
-            boostActive: (room && room.boostExpiryTimestamp > Date.now()) ? true : false
+            totalBonusPct: totalBonusPct || 0
         };
 }
 
@@ -430,85 +419,6 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
         });
     } catch (error) {
         console.error('Claim mining with ad error:', error);
-        return res.status(500).json({ success: false, message: error.message });
-    }
-});
-
-// ============================================================
-// POST /api/v1/game/mining/boost-with-ad
-// Tonton iklan → boost 2× rate selama 1 jam (max 3× sehari)
-// Body: { transactionId, vendor }
-// ============================================================
-router.post('/mining/boost-with-ad', verifyFirebaseToken, checkFraud, async (req, res) => {
-    try {
-        const { uid } = req.firebaseUser;
-        const { transactionId, vendor } = req.body;
-
-        if (!transactionId || !vendor) {
-            return res.status(400).json({
-                success: false,
-                message: 'transactionId dan vendor wajib diisi.'
-            });
-        }
-
-        // Anti-replay
-        const txRef = db.collection('mining_boost_transactions').doc(transactionId);
-        const txDoc = await txRef.get();
-        if (txDoc.exists) {
-            return res.status(400).json({
-                success: false,
-                message: 'Transaksi boost sudah diproses.'
-            });
-        }
-
-        const roomRef = db.collection('game_rooms').doc(uid);
-        const roomDoc = await roomRef.get();
-        const room = roomDoc.exists ? roomDoc.data() : {};
-
-        const now = Date.now();
-        const today = new Date(now).toISOString().slice(0, 10);
-        const boostMap = room.boostCountMap || {};
-        const boostToday = boostMap[today] || 0;
-        const BOOST_LIMIT_PER_DAY = 3;
-
-        if (boostToday >= BOOST_LIMIT_PER_DAY) {
-            return res.status(429).json({
-                success: false,
-                message: `Limit boost harian (${BOOST_LIMIT_PER_DAY}×) telah dicapai.`
-            });
-        }
-
-        const BOOST_DURATION_MS = 60 * 60 * 1000; // 1 jam
-        const boostExpiry = now + BOOST_DURATION_MS;
-
-        const updatedBoostMap = { ...boostMap, [today]: boostToday + 1 };
-
-        // Simpan boost state
-        await roomRef.set({
-            boostMultiplier: 2.0,
-            boostExpiryTimestamp: boostExpiry,
-            boostCountMap: updatedBoostMap
-        }, { merge: true });
-
-        // Simpan transactionId (anti-replay)
-        await txRef.set({
-            userId: uid,
-            vendor: vendor,
-            timestamp: admin.firestore.FieldValue.serverTimestamp()
-        });
-
-        console.log(`[BOOST] User ${uid}: 2× boost aktif sampai ${new Date(boostExpiry).toISOString()}, used ${boostToday + 1}/${BOOST_LIMIT_PER_DAY}`);
-
-        return res.json({
-            success: true,
-            multiplier: 2.0,
-            boostExpiryTimestamp: boostExpiry,
-            usedToday: boostToday + 1,
-            limitToday: BOOST_LIMIT_PER_DAY,
-            message: '⚡ Boost 2× aktif selama 1 jam!'
-        });
-    } catch (error) {
-        console.error('Boost mining error:', error);
         return res.status(500).json({ success: false, message: error.message });
     }
 });

@@ -358,7 +358,6 @@ fun MainAffiliateApp(
     val adminReviewTarget by viewModel.showAdminReviewModal.collectAsState()
     val showAdReward by viewModel.showAdRewardModal.collectAsState()
     val pendingMiningClaim by viewModel.pendingMiningClaim.collectAsState()
-    val pendingMiningBoost by viewModel.pendingMiningBoost.collectAsState()
     val pendingMinerActivate by viewModel.pendingMinerActivate.collectAsState()
     val show2FA by viewModel.show2FAModal.collectAsState()
     val showQrTransfer by viewModel.showQrTransferModal.collectAsState()
@@ -495,10 +494,6 @@ fun MainAffiliateApp(
                 pendingMinerActivate -> {
                     viewModel.setPendingMinerActivate(false)
                     viewModel.activateMinerWithAd(txId, "admob")
-                }
-                pendingMiningBoost -> {
-                    viewModel.setPendingMiningBoost(false)
-                    viewModel.boostMiningWithAd(txId, "admob")
                 }
                 pendingMiningClaim -> {
                     viewModel.setPendingMiningClaim(false)
