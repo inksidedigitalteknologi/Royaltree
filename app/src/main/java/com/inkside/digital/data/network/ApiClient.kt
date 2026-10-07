@@ -472,6 +472,29 @@ object ApiClient {
         }
     }
 
+    suspend fun activateMiner(transactionId: String, vendor: String): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().apply {
+                put("transactionId", transactionId)
+                put("vendor", vendor)
+            }
+            val reqBody = body.toString().toRequestBody(JSON_MEDIA)
+            val resp = apiService.activateMiner(reqBody)
+            Result.success(JSONObject(resp.string()))
+        } catch (e: retrofit2.HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val json = JSONObject(errorBody)
+                json.put("httpCode", e.code())
+                Result.success(json)
+            } catch (parseErr: Exception) {
+                Result.failure(e)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun boostMiningWithAd(transactionId: String, vendor: String): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val body = JSONObject().apply {

@@ -99,6 +99,9 @@ interface RoyaltreeApiService {
     @POST("game/mining/boost-with-ad")
     suspend fun boostMiningWithAd(@Body body: RequestBody): ResponseBody
 
+    @POST("game/mining/activate")
+    suspend fun activateMiner(@Body body: RequestBody): ResponseBody
+
     @POST("game/mining/buy")
     suspend fun buyMiner(@Body body: RequestBody): ResponseBody
 

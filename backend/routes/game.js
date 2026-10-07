@@ -514,6 +514,66 @@ router.post('/mining/boost-with-ad', verifyFirebaseToken, checkFraud, async (req
 });
 
 // ============================================================
+// POST /api/v1/game/mining/activate
+// Aktifkan miner 6 jam (tonton iklan)
+// Body: { transactionId, vendor }
+// ============================================================
+const MINER_ACTIVE_DURATION_MS = 6 * 60 * 60 * 1000; // 6 jam
+
+router.post('/mining/activate', verifyFirebaseToken, checkFraud, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+        const { transactionId, vendor } = req.body;
+
+        if (!transactionId || !vendor) {
+            return res.status(400).json({
+                success: false,
+                message: 'transactionId dan vendor wajib diisi.'
+            });
+        }
+
+        // Anti-replay
+        const txRef = db.collection('mining_activate_transactions').doc(transactionId);
+        const txDoc = await txRef.get();
+        if (txDoc.exists) {
+            return res.status(400).json({
+                success: false,
+                message: 'Transaksi aktivasi sudah diproses.'
+            });
+        }
+
+        const roomRef = db.collection('game_rooms').doc(uid);
+        const now = Date.now();
+        const activeUntil = now + MINER_ACTIVE_DURATION_MS;
+
+        await roomRef.set({
+            minerActiveUntil: activeUntil,
+            minerActivatedAt: now,
+            lastMiningUpdateTimestamp: now
+        }, { merge: true });
+
+        await txRef.set({
+            userId: uid,
+            vendor: vendor,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        console.log(`[ACTIVATE] User ${uid}: miner aktif sampai ${new Date(activeUntil).toISOString()}`);
+
+        return res.json({
+            success: true,
+            minerActiveUntil: activeUntil,
+            minerActivatedAt: now,
+            durationMs: MINER_ACTIVE_DURATION_MS,
+            message: '⛏️ Miner aktif selama 6 jam!'
+        });
+    } catch (error) {
+        console.error('Activate miner error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
 // POST /api/v1/game/mining/claim
 // Claim mining points
 // ============================================================
@@ -556,6 +616,17 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
         const unclaimed = parseFloat((storedUnclaimed + computedUnclaimed).toFixed(8));
         
         console.log(`[CLAIM] User ${uid}: unclaimed=${unclaimed}, base=${rateCalc.baseRate}, perm=${rateCalc.permanentBonusPct}%, mini=${rateCalc.miniGameBonusPct}%, final=${ratePerMin}/min`);
+
+        // ============ CHECK MINER ACTIVE (6 jam) ============
+        const minerActiveUntil = room.minerActiveUntil || 0;
+        if (minerActiveUntil < Date.now()) {
+            return res.status(400).json({
+                success: false,
+                code: 'MINER_INACTIVE',
+                message: 'Miner tidak aktif. Sila aktifkan semula (tonton iklan).',
+                minerActiveUntil: minerActiveUntil
+            });
+        }
         
         // AUTO-CLAIM: tiada min claim, tiada cooldown
         // Kalau unclaimed sangat kecil, skip (elak spam Firestore)
