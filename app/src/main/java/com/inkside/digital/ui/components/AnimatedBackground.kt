@@ -66,7 +66,7 @@ fun AnimatedBackground(
     enableGlow: Boolean = true,
     enableParticles: Boolean = true,
     starCount: Int = 35,  // M53: fewer stars
-    particleCount: Int = 10,  // M53: fewer leaves
+    particleCount: Int = 18,  // Diperbesar untuk visibility
     enableWind: Boolean = true,  // ← M53: wind effect
     content: @Composable BoxScope.() -> Unit = {}
 ) {
@@ -110,16 +110,16 @@ fun AnimatedBackground(
             LeafParticle(
                 x = Random.nextFloat(),
                 startY = -Random.nextFloat() * 0.5f,
-                size = 3f + Random.nextFloat() * 5f,  // M53: 3-8px smaller
-                fallSpeed = 0.25f + Random.nextFloat() * 0.4f,
+                size = 6f + Random.nextFloat() * 10f,  // Diperbesar: 6-16px
+                fallSpeed = 0.35f + Random.nextFloat() * 0.5f,
                 windInfluence = 0.5f + Random.nextFloat() * 1.0f,
                 swayPhase = Random.nextFloat() * 2f * PI.toFloat(),
                 rotationSpeed = (Random.nextFloat() - 0.5f) * 1f,  // M53: slower rotation
                 color = when (i % 4) {
-                    0 -> EmeraldAccent.copy(alpha = 0.25f)   // M53: subtler
-                    1 -> CyanAccent.copy(alpha = 0.20f)      // M53: subtler
-                    2 -> GoldAccent.copy(alpha = 0.22f)      // M53: subtler
-                    else -> Color(0xFF10B981).copy(alpha = 0.18f)
+                    0 -> EmeraldAccent.copy(alpha = 0.55f)   // Lebih visible
+                    1 -> CyanAccent.copy(alpha = 0.45f)      // Lebih visible
+                    2 -> GoldAccent.copy(alpha = 0.50f)      // Lebih visible
+                    else -> Color(0xFF10B981).copy(alpha = 0.50f)
                 },
                 isLeafShape = i % 3 != 2  // 2/3 daun, 1/3 dot
             )
