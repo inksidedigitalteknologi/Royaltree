@@ -203,7 +203,7 @@ fun RootNav(
         OnboardingScreen(
             currentLanguage = currentLanguage,
             onLanguageChange = { lang ->
-                com.inkside.digital.data.preferences.AppThemePreferences.setLanguage(context, lang)
+                affiliateViewModel.setLanguage(lang)
             },
             onFinish = {
                 com.inkside.digital.data.preferences.AppThemePreferences.setOnboarded(context, true)
