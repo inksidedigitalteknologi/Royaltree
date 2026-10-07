@@ -1285,11 +1285,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun setPendingMiningClaim(v: Boolean) { _pendingMiningClaim.value = v }
 
-    // ============ BOOST FLAG (untuk handle AdMob callback) ============
-    private val _pendingMiningBoost = MutableStateFlow(false)
-    val pendingMiningBoost: StateFlow<Boolean> = _pendingMiningBoost.asStateFlow()
-    fun setPendingMiningBoost(v: Boolean) { _pendingMiningBoost.value = v }
-
     /**
      * Refresh countdown cooldown dari room state.
      */
@@ -1372,15 +1367,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     private val _autoClaimActive = MutableStateFlow(false)
     val autoClaimActive: StateFlow<Boolean> = _autoClaimActive.asStateFlow()
 
-    private val _boostMultiplier = MutableStateFlow(1.0)
-    val boostMultiplier: StateFlow<Double> = _boostMultiplier.asStateFlow()
-
-    private val _boostExpiryMs = MutableStateFlow(0L)
-    val boostExpiryMs: StateFlow<Long> = _boostExpiryMs.asStateFlow()
-
-    private val _boostUsedToday = MutableStateFlow(0)
-    val boostUsedToday: StateFlow<Int> = _boostUsedToday.asStateFlow()
-
     fun startAutoClaim() {
         if (autoClaimJob?.isActive == true) return
         _autoClaimActive.value = true
@@ -1421,47 +1407,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         autoClaimJob = null
         _autoClaimActive.value = false
         android.util.Log.d("AffiliateViewModel", "⏸️ Auto-claim stopped")
-    }
-
-    fun boostMiningWithAd(transactionId: String, vendor: String) {
-        viewModelScope.launch {
-            try {
-                ApiClient.boostMiningWithAd(transactionId, vendor)
-                    .onSuccess { json ->
-                        if (json.optBoolean("success", false)) {
-                            val multiplier = json.optDouble("multiplier", 2.0)
-                            val expiry = json.optLong("boostExpiryTimestamp", 0L)
-                            val used = json.optInt("usedToday", 0)
-                            _boostMultiplier.value = multiplier
-                            _boostExpiryMs.value = expiry
-                            _boostUsedToday.value = used
-                            showSnackbar("⚡ Boost ${multiplier}× aktif 1 jam! ($used/3 hari ini)")
-                            loadGameState()
-                            loadUserFromBackend()
-                        } else {
-                            showSnackbar(json.optString("message", "Gagal boost"))
-                        }
-                    }
-                    .onFailure {
-                        showSnackbar("Error: ${it.message}")
-                    }
-            } catch (e: Exception) {
-                showSnackbar("Boost error: ${e.message}")
-            }
-        }
-    }
-
-    fun refreshBoostState() {
-        viewModelScope.launch {
-            val room = repository.getGameRoomStateOnce() ?: return@launch
-            val now = System.currentTimeMillis()
-            // Baca boost dari room (kalau ada field baru)
-            // Sementara: reset kalau expired
-            if (_boostExpiryMs.value > 0 && _boostExpiryMs.value < now) {
-                _boostMultiplier.value = 1.0
-                _boostExpiryMs.value = 0L
-            }
-        }
     }
 
     fun claimMiningWithAd(transactionId: String, vendor: String) {
