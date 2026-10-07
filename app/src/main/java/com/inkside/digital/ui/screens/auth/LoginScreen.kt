@@ -177,6 +177,7 @@ fun LoginScreen(
                         colors = CardDefaults.cardColors(
                             containerColor = Color.White.copy(alpha = 0.15f)
                         ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .shadow(
