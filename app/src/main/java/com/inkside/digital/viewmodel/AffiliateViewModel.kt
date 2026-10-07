@@ -115,7 +115,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 loadNotifications()
             }
         }
-        com.inkside.digital.data.network.ApiClient.init(application)
+        ApiClient.init(application)
     }
 
     /**
@@ -269,7 +269,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             val result = repository.convertStepsToCoins()
             if (result.isSuccess) {
                 val (coins, rupiah) = result.getOrThrow()
-                _snackbarMessage.value = "Sukses menukar langkah! +$coins Koin (Rp ${String.format("%,.0f", rupiah)})"
+                _snackbarMessage.value = "Sukses menukar langkah! +$coins Koin (Rp ${String.format(java.util.Locale.US, "%,.0f", rupiah)})"
                 onComplete?.invoke(true, "+$coins Koin")
             } else {
                 val msg = result.exceptionOrNull()?.message ?: "Gagal menukar langkah"
@@ -291,7 +291,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             val result = repository.claimAppDownloadReward(adId)
             if (result.isSuccess) {
                 val (coins, rupiah) = result.getOrThrow()
-                _snackbarMessage.value = "Klaim berhasil! +$coins Koin (+Rp ${String.format("%,.0f", rupiah)})"
+                _snackbarMessage.value = "Klaim berhasil! +$coins Koin (+Rp ${String.format(java.util.Locale.US, "%,.0f", rupiah)})"
                 onComplete?.invoke(true, "+$coins Koin")
             } else {
                 val msg = result.exceptionOrNull()?.message ?: "Gagal klaim hadiah"
@@ -843,7 +843,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             val res = repository.redeemPointsToWallet(points, walletName, phone, currency)
             res.onSuccess { earned ->
                 showRedeemPointsModal.value = false
-                showSnackbar(String.format(LanguageManager.translate("snackbar_redeem_success", _currentLanguage.value, "Sukses tukar poin! +Rp %s"), String.format("%,.0f", earned)))
+                showSnackbar(String.format(LanguageManager.translate("snackbar_redeem_success", _currentLanguage.value, "Sukses tukar poin! +Rp %s"), String.format(java.util.Locale.US, "%,.0f", earned)))
             }.onFailure {
                 showSnackbar(it.message ?: "Gagal tukar poin")
             }
@@ -874,7 +874,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             val res = repository.claimCouponYield(coupon)
             res.onSuccess { amount ->
-                showSnackbar(String.format(LanguageManager.translate("snackbar_dividend_paid", _currentLanguage.value, "Dividen +Rp %s dicairkan!"), String.format("%,.0f", amount)))
+                showSnackbar(String.format(LanguageManager.translate("snackbar_dividend_paid", _currentLanguage.value, "Dividen +Rp %s dicairkan!"), String.format(java.util.Locale.US, "%,.0f", amount)))
             }.onFailure {
                 showSnackbar(it.message ?: "Gagal klaim yield")
             }
