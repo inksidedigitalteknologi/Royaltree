@@ -36,6 +36,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 
 enum class AppScreen {
     HOME,
@@ -116,6 +117,18 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
         ApiClient.init(application)
+
+        // ============ LOAD MINER CATALOG SELEPAS USER READY ============
+        // Obser user state — bila user ready (Firebase + backend), load catalog
+        // (elak 401 bila token belum ready masa first launch)
+        viewModelScope.launch {
+            repository.user
+                .filterNotNull()
+                .first()  // tunggu user ready
+            kotlinx.coroutines.delay(500L)  // defer sikit
+            loadMinerCatalog()
+            android.util.Log.d("AffiliateViewModel", "✅ Auto-load miner catalog (user ready)")
+        }
     }
 
     /**
@@ -1170,16 +1183,30 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     /**
      * Load katalog miner dari backend.
      */
+    private var minerCatalogRetryCount = 0
+    private val MINER_CATALOG_MAX_RETRY = 5
+
     fun loadMinerCatalog() {
         viewModelScope.launch {
             try {
                 ApiClient.getMinerCatalog().onSuccess { json ->
                     if (json.optBoolean("success", false)) {
                         repository.syncMinerCatalogFromBackend(json)
+                        minerCatalogRetryCount = 0  // reset retry
                         android.util.Log.d("AffiliateViewModel", "✅ Miner catalog loaded")
                     }
-                }.onFailure {
-                    android.util.Log.w("AffiliateViewModel", "Gagal load catalog: ${it.message}")
+                }.onFailure { error ->
+                    val msg = error.message ?: ""
+                    android.util.Log.w("AffiliateViewModel", "Gagal load catalog: $msg")
+                    
+                    // Retry bila 401 (token belum ready) — max 5x dengan exponential backoff
+                    if (msg.contains("401") && minerCatalogRetryCount < MINER_CATALOG_MAX_RETRY) {
+                        minerCatalogRetryCount++
+                        val delayMs = 1000L * minerCatalogRetryCount  // 1s, 2s, 3s, 4s, 5s
+                        android.util.Log.d("AffiliateViewModel", "🔄 Retry loadMinerCatalog ($minerCatalogRetryCount/$MINER_CATALOG_MAX_RETRY) dalam ${delayMs}ms")
+                        kotlinx.coroutines.delay(delayMs)
+                        loadMinerCatalog()
+                    }
                 }
             } catch (e: Exception) {
                 android.util.Log.e("AffiliateViewModel", "loadMinerCatalog error: ${e.message}")
