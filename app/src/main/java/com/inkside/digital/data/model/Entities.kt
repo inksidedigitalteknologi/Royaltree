@@ -224,7 +224,10 @@ data class GameRoomStateEntity(
     val baseRate: Double = 0.0,
     val permanentBonusPct: Double = 0.0,
     val miniGameBonusPct: Double = 0.0,
-    val totalBonusPct: Double = 0.0
+    val totalBonusPct: Double = 0.0,
+    // Auto-claim miner aktif 6 jam
+    val minerActiveUntil: Long = 0L,
+    val minerActivatedAt: Long = 0L
 )
 
 @Entity(tableName = "app_download_ads")

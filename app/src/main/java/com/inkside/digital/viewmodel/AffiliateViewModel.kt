@@ -1285,6 +1285,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun setPendingMiningClaim(v: Boolean) { _pendingMiningClaim.value = v }
 
+    // ============ BOOST FLAG (untuk handle AdMob callback) ============
+    private val _pendingMiningBoost = MutableStateFlow(false)
+    val pendingMiningBoost: StateFlow<Boolean> = _pendingMiningBoost.asStateFlow()
+    fun setPendingMiningBoost(v: Boolean) { _pendingMiningBoost.value = v }
+
     /**
      * Refresh countdown cooldown dari room state.
      */
@@ -1309,6 +1314,58 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     /**
      * Claim mining dengan iklan. transactionId dari AdMob callback.
      */
+    // ============ MINER ACTIVE STATE (6 jam) ============
+    private val _minerActiveUntil = MutableStateFlow(0L)
+    val minerActiveUntil: StateFlow<Long> = _minerActiveUntil.asStateFlow()
+
+    private val _minerActiveRemainingMs = MutableStateFlow(0L)
+    val minerActiveRemainingMs: StateFlow<Long> = _minerActiveRemainingMs.asStateFlow()
+
+    private val _pendingMinerActivate = MutableStateFlow(false)
+    val pendingMinerActivate: StateFlow<Boolean> = _pendingMinerActivate.asStateFlow()
+    fun setPendingMinerActivate(v: Boolean) { _pendingMinerActivate.value = v }
+
+    fun isMinerActive(): Boolean = _minerActiveUntil.value > System.currentTimeMillis()
+
+    fun refreshMinerActiveState() {
+        viewModelScope.launch {
+            try {
+                val room = repository.getGameRoomStateOnce() ?: return@launch
+                val now = System.currentTimeMillis()
+                _minerActiveUntil.value = room.minerActiveUntil
+                val remaining = (room.minerActiveUntil - now).coerceAtLeast(0L)
+                _minerActiveRemainingMs.value = remaining
+            } catch (e: Exception) {
+                android.util.Log.w("AffiliateViewModel", "refreshMinerActiveState error: ${e.message}")
+            }
+        }
+    }
+
+    fun activateMinerWithAd(transactionId: String, vendor: String) {
+        viewModelScope.launch {
+            try {
+                ApiClient.activateMiner(transactionId, vendor)
+                    .onSuccess { json ->
+                        if (json.optBoolean("success", false)) {
+                            val activeUntil = json.optLong("minerActiveUntil", 0L)
+                            _minerActiveUntil.value = activeUntil
+                            _minerActiveRemainingMs.value = (activeUntil - System.currentTimeMillis()).coerceAtLeast(0L)
+                            showSnackbar("⛏️ Miner aktif 6 jam!")
+                            loadGameState()
+                            loadUserFromBackend()
+                        } else {
+                            showSnackbar(json.optString("message", "Gagal aktifkan miner"))
+                        }
+                    }
+                    .onFailure {
+                        showSnackbar("Error: ${it.message}")
+                    }
+            } catch (e: Exception) {
+                showSnackbar("Aktivasi error: ${e.message}")
+            }
+        }
+    }
+
     // ============ AUTO-CLAIM MINING ============
     private var autoClaimJob: kotlinx.coroutines.Job? = null
 
@@ -1332,6 +1389,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             while (isActive) {
                 delay(60_000L)
                 try {
+                    // Check miner active dulu — skip kalau tamat
+                    if (!isMinerActive()) {
+                        android.util.Log.d("AffiliateViewModel", "⏸️ Miner inactive — auto-claim skip")
+                        refreshMinerActiveState()
+                        continue
+                    }
                     val result = ApiClient.claimMining()
                     result.onSuccess { json ->
                         if (json.optBoolean("success", false)) {
@@ -1341,6 +1404,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                                 loadUserFromBackend()
                                 loadGameState()
                             }
+                        } else if (json.optString("code") == "MINER_INACTIVE") {
+                            android.util.Log.d("AffiliateViewModel", "⏸️ Miner inactive (backend)")
+                            refreshMinerActiveState()
                         }
                     }
                 } catch (e: Exception) {

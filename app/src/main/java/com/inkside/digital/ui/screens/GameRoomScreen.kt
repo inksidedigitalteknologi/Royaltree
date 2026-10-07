@@ -69,6 +69,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -134,6 +135,13 @@ fun GameRoomScreen(
             viewModel.loadMinerCatalog()
             viewModel.loadGameState()
         }
+    }
+
+    // ============ AUTO-CLAIM TIMER (60s) ============
+    // Start bila Game Room dibuka, stop bila keluar
+    DisposableEffect(Unit) {
+        viewModel.startAutoClaim()
+        onDispose { viewModel.stopAutoClaim() }
     }
 
     GameRoomScreenContent(
@@ -867,63 +875,101 @@ private fun MiningRoomTab(
                                 modifier = Modifier.padding(14.dp),
                                 verticalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Column {
-                                        Text(
-                                            text = "HASIL MINING SIAP DIKLAIM",
-                                            fontSize = 10.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = EmeraldLight
-                                        )
-                                        Text(
-                                            text = "${String.format(Locale.US, "%.8f", liveUnclaimedPoints)} RTP",
-                                            fontSize = 22.sp,
-                                            fontWeight = FontWeight.ExtraBold,
-                                            color = Color.White
-                                        )
+                                // ===== STATUS MINER AKTIF / TIDAK =====
+                                val isMinerActive = minerActiveUntil > System.currentTimeMillis()
+
+                                if (isMinerActive) {
+                                    // Miner sedang aktif — tunjuk countdown
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Column {
+                                            Text(
+                                                text = "⛏️ MINER SEDANG AKTIF",
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = EmeraldLight
+                                            )
+                                            Text(
+                                                text = formatCountdown(minerActiveRemainingMs),
+                                                fontSize = 22.sp,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                color = Color.White
+                                            )
+                                        }
+                                        Text("✅", fontSize = 28.sp)
                                     }
-                                    Text("⛏️", fontSize = 28.sp)
-                                }
 
-                                // ===== AUTO-CLAIM INDICATOR =====
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = "✅ AUTO-CLAIM AKTIF",
-                                        fontSize = 11.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = EmeraldLight
-                                    )
-                                }
+                                    // Button disabled — miner dah aktif
+                                    Button(
+                                        onClick = { },
+                                        enabled = false,
+                                        colors = ButtonDefaults.buttonColors(
+                                            disabledContainerColor = Color(0xFF334155),
+                                            disabledContentColor = Color.White.copy(alpha = 0.7f)
+                                        ),
+                                        shape = RoundedCornerShape(10.dp),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(44.dp)
+                                    ) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(imageVector = Icons.Filled.Timer, contentDescription = null, tint = Color.White.copy(alpha = 0.7f), modifier = Modifier.size(16.dp))
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text(
+                                                text = "⏱ Aktif — tunggu tamat",
+                                                color = Color.White.copy(alpha = 0.7f),
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 13.sp
+                                            )
+                                        }
+                                    }
+                                } else {
+                                    // Miner tamat — tunjuk button aktivasi
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Column {
+                                            Text(
+                                                text = "⛔ MINER TIDAK AKTIF",
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color(0xFFF87171)
+                                            )
+                                            Text(
+                                                text = "Aktifkan untuk mula mining",
+                                                fontSize = 13.sp,
+                                                fontWeight = FontWeight.Medium,
+                                                color = Color(0xFF94A3B8)
+                                            )
+                                        }
+                                        Text("💤", fontSize = 28.sp)
+                                    }
 
-                                Spacer(modifier = Modifier.height(4.dp))
-
-                                // ===== BOOST BUTTON =====
-                                Button(
-                                    onClick = onClaimMining,
-                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD700)),
-                                    shape = RoundedCornerShape(10.dp),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(44.dp)
-                                        .testTag("claim_mining_points_button")
-                                ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(imageVector = Icons.Filled.Bolt, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text(
-                                            text = "⚡ Boost 2× Rate (1 jam)",
-                                            color = Color.Black,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 13.sp
-                                        )
+                                    // Button aktivasi — tonton iklan
+                                    Button(
+                                        onClick = onActivateMiner,
+                                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                                        shape = RoundedCornerShape(10.dp),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(44.dp)
+                                            .testTag("activate_miner_button")
+                                    ) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text(
+                                                text = "🎬 Aktifkan Miner (Tonton Iklan)",
+                                                color = Color.Black,
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 13.sp
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -1872,5 +1918,22 @@ private fun tierColor(tier: String): Color {
         "LEGENDARY" -> GoldVip
         "MYTHIC" -> Color(0xFFEC4899)
         else -> EmeraldLight
+    }
+}
+
+
+/**
+ * Format countdown ms → "5j 32m" atau "32m 15s" atau "15s"
+ */
+private fun formatCountdown(ms: Long): String {
+    if (ms <= 0L) return "Tamat"
+    val totalSeconds = ms / 1000
+    val hours = totalSeconds / 3600
+    val minutes = (totalSeconds % 3600) / 60
+    val seconds = totalSeconds % 60
+    return when {
+        hours > 0 -> "${hours}j ${minutes}m"
+        minutes > 0 -> "${minutes}m ${seconds}s"
+        else -> "${seconds}s"
     }
 }

@@ -358,6 +358,8 @@ fun MainAffiliateApp(
     val adminReviewTarget by viewModel.showAdminReviewModal.collectAsState()
     val showAdReward by viewModel.showAdRewardModal.collectAsState()
     val pendingMiningClaim by viewModel.pendingMiningClaim.collectAsState()
+    val pendingMiningBoost by viewModel.pendingMiningBoost.collectAsState()
+    val pendingMinerActivate by viewModel.pendingMinerActivate.collectAsState()
     val show2FA by viewModel.show2FAModal.collectAsState()
     val showQrTransfer by viewModel.showQrTransferModal.collectAsState()
     val contacts by viewModel.contacts.collectAsState()
@@ -488,12 +490,23 @@ fun MainAffiliateApp(
         on2FAVerifyToggle = { viewModel.toggle2FA(it) },
         onAdRewardDismiss = { viewModel.showAdRewardModal.value = false },
         onAdRewardEarned = { points ->
-            if (pendingMiningClaim) {
-                viewModel.setPendingMiningClaim(false)
-                val txId = java.util.UUID.randomUUID().toString()
-                viewModel.claimMiningWithAd(txId, "admob")
-            } else {
-                viewModel.onAdRewardEarned(points)
+            val txId = java.util.UUID.randomUUID().toString()
+            when {
+                pendingMinerActivate -> {
+                    viewModel.setPendingMinerActivate(false)
+                    viewModel.activateMinerWithAd(txId, "admob")
+                }
+                pendingMiningBoost -> {
+                    viewModel.setPendingMiningBoost(false)
+                    viewModel.boostMiningWithAd(txId, "admob")
+                }
+                pendingMiningClaim -> {
+                    viewModel.setPendingMiningClaim(false)
+                    viewModel.claimMiningWithAd(txId, "admob")
+                }
+                else -> {
+                    viewModel.onAdRewardEarned(points)
+                }
             }
         },
         onQrTransferDismiss = { viewModel.showQrTransferModal.value = false },
