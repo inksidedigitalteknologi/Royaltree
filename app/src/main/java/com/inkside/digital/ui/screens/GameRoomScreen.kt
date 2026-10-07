@@ -794,10 +794,18 @@ private fun MiningRoomTab(
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
-                                    text = if (placedMiners.isNotEmpty()) "MINING AKTIF (24/7 ONLINE)" else "RAK KOSONG - PASANG ITEM",
+                                    text = when {
+                                        placedMiners.isEmpty() -> "RAK KOSONG - PASANG ITEM"
+                                        minerActiveUntil > System.currentTimeMillis() -> "MINING AKTIF (24/7 ONLINE)"
+                                        else -> "MINER TIDAK AKTIF - AKTIFKAN SEKARANG"
+                                    },
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (placedMiners.isNotEmpty()) EmeraldLight else Color(0xFF94A3B8)
+                                    color = when {
+                                        placedMiners.isEmpty() -> Color(0xFF94A3B8)
+                                        minerActiveUntil > System.currentTimeMillis() -> EmeraldLight
+                                        else -> Color(0xFFF87171)  // merah untuk "tidak aktif"
+                                    }
                                 )
                             }
                             Surface(
@@ -805,7 +813,7 @@ private fun MiningRoomTab(
                                 shape = RoundedCornerShape(8.dp)
                             ) {
                                 Text(
-                                    text = "${placedMiners.size}/6 Rak Terisi",
+                                    text = "${placedMiners.size}/${roomState?.unlockedSlots ?: 6} Rak Terisi",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White,
