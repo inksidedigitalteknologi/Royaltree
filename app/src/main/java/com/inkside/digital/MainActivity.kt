@@ -734,7 +734,16 @@ fun MainAffiliateAppContent(
                 onNavigate = { onNavigate(it) }
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                androidx.compose.material3.Snackbar(
+                    snackbarData = data,
+                    containerColor = androidx.compose.ui.graphics.Color(0xFF10B981),  // emerald
+                    contentColor = androidx.compose.ui.graphics.Color.White,
+                    actionColor = androidx.compose.ui.graphics.Color(0xFFFFD700)  // gold
+                )
+            }
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
