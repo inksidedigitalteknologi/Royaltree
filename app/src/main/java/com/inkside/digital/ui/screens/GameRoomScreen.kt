@@ -356,7 +356,7 @@ fun GameRoomScreenContent(
                             generationRatePerMin = generationRatePerMin,
                             liveUnclaimedPoints = liveUnclaimedPoints,
                             roomState = roomState,
-                            userPoints = user?.points ?: 0,
+                            userPoints = user?.points ?: 0.0,
                             minerActiveUntil = minerActiveUntil,
                             minerActiveRemainingMs = minerActiveRemainingMs,
                             minerTokens = minerTokens,
@@ -380,7 +380,7 @@ fun GameRoomScreenContent(
                         ItemShopTab(
                             currentLanguage = currentLanguage,
                             minerItems = minerItems,
-                            userPoints = user?.points ?: 0,
+                            userPoints = user?.points ?: 0.0,
                             minerTokens = minerTokens,
                             onBuyItem = { item -> selectedItemToBuy = item },
                             onUnlockMiner = onUnlockMiner,
@@ -402,7 +402,7 @@ fun GameRoomScreenContent(
 
     // Modal: Confirmation Beli Item — Framed Style
     selectedItemToBuy?.let { item ->
-        val canAfford = (user?.points ?: 0) >= item.pricePoints
+        val canAfford = (user?.points ?: 0.0) >= item.pricePoints.toDouble()
         val unlockedSlots = roomState?.unlockedSlots ?: 2
         val usedSlots = minerItems
             .filter { it.isPlacedInRoom }
@@ -468,7 +468,7 @@ fun GameRoomScreenContent(
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                text = "RTP tidak mencukupi - kurang ${item.pricePoints - (user?.points ?: 0)} RTP",
+                                text = "RTP tidak mencukupi - kurang ${item.pricePoints.toDouble() - (user?.points ?: 0.0)} RTP",
                                 fontSize = 11.sp,
                                 color = Color(0xFFEF4444),
                                 modifier = Modifier.padding(8.dp)

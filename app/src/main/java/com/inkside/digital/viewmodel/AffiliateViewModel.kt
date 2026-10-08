@@ -989,9 +989,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         .onSuccess {
                             android.util.Log.d("BuyMiner", "Miner synced")
 
-                            val roomState = _gameRoomState.value
+                            val roomState = gameRoomState.value
                             val unlockedSlots = roomState?.unlockedSlots ?: 2
-                            val usedSlots = _gameMinerItems.value
+                            val usedSlots = gameMinerItems.value
                                 .filter { it.isPlacedInRoom && it.id != itemId }
                                 .map { it.placedSlotIndex }
                                 .toSet()

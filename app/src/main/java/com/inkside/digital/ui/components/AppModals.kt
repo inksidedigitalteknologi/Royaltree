@@ -1042,8 +1042,8 @@ fun RedeemPointsModal(
     var targetWallet by remember { mutableStateOf("PayPal Global") }
     var destinationInput by remember { mutableStateOf(user?.email ?: "") }
 
-    val usdVal = GlobalPointsManager.getUsdValue(pointsToRedeem)
-    val convertedVal = GlobalPointsManager.getValueInCurrency(pointsToRedeem, selectedCurrency)
+    val usdVal = GlobalPointsManager.getUsdValue(pointsToRedeem.toDouble())
+    val convertedVal = GlobalPointsManager.getValueInCurrency(pointsToRedeem.toDouble(), selectedCurrency)
     val formattedConverted = GlobalPointsManager.formatCurrencyDisplay(convertedVal, selectedCurrency)
 
     Dialog(onDismissRequest = onDismiss) {

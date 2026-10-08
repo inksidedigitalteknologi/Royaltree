@@ -417,7 +417,7 @@ class AffiliateRepository(private val dao: AppDao) {
             return@withContext Result.failure(Exception("Poin tidak mencukupi"))
         }
 
-        val usdValue = GlobalPointsManager.getUsdValue(pointsToRedeem)
+        val usdValue = GlobalPointsManager.getUsdValue(pointsToRedeem.toDouble())
         val idrEquivalent = GlobalPointsManager.getIdrValue(pointsToRedeem)
         val payoutAmount = GlobalPointsManager.getValueInCurrency(pointsToRedeem, payoutCurrency)
         val formattedPayout = GlobalPointsManager.formatCurrencyDisplay(payoutAmount, payoutCurrency)
@@ -992,7 +992,7 @@ class AffiliateRepository(private val dao: AppDao) {
             Result.success(
                 TransferResult(
                     transferId = txId,
-                    senderPointsRemaining = updatedUser.points,
+                    senderPointsRemaining = updatedUser.points.toInt(),
                     sentPoints = pointsAmount,
                     adminFee = adminFee,
                     netPointsReceived = netReceived,
@@ -1419,7 +1419,7 @@ class AffiliateRepository(private val dao: AppDao) {
                     phone = phone,
                     tier = tier.ifBlank { "FREE" },
                     balance = balance,
-                    points = points,
+                    points = points.toDouble(),
                     referralCode = referralCode.ifBlank { "RT" + userId.takeLast(6).uppercase() },
                     referredCount = referredCount,
                     checkInStreak = checkInStreak,
