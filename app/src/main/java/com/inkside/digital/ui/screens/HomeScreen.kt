@@ -146,7 +146,9 @@ fun HomeScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_balance,
-                paddingPercent = 0.12f
+                aspectRatioOverride = 1.5f,           // lebih tinggi (dari ~1.8)
+                paddingPercentHorizontal = 0.12f,
+                paddingPercentVertical = 0.20f         // extra vertical untuk glow
             ) {
                 Box(
                     modifier = Modifier
