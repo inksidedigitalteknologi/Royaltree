@@ -62,6 +62,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.window.Dialog
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -162,6 +166,7 @@ fun GameRoomScreen(
         onClaimMining = { viewModel.showAdRewardModal.value = true; viewModel.setPendingMiningClaim(true) },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
+        onBuyAndPlaceGameMinerItem = { id -> viewModel.buyAndPlaceGameMinerItem(id) },
         onFinishGame = { score, duration, nonce -> viewModel.finishMiniGame(score, duration, nonce) },
         onNavigateToMissions = onNavigateToMissions,
         onBack = onBack,
@@ -183,6 +188,7 @@ fun GameRoomScreenContent(
     onClaimMining: () -> Unit,
     onToggleMinerSlot: (String, Int) -> Unit,
     onBuyGameMinerItem: (String) -> Unit,
+    onBuyAndPlaceGameMinerItem: (String) -> Unit = {},
     onFinishGame: (score: Int, durationMs: Long, gameNonce: String) -> Unit,
     onNavigateToMissions: () -> Unit,
     onBack: () -> Unit,
@@ -396,83 +402,115 @@ fun GameRoomScreenContent(
         }
     }
 
-    // Modal: Confirmation Beli Item
+    // Modal: Confirmation Beli Item — Framed Style
     selectedItemToBuy?.let { item ->
-        AlertDialog(
-            onDismissRequest = { selectedItemToBuy = null },
-            title = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(item.iconEmoji, fontSize = 26.sp)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Beli ${item.name}", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                }
-            },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = item.description,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+        val canAfford = (user?.points ?: 0) >= item.pricePoints
+        val unlockedSlots = roomState?.unlockedSlots ?: 2
+        val usedSlots = minerItems
+            .filter { it.isPlacedInRoom }
+            .map { it.placedSlotIndex }
+            .toSet()
+        val hasEmptySlot = (0 until unlockedSlots).any { it !in usedSlots }
+
+        Dialog(onDismissRequest = { selectedItemToBuy = null }) {
+            Surface(
+                shape = RoundedCornerShape(20.dp),
+                color = Color(0xFF0F172A),
+                border = BorderStroke(
+                    width = 1.5.dp,
+                    brush = Brush.linearGradient(
+                        colors = listOf(EmeraldPrimary, GoldVip)
                     )
-                    Card(
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text(LanguageManager.translate("game_price", currentLanguage, "Harga:"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("${item.pricePoints} Poin", fontWeight = FontWeight.Bold, color = GoldVip, fontSize = 12.sp)
-                            }
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text(LanguageManager.translate("game_mining_power", currentLanguage, "Mining Power:"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("+${item.powerGhs} GH/s", fontWeight = FontWeight.Bold, color = ElectricBlue, fontSize = 12.sp)
-                            }
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text(LanguageManager.translate("game_rate_points", currentLanguage, "Rate Poin:"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("+${String.format(Locale.US, "%.4f", item.pointsPerMinute)} RTP/mnt", fontWeight = FontWeight.Bold, color = EmeraldLight, fontSize = 12.sp)
-                            }
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text(LanguageManager.translate("game_your_points", currentLanguage, "Saldo Poin Anda:"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("${user?.points ?: 0} Poin", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                            }
+                ),
+                shadowElevation = 16.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(item.iconEmoji, fontSize = 28.sp)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "Beli ${item.name}",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 17.sp,
+                                color = Color.White
+                            )
+                            Text(
+                                text = item.description,
+                                fontSize = 11.sp,
+                                color = Color(0xFF94A3B8)
+                            )
                         }
                     }
 
-                    val canAfford = (user?.points ?: 0) >= item.pricePoints
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = Color(0xFF1E293B),
+                        border = BorderStroke(1.dp, EmeraldPrimary.copy(alpha = 0.3f)),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            BuyStatRow("Harga", "${item.pricePoints} RTP", GoldVip)
+                            BuyStatRow("Mining Power", "+${item.powerGhs} GH/s", EmeraldLight)
+                            BuyStatRow("Rate RTP", "+${String.format(Locale.US, "%.4f", item.pointsPerMinute)}/mnt", EmeraldLight)
+                            BuyStatRow("Saldo Anda", "${user?.points ?: 0} RTP", Color.White)
+                        }
+                    }
+
                     if (!canAfford) {
                         Surface(
                             color = Color(0xFFEF4444).copy(alpha = 0.12f),
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                text = "Poin tidak mencukupi! Kurang ${item.pricePoints - (user?.points ?: 0)} Poin. Selesaikan misi Like, Subscribe, Nonton, & Web untuk menambah poin.",
+                                text = "RTP tidak mencukupi - kurang ${item.pricePoints - (user?.points ?: 0)} RTP",
                                 fontSize = 11.sp,
                                 color = Color(0xFFEF4444),
                                 modifier = Modifier.padding(8.dp)
                             )
                         }
                     }
-                }
-            },
-            confirmButton = {
-                val canAfford = (user?.points ?: 0) >= item.pricePoints
-                Button(
-                    onClick = {
-                        onBuyGameMinerItem(item.id)
-                        selectedItemToBuy = null
-                    },
-                    enabled = canAfford,
-                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
-                ) {
-                    Text(LanguageManager.translate("game_buy_now", currentLanguage, "Beli Sekarang"), fontWeight = FontWeight.Bold)
-                }
-            },
-            dismissButton = {
-                OutlinedButton(onClick = { selectedItemToBuy = null }) {
-                    Text(LanguageManager.translate("common_cancel", currentLanguage, "Batal"))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = { selectedItemToBuy = null },
+                            modifier = Modifier.weight(1f),
+                            border = BorderStroke(1.dp, Color(0xFF475569))
+                        ) {
+                            Text("Batal", color = Color(0xFF94A3B8))
+                        }
+                        Button(
+                            onClick = {
+                                if (hasEmptySlot) {
+                                    onBuyAndPlaceGameMinerItem(item.id)
+                                } else {
+                                    onBuyGameMinerItem(item.id)
+                                }
+                                selectedItemToBuy = null
+                            },
+                            enabled = canAfford,
+                            modifier = Modifier.weight(1.5f),
+                            colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
+                        ) {
+                            Text(
+                                text = if (hasEmptySlot) "Beli & Pasang" else "Beli Sahaja",
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                 }
             }
-        )
+        }
     }
 
     // Modal: Pilih Item dari Inventaris untuk dipasang di Slot Kosong
@@ -1986,3 +2024,15 @@ private fun formatMinerCountdown(ms: Long): String {
         else -> "${seconds}s"
     }
 }
+
+@Composable
+private fun BuyStatRow(label: String, value: String, valueColor: Color) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(label, fontSize = 12.sp, color = Color(0xFF94A3B8))
+        Text(value, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = valueColor)
+    }
+}
+
