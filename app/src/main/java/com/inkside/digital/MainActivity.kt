@@ -750,7 +750,9 @@ fun MainAffiliateAppContent(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            when (currentScreen) {
+            // ============ FIX: Wrap dengan AnimatedBackground (daun jatuh) ============
+            com.inkside.digital.ui.components.AnimatedBackground {
+                when (currentScreen) {
                 AppScreen.HOME -> {
                     HomeScreen(
                         user = user,
@@ -978,9 +980,10 @@ fun MainAffiliateAppContent(
                     // Screen yang dinonaktifkan (tidak ada backend support)
                     // STEP_COUNTER, APP_OFFERS, CAMPAIGNS, ANALYTICS, INVEST
                 }
-            }
-        }
-    }
+            }  // close when (currentScreen)
+            }  // close AnimatedBackground
+        }  // close Box
+    }  // close Scaffold content
     }  // penutup ModalNavigationDrawer
 
     // Modal Overlays
