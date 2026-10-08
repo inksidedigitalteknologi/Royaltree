@@ -250,7 +250,7 @@ private fun DrawerHeader(user: UserEntity?) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ElectricBlue.copy(alpha = 0.1f))
+            .background(EmeraldLight.copy(alpha = 0.1f))
             .padding(20.dp)
     ) {
         Column {
@@ -258,17 +258,30 @@ private fun DrawerHeader(user: UserEntity?) {
                 // Avatar
                 Box(
                     modifier = Modifier
-                        .size(52.dp)
+                        .size(56.dp)
                         .clip(CircleShape)
-                        .background(ElectricBlue),
+                        .background(
+                            androidx.compose.ui.graphics.Brush.linearGradient(
+                                listOf(EmeraldLight, GoldVip)
+                            )
+                        )
+                        .padding(2.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = (user?.name?.firstOrNull()?.uppercase() ?: "U"),
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Black,
-                        color = Color.White
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                            .background(Color(0xFF0A0E1A)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = (user?.name?.firstOrNull()?.uppercase() ?: "U"),
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Black,
+                            color = EmeraldLight
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
