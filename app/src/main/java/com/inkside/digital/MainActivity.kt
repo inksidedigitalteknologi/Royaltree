@@ -1103,15 +1103,10 @@ fun MainAffiliateAppContent(
                     }
                 )
             } else {
-                android.util.Log.e("AdFlow", "❌ Activity NULL — context bukan Activity!")
                 onAdRewardDismiss()
             }
-        } else {
-            android.util.Log.d("AdFlow", "showAdReward = false, no-op")
         }
     }
-
-    if (adBlockedReason != null) {
 
     if (adBlockedReason != null) {
         AdBlockedDialog(
