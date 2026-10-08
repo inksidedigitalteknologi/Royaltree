@@ -581,7 +581,8 @@ fun GameRoomScreenContent(
 private fun HeroBanner(
     totalPowerGhs: Double,
     liveUnclaimedPoints: Double,
-    generationRatePerMin: Double
+    generationRatePerMin: Double,
+    userPoints: Int = 0
 ) {
     Box(
         modifier = Modifier
@@ -750,7 +751,8 @@ private fun MiningRoomTab(
                 HeroBanner(
                     totalPowerGhs = totalPowerGhs,
                     liveUnclaimedPoints = liveUnclaimedPoints,
-                    generationRatePerMin = generationRatePerMin
+                    generationRatePerMin = generationRatePerMin,
+                    userPoints = user?.points ?: 0
                 )
                 // Token badge di pojok kanan atas
                 Surface(
