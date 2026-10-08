@@ -12,7 +12,7 @@ data class UserEntity(
     val phone: String = "",
     val tier: String = "FREE",           // FREE or PREMIUM
     val balance: Double = 0.0,
-    val points: Int = 0,
+    val points: Double = 0.0,  // FIX: dari Int ke Double (kekal precision)
     val referralCode: String = "",
     val referredCount: Int = 0,
     val checkInStreak: Int = 0,
