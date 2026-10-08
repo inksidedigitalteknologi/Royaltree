@@ -1983,7 +1983,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         repository.updateUserFromBackend(
                             userId = current.id, name = "", email = "", phone = "",
                             tier = current.tier, balance = current.balance,
-                            points = current.points + spin.pointsWon,
+                            points = (current.points + spin.pointsWon).toInt(),
                             referralCode = current.referralCode,
                             checkInStreak = current.checkInStreak,
                             lastCheckInDate = current.lastCheckInDate,

@@ -418,8 +418,8 @@ class AffiliateRepository(private val dao: AppDao) {
         }
 
         val usdValue = GlobalPointsManager.getUsdValue(pointsToRedeem.toDouble())
-        val idrEquivalent = GlobalPointsManager.getIdrValue(pointsToRedeem)
-        val payoutAmount = GlobalPointsManager.getValueInCurrency(pointsToRedeem, payoutCurrency)
+        val idrEquivalent = GlobalPointsManager.getIdrValue(pointsToRedeem.toDouble())
+        val payoutAmount = GlobalPointsManager.getValueInCurrency(pointsToRedeem.toDouble(), payoutCurrency)
         val formattedPayout = GlobalPointsManager.formatCurrencyDisplay(payoutAmount, payoutCurrency)
 
         val updatedUser = user.copy(
@@ -754,7 +754,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 type = "DAILY_CHECKIN",
                 title = "Check-in Harian Royaltree (Streak Hari ke-$newStreak) 🌟",
                 description = "Bonus login harian +$rewardRtp RTP berhasil dikreditkan ke saldo poin.",
-                amount = GlobalPointsManager.getIdrValue(rewardRtp),
+                amount = GlobalPointsManager.getIdrValue(rewardRtp.toDouble()),
                 isCredit = true,
                 status = "SUCCESS",
                 timestamp = System.currentTimeMillis()
@@ -906,7 +906,7 @@ class AffiliateRepository(private val dao: AppDao) {
             if (recipientUser != null) {
                 val updatedRecipient = recipientUser.copy(
                     points = recipientUser.points + netReceived,
-                    balance = recipientUser.balance + GlobalPointsManager.getIdrValue(netReceived)
+                    balance = recipientUser.balance + GlobalPointsManager.getIdrValue(netReceived.toDouble())
                 )
                 dao.updateUser(updatedRecipient)
 
@@ -916,7 +916,7 @@ class AffiliateRepository(private val dao: AppDao) {
                         type = "POINT_TRANSFER_IN",
                         title = "Terima Transfer RTP dari ${user.name}",
                         description = "Menerima $netReceived RTP dari ${user.name} (${user.referralCode}). ${if (note.isNotBlank()) "Pesan: $note" else ""}",
-                        amount = GlobalPointsManager.getIdrValue(netReceived),
+                        amount = GlobalPointsManager.getIdrValue(netReceived.toDouble()),
                         currency = "IDR",
                         isCredit = true,
                         status = "SUCCESS",
@@ -943,7 +943,7 @@ class AffiliateRepository(private val dao: AppDao) {
                     type = "POINT_TRANSFER_OUT",
                     title = "Transfer RTP ke $recipientName",
                     description = "Kirim $pointsAmount RTP (Biaya admin $adminFee RTP dipotong dr saldo penerima, bersih: $netReceived RTP). [Sig: $signature] ${if (note.isNotBlank()) "Catatan: $note" else ""}",
-                    amount = GlobalPointsManager.getIdrValue(pointsAmount),
+                    amount = GlobalPointsManager.getIdrValue(pointsAmount.toDouble()),
                     currency = "IDR",
                     isCredit = false,
                     status = "SUCCESS",
