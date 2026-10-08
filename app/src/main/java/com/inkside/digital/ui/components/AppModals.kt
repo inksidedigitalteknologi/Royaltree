@@ -1037,7 +1037,7 @@ fun RedeemPointsModal(
     onRedeem: (points: Int, wallet: String, phoneOrDest: String, currency: String) -> Unit,
     onOpenTransferQr: (() -> Unit)? = null
 ) {
-    var pointsToRedeem by remember { mutableIntStateOf(1000.coerceAtMost(user?.points ?: 0)) }
+    var pointsToRedeem by remember { mutableIntStateOf(1000.coerceAtMost((user?.points ?: 0.0).toInt())) }
     var selectedCurrency by remember { mutableStateOf("USD") } // USD, USDT, IDR, EUR
     var targetWallet by remember { mutableStateOf("PayPal Global") }
     var destinationInput by remember { mutableStateOf(user?.email ?: "") }
@@ -1123,7 +1123,7 @@ fun RedeemPointsModal(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Saldo RTP Anda: ${user?.points ?: 0} RTP (Setara $${String.format(java.util.Locale.US, "%.2f", GlobalPointsManager.getUsdValue(user?.points ?: 0))} USD)",
+                    text = "Saldo RTP Anda: ${user?.points ?: 0} RTP (Setara $${String.format(java.util.Locale.US, "%.2f", GlobalPointsManager.getUsdValue(user?.points ?: 0.0))} USD)",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = EmeraldLight
@@ -1217,7 +1217,7 @@ fun RedeemPointsModal(
                         .padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    listOf(250, 500, 1000, user?.points ?: 0).forEach { pts ->
+                    listOf(250, 500, 1000, (user?.points ?: 0.0).toInt()).forEach { pts ->
                         val isSel = pointsToRedeem == pts
                         Box(
                             modifier = Modifier
@@ -1229,7 +1229,7 @@ fun RedeemPointsModal(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = if (pts == (user?.points ?: 0)) "Semua ($pts RTP)" else "$pts RTP",
+                                text = if (pts == (user?.points ?: 0.0).toInt()) "Semua ($pts RTP)" else "$pts RTP",
                                 fontSize = 10.sp,
                                 fontWeight = if (isSel) FontWeight.Bold else FontWeight.Normal,
                                 color = if (isSel) GoldVip else MaterialTheme.colorScheme.onSurface
@@ -1290,7 +1290,7 @@ fun RedeemPointsModal(
 
                 Button(
                     onClick = { onRedeem(pointsToRedeem, targetWallet, destinationInput, selectedCurrency) },
-                    enabled = (user?.points ?: 0) >= pointsToRedeem && pointsToRedeem > 0 && destinationInput.isNotBlank(),
+                    enabled = (user?.points ?: 0.0) >= pointsToRedeem.toDouble() && pointsToRedeem > 0 && destinationInput.isNotBlank(),
                     colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()

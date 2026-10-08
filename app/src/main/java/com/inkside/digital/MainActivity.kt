@@ -1160,7 +1160,7 @@ fun MainAffiliateAppPreview() {
                 id = "preview_user",
                 name = "Preview User",
                 balance = 5000000.0,
-                points = 1200
+                points = 1200.0
             ),
             campaigns = emptyList(),
             links = emptyList(),

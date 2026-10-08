@@ -33,7 +33,7 @@ import com.inkside.digital.ui.theme.GoldVip
 fun RecoveryDialog(
     missedDate: String,
     pointCost: Int,
-    userPoints: Int,
+    userPoints: Double,
     adsWatchedToday: Int,
     maxAdsPerDay: Int,
     currentLanguage: AppLanguage = AppLanguage.INDONESIAN,

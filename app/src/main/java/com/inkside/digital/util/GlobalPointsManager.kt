@@ -67,7 +67,7 @@ object GlobalPointsManager {
         return DAILY_STREAK_REWARDS[index]
     }
 
-    fun getUsdValue(points: Int): Double {
+    fun getUsdValue(points: Double): Double {
         return points * USD_PER_POINT
     }
 

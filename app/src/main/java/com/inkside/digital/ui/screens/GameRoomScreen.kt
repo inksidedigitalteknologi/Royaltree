@@ -63,8 +63,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.window.Dialog
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
@@ -620,7 +618,7 @@ private fun HeroBanner(
     totalPowerGhs: Double,
     liveUnclaimedPoints: Double,
     generationRatePerMin: Double,
-    userPoints: Int = 0
+    userPoints: Double = 0.0
 ) {
     Box(
         modifier = Modifier
@@ -748,7 +746,7 @@ private fun MiningRoomTab(
     generationRatePerMin: Double,
     liveUnclaimedPoints: Double,
     roomState: GameRoomStateEntity?,
-    userPoints: Int = 0,
+    userPoints: Double = 0.0,
     minerActiveUntil: Long = 0L,
     minerActiveRemainingMs: Long = 0L,
     minerTokens: Int = 0,
@@ -1439,7 +1437,7 @@ private fun LoadingState(currentLanguage: AppLanguage) {
 private fun ItemShopTab(
     currentLanguage: AppLanguage,
     minerItems: List<GameMinerItemEntity>,
-    userPoints: Int,
+    userPoints: Double,
     minerTokens: Int = 0,
     onBuyItem: (GameMinerItemEntity) -> Unit,
     onUnlockMiner: (String) -> Unit = {},
@@ -1551,7 +1549,7 @@ private fun ItemShopTab(
 @Composable
 private fun ShopMinerCard(
     item: GameMinerItemEntity,
-    userPoints: Int,
+    userPoints: Double,
     minerTokens: Int = 0,
     onBuy: () -> Unit,
     onUnlock: () -> Unit = {}

@@ -1234,8 +1234,8 @@ class AffiliateRepository(private val dao: AppDao) {
             return@withContext Result.failure(Exception("Anda sudah memiliki item ini. Pasang item ini di rak ruang game."))
         }
 
-        if (user.points < item.pricePoints) {
-            val shortage = item.pricePoints - user.points
+        if (user.points < item.pricePoints.toDouble()) {
+            val shortage = (item.pricePoints - user.points).toInt()
             return@withContext Result.failure(Exception("Poin tidak cukup! Anda memiliki ${user.points} Poin (Kurang $shortage Poin). Selesaikan misi Like, Subscribe, Nonton & Web untuk kumpulkan poin!"))
         }
 
