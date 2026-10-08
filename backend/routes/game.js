@@ -203,15 +203,20 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
             console.log(`[MINING] Bonus expired untuk ${uid}`);
         }
 
-        // Ambil miner items
-        const minersSnapshot = await db.collection('game_miners')
-            .where('userId', '==', uid)
-            .get();
+        // Ambil miner items — baca dari users.minersOwned (primary)
+        let miners = Object.entries(userData.minersOwned || {}).map(([id, m]) => ({
+            id, ...m
+        }));
 
-        const miners = [];
-        minersSnapshot.forEach(doc => {
-            miners.push({ id: doc.id, ...doc.data() });
-        });
+        // Fallback transitional: kalau kosong, baca dari game_miners lama
+        if (miners.length === 0) {
+            const minersSnapshot = await db.collection('game_miners')
+                .where('userId', '==', uid)
+                .get();
+            minersSnapshot.forEach(doc => {
+                miners.push({ id: doc.id, ...doc.data() });
+            });
+        }
 
         // Hitung total power
         const totalPowerGhs = miners.reduce((sum, m) => sum + (m.powerGhs || 0), 0);
@@ -654,20 +659,48 @@ router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => 
             });
         }
 
-        // Potong points
+        // ============ BUG FIX: Guna tokenCost (Miner Token) ============
+        const tokenCost = catalogItem.tokenCost || 0;
+        if ((userData.minerTokens || 0) < tokenCost) {
+            return res.status(400).json({
+                success: false,
+                message: `Miner Token tidak cukup. Butuh ${tokenCost}, punya ${userData.minerTokens || 0}.`
+            });
+        }
+
+        // ============ Instance ID unik (elak overwrite) ============
+        const instanceId = 'miner_' + uid.slice(0, 6) + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+
+        // Potong Miner Token
         await userRef.update({
-            points: admin.firestore.FieldValue.increment(-pricePoints)
+            minerTokens: admin.firestore.FieldValue.increment(-tokenCost),
+            [`minersOwned.${instanceId}`]: {
+                catalogId: lookupId,
+                instanceId: instanceId,
+                name: name,
+                tier: tier,
+                iconEmoji: iconEmoji,
+                tokenCost: tokenCost,
+                powerGhs: powerGhs,
+                pointsPerMinute: pointsPerMinute || 0,
+                bonusPermanentPct: bonusPermanentPct || 0,
+                isOwned: true,
+                isPlacedInRoom: false,
+                placedSlotIndex: -1,
+                purchasedAt: admin.firestore.FieldValue.serverTimestamp()
+            }
         });
 
-        // Simpan miner ke inventory
-        const minerRef = db.collection('game_miners').doc(minerId);
-        // M43 FIX: Guna field dari CATALOG (server-side), bukan req.body
+        // Dual-write ke game_miners (backward compat)
+        const minerRef = db.collection('game_miners').doc(instanceId);
         await minerRef.set({
             userId: uid,
+            catalogId: lookupId,
+            instanceId: instanceId,
             name: name,
             tier: tier,
             iconEmoji: iconEmoji,
-            pricePoints: pricePoints,
+            tokenCost: tokenCost,
             powerGhs: powerGhs,
             pointsPerMinute: pointsPerMinute || 0,
             bonusPermanentPct: bonusPermanentPct || 0,
@@ -681,8 +714,9 @@ router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => 
         await db.collection('audit_logs').add({
             userId: uid,
             action: 'GAME_MINER_BUY',
-            minerId: minerId,
-            price: pricePoints,
+            catalogId: lookupId,
+            instanceId: instanceId,
+            tokenCost: tokenCost,
             timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
 
@@ -690,9 +724,11 @@ router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => 
             success: true,
             message: `Berhasil beli ${name}!`,
             data: {
-                id: minerId,
+                id: instanceId,
+                catalogId: lookupId,
+                instanceId: instanceId,
                 name, tier, iconEmoji,
-                pricePoints, powerGhs, pointsPerMinute,
+                tokenCost, powerGhs, pointsPerMinute,
                 bonusPermanentPct: bonusPermanentPct || 0
             }
         });
@@ -828,7 +864,14 @@ router.post('/mining/place', verifyFirebaseToken, async (req, res) => {
             });
         }
 
-        // Update miner
+        // Update miner — dual-write
+        const userRef = db.collection('users').doc(uid);
+        await userRef.update({
+            [`minersOwned.${minerId}.isPlacedInRoom`]: true,
+            [`minersOwned.${minerId}.placedSlotIndex`]: slotIndex
+        });
+
+        // Dual-write ke game_miners
         await db.collection('game_miners').doc(minerId).update({
             isPlacedInRoom: true,
             placedSlotIndex: slotIndex,
@@ -963,6 +1006,13 @@ router.post('/mining/unplace', verifyFirebaseToken, async (req, res) => {
         if (!minerId) {
             return res.status(400).json({ success: false, message: 'Miner ID wajib' });
         }
+
+        // Dual-write
+        const userRef = db.collection('users').doc(uid);
+        await userRef.update({
+            [`minersOwned.${minerId}.isPlacedInRoom`]: false,
+            [`minersOwned.${minerId}.placedSlotIndex`]: -1
+        });
 
         await db.collection('game_miners').doc(minerId).update({
             isPlacedInRoom: false,
@@ -1325,6 +1375,12 @@ router.get('/miners/catalog', verifyFirebaseToken, async (req, res) => {
         const { uid } = req.firebaseUser;
 
         // Ambil miner yang sudah dimiliki user
+        // Baca dari user doc dulu
+        const userDoc = await db.collection('users').doc(uid).get();
+        const userData = userDoc.exists ? userDoc.data() : {};
+        const ownedFromUser = Object.keys(userData.minersOwned || {});
+
+        // Fallback transitional
         const ownedSnapshot = await db.collection('game_miners')
             .where('userId', '==', uid)
             .get();
@@ -1482,15 +1538,37 @@ router.post('/miners/unlock', verifyFirebaseToken, checkFraud, async (req, res) 
             minerTokens: admin.firestore.FieldValue.increment(-catalogItem.tokenCost)
         });
 
-        // Buat instance miner baru
-        const minerInstanceId = 'miner_' + uid.substring(0, 6) + '_' + Date.now();
+        // Buat instance miner baru — dual-write
+        const minerInstanceId = 'miner_' + uid.substring(0, 6) + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+
+        // Simpan ke user doc
+        await userRef.update({
+            [`minersOwned.${minerInstanceId}`]: {
+                catalogId: catalogItem.id,
+                instanceId: minerInstanceId,
+                name: catalogItem.name,
+                tier: catalogItem.tier,
+                iconEmoji: catalogItem.iconEmoji,
+                tokenCost: catalogItem.tokenCost || 0,
+                powerGhs: catalogItem.powerGhs,
+                pointsPerMinute: catalogItem.pointsPerMinute || 0,
+                isOwned: true,
+                isPlacedInRoom: false,
+                placedSlotIndex: -1,
+                unlockedAt: admin.firestore.FieldValue.serverTimestamp()
+            }
+        });
+
+        // Dual-write ke game_miners
         const minerRef = db.collection('game_miners').doc(minerInstanceId);
         await minerRef.set({
             userId: uid,
             catalogId: catalogItem.id,
+            instanceId: minerInstanceId,
             name: catalogItem.name,
             tier: catalogItem.tier,
             iconEmoji: catalogItem.iconEmoji,
+            tokenCost: catalogItem.tokenCost || 0,
             powerGhs: catalogItem.powerGhs,
             pointsPerDay: catalogItem.pointsPerDay,
             isOwned: true,

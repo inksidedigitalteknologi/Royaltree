@@ -1163,7 +1163,8 @@ fun MainAffiliateAppPreview() {
                 id = "preview_user",
                 name = "Preview User",
                 balance = 5000000.0,
-                points = 1200.0
+                points = 1200.0,
+                minerTokens = 500
             ),
             campaigns = emptyList(),
             links = emptyList(),
