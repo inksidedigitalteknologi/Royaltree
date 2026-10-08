@@ -805,7 +805,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 type = "MISSION_REWARD",
                 title = "Klaim Misi Royaltree: ${mission.title}",
                 description = "Hadiah penyelesaian misi +${mission.rtpReward} RTP",
-                amount = GlobalPointsManager.getIdrValue(mission.rtpReward),
+                amount = GlobalPointsManager.getIdrValue(mission.rtpReward.toDouble()),
                 isCredit = true,
                 status = "SUCCESS",
                 timestamp = System.currentTimeMillis()
@@ -1416,7 +1416,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 phone = phone.ifBlank { existing.phone },
                 tier = tier.ifBlank { existing.tier },
                 balance = balance,
-                points = points,
+                points = points.toDouble(),
                 referralCode = referralCode.ifBlank { existing.referralCode },
                 referredCount = referredCount,
                 checkInStreak = checkInStreak,

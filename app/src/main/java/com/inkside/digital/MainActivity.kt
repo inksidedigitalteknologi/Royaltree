@@ -1245,6 +1245,7 @@ fun MainAffiliateAppPreview() {
             onUpdateProfile = { _, _, _, _ -> },
             onToggleLocationTracking = {},
             onMarkAllNotifsRead = {},
+            onClearAllNotifs = {},
             onLoadHistory = {},
             onLoadNotifications = {},
             onSetWithdrawModalVisible = {},
