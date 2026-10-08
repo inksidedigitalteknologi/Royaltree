@@ -3,6 +3,22 @@
 Format: `V{major}.{minor}` — increment minor untuk setiap update.
 Formula versionCode: `major * 100 + minor`
 
+## V1.02
+- Fix: RTP naik walau miner tak aktif (Fasa A)
+- Fix: Header "170 Poin" → "170 RTP"
+- Fix: Kolom RTP guna user.points + tambah UNCLAIMED
+- Fix: Duplicate "MINER TIDAK AKTIF" hilang
+- Fix: Unplace miner auto-pasang semula
+- Fix: IllegalFormatConversion crash (header RTP)
+- Fix: Build error userPoints parameter (MiningRoomTab + HeroBanner)
+- Polish: Visual consistency (Fasa C) — Snackbar/header/Profile emerald
+- Polish: Daun jatuh visible (18 daun, size besar)
+- Polish: Daun jatuh global (wrap MainAffiliateApp)
+- Polish: Avatar frame Drawer (emerald/gold)
+- Polish: RetroStatBox maxLines + format %.4f
+
+**Commits:** `5c4fb12` → `d09f410` → V1.02
+
 ## V1.01
 - i18n: tambah 19 key login_* + register_* (6 bahasa)
 - Language toggle: fix Onboarding + Login + Register
