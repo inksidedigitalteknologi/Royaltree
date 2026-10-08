@@ -558,6 +558,15 @@ fun MainAffiliateApp(
     )
 }
 
+/**
+ * Helper: Cari Activity dari Context (Compose context biasanya ContextWrapper).
+ */
+private fun android.content.Context.findActivity(): android.app.Activity? = when (this) {
+    is android.app.Activity -> this
+    is android.content.ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
+
 @Composable
 fun MainAffiliateAppContent(
     user: UserEntity?,
@@ -1078,7 +1087,7 @@ fun MainAffiliateAppContent(
     // AdMob Rewarded Video — trigger kalau showAdReward = true
     androidx.compose.runtime.LaunchedEffect(showAdReward) {
         if (showAdReward) {
-            val activity = (context as? android.app.Activity)
+            val activity = context.findActivity()
             if (activity != null) {
                 AdManager.showRewardedAdForReward(
                     activity = activity,
@@ -1094,10 +1103,15 @@ fun MainAffiliateAppContent(
                     }
                 )
             } else {
+                android.util.Log.e("AdFlow", "❌ Activity NULL — context bukan Activity!")
                 onAdRewardDismiss()
             }
+        } else {
+            android.util.Log.d("AdFlow", "showAdReward = false, no-op")
         }
     }
+
+    if (adBlockedReason != null) {
 
     if (adBlockedReason != null) {
         AdBlockedDialog(

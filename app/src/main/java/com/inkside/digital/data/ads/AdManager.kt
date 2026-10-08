@@ -24,8 +24,10 @@ object AdManager {
         onSuccess: (points: Int) -> Unit,
         onFailure: (reason: AdFailureReason, message: String) -> Unit
     ) {
+        Log.d(TAG, "🎬 showRewardedAdForReward START — userId=$userId")
         // 1. Load ad
         val loadResult = AdMobProvider.loadRewardedAd(activity, userId)
+        Log.d(TAG, "📥 Load result: isSuccess=${loadResult.isSuccess}")
         if (loadResult.isFailure) {
             val ex = loadResult.exceptionOrNull()
             val reason = if (ex is AdLoadException) ex.reason else AdFailureReason.UNKNOWN
