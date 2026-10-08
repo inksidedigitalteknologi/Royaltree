@@ -290,7 +290,7 @@ fun GameRoomScreenContent(
                             Text("⭐", fontSize = 12.sp)
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "${String.format(Locale.US, "%.8f", user?.points ?: 0.0)} RTP",
+                                text = "${String.format(Locale.US, "%.4f", (user?.points ?: 0).toDouble())} RTP",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = GoldVip
