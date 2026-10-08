@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.sp
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.PurpleSecondary
 import com.inkside.digital.ui.theme.CoralRed
+import com.inkside.digital.ui.theme.GoldVip
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.CustomCredential
@@ -73,7 +74,6 @@ import com.inkside.digital.ui.components.AnimatedBackground
 import kotlinx.coroutines.launch
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
-import com.inkside.digital.ui.components.LanguageSelectionModal
 
 @Composable
 fun LoginScreen(
@@ -467,3 +467,76 @@ fun LoginScreen(
         }
     }
 }
+
+
+// ============================================================
+// Private LanguageSelectionModal (sama macam OnboardingScreen)
+// ============================================================
+@androidx.compose.runtime.Composable
+private fun LanguageSelectionModal(
+    currentLanguage: AppLanguage,
+    onSelect: (AppLanguage) -> Unit,
+    onDismiss: () -> Unit
+) {
+    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
+        androidx.compose.material3.Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = Color(0xFF1E293B),
+            modifier = Modifier.fillMaxWidth().padding(16.dp)
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "🌐 " + LanguageManager.translate("settings_language", currentLanguage, "Language"),
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "✕",
+                        color = Color.White.copy(alpha = 0.6f),
+                        fontSize = 18.sp,
+                        modifier = Modifier.clickable { onDismiss() }.padding(8.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                AppLanguage.values().forEach { lang ->
+                    val isSelected = lang == currentLanguage
+                    androidx.compose.material3.Surface(
+                        color = if (isSelected) GoldVip.copy(alpha = 0.2f) else Color.White.copy(alpha = 0.05f),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                            .clickable { onSelect(lang) }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(lang.flag, fontSize = 22.sp)
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = lang.displayName,
+                                color = if (isSelected) GoldVip else Color.White,
+                                fontSize = 14.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                modifier = Modifier.weight(1f)
+                            )
+                            if (isSelected) {
+                                Text("✓", color = GoldVip, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
