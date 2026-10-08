@@ -185,17 +185,14 @@ fun LoginScreen(
                     Card(
                         shape = RoundedCornerShape(24.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.White.copy(alpha = 0.15f)
+                            containerColor = Color.White.copy(alpha = 0.05f)  // ← SANGAT TRANSPARAN
                         ),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .shadow(
-                                elevation = 24.dp,
-                                shape = RoundedCornerShape(24.dp),
-                                ambientColor = Color(0xFF34D399).copy(alpha = 0.5f),
-                                spotColor = Color(0xFFFFD700).copy(alpha = 0.5f)
-                            )
+                        border = androidx.compose.foundation.BorderStroke(
+                            width = 1.dp,
+                            color = Color.White.copy(alpha = 0.15f)  // ← subtle border
+                        ),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(
                             modifier = Modifier

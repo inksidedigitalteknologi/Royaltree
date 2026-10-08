@@ -181,11 +181,15 @@ fun RegisterScreen(
                 ) {
                     Card(
                         shape = RoundedCornerShape(24.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.15f)),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.White.copy(alpha = 0.05f)  // ← SANGAT TRANSPARAN
+                        ),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .shadow(24.dp, RoundedCornerShape(24.dp), ambientColor = Color(0xFF34D399).copy(alpha = 0.5f), spotColor = Color(0xFFFFD700).copy(alpha = 0.5f))
+                        border = androidx.compose.foundation.BorderStroke(
+                            width = 1.dp,
+                            color = Color.White.copy(alpha = 0.15f)  // ← subtle border
+                        ),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
                             Text(LanguageManager.translate("register_create", currentLanguage, "Buat Akun"), fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
