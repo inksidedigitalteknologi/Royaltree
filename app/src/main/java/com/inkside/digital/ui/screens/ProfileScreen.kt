@@ -636,7 +636,7 @@ private fun MiningStatsCard(
 // M47: Avatar dengan Frame Tier (dragon, lion, star, dll)
 // ============================================================
 @Composable
-private fun ProfileAvatarWithFrame(
+fun ProfileAvatarWithFrame(
     userName: String?,
     tier: String,
     size: Dp = 120.dp
