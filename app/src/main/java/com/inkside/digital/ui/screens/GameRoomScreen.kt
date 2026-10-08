@@ -752,7 +752,7 @@ private fun MiningRoomTab(
                     totalPowerGhs = totalPowerGhs,
                     liveUnclaimedPoints = liveUnclaimedPoints,
                     generationRatePerMin = generationRatePerMin,
-                    userPoints = user?.points ?: 0
+                    userPoints = userPoints
                 )
                 // Token badge di pojok kanan atas
                 Surface(
