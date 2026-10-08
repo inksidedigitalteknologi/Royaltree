@@ -188,7 +188,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 phone = currentUser.phone,
                 tier = currentUser.tier,
                 balance = currentUser.balance,
-                points = currentUser.points,
+                points = currentUser.points.toInt(),
                 todaySteps = currentUser.todaySteps,
                 referralCode = currentUser.referralCode,
                 city = currentUser.locationCity
@@ -989,9 +989,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         .onSuccess {
                             android.util.Log.d("BuyMiner", "Miner synced")
 
-                            val roomState = repository.gameRoomState.value
+                            val roomState = _gameRoomState.value
                             val unlockedSlots = roomState?.unlockedSlots ?: 2
-                            val usedSlots = repository.gameMinerItems.value
+                            val usedSlots = _gameMinerItems.value
                                 .filter { it.isPlacedInRoom && it.id != itemId }
                                 .map { it.placedSlotIndex }
                                 .toSet()
@@ -1155,7 +1155,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             phone = currentUser.phone,
                             tier = currentUser.tier,
                             balance = currentUser.balance,
-                            points = currentUser.points,
+                            points = currentUser.points.toInt(),
                             referralCode = currentUser.referralCode,
                             checkInStreak = currentUser.checkInStreak,
                             lastCheckInDate = currentUser.lastCheckInDate,

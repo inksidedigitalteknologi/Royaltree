@@ -38,7 +38,7 @@ object WidgetUpdater {
                 if (glanceIds.isEmpty()) return@launch
 
                 val balanceFormatted = "Rp ${formatNumber(user.balance)}"
-                val pointsFormatted = formatCompact(user.points)
+                val pointsFormatted = formatCompact(user.points.toInt())
                 val stepsFormatted = formatCompact(user.todaySteps)
 
                 glanceIds.forEach { glanceId ->

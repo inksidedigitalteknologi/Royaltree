@@ -741,7 +741,7 @@ fun QrTransferModal(
                                     amount > GlobalPointsManager.MAX_TRANSFER_PER_TX_RTP -> {
                                         errorMessage = "Melebihi batas transaksi tunggal (Maksimal ${GlobalPointsManager.MAX_TRANSFER_PER_TX_RTP} RTP)"
                                     }
-                                    amount > (user?.points ?: 0) -> {
+                                    amount.toDouble() > (user?.points ?: 0.0) -> {
                                         errorMessage = "Saldo RTP Anda tidak mencukupi (Saldo: ${user?.points ?: 0} RTP)"
                                     }
                                     else -> {
