@@ -382,9 +382,15 @@ private fun DrawerItem(
 // ============ HELPER: FORMAT ANGKA ============
 private fun formatNumber(value: Double): String {
     return try {
-        val longVal = value.toLong()
-        val formatted = longVal.toString().reversed().chunked(3).joinToString(".").reversed()
-        formatted
+        // Kalau integer — format tanpa decimal (contoh: 1.234.567)
+        if (value == value.toLong().toDouble()) {
+            val longVal = value.toLong()
+            val formatted = longVal.toString().reversed().chunked(3).joinToString(".").reversed()
+            formatted
+        } else {
+            // Kalau ada decimal — guna Locale.US dengan 4 decimal (contoh: 170.0177)
+            String.format(java.util.Locale.US, "%,.4f", value)
+        }
     } catch (e: Exception) {
         value.toString()
     }

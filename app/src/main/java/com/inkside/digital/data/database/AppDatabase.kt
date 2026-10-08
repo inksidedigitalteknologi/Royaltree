@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
         GameMinerItemEntity::class,
         GameRoomStateEntity::class
     ],
-    version = 2,  // Bump: minerActiveUntil + minerActivatedAt (GameRoomStateEntity)
+    version = 3,  // Bump: UserEntity.points Int → Double
     exportSchema = false  // No-op, sudah ada migration manual
 )
 abstract class AppDatabase : RoomDatabase() {
