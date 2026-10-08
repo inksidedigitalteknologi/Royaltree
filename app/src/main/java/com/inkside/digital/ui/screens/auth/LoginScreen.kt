@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -51,6 +52,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -118,19 +120,24 @@ fun LoginScreen(
                 androidx.compose.material3.Surface(
                     shape = RoundedCornerShape(20.dp),
                     color = Color.White.copy(alpha = 0.15f),
-                    modifier = Modifier.clickable { showLanguageModal = true }
+                    onClick = { showLanguageModal = true },
+                    modifier = Modifier
+                        .height(44.dp)
+                        .testTag("language_toggle_button")
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxHeight(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("🌐", fontSize = 14.sp)
+                        Text("🌐", fontSize = 16.sp)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(currentLanguage.flag, fontSize = 16.sp)
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(currentLanguage.flag, fontSize = 14.sp)
-                        Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = currentLanguage.code,
-                            fontSize = 12.sp,
+                            fontSize = 13.sp,
                             color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
