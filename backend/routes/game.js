@@ -231,10 +231,23 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
         const elapsedMs = Math.max(0, Date.now() - lastUpdate);
         const elapsedMin = elapsedMs / 60000;
         
-        // Kalau backend punya unclaimedMiningPoints, guna. Kalau tak, compute.
+        // ============ FASA A FIX: Check minerActiveUntil ============
+        // Kalau miner tak aktif, jangan accumulate unclaimed
+        const minerActiveUntil = room.minerActiveUntil || 0;
+        const isMinerActive = minerActiveUntil > Date.now();
+        
         const storedUnclaimed = room.unclaimedMiningPoints || 0;
-        const computedUnclaimed = elapsedMin * ratePerMin;
-        const unclaimedMiningPoints = parseFloat((storedUnclaimed + computedUnclaimed).toFixed(8));
+        let unclaimedMiningPoints;
+        
+        if (!isMinerActive) {
+            // Miner tak aktif — freeze unclaimed (jangan accumulate)
+            unclaimedMiningPoints = parseFloat(storedUnclaimed.toFixed(8));
+            console.log(`[MINING] Miner TIDAK aktif — freeze unclaimed=${unclaimedMiningPoints}`);
+        } else {
+            // Miner aktif — accumulate seperti biasa
+            const computedUnclaimed = elapsedMin * ratePerMin;
+            unclaimedMiningPoints = parseFloat((storedUnclaimed + computedUnclaimed).toFixed(8));
+        }
         
         // Update lastMiningUpdateTimestamp supaya tidak double-count
         await roomRef.set({

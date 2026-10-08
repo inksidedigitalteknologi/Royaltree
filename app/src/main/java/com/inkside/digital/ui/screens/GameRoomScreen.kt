@@ -213,9 +213,17 @@ fun GameRoomScreenContent(
         else placedMiners.sumOf { it.pointsPerMinute }  // fallback
     }
 
-    LaunchedEffect(roomState, placedMiners) {
+    LaunchedEffect(roomState, placedMiners, minerActiveUntil) {
         while (true) {
             val now = System.currentTimeMillis()
+            
+            // ✅ CHECK: Kalau miner tak aktif, RTP = 0 (freeze)
+            if (minerActiveUntil <= now) {
+                liveUnclaimedPoints = 0.0
+                delay(1000L)
+                continue
+            }
+            
             val lastClaim = roomState?.lastClaimTimestamp ?: now
             val elapsedMinutes = ((now - lastClaim) / 60000.0).coerceAtLeast(0.0)
             val generated = elapsedMinutes * generationRatePerMin
@@ -282,7 +290,7 @@ fun GameRoomScreenContent(
                             Text("⭐", fontSize = 12.sp)
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "${user?.points ?: 0} Poin",
+                                text = "${String.format(Locale.US, "%.8f", user?.points ?: 0.0)} RTP",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = GoldVip
@@ -628,8 +636,15 @@ private fun HeroBanner(
                 RetroStatBox(
                     emoji = "💰",
                     label = "RTP",
-                    value = String.format(Locale.US, "%.8f", liveUnclaimedPoints),
+                    value = String.format(Locale.US, "%.8f", user?.points ?: 0.0),
                     color = RetroGold,
+                    modifier = Modifier.weight(1f)
+                )
+                RetroStatBox(
+                    emoji = "📊",
+                    label = "UNCLAIMED",
+                    value = String.format(Locale.US, "%.8f", liveUnclaimedPoints),
+                    color = EmeraldLight,
                     modifier = Modifier.weight(1f)
                 )
                 RetroStatBox(
@@ -797,14 +812,14 @@ private fun MiningRoomTab(
                                     text = when {
                                         placedMiners.isEmpty() -> "RAK KOSONG - PASANG ITEM"
                                         minerActiveUntil > System.currentTimeMillis() -> "MINING AKTIF (24/7 ONLINE)"
-                                        else -> "MINER TIDAK AKTIF - AKTIFKAN SEKARANG"
+                                        else -> "RATE: ${String.format(Locale.US, "%.4f", generationRatePerMin)}/m"
                                     },
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = when {
                                         placedMiners.isEmpty() -> Color(0xFF94A3B8)
                                         minerActiveUntil > System.currentTimeMillis() -> EmeraldLight
-                                        else -> Color(0xFFF87171)  // merah untuk "tidak aktif"
+                                        else -> Color(0xFF94A3B8)  // gray untuk rate info
                                     }
                                 )
                             }
