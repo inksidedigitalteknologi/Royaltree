@@ -964,6 +964,64 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    /**
+     * Beli miner & auto-pasang ke slot kosong pertama.
+     * Kalau takde slot kosong → beli sahaja (masuk inventory).
+     */
+    fun buyAndPlaceGameMinerItem(itemId: String) {
+        viewModelScope.launch {
+            val result = repository.buyGameMinerItem(itemId)
+            result.onSuccess { msg ->
+                showSnackbar(msg)
+
+                val item = repository.getGameMinerItemByIdSync(itemId)
+                if (item != null) {
+                    val body = org.json.JSONObject().apply {
+                        put("minerId", item.id)
+                        put("tier", item.tier)
+                        put("name", item.name)
+                        put("pricePoints", item.pricePoints)
+                        put("powerGhs", item.powerGhs)
+                        put("pointsPerMinute", item.pointsPerMinute)
+                        put("iconEmoji", item.iconEmoji)
+                    }
+                    ApiClient.buyMiner(body)
+                        .onSuccess {
+                            android.util.Log.d("BuyMiner", "Miner synced")
+
+                            val roomState = repository.gameRoomState.value
+                            val unlockedSlots = roomState?.unlockedSlots ?: 2
+                            val usedSlots = repository.gameMinerItems.value
+                                .filter { it.isPlacedInRoom && it.id != itemId }
+                                .map { it.placedSlotIndex }
+                                .toSet()
+                            val emptySlot = (0 until unlockedSlots).firstOrNull { it !in usedSlots }
+
+                            if (emptySlot != null) {
+                                repository.toggleMinerSlot(itemId, emptySlot)
+                                val placeBody = org.json.JSONObject().apply {
+                                    put("minerId", itemId)
+                                    put("slotIndex", emptySlot)
+                                }
+                                ApiClient.placeMiner(placeBody)
+                                showSnackbar("${item.name} dipasang di Slot ${emptySlot + 1}")
+                            } else {
+                                showSnackbar("${item.name} disimpan — slot penuh")
+                            }
+
+                            loadGameState()
+                        }
+                        .onFailure { err ->
+                            android.util.Log.e("BuyMiner", "Sync failed: ${err.message}")
+                            showSnackbar("Gagal sync ke server")
+                        }
+                }
+            }.onFailure { error ->
+                showSnackbar(error.message ?: "Gagal membeli item penambang")
+            }
+        }
+    }
+
     fun toggleMinerSlot(itemId: String, targetSlot: Int) {
         viewModelScope.launch {
             // Check condition: place atau unplace?
