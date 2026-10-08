@@ -609,7 +609,7 @@ private fun HeroBanner(
                 text = "MINING TYCOON",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Black,
-                color = RetroGold,
+                color = EmeraldLight,
                 letterSpacing = 2.sp
             )
             Text(
@@ -636,14 +636,14 @@ private fun HeroBanner(
                 RetroStatBox(
                     emoji = "💰",
                     label = "RTP",
-                    value = String.format(Locale.US, "%.8f", user?.points ?: 0.0),
+                    value = String.format(Locale.US, "%.4f", user?.points ?: 0.0),
                     color = RetroGold,
                     modifier = Modifier.weight(1f)
                 )
                 RetroStatBox(
                     emoji = "📊",
                     label = "UNCLAIMED",
-                    value = String.format(Locale.US, "%.8f", liveUnclaimedPoints),
+                    value = String.format(Locale.US, "%.4f", liveUnclaimedPoints),
                     color = EmeraldLight,
                     modifier = Modifier.weight(1f)
                 )
@@ -686,9 +686,12 @@ private fun RetroStatBox(
             )
             Text(
                 text = value,
-                fontSize = 11.sp,
+                fontSize = 10.sp,
                 fontWeight = FontWeight.Black,
-                color = color
+                color = color,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
         }
     }

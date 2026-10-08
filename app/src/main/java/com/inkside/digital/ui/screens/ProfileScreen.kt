@@ -389,7 +389,7 @@ private fun QuickActionsRow(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 QuickActionButton("🎁", LanguageManager.translate("profile_action_checkin", currentLanguage, "Check-in"), EmeraldLight, onDailyCheckIn)
-                QuickActionButton("⛏️", LanguageManager.translate("profile_action_mining", currentLanguage, "Mining"), ElectricBlue, onMining)
+                QuickActionButton("⛏️", LanguageManager.translate("profile_action_mining", currentLanguage, "Mining"), EmeraldLight, onMining)
                 QuickActionButton("🎰", LanguageManager.translate("profile_action_coinrush", currentLanguage, "Coin Rush"), GoldVip, onCoinRush)
                 QuickActionButton("🎯", LanguageManager.translate("profile_action_missions", currentLanguage, "Misi"), Color(0xFFEC4899), onMissions)
             }
@@ -614,7 +614,7 @@ private fun MiningStatsCard(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 MiniStatBox(LanguageManager.translate("profile_slot", currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), "${powerGhs.toInt()} GH/s", ElectricBlue, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), "${powerGhs.toInt()} GH/s", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox("RTP", "$tokens", GoldVip, Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(6.dp))
@@ -625,7 +625,7 @@ private fun MiningStatsCard(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format(Locale.US, "%.4f", (roomState?.ratePerMin ?: (powerGhs * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", ElectricBlue, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+${String.format(Locale.US, "%.0f", roomState?.tempPowerBonusGhs ?: 0.0)} GH/s", GoldVip, Modifier.weight(1f))
             }
         }
