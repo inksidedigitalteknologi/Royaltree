@@ -607,8 +607,8 @@ fun QrTransferModal(
                         // FEE BREAKDOWN & MINIMUM TRANSFER BOX (CRITICAL REQUIREMENT)
                         val enteredAmount = transferAmountText.toIntOrNull() ?: 0
                         val netReceived = GlobalPointsManager.calculateNetReceived(enteredAmount)
-                        val usdValue = GlobalPointsManager.getUsdValue(enteredAmount)
-                        val idrValue = GlobalPointsManager.getIdrValue(enteredAmount)
+                        val usdValue = GlobalPointsManager.getUsdValue(enteredAmount.toDouble())
+                        val idrValue = GlobalPointsManager.getIdrValue(enteredAmount.toDouble())
 
                         Card(
                             shape = RoundedCornerShape(14.dp),

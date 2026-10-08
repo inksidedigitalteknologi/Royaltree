@@ -119,7 +119,7 @@ fun MissionsScreen(
         else -> missions
     }
 
-    val totalPoints = user?.points ?: 0
+    val totalPoints = user?.points ?: 0.0
     val usdValue = GlobalPointsManager.getUsdValue(totalPoints)
     val streakDay = user?.checkInStreak ?: 0
 

@@ -71,11 +71,11 @@ object GlobalPointsManager {
         return points * USD_PER_POINT
     }
 
-    fun getIdrValue(points: Int): Double {
+    fun getIdrValue(points: Double): Double {
         return getUsdValue(points) * RATE_USD_TO_IDR
     }
 
-    fun getValueInCurrency(points: Int, currencyCode: String): Double {
+    fun getValueInCurrency(points: Double, currencyCode: String): Double {
         val usd = getUsdValue(points)
         return when (currencyCode.uppercase()) {
             "USD" -> usd
@@ -90,7 +90,7 @@ object GlobalPointsManager {
         }
     }
 
-    fun formatFormattedDualValue(points: Int): String {
+    fun formatFormattedDualValue(points: Double): String {
         val usd = getUsdValue(points)
         val idr = getIdrValue(points)
         return "$points RTP ($${String.format(Locale.US, "%.2f", usd)} USD ≈ Rp ${String.format("%,.0f", idr)})"

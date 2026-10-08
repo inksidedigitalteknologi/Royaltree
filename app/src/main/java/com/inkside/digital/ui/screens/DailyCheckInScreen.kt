@@ -360,7 +360,7 @@ fun DailyCheckInScreen(
         RecoveryDialog(
             missedDate = selectedMissedDate,
             pointCost = 500,
-            userPoints = 0,
+            userPoints = 0.0,
             adsWatchedToday = 0,
             maxAdsPerDay = 1,
             currentLanguage = currentLanguage,
