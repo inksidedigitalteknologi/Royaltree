@@ -352,6 +352,7 @@ fun GameRoomScreenContent(
                             generationRatePerMin = generationRatePerMin,
                             liveUnclaimedPoints = liveUnclaimedPoints,
                             roomState = roomState,
+                            userPoints = user?.points ?: 0,
                             minerActiveUntil = minerActiveUntil,
                             minerActiveRemainingMs = minerActiveRemainingMs,
                             minerTokens = minerTokens,
@@ -636,7 +637,7 @@ private fun HeroBanner(
                 RetroStatBox(
                     emoji = "💰",
                     label = "RTP",
-                    value = String.format(Locale.US, "%.4f", user?.points ?: 0.0),
+                    value = String.format(Locale.US, "%.4f", userPoints.toDouble()),
                     color = RetroGold,
                     modifier = Modifier.weight(1f)
                 )
@@ -708,6 +709,7 @@ private fun MiningRoomTab(
     generationRatePerMin: Double,
     liveUnclaimedPoints: Double,
     roomState: GameRoomStateEntity?,
+    userPoints: Int = 0,
     minerActiveUntil: Long = 0L,
     minerActiveRemainingMs: Long = 0L,
     minerTokens: Int = 0,
