@@ -940,10 +940,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 val item = repository.getGameMinerItemByIdSync(itemId)
                 if (item != null) {
                     val body = org.json.JSONObject().apply {
-                        put("minerId", item.id)
+                        put("catalogId", item.catalogId)
+                        put("instanceId", item.id)
                         put("tier", item.tier)
                         put("name", item.name)
-                        put("pricePoints", item.pricePoints)
+                        put("tokenCost", item.tokenCost)
                         put("powerGhs", item.powerGhs)
                         put("pointsPerMinute", item.pointsPerMinute)
                         put("iconEmoji", item.iconEmoji)
@@ -977,10 +978,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 val item = repository.getGameMinerItemByIdSync(itemId)
                 if (item != null) {
                     val body = org.json.JSONObject().apply {
-                        put("minerId", item.id)
+                        put("catalogId", item.catalogId)
+                        put("instanceId", item.id)
                         put("tier", item.tier)
                         put("name", item.name)
-                        put("pricePoints", item.pricePoints)
+                        put("tokenCost", item.tokenCost)
                         put("powerGhs", item.powerGhs)
                         put("pointsPerMinute", item.pointsPerMinute)
                         put("iconEmoji", item.iconEmoji)
@@ -1614,10 +1616,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 val item = repository.getGameMinerItemByIdSync(itemId)
                 if (item != null) {
                     val body = org.json.JSONObject().apply {
-                        put("minerId", item.id)
+                        put("catalogId", item.catalogId)
+                        put("instanceId", item.id)
                         put("tier", item.tier)
                         put("name", item.name)
-                        put("pricePoints", item.pricePoints)
+                        put("tokenCost", item.tokenCost)
                         put("powerGhs", item.powerGhs)
                         put("pointsPerMinute", item.pointsPerMinute)
                         put("iconEmoji", item.iconEmoji)

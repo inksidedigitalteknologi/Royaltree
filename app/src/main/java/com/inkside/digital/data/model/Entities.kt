@@ -13,6 +13,7 @@ data class UserEntity(
     val tier: String = "FREE",           // FREE or PREMIUM
     val balance: Double = 0.0,
     val points: Double = 0.0,  // FIX: dari Int ke Double (kekal precision)
+    val minerTokens: Int = 0,  // Miner Token — currency untuk beli miner (dari iklan/claim)
     val referralCode: String = "",
     val referredCount: Int = 0,
     val checkInStreak: Int = 0,
@@ -192,11 +193,12 @@ data class TaskMissionEntity(
 
 @Entity(tableName = "game_miner_items")
 data class GameMinerItemEntity(
-    @PrimaryKey val id: String,
+    @PrimaryKey val id: String,             // instance ID (miner_xxx_timestamp_random)
+    val catalogId: String = "",             // catalog ID (miner_common, miner_rare, ...)
     val name: String,
     val tier: String, // COMMON, RARE, EPIC, LEGENDARY, MYTHIC
     val iconEmoji: String,
-    val pricePoints: Int, // Cost to buy using points
+    val tokenCost: Int, // Cost to buy using Miner Token
     val powerGhs: Double, // Hash rate e.g. 150.0 GH/s
     val pointsPerMinute: Double, // Generation rate e.g. 0.15 poin/menit
     val isOwned: Boolean = false,

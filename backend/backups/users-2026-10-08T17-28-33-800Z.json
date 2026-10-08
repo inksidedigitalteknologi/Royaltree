@@ -1,0 +1,41 @@
+[
+  {
+    "id": "VTmp1Za0Awc8juAgLa2g3rJ3tS82",
+    "email": "inksidedigital@gmail.com",
+    "tier": "FREE",
+    "balance": 0,
+    "referralCode": "RTVTMP1Z",
+    "referredBy": null,
+    "createdAt": {
+      "_seconds": 1790141792,
+      "_nanoseconds": 750000000
+    },
+    "lastLoginAt": {
+      "_seconds": 1790141792,
+      "_nanoseconds": 750000000
+    },
+    "city": "",
+    "phone": "085798074117",
+    "todaySteps": 2000,
+    "lastLoginIp": "::ffff:121.121.247.54",
+    "lastTokenDate": "2026-10-06",
+    "lastAdDate": "2026-10-06",
+    "minerTokens": 22,
+    "todayTokensEarned": 4,
+    "recentAdTimestamps": [
+      1791301581152
+    ],
+    "todayAdsWatched": 4,
+    "lastCheckInDate": "2026-10-08",
+    "checkInStreak": 1,
+    "monthCheckInCount": 13,
+    "points": 163.0176749,
+    "name": "Inkside Digital",
+    "updatedAt": "2026-10-08T13:29:07.617Z",
+    "fcmToken": "eViy4fDIQny8OcVSC9N3LN:APA91bGigMHzllFFTdjHygMQL_R2gY0vpeFXg-uAE683X0eCwUYifNB-wkXfz9RsiawbDNL-SSd-FSG4laBrb6ZZgU5I63FU1UEqY2VPsPwPpu3Wgtkd8VI",
+    "fcmUpdatedAt": {
+      "_seconds": 1791479422,
+      "_nanoseconds": 286000000
+    }
+  }
+]

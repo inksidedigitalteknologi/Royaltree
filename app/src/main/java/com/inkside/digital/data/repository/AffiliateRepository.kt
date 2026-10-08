@@ -1241,9 +1241,9 @@ class AffiliateRepository(private val dao: AppDao) {
             return@withContext Result.failure(Exception("Anda sudah memiliki item ini. Pasang item ini di rak ruang game."))
         }
 
-        if (user.points < item.pricePoints.toDouble()) {
-            val shortage = (item.pricePoints - user.points).toInt()
-            return@withContext Result.failure(Exception("Poin tidak cukup! Anda memiliki ${user.points} Poin (Kurang $shortage Poin). Selesaikan misi Like, Subscribe, Nonton & Web untuk kumpulkan poin!"))
+        if (user.minerTokens < item.tokenCost) {
+            val shortage = item.tokenCost - user.minerTokens
+            return@withContext Result.failure(Exception("Miner Token tidak cukup! Anda memiliki ${user.minerTokens} Token (Butuh ${item.tokenCost}, kurang $shortage Token). Claim token dari iklan/misi."))
         }
 
         val placedMiners = dao.getPlacedMinerItemsSync()
@@ -1256,7 +1256,7 @@ class AffiliateRepository(private val dao: AppDao) {
             item.copy(isOwned = true, isPlacedInRoom = false, placedSlotIndex = -1)
         }
 
-        val updatedUser = user.copy(points = user.points - item.pricePoints)
+        val updatedUser = user.copy(minerTokens = user.minerTokens - item.tokenCost)
         dao.updateUser(updatedUser)
         dao.updateGameMinerItem(updatedItem)
 
@@ -1266,8 +1266,8 @@ class AffiliateRepository(private val dao: AppDao) {
                 id = "tx_buy_" + UUID.randomUUID().toString().take(8),
                 type = "POINT_REWARD",
                 title = "Beli Item Penambang: ${item.name}",
-                description = "Pembelian item penambang daya ${item.powerGhs} GH/s seharga ${item.pricePoints} Poin",
-                amount = item.pricePoints.toDouble(),
+                description = "Pembelian item penambang daya ${item.powerGhs} GH/s seharga ${item.tokenCost} Token",
+                amount = item.tokenCost.toDouble(),
                 currency = "POIN",
                 isCredit = false,
                 status = "SUCCESS",
@@ -1517,7 +1517,8 @@ class AffiliateRepository(private val dao: AppDao) {
                         name = m.optString("name", ""),
                         tier = m.optString("tier", "COMMON"),
                         iconEmoji = m.optString("iconEmoji", "⛏️"),
-                        pricePoints = m.optInt("tokenCost", 0),  // token cost
+                        tokenCost = m.optInt("tokenCost", 0),
+                        catalogId = m.optString("id", ""),
                         powerGhs = m.optDouble("powerGhs", 0.0),
                         pointsPerMinute = m.optDouble("pointsPerMinute", 0.0),  // M43 FIX: fix dari pointsPerDay
                         isOwned = false,  // Catalog != owned. Instance dari /game/state yang owned.
@@ -1579,7 +1580,8 @@ class AffiliateRepository(private val dao: AppDao) {
                             name = m.optString("name", ""),
                             tier = m.optString("tier", "COMMON"),
                             iconEmoji = m.optString("iconEmoji", "⛏️"),
-                            pricePoints = m.optInt("pricePoints", 0),
+                            tokenCost = m.optInt("tokenCost", m.optInt("pricePoints", 0)),
+                            catalogId = m.optString("catalogId", m.optString("id", "")),
                             powerGhs = m.optDouble("powerGhs", 0.0),
                             pointsPerMinute = m.optDouble("pointsPerMinute", 0.0),
                             isOwned = m.optBoolean("isOwned", true),

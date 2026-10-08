@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
         GameMinerItemEntity::class,
         GameRoomStateEntity::class
     ],
-    version = 3,  // Bump: UserEntity.points Int → Double
+    version = 4,  // Bump: GameMinerItemEntity pricePoints → tokenCost + catalogId + UserEntity.minerTokens
     exportSchema = false  // No-op, sudah ada migration manual
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -115,6 +115,42 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // ============ MIGRATION 3 → 4 ============
+        // - GameMinerItemEntity: pricePoints → tokenCost + tambah catalogId
+        // - UserEntity: tambah minerTokens
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // 1. game_miner_items — rename pricePoints → tokenCost
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS game_miner_items_new (
+                        id TEXT NOT NULL PRIMARY KEY,
+                        catalogId TEXT NOT NULL DEFAULT '',
+                        name TEXT NOT NULL DEFAULT '',
+                        tier TEXT NOT NULL DEFAULT 'COMMON',
+                        iconEmoji TEXT NOT NULL DEFAULT '',
+                        tokenCost INTEGER NOT NULL DEFAULT 0,
+                        powerGhs REAL NOT NULL DEFAULT 0.0,
+                        pointsPerMinute REAL NOT NULL DEFAULT 0.0,
+                        isOwned INTEGER NOT NULL DEFAULT 0,
+                        isPlacedInRoom INTEGER NOT NULL DEFAULT 0,
+                        placedSlotIndex INTEGER NOT NULL DEFAULT -1,
+                        description TEXT NOT NULL DEFAULT ''
+                    )
+                """)
+                // Copy data — pricePoints → tokenCost, catalogId = id
+                db.execSQL("""
+                    INSERT INTO game_miner_items_new (id, catalogId, name, tier, iconEmoji, tokenCost, powerGhs, pointsPerMinute, isOwned, isPlacedInRoom, placedSlotIndex, description)
+                    SELECT id, id, name, tier, iconEmoji, pricePoints, powerGhs, pointsPerMinute, isOwned, isPlacedInRoom, placedSlotIndex, description
+                    FROM game_miner_items
+                """)
+                db.execSQL("DROP TABLE IF EXISTS game_miner_items")
+                db.execSQL("ALTER TABLE game_miner_items_new RENAME TO game_miner_items")
+
+                // 2. users — tambah minerTokens
+                db.execSQL("ALTER TABLE users ADD COLUMN minerTokens INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         fun getDatabase(context: Context, scope: CoroutineScope): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -122,7 +158,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "royaltree.db"
                 )
-                    .addMigrations(MIGRATION_2_3)  // MIGRATION PROPER
+                    .addMigrations(MIGRATION_2_3, MIGRATION_3_4)  // MIGRATION PROPER
                     .addCallback(DatabaseCallback(scope))
                     .fallbackToDestructiveMigration(dropAllTables = true)
                     .build()

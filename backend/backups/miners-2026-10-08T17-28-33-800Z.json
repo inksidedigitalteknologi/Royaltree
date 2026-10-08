@@ -1,0 +1,48 @@
+[
+  {
+    "id": "miner_common",
+    "userId": "VTmp1Za0Awc8juAgLa2g3rJ3tS82",
+    "name": "Pico Miner",
+    "tier": "COMMON",
+    "iconEmoji": "⛏️",
+    "pricePoints": 10,
+    "powerGhs": 10,
+    "isOwned": true,
+    "purchasedAt": {
+      "_seconds": 1791172344,
+      "_nanoseconds": 583000000
+    },
+    "pointsPerMinute": 0.0001,
+    "pointsPerDay": 0.144,
+    "bonusPermanentPct": 0,
+    "placedSlotIndex": 0,
+    "isPlacedInRoom": true,
+    "placedAt": {
+      "_seconds": 1791479449,
+      "_nanoseconds": 333000000
+    }
+  },
+  {
+    "id": "miner_rare",
+    "userId": "VTmp1Za0Awc8juAgLa2g3rJ3tS82",
+    "name": "Micro Rig",
+    "tier": "RARE",
+    "iconEmoji": "🔧",
+    "pricePoints": 50,
+    "powerGhs": 50,
+    "isOwned": true,
+    "purchasedAt": {
+      "_seconds": 1791185932,
+      "_nanoseconds": 419000000
+    },
+    "pointsPerMinute": 0.0005,
+    "pointsPerDay": 0.72,
+    "bonusPermanentPct": 0.1,
+    "placedSlotIndex": 1,
+    "isPlacedInRoom": true,
+    "placedAt": {
+      "_seconds": 1791479452,
+      "_nanoseconds": 856000000
+    }
+  }
+]

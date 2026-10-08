@@ -402,7 +402,7 @@ fun GameRoomScreenContent(
 
     // Modal: Confirmation Beli Item — Framed Style
     selectedItemToBuy?.let { item ->
-        val canAfford = (user?.points ?: 0.0) >= item.pricePoints.toDouble()
+        val canAfford = (user?.minerTokens ?: 0) >= item.tokenCost
         val unlockedSlots = roomState?.unlockedSlots ?: 2
         val usedSlots = minerItems
             .filter { it.isPlacedInRoom }
@@ -455,7 +455,7 @@ fun GameRoomScreenContent(
                             modifier = Modifier.padding(12.dp),
                             verticalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            BuyStatRow("Harga", "${item.pricePoints} RTP", GoldVip)
+                            BuyStatRow("Harga", "${item.tokenCost} Token", GoldVip)
                             BuyStatRow("Mining Power", "+${item.powerGhs} GH/s", EmeraldLight)
                             BuyStatRow("Rate RTP", "+${String.format(Locale.US, "%.4f", item.pointsPerMinute)}/mnt", EmeraldLight)
                             BuyStatRow("Saldo Anda", "${user?.points ?: 0} RTP", Color.White)
@@ -468,7 +468,7 @@ fun GameRoomScreenContent(
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                text = "RTP tidak mencukupi - kurang ${item.pricePoints.toDouble() - (user?.points ?: 0.0)} RTP",
+                                text = "Token tidak mencukupi - kurang ${item.tokenCost - (user?.minerTokens ?: 0)} Token",
                                 fontSize = 11.sp,
                                 color = Color(0xFFEF4444),
                                 modifier = Modifier.padding(8.dp)
@@ -1555,7 +1555,7 @@ private fun ShopMinerCard(
     onUnlock: () -> Unit = {}
 ) {
     val rarityColor = tierColor(item.tier)
-    val canAfford = userPoints >= item.pricePoints
+    val canAfford = userPoints >= item.tokenCost
 
     // M50: Auto-switch frame ikut tier miner
     val frameRes = when (item.tier.uppercase()) {
@@ -1697,7 +1697,7 @@ private fun ShopMinerCard(
                         Text("💰", fontSize = 14.sp)
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "${item.pricePoints}",
+                            text = "${item.tokenCost}",
                             fontWeight = FontWeight.Black,
                             fontSize = 16.sp,
                             color = RetroGold
@@ -1737,7 +1737,7 @@ private fun ShopMinerCard(
                         modifier = Modifier.clickable(enabled = canAfford) { onBuy() }
                     ) {
                         Text(
-                            text = if (canAfford) "BELI" else "KURANG ${item.pricePoints - userPoints}",
+                            text = if (canAfford) "BELI" else "KURANG ${item.tokenCost - userPoints}",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Black,
                             color = if (canAfford) Color.Black else Color.White.copy(alpha = 0.7f),
