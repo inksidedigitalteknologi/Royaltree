@@ -76,7 +76,7 @@ fun SettingsScreen(
 
         item { SectionHeader("Informasi") }
         item { SettingRow(Icons.Default.Policy, LanguageManager.translate("settings_privacy", currentLanguage, "Privacy Policy"), "Baca kebijakan privasi", { }) }
-        item { SettingRow(Icons.Default.Info, LanguageManager.translate("settings_about", currentLanguage, "About Royaltree"), "V1.02", { }) }
+        item { SettingRow(Icons.Default.Info, LanguageManager.translate("settings_about", currentLanguage, "About Royaltree"), "V1.04", { }) }
 
         item { Spacer(modifier = Modifier.height(8.dp)) }
 

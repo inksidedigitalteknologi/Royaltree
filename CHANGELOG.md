@@ -3,6 +3,38 @@
 Format: `V{major}.{minor}` — increment minor untuk setiap update.
 Formula versionCode: `major * 100 + minor`
 
+## V1.04
+- **Critical:** Fix miner hilang bila install ulang (migrate game_miners → users.minersOwned)
+- **Critical:** Fix beli miner sama 2× overwrite (instance ID unik)
+- **Critical:** Fix butang "Aktifkan Miner" tak berfungsi (AdMob test ID match)
+- Feature: Miner Token (tokenCost) sebagai currency beli miner
+- Feature: Dual-write ke users.minersOwned + game_miners (backward compat)
+- Feature: Unlimited miner support (beli miner sama banyak kali)
+- Feature: Auto-place ke slot kosong pertama (buyAndPlaceGameMinerItem)
+- UI: Pop-up Beli Miner frame custom (gradient emerald/gold) + tombol "Beli & Pasang"
+- UI: Notifikasi i18n 6 bahasa (notif_item_placed_*) + tombol Hapus
+- UI: Fix label "Poin" → "RTP" konsisten
+- Room DB: v3 → v4 (GameMinerItemEntity: pricePoints → tokenCost + catalogId, UserEntity: minerTokens)
+- Backend: /mining/buy guna tokenCost + instance ID + dual-write
+- Backend: /state baca dari users.minersOwned + fallback
+- Backend: /mining/place + /mining/unplace + /miners/catalog + /miners/unlock dual-write
+- Migration: scripts/backup-miners.js + migrate-miners-to-user.js + verify-migration.js
+- Fix: Int/Double mismatch pasca migration points Int → Double (23 lokasi)
+
+**Commits:** `1a8388f` → `877b870` → `d46854e` → `249afe6` → V1.04
+
+## V1.03
+- Fix: Migration proper 2 → 3 (UserEntity.points Int → Double)
+- Fix: Sidebar RTP decimal support
+- Fix: Frame Balance Hero vertical (glow tak terpotong)
+- Fix: Avatar Drawer frame tier dynamic (ProfileAvatarWithFrame)
+- Fix: Language toggle tap target lebih besar (Surface onClick + height 44dp)
+- Polish: Card transparan Login + Register (alpha 0.05 + border 1dp)
+- Polish: Daun jatuh global + Compose BOM 2025.10.00
+- Fix: Import fillMaxSize (AppDrawer)
+
+**Commits:** `aae1fb8` → `a3fa538` → V1.03
+
 ## V1.02
 - Fix: RTP naik walau miner tak aktif (Fasa A)
 - Fix: Header "170 Poin" → "170 RTP"
