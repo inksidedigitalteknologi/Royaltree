@@ -22,6 +22,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
+import com.inkside.digital.data.preferences.AppThemePreferences
 import java.util.UUID
 
 data class PeerContact(
@@ -710,6 +713,10 @@ class AffiliateRepository(private val dao: AppDao) {
         dao.markAllNotificationsAsRead()
     }
 
+    suspend fun deleteAllNotifications() = withContext(Dispatchers.IO) {
+        dao.deleteAllNotifications()
+    }
+
     suspend fun performDailyCheckIn(): Result<Pair<Int, Int>> = withContext(Dispatchers.IO) {
         val user = dao.getUserSync(_activeUserId.value) ?: return@withContext Result.failure(Exception("User tidak ditemukan"))
         val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
@@ -1271,8 +1278,29 @@ class AffiliateRepository(private val dao: AppDao) {
         dao.insertNotification(
             NotificationEntity(
                 id = "notif_buy_" + UUID.randomUUID().toString().take(8),
-                title = "Item Baru Terpasang! 🖥️",
-                message = "Item '${item.name}' berhasil dibeli dan ${if (firstEmptySlot != null) "langsung aktif di Slot ${firstEmptySlot + 1}!" else "tersimpan di inventaris rak."}",
+                title = LanguageManager.translate(
+                    "notif_item_placed_title",
+                    AppThemePreferences.currentLanguage,
+                    "Item Baru Terpasang! 🖥️"
+                ),
+                message = if (firstEmptySlot != null)
+                    String.format(
+                        LanguageManager.translate(
+                            "notif_item_placed_active",
+                            AppThemePreferences.currentLanguage,
+                            "Item '%s' berhasil dibeli dan langsung aktif di Slot %d!"
+                        ),
+                        item.name, firstEmptySlot + 1
+                    )
+                else
+                    String.format(
+                        LanguageManager.translate(
+                            "notif_item_placed_inventory",
+                            AppThemePreferences.currentLanguage,
+                            "Item '%s' berhasil dibeli dan tersimpan di inventaris rak."
+                        ),
+                        item.name
+                    ),
                 type = "REWARD",
                 timestamp = System.currentTimeMillis()
             )

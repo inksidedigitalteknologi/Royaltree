@@ -1187,6 +1187,13 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    fun clearAllNotifications() {
+        viewModelScope.launch {
+            repository.deleteAllNotifications()
+            showSnackbar("Semua notifikasi dihapus.")
+        }
+    }
+
     fun performDailyCheckIn() {
         viewModelScope.launch {
             val res = repository.performDailyCheckIn()

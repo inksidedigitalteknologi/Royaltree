@@ -1320,6 +1320,38 @@ object LanguageManager {
             AppLanguage.ARABIC to "%d غير مقروء",
             AppLanguage.JAPANESE to "%d 未読"
         ),
+        "notif_item_placed_title" to mapOf(
+            AppLanguage.INDONESIAN to "Item Baru Terpasang! 🖥️",
+            AppLanguage.ENGLISH to "New Item Placed! 🖥️",
+            AppLanguage.SPANISH to "¡Nuevo artículo instalado! 🖥️",
+            AppLanguage.CHINESE to "新物品已安装！🖥️",
+            AppLanguage.ARABIC to "تم تثبيت العنصر الجديد! 🖥️",
+            AppLanguage.JAPANESE to "新しいアイテムを設置しました！🖥️"
+        ),
+        "notif_item_placed_active" to mapOf(
+            AppLanguage.INDONESIAN to "Item '%s' berhasil dibeli dan langsung aktif di Slot %d!",
+            AppLanguage.ENGLISH to "Item '%s' purchased and instantly active in Slot %d!",
+            AppLanguage.SPANISH to "¡Artículo '%s' comprado y activo en la Ranura %d!",
+            AppLanguage.CHINESE to "物品 '%s' 已购买并在槽位 %d 中激活！",
+            AppLanguage.ARABIC to "تم شراء العنصر '%s' وتنشيطه في الفتحة %d!",
+            AppLanguage.JAPANESE to "アイテム '%s' を購入し、スロット %d で有効化！"
+        ),
+        "notif_item_placed_inventory" to mapOf(
+            AppLanguage.INDONESIAN to "Item '%s' berhasil dibeli dan tersimpan di inventaris rak.",
+            AppLanguage.ENGLISH to "Item '%s' purchased and stored in rack inventory.",
+            AppLanguage.SPANISH to "Artículo '%s' comprado y guardado en el inventario.",
+            AppLanguage.CHINESE to "物品 '%s' 已购买并存储在货架库存中。",
+            AppLanguage.ARABIC to "تم شراء العنصر '%s' وتخزينه في مخزون الرف.",
+            AppLanguage.JAPANESE to "アイテム '%s' を購入し、棚のインベントリに保存しました。"
+        ),
+        "notif_clear_all" to mapOf(
+            AppLanguage.INDONESIAN to "Hapus",
+            AppLanguage.ENGLISH to "Clear",
+            AppLanguage.SPANISH to "Borrar",
+            AppLanguage.CHINESE to "清除",
+            AppLanguage.ARABIC to "حذف",
+            AppLanguage.JAPANESE to "削除"
+        ),
         "notif_mark_all" to mapOf(
             AppLanguage.INDONESIAN to "Tandai",
             AppLanguage.ENGLISH to "Mark",

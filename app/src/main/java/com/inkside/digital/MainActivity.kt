@@ -530,6 +530,7 @@ fun MainAffiliateApp(
         onUpdateProfile = { name, email, phone, region -> viewModel.updateProfile(name, email, phone, region) },
         onToggleLocationTracking = { viewModel.toggleLocationTracking(it) },
         onMarkAllNotifsRead = { viewModel.markAllNotificationsRead() },
+        onClearAllNotifs = { viewModel.clearAllNotifications() },
         onLoadHistory = { viewModel.loadHistory() },
         onLoadNotifications = { viewModel.loadNotifications() },
         onSetWithdrawModalVisible = { viewModel.showWithdrawModal.value = it },
@@ -657,6 +658,7 @@ fun MainAffiliateAppContent(
     onUpdateProfile: (String, String, String, String) -> Unit,
     onToggleLocationTracking: (Boolean) -> Unit,
     onMarkAllNotifsRead: () -> Unit,
+    onClearAllNotifs: () -> Unit,
     onLoadHistory: () -> Unit,
     onLoadNotifications: () -> Unit,
     onSetWithdrawModalVisible: (Boolean) -> Unit,
@@ -914,7 +916,8 @@ fun MainAffiliateAppContent(
                     NotificationsScreen(
                         notifications = notifications,
                         currentLanguage = currentLanguage,
-                        onMarkAllRead = onMarkAllNotifsRead
+                        onMarkAllRead = onMarkAllNotifsRead,
+                        onClearAll = onClearAllNotifs
                     )
                 }
 
