@@ -62,6 +62,7 @@ import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.viewmodel.AppScreen
+import com.inkside.digital.ui.screens.ProfileAvatarWithFrame
 
 @Composable
 fun AppDrawer(
@@ -256,34 +257,12 @@ private fun DrawerHeader(user: UserEntity?) {
     ) {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // Avatar
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(
-                            androidx.compose.ui.graphics.Brush.linearGradient(
-                                listOf(EmeraldLight, GoldVip)
-                            )
-                        )
-                        .padding(2.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape)
-                            .background(Color(0xFF0A0E1A)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = (user?.name?.firstOrNull()?.uppercase() ?: "U"),
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Black,
-                            color = EmeraldLight
-                        )
-                    }
-                }
+                // Avatar dengan frame tier (dynamic dari tier user)
+                ProfileAvatarWithFrame(
+                    userName = user?.name,
+                    tier = user?.tier ?: "FREE",
+                    size = 56.dp
+                )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
