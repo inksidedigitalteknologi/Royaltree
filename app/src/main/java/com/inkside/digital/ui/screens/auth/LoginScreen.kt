@@ -108,8 +108,9 @@ fun LoginScreen(
         android.util.Log.d("LoginScreen", "🌐 showLanguageModal = $showLanguageModal")
     }
 
-    AnimatedBackground {
-        Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        AnimatedBackground {
+            Box(modifier = Modifier.fillMaxSize()) {
             // ===== LANGUAGE TOGGLE (top-right) =====
             Row(
                 modifier = Modifier
@@ -453,17 +454,20 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(48.dp))
             }
 
-            // ===== LANGUAGE MODAL =====
-            if (showLanguageModal) {
-                LanguageSelectionModal(
-                    currentLanguage = currentLanguage,
-                    onSelect = { lang ->
-                        onLanguageChange(lang)
-                        showLanguageModal = false
-                    },
-                    onDismiss = { showLanguageModal = false }
-                )
+            // Modal DIPINDAH ke LUAR AnimatedBackground
             }
+        }
+
+        // ===== LANGUAGE MODAL (LUAR AnimatedBackground) =====
+        if (showLanguageModal) {
+            LanguageSelectionModal(
+                currentLanguage = currentLanguage,
+                onSelect = { lang ->
+                    onLanguageChange(lang)
+                    showLanguageModal = false
+                },
+                onDismiss = { showLanguageModal = false }
+            )
         }
     }
 }
