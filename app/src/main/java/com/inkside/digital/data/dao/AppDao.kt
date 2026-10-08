@@ -99,8 +99,14 @@ interface AppDao {
     @Query("SELECT * FROM notifications ORDER BY timestamp DESC")
     fun getAllNotifications(): Flow<List<NotificationEntity>>
     
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertNotifications(notifications: List<NotificationEntity>)
+
+    @Query("UPDATE notifications SET isRead = 1 WHERE id = :id")
+    suspend fun markNotificationAsRead(id: String)
+
+    @Query("DELETE FROM notifications WHERE id = :id")
+    suspend fun deleteNotificationById(id: String)
     
     @Query("DELETE FROM notifications")
     suspend fun deleteAllNotifications()
