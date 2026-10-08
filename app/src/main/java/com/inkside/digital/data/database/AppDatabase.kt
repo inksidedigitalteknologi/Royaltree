@@ -50,6 +50,71 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
+
+        // ============ MIGRATION 2 → 3 ============
+        // UserEntity.points: Int -> Double
+        // Tukar table users: CAST points Int -> REAL
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS users_new (
+                        id TEXT NOT NULL PRIMARY KEY,
+                        name TEXT NOT NULL DEFAULT '',
+                        email TEXT NOT NULL DEFAULT '',
+                        phone TEXT NOT NULL DEFAULT '',
+                        tier TEXT NOT NULL DEFAULT 'FREE',
+                        balance REAL NOT NULL DEFAULT 0.0,
+                        points REAL NOT NULL DEFAULT 0.0,
+                        referralCode TEXT NOT NULL DEFAULT '',
+                        referredCount INTEGER NOT NULL DEFAULT 0,
+                        checkInStreak INTEGER NOT NULL DEFAULT 0,
+                        lastCheckInDate TEXT NOT NULL DEFAULT '',
+                        todaySteps INTEGER NOT NULL DEFAULT 0,
+                        pendingBalance REAL NOT NULL DEFAULT 0.0,
+                        totalPaidOut REAL NOT NULL DEFAULT 0.0,
+                        dailyStepGoal INTEGER NOT NULL DEFAULT 5000,
+                        unclaimedSteps INTEGER NOT NULL DEFAULT 0,
+                        isLocationTrackingAllowed INTEGER NOT NULL DEFAULT 1,
+                        latitude REAL NOT NULL DEFAULT 0.0,
+                        longitude REAL NOT NULL DEFAULT 0.0,
+                        locationCity TEXT NOT NULL DEFAULT '',
+                        locationProvince TEXT NOT NULL DEFAULT '',
+                        regionZone TEXT NOT NULL DEFAULT 'ID',
+                        is2FAEnabled INTEGER NOT NULL DEFAULT 0,
+                        twoFactorSecret TEXT NOT NULL DEFAULT '',
+                        commissionRateMultiplier REAL NOT NULL DEFAULT 1.0,
+                        convertedStepsToday INTEGER NOT NULL DEFAULT 0,
+                        affiliateBalance REAL NOT NULL DEFAULT 0.0,
+                        affiliateBalanceAvailable REAL NOT NULL DEFAULT 0.0,
+                        affiliateBalancePending REAL NOT NULL DEFAULT 0.0,
+                        affiliateTotalEarned REAL NOT NULL DEFAULT 0.0,
+                        affiliateTotalWithdrawn REAL NOT NULL DEFAULT 0.0
+                    )
+                    """.trimIndent()
+                )
+
+                db.execSQL(
+                    """
+                    INSERT OR IGNORE INTO users_new
+                    SELECT id, name, email, phone, tier, balance,
+                           CAST(points AS REAL),
+                           referralCode, referredCount, checkInStreak, lastCheckInDate,
+                           todaySteps, pendingBalance, totalPaidOut, dailyStepGoal,
+                           unclaimedSteps, isLocationTrackingAllowed, latitude, longitude,
+                           locationCity, locationProvince, regionZone, is2FAEnabled,
+                           twoFactorSecret, commissionRateMultiplier, convertedStepsToday,
+                           affiliateBalance, affiliateBalanceAvailable, affiliateBalancePending,
+                           affiliateTotalEarned, affiliateTotalWithdrawn
+                    FROM users
+                    """.trimIndent()
+                )
+
+                db.execSQL("DROP TABLE IF EXISTS users")
+                db.execSQL("ALTER TABLE users_new RENAME TO users")
+            }
+        }
+
         fun getDatabase(context: Context, scope: CoroutineScope): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -57,7 +122,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "royaltree.db"
                 )
-                    // No migrations — fresh DB
+                    .addMigrations(MIGRATION_2_3)  // MIGRATION PROPER
                     .addCallback(DatabaseCallback(scope))
                     .fallbackToDestructiveMigration(dropAllTables = true)
                     .build()
