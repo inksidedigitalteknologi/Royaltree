@@ -260,7 +260,7 @@ fun MissionsScreen(
                             ) {
                                 Column {
                                     Text(
-                                        text = "$totalPoints RTP",
+                                        text = "${GlobalPointsManager.formatRtp(totalPoints)} RTP",
                                         fontSize = 28.sp,
                                         fontWeight = FontWeight.ExtraBold,
                                         color = Color.White

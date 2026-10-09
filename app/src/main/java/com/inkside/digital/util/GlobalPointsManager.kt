@@ -150,4 +150,26 @@ object GlobalPointsManager {
             }
         }
     }
+
+    /**
+     * Format RTP (points) — integer kekal integer, decimal → 4 tempat.
+     *
+     * Contoh:
+     *   200.0      -> "200"
+     *   200.5      -> "200.5000"
+     *   200.123456 -> "200.1235"
+     */
+    fun formatRtp(value: Double): String {
+        return if (value == value.toLong().toDouble()) {
+            value.toLong().toString()
+        } else {
+            String.format(Locale.US, "%.4f", value)
+        }
+    }
+
+    /**
+     * Overload untuk Int — auto convert ke Double.
+     */
+    fun formatRtp(value: Int): String = formatRtp(value.toDouble())
+
 }
