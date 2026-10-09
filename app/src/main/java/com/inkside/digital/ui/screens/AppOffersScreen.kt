@@ -173,6 +173,7 @@ fun AppOffersScreenContent(
         items(filteredAds, key = { it.id }) { ad ->
             AppOfferCard(
                 ad = ad,
+                currentLanguage = currentLanguage,
                 onDownload = { onDownloadApp(ad.id) },
                 onClaimReward = { onClaimAppReward(ad.id) }
             )
@@ -208,6 +209,7 @@ fun AppOffersScreenContent(
 @Composable
 fun AppOfferCard(
     ad: AppDownloadAdEntity,
+    currentLanguage: AppLanguage,
     onDownload: () -> Unit,
     onClaimReward: () -> Unit
 ) {
