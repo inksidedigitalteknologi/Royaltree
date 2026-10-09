@@ -177,28 +177,6 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     // Admin action: Approve & Mark Paid (manual payout validation)
-    suspend fun adminApproveWithdrawal(withdrawalId: String, adminNotes: String = "Disetujui & telah ditransfer via Gateway") = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext
-        val withdrawals = dao.getAllWithdrawals()
-        // Find withdrawal
-        // Since we need to update this specific withdrawal:
-        val wd = WithdrawalEntity(
-            id = withdrawalId,
-            userId = user.id,
-            amount = 0.0,
-            currency = "IDR",
-            channelType = "BANK",
-            providerName = "BCA",
-            accountDestination = "",
-            accountHolderName = "",
-            status = "PAID",
-            fee = 0.0,
-            netAmount = 0.0,
-            txRef = ""
-        )
-        // We'll update the withdrawal through standard DAO or query
-    }
-
     suspend fun updateWithdrawalStatusByAdmin(
         withdrawal: WithdrawalEntity,
         newStatus: String, // PAID or REJECTED
@@ -407,6 +385,32 @@ class AffiliateRepository(private val dao: AppDao) {
         )
 
         Result.success("Berhasil upgrade ke level Premium VIP!")
+
+        // ============ SYNC KE BACKEND (ADMIN) ============
+        try {
+            if (isApprove) {
+                com.inkside.digital.data.network.ApiClient
+                    .adminApproveWithdrawal(withdrawal.id, note)
+                    .onSuccess {
+                        android.util.Log.d("AdminWithdrawal", "✅ Approved synced to backend")
+                    }
+                    .onFailure {
+                        android.util.Log.e("AdminWithdrawal", "❌ Approve sync failed: ${it.message}")
+                    }
+            } else {
+                com.inkside.digital.data.network.ApiClient
+                    .adminRejectWithdrawal(withdrawal.id, note)
+                    .onSuccess {
+                        android.util.Log.d("AdminWithdrawal", "✅ Rejected synced to backend")
+                    }
+                    .onFailure {
+                        android.util.Log.e("AdminWithdrawal", "❌ Reject sync failed: ${it.message}")
+                    }
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("AdminWithdrawal", "❌ Sync exception: ${e.message}")
+        }
+
     }
 
     suspend fun redeemPointsToWallet(

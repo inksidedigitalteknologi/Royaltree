@@ -105,6 +105,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         AppThemePreferences.init(this)   // Load dark mode & bahasa
+        AppThemePreferences.loadAdminToken(this)  // Load admin token (kalau ada)
         AdManager.init(this)              // Init AdMob SDK
         setContent {
             MyApplicationTheme(

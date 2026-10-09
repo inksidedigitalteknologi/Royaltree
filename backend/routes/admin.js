@@ -262,4 +262,202 @@ router.put('/game-config', checkAdmin, async (req, res) => {
     }
 });
 
+// ============================================================
+// USER MANAGEMENT
+// ============================================================
+router.get('/users', checkAdmin, async (req, res) => {
+    try {
+        const snapshot = await db.collection('users').get();
+        const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.json({ success: true, total: users.length, data: users });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+router.get('/users/:uid', checkAdmin, async (req, res) => {
+    try {
+        const doc = await db.collection('users').doc(req.params.uid).get();
+        if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan' });
+        res.json({ success: true, data: { id: doc.id, ...doc.data() } });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+router.put('/users/:uid', checkAdmin, async (req, res) => {
+    try {
+        const docRef = db.collection('users').doc(req.params.uid);
+        const doc = await docRef.get();
+        if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan' });
+        await docRef.update({ ...req.body, updatedAt: new Date().toISOString() });
+        res.json({ success: true, message: 'User diupdate' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+router.post('/users/:uid/ban', checkAdmin, async (req, res) => {
+    try {
+        await db.collection('users').doc(req.params.uid).update({
+            banned: true,
+            bannedAt: new Date().toISOString(),
+            bannedReason: req.body.reason || 'Dibanned admin'
+        });
+        res.json({ success: true, message: 'User dibanned' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+router.post('/users/:uid/unban', checkAdmin, async (req, res) => {
+    try {
+        await db.collection('users').doc(req.params.uid).update({
+            banned: false,
+            unbannedAt: new Date().toISOString()
+        });
+        res.json({ success: true, message: 'User di-unban' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// ============================================================
+// WITHDRAWAL MANAGEMENT
+// ============================================================
+router.get('/withdrawals', checkAdmin, async (req, res) => {
+    try {
+        const statusFilter = req.query.status || 'PENDING';
+        const snapshot = await db.collection('withdrawals')
+            .where('status', '==', statusFilter)
+            .get();
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.json({ success: true, total: result.length, data: result });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+router.get('/withdrawals/all', checkAdmin, async (req, res) => {
+    try {
+        const snapshot = await db.collection('withdrawals')
+            .orderBy('timestamp', 'desc')
+            .limit(100)
+            .get();
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.json({ success: true, total: result.length, data: result });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+router.post('/withdrawals/:id/approve', checkAdmin, async (req, res) => {
+    try {
+        const docRef = db.collection('withdrawals').doc(req.params.id);
+        const doc = await docRef.get();
+        if (!doc.exists) return res.status(404).json({ success: false, message: 'Withdrawal tidak ditemukan' });
+        
+        await docRef.update({
+            status: 'PAID',
+            processedAt: Date.now(),
+            adminNotes: req.body.note || 'Disetujui admin'
+        });
+        res.json({ success: true, message: 'Withdrawal disetujui' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+router.post('/withdrawals/:id/reject', checkAdmin, async (req, res) => {
+    try {
+        const docRef = db.collection('withdrawals').doc(req.params.id);
+        const doc = await docRef.get();
+        if (!doc.exists) return res.status(404).json({ success: false, message: 'Withdrawal tidak ditemukan' });
+        
+        await docRef.update({
+            status: 'REJECTED',
+            processedAt: Date.now(),
+            adminNotes: req.body.note || 'Ditolak admin'
+        });
+        res.json({ success: true, message: 'Withdrawal ditolak' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// ============================================================
+// NOTIFICATION BROADCAST
+// ============================================================
+router.post('/notifications/broadcast', checkAdmin, async (req, res) => {
+    try {
+        const { title, message, type } = req.body;
+        if (!title || !message) return res.status(400).json({ success: false, message: 'Title & message wajib' });
+        
+        const usersSnapshot = await db.collection('users').get();
+        const batch = db.batch();
+        let count = 0;
+        usersSnapshot.forEach(userDoc => {
+            const notifRef = db.collection('notifications').doc();
+            batch.set(notifRef, {
+                userId: userDoc.id,
+                title, message,
+                type: type || 'BROADCAST',
+                timestamp: Date.now(),
+                createdAt: new Date().toISOString(),
+                read: false
+            });
+            count++;
+        });
+        await batch.commit();
+        res.json({ success: true, message: `Broadcast ke ${count} user.` });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// ============================================================
+// SYSTEM CONTROL
+// ============================================================
+router.post('/system/maintenance', checkAdmin, async (req, res) => {
+    try {
+        const { enabled } = req.body;
+        await db.collection('system').doc('config').set({
+            maintenanceMode: !!enabled,
+            updatedAt: new Date().toISOString()
+        }, { merge: true });
+        res.json({ success: true, message: `Maintenance mode ${enabled ? 'ON' : 'OFF'}` });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+router.put('/rates', checkAdmin, async (req, res) => {
+    try {
+        const { usdToIdr, rtpToIdr, rtpToUsd } = req.body;
+        await db.collection('app_config').doc('exchange_rates').set({
+            usdToIdr, rtpToIdr, rtpToUsd,
+            updatedAt: new Date().toISOString()
+        }, { merge: true });
+        res.json({ success: true, message: 'Exchange rate diupdate' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+router.post('/login', async (req, res) => {
+    try {
+        const { password } = req.body;
+        const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'royaltree_admin_2026';
+        if (password !== ADMIN_PASSWORD) {
+            return res.status(401).json({ success: false, message: 'Password salah' });
+        }
+        const token = 'admin_' + Math.random().toString(36).substr(2, 24) + Date.now();
+        if (!global.__adminTokens) global.__adminTokens = new Map();
+        global.__adminTokens.set(token, { expiresAt: Date.now() + (24 * 60 * 60 * 1000) });
+        res.json({ success: true, token, message: 'Login admin berhasil' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 module.exports = router;
