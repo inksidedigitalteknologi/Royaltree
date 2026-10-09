@@ -297,7 +297,7 @@ fun ProfileScreen(
                 slotsUsed = minerSlotsUsed,
                 slotsMax = minerSlotsMax,
                 powerGhs = minerPowerGhs,
-                tokens = minerTokens,
+                userPoints = user?.points ?: 0.0,
                 roomState = roomState  // M46: Pass roomState untuk sinkron
             )
         }
@@ -590,7 +590,7 @@ private fun MiningStatsCard(
     slotsUsed: Int,
     slotsMax: Int,
     powerGhs: Double,
-    tokens: Int,
+    userPoints: Double = 0.0,
     roomState: GameRoomStateEntity? = null
 ) {
     // M55 FIX: Card simple + gradient border (buang PNG frame — flexible height)
@@ -627,7 +627,7 @@ private fun MiningStatsCard(
             ) {
                 MiniStatBox(LanguageManager.translate("profile_slot", currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), "${powerGhs.toInt()} GH/s", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox("RTP", "$tokens", GoldVip, Modifier.weight(1f))
+                MiniStatBox("RTP", "${String.format(Locale.US, "%.4f", userPoints)}", GoldVip, Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(6.dp))
 
