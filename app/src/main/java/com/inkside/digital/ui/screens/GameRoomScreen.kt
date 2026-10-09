@@ -110,6 +110,8 @@ import kotlinx.coroutines.delay
 import java.util.Locale
 import kotlin.random.Random
 import com.inkside.digital.util.GlobalPointsManager
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 // ==== Retro Pixel Palette ====
@@ -434,7 +436,11 @@ fun GameRoomScreenContent(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(item.iconEmoji, fontSize = 28.sp)
+                        Image(
+                            painter = painterResource(R.drawable.micro_chip),
+                            contentDescription = item.name,
+                            modifier = Modifier.size(32.dp)
+                        )
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Text(
@@ -569,7 +575,11 @@ fun GameRoomScreenContent(
                                     modifier = Modifier.padding(10.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(miner.iconEmoji, fontSize = 22.sp)
+                                    Image(
+                                        painter = painterResource(R.drawable.micro_chip),
+                                        contentDescription = miner.name,
+                                        modifier = Modifier.size(26.dp)
+                                    )
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(miner.name, fontWeight = FontWeight.Bold, fontSize = 12.sp)
@@ -1285,7 +1295,11 @@ private fun RackSlotItemCard(
                         .border(1.dp, RetroBorder.copy(alpha = 0.5f), RoundedCornerShape(10.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(miner!!.iconEmoji, fontSize = 24.sp)
+                    Image(
+                        painter = painterResource(R.drawable.micro_chip),
+                        contentDescription = miner!!.name,
+                        modifier = Modifier.size(28.dp)
+                    )
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
@@ -1597,7 +1611,11 @@ private fun ShopMinerCard(
                         .border(1.dp, rarityColor.copy(alpha = 0.5f), RoundedCornerShape(10.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(item.iconEmoji, fontSize = 26.sp)
+                    Image(
+                        painter = painterResource(R.drawable.micro_chip),
+                        contentDescription = item.name,
+                        modifier = Modifier.size(30.dp)
+                    )
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))
