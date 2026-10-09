@@ -22,6 +22,8 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import okhttp3.Headers
+import okhttp3.Request
 import okhttp3.RequestBody
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
@@ -578,7 +580,7 @@ object ApiClient {
     suspend fun adminGetUsers(): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val req = Request.Builder()
-                .url("$BASE_URL/admin/users")
+                .url("${currentBaseUrl}admin/users")
                 .headers(adminHeaders())
                 .get()
                 .build()
@@ -590,7 +592,7 @@ object ApiClient {
     suspend fun adminGetWithdrawals(status: String = "PENDING"): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val req = Request.Builder()
-                .url("$BASE_URL/admin/withdrawals?status=$status")
+                .url("${currentBaseUrl}admin/withdrawals?status=$status")
                 .headers(adminHeaders())
                 .get()
                 .build()
@@ -604,7 +606,7 @@ object ApiClient {
             val body = JSONObject().put("note", note).toString()
                 .toRequestBody("application/json".toMediaType())
             val req = Request.Builder()
-                .url("$BASE_URL/admin/withdrawals/$id/approve")
+                .url("${currentBaseUrl}admin/withdrawals/$id/approve")
                 .headers(adminHeaders())
                 .post(body)
                 .build()
@@ -618,7 +620,7 @@ object ApiClient {
             val body = JSONObject().put("note", note).toString()
                 .toRequestBody("application/json".toMediaType())
             val req = Request.Builder()
-                .url("$BASE_URL/admin/withdrawals/$id/reject")
+                .url("${currentBaseUrl}admin/withdrawals/$id/reject")
                 .headers(adminHeaders())
                 .post(body)
                 .build()
@@ -631,7 +633,7 @@ object ApiClient {
         try {
             val reqBody = body.toString().toRequestBody("application/json".toMediaType())
             val req = Request.Builder()
-                .url("$BASE_URL/admin/users/$uid")
+                .url("${currentBaseUrl}admin/users/$uid")
                 .headers(adminHeaders())
                 .put(reqBody)
                 .build()
@@ -648,7 +650,7 @@ object ApiClient {
                 .toString()
                 .toRequestBody("application/json".toMediaType())
             val req = Request.Builder()
-                .url("$BASE_URL/admin/notifications/broadcast")
+                .url("${currentBaseUrl}admin/notifications/broadcast")
                 .headers(adminHeaders())
                 .post(body)
                 .build()
@@ -662,7 +664,7 @@ object ApiClient {
             val body = JSONObject().put("enabled", enabled).toString()
                 .toRequestBody("application/json".toMediaType())
             val req = Request.Builder()
-                .url("$BASE_URL/admin/system/maintenance")
+                .url("${currentBaseUrl}admin/system/maintenance")
                 .headers(adminHeaders())
                 .post(body)
                 .build()
@@ -676,7 +678,7 @@ object ApiClient {
             val body = JSONObject().put("password", password).toString()
                 .toRequestBody("application/json".toMediaType())
             val req = Request.Builder()
-                .url("$BASE_URL/admin/login")
+                .url("${currentBaseUrl}admin/login")
                 .post(body)
                 .build()
             val resp = OkHttpClient().newCall(req).execute()
