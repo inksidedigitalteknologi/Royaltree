@@ -285,6 +285,7 @@ fun AdminScreen(
                     items(pendingWithdrawals) { withdrawal ->
                         AdminWithdrawalCard(
                             withdrawal = withdrawal,
+                            currentLanguage = currentLanguage,
                             onReview = { onReviewWithdrawal(withdrawal) }
                         )
                     }
@@ -951,6 +952,7 @@ fun AdminStatPill(title: String, value: String, modifier: Modifier = Modifier) {
 @Composable
 fun AdminWithdrawalCard(
     withdrawal: WithdrawalEntity,
+    currentLanguage: AppLanguage,
     onReview: () -> Unit
 ) {
     val sdf = SimpleDateFormat("dd MMM, HH:mm", Locale.getDefault())

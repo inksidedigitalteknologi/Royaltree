@@ -98,7 +98,7 @@ fun AppDrawer(
                 .verticalScroll(rememberScrollState())
         ) {
             // ============ HEADER ============
-            DrawerHeader(user = user)
+            DrawerHeader(user = user, currentLanguage = currentLanguage)
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -249,7 +249,7 @@ fun AppDrawer(
 
 // ============ HEADER: FOTO, NAMA, EMAIL, TIER, SALDO, POIN ============
 @Composable
-private fun DrawerHeader(user: UserEntity?) {
+private fun DrawerHeader(user: UserEntity?, currentLanguage: AppLanguage) {
     Box(
         modifier = Modifier
             .fillMaxWidth()

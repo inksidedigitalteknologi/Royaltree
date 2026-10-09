@@ -201,6 +201,7 @@ fun CampaignsScreen(
                     items(links) { link ->
                         ActiveLinkCard(
                             link = link,
+                            currentLanguage = currentLanguage,
                             onCopy = {
                                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                 val clip = ClipData.newPlainText("Link", link.shortUrl)
@@ -338,6 +339,7 @@ fun CampaignCard(
 @Composable
 fun ActiveLinkCard(
     link: AffiliateLinkEntity,
+    currentLanguage: AppLanguage,
     onCopy: () -> Unit,
     onShare: () -> Unit,
     onSimulate: () -> Unit

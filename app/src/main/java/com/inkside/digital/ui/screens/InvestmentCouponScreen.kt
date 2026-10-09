@@ -176,6 +176,7 @@ fun InvestmentCouponScreen(
                 items(coupons) { coupon ->
                     CouponCatalogCard(
                         coupon = coupon,
+                        currentLanguage = currentLanguage,
                         onBuy = { onBuyCoupon(coupon) }
                     )
                 }
@@ -206,6 +207,7 @@ fun InvestmentCouponScreen(
                     items(myPortfolio) { coupon ->
                         MyCouponPortfolioCard(
                             coupon = coupon,
+                            currentLanguage = currentLanguage,
                             onListToMarket = { onListCoupon(coupon) },
                             onClaim = { onClaimYield(coupon) }
                         )
@@ -254,6 +256,7 @@ fun InvestmentCouponScreen(
                     items(secondaryMarketList) { coupon ->
                         SecondaryMarketCard(
                             coupon = coupon,
+                            currentLanguage = currentLanguage,
                             onBuy = { onBuyCoupon(coupon) }
                         )
                     }
@@ -268,6 +271,7 @@ fun InvestmentCouponScreen(
 @Composable
 fun CouponCatalogCard(
     coupon: InvestmentCouponEntity,
+    currentLanguage: AppLanguage,
     onBuy: () -> Unit
 ) {
     Card(
@@ -360,6 +364,7 @@ fun CouponCatalogCard(
 @Composable
 fun MyCouponPortfolioCard(
     coupon: InvestmentCouponEntity,
+    currentLanguage: AppLanguage,
     onListToMarket: () -> Unit,
     onClaim: () -> Unit
 ) {
@@ -441,6 +446,7 @@ fun MyCouponPortfolioCard(
 @Composable
 fun SecondaryMarketCard(
     coupon: InvestmentCouponEntity,
+    currentLanguage: AppLanguage,
     onBuy: () -> Unit
 ) {
     Card(
