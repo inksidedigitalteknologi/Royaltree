@@ -386,31 +386,6 @@ class AffiliateRepository(private val dao: AppDao) {
 
         Result.success("Berhasil upgrade ke level Premium VIP!")
 
-        // ============ SYNC KE BACKEND (ADMIN) ============
-        try {
-            if (isApprove) {
-                com.inkside.digital.data.network.ApiClient
-                    .adminApproveWithdrawal(withdrawal.id, note)
-                    .onSuccess {
-                        android.util.Log.d("AdminWithdrawal", "✅ Approved synced to backend")
-                    }
-                    .onFailure {
-                        android.util.Log.e("AdminWithdrawal", "❌ Approve sync failed: ${it.message}")
-                    }
-            } else {
-                com.inkside.digital.data.network.ApiClient
-                    .adminRejectWithdrawal(withdrawal.id, note)
-                    .onSuccess {
-                        android.util.Log.d("AdminWithdrawal", "✅ Rejected synced to backend")
-                    }
-                    .onFailure {
-                        android.util.Log.e("AdminWithdrawal", "❌ Reject sync failed: ${it.message}")
-                    }
-            }
-        } catch (e: Exception) {
-            android.util.Log.e("AdminWithdrawal", "❌ Sync exception: ${e.message}")
-        }
-
     }
 
     suspend fun redeemPointsToWallet(

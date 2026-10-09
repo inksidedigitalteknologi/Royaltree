@@ -41,7 +41,6 @@ object AppThemePreferences {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         adminToken = prefs.getString(KEY_ADMIN_TOKEN, null)
     }
-        private set
 
     var isOnboarded by mutableStateOf(false)
         private set
