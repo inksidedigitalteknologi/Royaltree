@@ -657,13 +657,12 @@ fun ProfileAvatarWithFrame(
     tier: String,
     size: Dp = 120.dp
 ) {
-    // Frame resource per tier (fallback null kalau tiada)
-    val frameRes: Int = when (tier) {
+    // Frame resource per tier
+    // Nota: STARTER & PREMIUM guna frame_leaf_free (frame asal JPEG opaque)
+    val frameRes: Int = when (tier.uppercase()) {
         "ROYAL" -> R.drawable.frame_dragon_royal
         "VIP" -> R.drawable.frame_lion_vip
-        "PREMIUM" -> R.drawable.frame_star_premium
-        "STARTER" -> R.drawable.frame_bronze_starter
-        else -> R.drawable.frame_leaf_free  // FREE default
+        else -> R.drawable.frame_leaf_free  // STARTER, PREMIUM, FREE
     }
     
     Box(
@@ -673,7 +672,7 @@ fun ProfileAvatarWithFrame(
         // Avatar bulat di tengah (75% dari frame — lebih proporsional)
         Box(
             modifier = Modifier
-                .size(size * 0.55f)
+                .size(size * 0.75f)
                 .clip(CircleShape)
                 .background(
                     when (tier) {
