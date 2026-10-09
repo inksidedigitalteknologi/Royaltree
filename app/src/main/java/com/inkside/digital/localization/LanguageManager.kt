@@ -2307,12 +2307,12 @@ object LanguageManager {
             AppLanguage.JAPANESE to "💰 手数料"
         ),
         "profile_edit" to mapOf(
-            AppLanguage.INDONESIAN to "✏️ Edit Profil",
-            AppLanguage.ENGLISH to "✏️ Edit Profile",
-            AppLanguage.SPANISH to "✏️ Editar Perfil",
-            AppLanguage.CHINESE to "✏️ 编辑个人资料",
-            AppLanguage.ARABIC to "✏️ تعديل الملف",
-            AppLanguage.JAPANESE to "✏️ プロフィール編集"
+            AppLanguage.INDONESIAN to "Edit Profil",
+            AppLanguage.ENGLISH to "Edit Profile",
+            AppLanguage.SPANISH to "Editar Perfil",
+            AppLanguage.CHINESE to "编辑个人资料",
+            AppLanguage.ARABIC to "تعديل الملف",
+            AppLanguage.JAPANESE to "プロフィール編集"
         ),
         "profile_email_label" to mapOf(
             AppLanguage.INDONESIAN to "Email",
