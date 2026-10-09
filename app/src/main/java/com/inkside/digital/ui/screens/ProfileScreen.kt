@@ -593,14 +593,26 @@ private fun MiningStatsCard(
     tokens: Int,
     roomState: GameRoomStateEntity? = null
 ) {
-    // M55: Aspect ratio lebih tinggi + layout 2 kolom × 3 baris
-    FramedCard(
-        frameRes = R.drawable.card_frame_stats,  // Ganti dari mining (tech sci-fi → stats simple)
-        aspectRatioOverride = 1.5f,  // ← Lebar:tinggi 3:2 (rendah sikit dari 2.0f)
-        paddingPercentHorizontal = 0.10f,
-        paddingPercentVertical = 0.08f,
+    // M55 FIX: Card simple + gradient border (buang PNG frame — flexible height)
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        border = BorderStroke(
+            width = 1.5.dp,
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    EmeraldLight.copy(alpha = 0.6f),
+                    GoldVip.copy(alpha = 0.3f),
+                    EmeraldLight.copy(alpha = 0.6f)
+                )
+            )
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
             Text(
                 LanguageManager.translate("profile_mining_status", currentLanguage, "⛏️ Status Mining"),
                 fontSize = 12.sp,
