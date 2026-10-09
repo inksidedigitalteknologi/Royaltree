@@ -764,12 +764,48 @@ function formatDate(ts) {
   return d.toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
+
+// ═══ Currency & RTP Formatter ═══
+function formatRtp(value) {
+  const num = Number(value) || 0;
+  return Number.isInteger(num) ? num.toString() : num.toFixed(4);
+}
+
+function formatBalance(valueIdr, language) {
+  const num = Number(valueIdr) || 0;
+  if (language === 'en') {
+    const usd = num / 16000;
+    return '$' + usd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  return 'Rp ' + num.toLocaleString('id-ID');
+}
+
+function getTier(points, currentTier) {
+  if (currentTier) return currentTier;
+  const p = Number(points) || 0;
+  if (p >= 100000) return 'ROYAL';
+  if (p >= 10000) return 'VIP';
+  if (p >= 1000) return 'PREMIUM';
+  return 'FREE';
+}
+
+function getTierBadge(tier) {
+  const map = {
+    'ROYAL': 'badge-warning',    // gold/yellow
+    'VIP': 'badge-info',         // blue
+    'PREMIUM': 'badge-danger',   // red
+    'FREE': 'badge-success'      // green
+  };
+  return map[tier] || 'badge-success';
+}
+
 function statusBadge(status) {
   const map = {
-    'PAID': 'badge-green', 'APPROVED': 'badge-blue', 'PENDING': 'badge-yellow',
-    'REJECTED': 'badge-red', 'ACTIVE': 'badge-green', 'INACTIVE': 'badge-gray'
+    'PAID': 'badge-success', 'APPROVED': 'badge-info', 'PENDING': 'badge-warning',
+    'REJECTED': 'badge-danger', 'ACTIVE': 'badge-success', 'INACTIVE': 'badge-info',
+    'COMPLETED': 'badge-success', 'FAILED': 'badge-danger', 'CANCELLED': 'badge-danger'
   };
-  const cls = map[status] || 'badge-gray';
+  const cls = map[status] || 'badge-info';
   return `<span class="badge ${cls}">${status || '-'}</span>`;
 }
 
@@ -917,14 +953,16 @@ async function loadUsers() {
       </tr></thead>
       <tbody>`;
   usersData.forEach(u => {
-    const badge = u.tier === 'VIP' ? 'badge-blue' : 'badge-green';
+    const tier = getTier(u.points, u.tier);
+    const badge = getTierBadge(tier);
+    const adminLang = window.adminLanguage || 'id';
     html += `<tr>
       <td><code>${u.id}</code></td>
       <td>${u.name || '-'}</td>
       <td>${u.email || '-'}</td>
-      <td><span class="badge ${badge}">${u.tier || 'FREE'}</span></td>
-      <td>${u.points || 0}</td>
-      <td>${formatRupiah(u.balance)}</td>
+      <td><span class="badge ${badge}">${tier}</span></td>
+      <td>${formatRtp(u.points)}</td>
+      <td>${formatBalance(u.balance, adminLang)}</td>
       <td>${formatDate(u.updatedAt)}</td>
       <td>
         <button class="btn btn-sm btn-primary" onclick="editUser('${u.id}')">Edit</button>
