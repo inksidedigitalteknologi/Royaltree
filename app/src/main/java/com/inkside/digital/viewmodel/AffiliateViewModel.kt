@@ -931,36 +931,59 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun buyGameMinerItem(itemId: String) {
         viewModelScope.launch {
-            // 1. Beli lokal (Room DB)
-            val result = repository.buyGameMinerItem(itemId)
-            result.onSuccess { msg ->
-                showSnackbar(msg)
+            try {
+                android.util.Log.d("BuyMiner", "🛒 buyGameMinerItem START: $itemId")
+                
+                // 1. Beli lokal (Room DB)
+                val result = repository.buyGameMinerItem(itemId)
+                result.onSuccess { msg ->
+                    android.util.Log.d("BuyMiner", "✅ Lokal OK: $msg")
+                    showSnackbar(msg)
 
-                // 2. Sync ke backend (CRITICAL FIX)
-                val item = repository.getGameMinerItemByIdSync(itemId)
-                if (item != null) {
-                    val body = org.json.JSONObject().apply {
-                        put("catalogId", item.catalogId)
-                        put("instanceId", item.id)
-                        put("tier", item.tier)
-                        put("name", item.name)
-                        put("tokenCost", item.tokenCost)
-                        put("powerGhs", item.powerGhs)
-                        put("pointsPerMinute", item.pointsPerMinute)
-                        put("iconEmoji", item.iconEmoji)
+                    // 2. Sync ke backend
+                    try {
+                        val item = repository.getGameMinerItemByIdSync(itemId)
+                        if (item != null) {
+                            val body = org.json.JSONObject().apply {
+                                put("catalogId", item.catalogId)
+                                put("instanceId", item.id)
+                                put("tier", item.tier)
+                                put("name", item.name)
+                                put("tokenCost", item.tokenCost)
+                                put("powerGhs", item.powerGhs)
+                                put("pointsPerMinute", item.pointsPerMinute)
+                                put("iconEmoji", item.iconEmoji)
+                            }
+                            android.util.Log.d("BuyMiner", "📡 Sync backend: catalogId=${item.catalogId}")
+                            ApiClient.buyMiner(body)
+                                .onSuccess { resp ->
+                                    val success = resp.optBoolean("success", false)
+                                    android.util.Log.d("BuyMiner", "✅ Sync response: $resp")
+                                    if (success) {
+                                        loadGameState()
+                                    } else {
+                                        showSnackbar(resp.optString("message", "Backend reject"))
+                                    }
+                                }
+                                .onFailure { err ->
+                                    android.util.Log.e("BuyMiner", "❌ Sync failed: ${err.message}", err)
+                                    showSnackbar("⚠️ Gagal sync ke server: ${err.message}")
+                                }
+                        } else {
+                            android.util.Log.e("BuyMiner", "❌ Item null selepas beli!")
+                            showSnackbar("⚠️ Item tak jumpa")
+                        }
+                    } catch (e: Exception) {
+                        android.util.Log.e("BuyMiner", "❌ Sync exception: ${e.message}", e)
+                        showSnackbar("⚠️ Sync error: ${e.message}")
                     }
-                    ApiClient.buyMiner(body)
-                        .onSuccess {
-                            android.util.Log.d("BuyMiner", "✅ Miner synced to backend")
-                            loadGameState()
-                        }
-                        .onFailure { err ->
-                            android.util.Log.e("BuyMiner", "❌ Sync failed: ${err.message}")
-                            showSnackbar("⚠️ Gagal sync ke server")
-                        }
+                }.onFailure { error ->
+                    android.util.Log.e("BuyMiner", "❌ Lokal fail: ${error.message}", error)
+                    showSnackbar(error.message ?: "Gagal membeli item penambang")
                 }
-            }.onFailure { error ->
-                showSnackbar(error.message ?: "Gagal membeli item penambang")
+            } catch (e: Exception) {
+                android.util.Log.e("BuyMiner", "❌ Fatal error: ${e.message}", e)
+                showSnackbar("Error: ${e.message}")
             }
         }
     }
