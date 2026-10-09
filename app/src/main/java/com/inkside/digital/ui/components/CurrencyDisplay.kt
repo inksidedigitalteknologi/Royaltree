@@ -30,12 +30,14 @@ import com.inkside.digital.R
 @Composable
 fun RtpAmount(
     amount: String,
+    modifier: Modifier = Modifier,
     fontSize: TextUnit = 14.sp,
     iconSize: Dp = 16.dp,
     color: Color = Color.Unspecified,
     fontWeight: FontWeight = FontWeight.Bold
 ) {
     Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {

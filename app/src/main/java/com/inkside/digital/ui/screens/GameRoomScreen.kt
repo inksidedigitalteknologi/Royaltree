@@ -112,6 +112,7 @@ import kotlin.random.Random
 import com.inkside.digital.util.GlobalPointsManager
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
+import com.inkside.digital.ui.components.RtpAmount
 
 @OptIn(ExperimentalMaterial3Api::class)
 // ==== Retro Pixel Palette ====
@@ -1242,9 +1243,10 @@ private fun LockedSlotCard(
                 color = RetroGold,
                 shape = RoundedCornerShape(6.dp)
             ) {
-                Text(
-                    text = "${GlobalPointsManager.formatRtp(price)} RTP",
+                RtpAmount(
+                    amount = "${GlobalPointsManager.formatRtp(price)} RTP",
                     fontSize = 10.sp,
+                    iconSize = 12.dp,
                     fontWeight = FontWeight.Black,
                     color = Color.Black,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
