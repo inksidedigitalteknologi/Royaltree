@@ -160,7 +160,12 @@ fun GameRoomScreen(
         roomState = roomState,
         minerActiveUntil = minerActiveUntil,
         minerActiveRemainingMs = minerActiveRemainingMs,
-        onActivateMiner = { viewModel.setPendingMinerActivate(true); viewModel.showAdRewardModal.value = true },
+        onActivateMiner = { 
+            android.util.Log.d("MinerFlow", "🎯 [1] Butang Aktifkan Miner ditekan")
+            viewModel.setPendingMinerActivate(true)
+            viewModel.showAdRewardModal.value = true
+            android.util.Log.d("MinerFlow", "🎯 [2] showAdRewardModal = true di-set")
+        },
         onClaimMining = { viewModel.showAdRewardModal.value = true; viewModel.setPendingMiningClaim(true) },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
