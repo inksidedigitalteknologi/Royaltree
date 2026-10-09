@@ -655,10 +655,10 @@ router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => 
         // ============ BUG FIX: Guna tokenCost (Miner Token) ============
         // (Buang duplicate pricePoints check — catalog guna tokenCost)
         const tokenCost = catalogItem.tokenCost || 0;
-        if ((userData.minerTokens || 0) < tokenCost) {
+        if ((userData.points || 0) < tokenCost) {
             return res.status(400).json({
                 success: false,
-                message: `Miner Token tidak cukup. Butuh ${tokenCost}, punya ${userData.minerTokens || 0}.`
+                message: `RTP tidak cukup. Butuh ${tokenCost}, punya ${userData.points || 0}.`
             });
         }
 
@@ -667,7 +667,7 @@ router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => 
 
         // Potong Miner Token
         await userRef.update({
-            minerTokens: admin.firestore.FieldValue.increment(-tokenCost),
+            points: admin.firestore.FieldValue.increment(-tokenCost),
             [`minersOwned.${instanceId}`]: {
                 catalogId: lookupId,
                 instanceId: instanceId,
