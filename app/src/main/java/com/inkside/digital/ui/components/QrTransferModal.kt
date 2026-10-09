@@ -882,9 +882,10 @@ fun QrTransferModal(
                                     shape = RoundedCornerShape(16.dp),
                                     modifier = Modifier.clickable { requestedAmountText = preset.toString() }
                                 ) {
-                                    Text(
-                                        text = "+${GlobalPointsManager.formatRtp(preset)} RTP",
+                                    RtpAmount(
+                                        amount = "+${GlobalPointsManager.formatRtp(preset)} RTP",
                                         fontSize = 10.sp,
+                                        iconSize = 12.dp,
                                         fontWeight = FontWeight.Bold,
                                         color = if (requestedAmountText == preset.toString()) Color.White else MaterialTheme.colorScheme.onSurface,
                                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
@@ -1433,7 +1434,7 @@ fun SecurityPinModal(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text("Nominal Transfer:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Text("${GlobalPointsManager.formatRtp(amount)} RTP", fontSize = 12.sp, fontWeight = FontWeight.ExtraBold, color = EmeraldLight)
+                            RtpAmount(amount = "${GlobalPointsManager.formatRtp(amount)} RTP", fontSize = 12.sp, iconSize = 14.dp, fontWeight = FontWeight.ExtraBold, color = EmeraldLight)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Row(
@@ -1441,7 +1442,7 @@ fun SecurityPinModal(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text("Biaya Admin (Penerima):", fontSize = 10.sp, color = Color(0xFFEF4444))
-                            Text("-${GlobalPointsManager.formatRtp(adminFee)} RTP", fontSize = 10.sp, color = Color(0xFFEF4444), fontWeight = FontWeight.Bold)
+                            RtpAmount(amount = "-${GlobalPointsManager.formatRtp(adminFee)} RTP", fontSize = 10.sp, iconSize = 12.dp, color = Color(0xFFEF4444), fontWeight = FontWeight.Bold)
                         }
                     }
                 }
