@@ -34,6 +34,7 @@ import com.inkside.digital.ui.components.BannerAdView
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
+import com.inkside.digital.util.GlobalPointsManager
 
 @Composable
 fun SweepstakesScreen(
@@ -136,7 +137,7 @@ fun SweepstakesScreen(
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            "$totalPool RTP",
+                            "${GlobalPointsManager.formatRtp(totalPool)} RTP",
                             fontSize = 36.sp,
                             fontWeight = FontWeight.Black,
                             color = Color.White
@@ -193,7 +194,7 @@ fun SweepstakesScreen(
                     Icon(Icons.Default.Casino, null)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        "BELI KUPON — $ticketPrice RTP",
+                        "BELI KUPON — ${GlobalPointsManager.formatRtp(ticketPrice)} RTP",
                         fontWeight = FontWeight.Black,
                         fontSize = 14.sp
                     )
@@ -438,7 +439,7 @@ fun BuyTicketModal(
 
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    "Total: $totalPrice RTP",
+                    "Total: ${GlobalPointsManager.formatRtp(totalPrice)} RTP",
                     fontWeight = FontWeight.Black,
                     fontSize = 14.sp
                 )

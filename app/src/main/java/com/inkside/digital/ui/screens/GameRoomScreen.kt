@@ -109,6 +109,7 @@ import com.inkside.digital.viewmodel.AffiliateViewModel
 import kotlinx.coroutines.delay
 import java.util.Locale
 import kotlin.random.Random
+import com.inkside.digital.util.GlobalPointsManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 // ==== Retro Pixel Palette ====
@@ -1232,7 +1233,7 @@ private fun LockedSlotCard(
                 shape = RoundedCornerShape(6.dp)
             ) {
                 Text(
-                    text = "$price RTP",
+                    text = "${GlobalPointsManager.formatRtp(price)} RTP",
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Black,
                     color = Color.Black,

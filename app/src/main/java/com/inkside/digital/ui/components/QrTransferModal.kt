@@ -559,7 +559,7 @@ fun QrTransferModal(
                                         }
                                 ) {
                                     Text(
-                                        text = "$preset RTP",
+                                        text = "${GlobalPointsManager.formatRtp(preset)} RTP",
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
                                         textAlign = TextAlign.Center,
@@ -631,7 +631,7 @@ fun QrTransferModal(
                                         shape = RoundedCornerShape(6.dp)
                                     ) {
                                         Text(
-                                            "Min. $minTransfer RTP",
+                                            "Min. ${GlobalPointsManager.formatRtp(minTransfer)} RTP",
                                             fontSize = 10.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = ElectricBlue,
@@ -649,7 +649,7 @@ fun QrTransferModal(
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Text("Jumlah Ditransfer:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                    Text("$enteredAmount RTP", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                    Text("${GlobalPointsManager.formatRtp(enteredAmount)} RTP", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                                 }
 
                                 Spacer(modifier = Modifier.height(4.dp))
@@ -659,12 +659,12 @@ fun QrTransferModal(
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Text("Potongan Biaya Admin (Fixed):", fontSize = 11.sp, color = Color(0xFFEF4444))
-                                    Text("-$adminFee RTP", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))
+                                    Text("-${GlobalPointsManager.formatRtp(adminFee)} RTP", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))
                                 }
 
                                 Spacer(modifier = Modifier.height(3.dp))
                                 Text(
-                                    text = "*Biaya admin $adminFee RTP dipotong langsung dari saldo yang diterima penerima.",
+                                    text = "*Biaya admin ${GlobalPointsManager.formatRtp(adminFee)} RTP dipotong langsung dari saldo yang diterima penerima.",
                                     fontSize = 9.sp,
                                     color = Color(0xFFEF4444).copy(alpha = 0.85f)
                                 )
@@ -683,7 +683,7 @@ fun QrTransferModal(
                                         Text("Setara: $${String.format(Locale.US, "%.2f", usdValue)} USD ≈ Rp ${String.format("%,.0f", idrValue)}", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                     Text(
-                                        "$netReceived RTP",
+                                        "${GlobalPointsManager.formatRtp(netReceived)} RTP",
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.ExtraBold,
                                         color = EmeraldLight
@@ -736,7 +736,7 @@ fun QrTransferModal(
                                         errorMessage = "Pencegahan Fraud: Tidak dapat mentransfer ke akun Anda sendiri"
                                     }
                                     amount < minTransfer -> {
-                                        errorMessage = "Jumlah transfer kurang dari batas minimum ($minTransfer RTP)"
+                                        errorMessage = "Jumlah transfer kurang dari batas minimum (${GlobalPointsManager.formatRtp(minTransfer)} RTP)"
                                     }
                                     amount > GlobalPointsManager.MAX_TRANSFER_PER_TX_RTP -> {
                                         errorMessage = "Melebihi batas transaksi tunggal (Maksimal ${GlobalPointsManager.MAX_TRANSFER_PER_TX_RTP} RTP)"
@@ -764,7 +764,7 @@ fun QrTransferModal(
                             Icon(imageVector = Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Verifikasi & Kirim ($enteredAmount RTP)",
+                                text = "Verifikasi & Kirim (${GlobalPointsManager.formatRtp(enteredAmount)} RTP)",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             )
@@ -881,7 +881,7 @@ fun QrTransferModal(
                                     modifier = Modifier.clickable { requestedAmountText = preset.toString() }
                                 ) {
                                     Text(
-                                        text = "+$preset RTP",
+                                        text = "+${GlobalPointsManager.formatRtp(preset)} RTP",
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = if (requestedAmountText == preset.toString()) Color.White else MaterialTheme.colorScheme.onSurface,
@@ -934,7 +934,7 @@ fun QrTransferModal(
                                 Text("💡", fontSize = 16.sp)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "Minimum transfer adalah $minTransfer RTP. Potongan biaya admin tetap $adminFee RTP akan dipotong dari saldo yang Anda terima.",
+                                    text = "Minimum transfer adalah ${GlobalPointsManager.formatRtp(minTransfer)} RTP. Potongan biaya admin tetap ${GlobalPointsManager.formatRtp(adminFee)} RTP akan dipotong dari saldo yang Anda terima.",
                                     fontSize = 10.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -966,7 +966,7 @@ fun QrTransferModal(
                                     val shareText = buildString {
                                         append("🌲 Tagihan Poin Royaltree dari $myName\n")
                                         if (customAmount != null && customAmount > 0) {
-                                            append("💰 Nominal: $customAmount RTP\n")
+                                            append("💰 Nominal: ${GlobalPointsManager.formatRtp(customAmount)} RTP\n")
                                         }
                                         if (requestNoteText.isNotBlank()) {
                                             append("📝 Keperluan: $requestNoteText\n")
@@ -1431,7 +1431,7 @@ fun SecurityPinModal(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text("Nominal Transfer:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Text("$amount RTP", fontSize = 12.sp, fontWeight = FontWeight.ExtraBold, color = EmeraldLight)
+                            Text("${GlobalPointsManager.formatRtp(amount)} RTP", fontSize = 12.sp, fontWeight = FontWeight.ExtraBold, color = EmeraldLight)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Row(
@@ -1439,7 +1439,7 @@ fun SecurityPinModal(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text("Biaya Admin (Penerima):", fontSize = 10.sp, color = Color(0xFFEF4444))
-                            Text("-$adminFee RTP", fontSize = 10.sp, color = Color(0xFFEF4444), fontWeight = FontWeight.Bold)
+                            Text("-${GlobalPointsManager.formatRtp(adminFee)} RTP", fontSize = 10.sp, color = Color(0xFFEF4444), fontWeight = FontWeight.Bold)
                         }
                     }
                 }

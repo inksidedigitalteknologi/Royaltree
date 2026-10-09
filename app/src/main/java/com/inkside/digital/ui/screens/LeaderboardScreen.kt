@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.ui.theme.GoldVip
+import com.inkside.digital.util.GlobalPointsManager
 
 data class LeaderboardEntry(
     val rank: Int,
@@ -252,7 +253,7 @@ private fun PodiumCard(entry: LeaderboardEntry, rank: Int, modifier: Modifier = 
                     maxLines = 1
                 )
                 Text(
-                    text = "${entry.points} RTP",
+                    text = "${GlobalPointsManager.formatRtp(entry.points)} RTP",
                     fontSize = 10.sp,
                     color = Color.Black.copy(alpha = 0.7f)
                 )
@@ -302,7 +303,7 @@ private fun LeaderboardRow(entry: LeaderboardEntry, isCurrentUser: Boolean = fal
                 modifier = Modifier.weight(1f)
             )
             Text(
-                text = "${entry.points} RTP",
+                text = "${GlobalPointsManager.formatRtp(entry.points)} RTP",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 color = GoldVip

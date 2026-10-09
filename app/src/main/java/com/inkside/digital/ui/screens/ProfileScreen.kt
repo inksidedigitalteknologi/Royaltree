@@ -196,7 +196,7 @@ fun ProfileScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         Text("RTP", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
-                            "${user?.points ?: 0}",
+                            GlobalPointsManager.formatRtp(user?.points ?: 0),
                             fontSize = 14.sp, fontWeight = FontWeight.Black, color = GoldVip
                         )
                     }
@@ -627,7 +627,7 @@ private fun MiningStatsCard(
             ) {
                 MiniStatBox(LanguageManager.translate("profile_slot", currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), "${powerGhs.toInt()} GH/s", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox("RTP", "${String.format(Locale.US, "%.4f", userPoints)}", GoldVip, Modifier.weight(1f))
+                MiniStatBox("RTP", "${GlobalPointsManager.formatRtp(userPoints)}", GoldVip, Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(6.dp))
 
@@ -636,7 +636,7 @@ private fun MiningStatsCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${String.format(Locale.US, "%.4f", (roomState?.ratePerMin ?: (powerGhs * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${GlobalPointsManager.formatRtp((roomState?.ratePerMin ?: (powerGhs * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+${String.format(Locale.US, "%.0f", roomState?.tempPowerBonusGhs ?: 0.0)} GH/s", GoldVip, Modifier.weight(1f))
             }

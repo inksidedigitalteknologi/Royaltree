@@ -1229,7 +1229,7 @@ fun RedeemPointsModal(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = if (pts == (user?.points ?: 0.0).toInt()) "Semua ($pts RTP)" else "$pts RTP",
+                                text = if (pts == (user?.points ?: 0.0).toInt()) "Semua (${GlobalPointsManager.formatRtp(pts)} RTP)" else "${GlobalPointsManager.formatRtp(pts)} RTP",
                                 fontSize = 10.sp,
                                 fontWeight = if (isSel) FontWeight.Bold else FontWeight.Normal,
                                 color = if (isSel) GoldVip else MaterialTheme.colorScheme.onSurface
@@ -2497,7 +2497,7 @@ fun DailyCheckInModal(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (isCheckedInToday) "Sudah Check-in Hari Ini (H-$streakDay)" else "Klaim Bonus Login (+$currentReward RTP)",
+                        text = if (isCheckedInToday) "Sudah Check-in Hari Ini (H-$streakDay)" else "Klaim Bonus Login (+${GlobalPointsManager.formatRtp(currentReward)} RTP)",
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp
                     )
