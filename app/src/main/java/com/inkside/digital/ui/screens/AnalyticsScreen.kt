@@ -48,10 +48,13 @@ import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.ui.theme.PurpleSecondary
+import com.inkside.digital.util.GlobalPointsManager
+import com.inkside.digital.localization.AppLanguage
 
 @Composable
 fun AnalyticsScreen(
     campaigns: List<CampaignEntity>,
+    currentLanguage: AppLanguage,
     links: List<AffiliateLinkEntity>
 ) {
     var selectedRange by remember { mutableIntStateOf(1) } // 0: 24 Jam, 1: 7 Hari, 2: 30 Hari, 3: Semua
@@ -148,7 +151,7 @@ fun AnalyticsScreen(
                     )
                     KpiCard(
                         title = "Earnings Per Click (EPC)",
-                        value = "Rp ${String.format("%,.0f", averageEpc)}",
+                        value = ${GlobalPointsManager.formatBalanceIdr(averageEpc, currentLanguage.code)},
                         subtext = "Nilai per klik",
                         isPositive = true,
                         accentColor = PurpleSecondary,

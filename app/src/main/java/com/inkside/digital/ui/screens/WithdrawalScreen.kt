@@ -51,11 +51,14 @@ import com.inkside.digital.data.model.WithdrawalEntity
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
+import com.inkside.digital.util.GlobalPointsManager
+import com.inkside.digital.localization.AppLanguage
 
 @Composable
 fun WithdrawalScreen(
     user: UserEntity?,
     withdrawals: List<WithdrawalEntity>,
+    currentLanguage: AppLanguage,
     onSubmitWithdrawal: (amount: Double, channelType: String, providerName: String, accountDestination: String, accountHolderName: String) -> Unit
 ) {
     var amount by remember { mutableStateOf("") }
@@ -110,7 +113,7 @@ fun WithdrawalScreen(
                     Column {
                         Text("Saldo Tersedia", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
-                            "Rp " + String.format("%,.0f", balance).replace(",", "."),
+                            GlobalPointsManager.formatBalanceIdr(balance, currentLanguage.code),
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Black,
                             color = EmeraldLight
@@ -313,7 +316,7 @@ fun WithdrawalScreen(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(w.id, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                             Text(
-                                "Rp " + String.format("%,.0f", w.amount).replace(",", ".") + " → " + w.providerName,
+                                GlobalPointsManager.formatBalanceIdr(w.amount, currentLanguage.code) + " → " + w.providerName,
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

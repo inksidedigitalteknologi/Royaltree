@@ -99,6 +99,7 @@ import com.inkside.digital.ui.theme.PurpleSecondary
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.inkside.digital.util.GlobalPointsManager
 
 @Composable
 fun AdminScreen(
@@ -593,7 +594,7 @@ fun AdminUserCard(user: UserEntity, currentLanguage: AppLanguage) {
                 Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text("Saldo Komisi Tersedia:", fontSize = 11.sp)
-                        Text("Rp ${String.format("%,.0f", user.balance)}", fontWeight = FontWeight.Bold, fontSize = 11.sp, color = EmeraldLight)
+                        Text(${GlobalPointsManager.formatBalanceIdr(user.balance, currentLanguage.code)}, fontWeight = FontWeight.Bold, fontSize = 11.sp, color = EmeraldLight)
                     }
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text("Poin Loyalitas (RTP):", fontSize = 11.sp)
@@ -991,7 +992,7 @@ fun AdminWithdrawalCard(
             ) {
                 Column {
                     Text("Nominal Cair Bersih:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text("Rp ${String.format("%,.0f", withdrawal.netAmount)}", fontWeight = FontWeight.Black, fontSize = 15.sp, color = EmeraldLight)
+                    Text(${GlobalPointsManager.formatBalanceIdr(withdrawal.netAmount, currentLanguage.code)}, fontWeight = FontWeight.Black, fontSize = 15.sp, color = EmeraldLight)
                 }
 
                 Button(

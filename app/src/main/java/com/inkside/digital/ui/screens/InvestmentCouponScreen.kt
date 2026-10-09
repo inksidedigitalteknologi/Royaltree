@@ -65,9 +65,12 @@ import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.EmeraldPrimary
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.ui.theme.PurpleSecondary
+import com.inkside.digital.util.GlobalPointsManager
+import com.inkside.digital.localization.AppLanguage
 
 @Composable
 fun InvestmentCouponScreen(
+    currentLanguage: AppLanguage,
     user: UserEntity?,
     coupons: List<InvestmentCouponEntity>,
     onBuyCoupon: (InvestmentCouponEntity) -> Unit,
@@ -124,7 +127,7 @@ fun InvestmentCouponScreen(
                         ) {
                             Column {
                                 Text("Total Nilai Investasi:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("Rp ${String.format("%,.0f", totalInvested)}", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                Text(${GlobalPointsManager.formatBalanceIdr(totalInvested, currentLanguage.code)}, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                             }
                             Column(horizontalAlignment = Alignment.End) {
                                 Text("Hasil Return Dividen:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -325,7 +328,7 @@ fun CouponCatalogCard(
                 ) {
                     Column {
                         Text("Harga Unit:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("Rp ${String.format("%,.0f", coupon.unitPrice)}", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        Text(${GlobalPointsManager.formatBalanceIdr(coupon.unitPrice, currentLanguage.code)}, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                     }
                     Column {
                         Text("Tenor:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -403,11 +406,11 @@ fun MyCouponPortfolioCard(
                 ) {
                     Column {
                         Text("Total Nilai:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("Rp ${String.format("%,.0f", coupon.unitPrice * coupon.ownedUnits)}", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        Text(${GlobalPointsManager.formatBalanceIdr(coupon.unitPrice * coupon.ownedUnits, currentLanguage.code)}, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                     }
                     Column(horizontalAlignment = Alignment.End) {
                         Text("Dividen Berjalan:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("Rp ${String.format("%,.0f", coupon.accumulatedYield)}", fontWeight = FontWeight.Black, fontSize = 12.sp, color = EmeraldLight)
+                        Text(${GlobalPointsManager.formatBalanceIdr(coupon.accumulatedYield, currentLanguage.code)}, fontWeight = FontWeight.Black, fontSize = 12.sp, color = EmeraldLight)
                     }
                 }
             }
@@ -476,7 +479,7 @@ fun SecondaryMarketCard(
                 Column {
                     Text("Harga Jual:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(
-                        text = "Rp ${String.format("%,.0f", coupon.secondaryMarketPrice)}",
+                        text = ${GlobalPointsManager.formatBalanceIdr(coupon.secondaryMarketPrice, currentLanguage.code)},
                         fontWeight = FontWeight.Black,
                         fontSize = 15.sp,
                         color = EmeraldLight

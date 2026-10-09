@@ -69,10 +69,13 @@ import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.EmeraldPrimary
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.ui.theme.PurpleSecondary
+import com.inkside.digital.util.GlobalPointsManager
+import com.inkside.digital.localization.AppLanguage
 
 @Composable
 fun CampaignsScreen(
     campaigns: List<CampaignEntity>,
+    currentLanguage: AppLanguage,
     links: List<AffiliateLinkEntity>,
     onSelectCampaignForLink: (CampaignEntity) -> Unit,
     onSimulateConversion: (AffiliateLinkEntity) -> Unit,
@@ -410,7 +413,7 @@ fun ActiveLinkCard(
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text("EPC", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("Rp ${String.format("%,.0f", epc)}", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                        Text(${GlobalPointsManager.formatBalanceIdr(epc, currentLanguage.code)}, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                     }
                 }
             }

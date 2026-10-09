@@ -53,10 +53,13 @@ import com.inkside.digital.data.model.AppDownloadAdEntity
 import com.inkside.digital.ui.components.AdBannerCard
 import com.inkside.digital.ui.components.SAMPLE_BANNER_ADS
 import com.inkside.digital.viewmodel.AffiliateViewModel
+import com.inkside.digital.util.GlobalPointsManager
+import com.inkside.digital.localization.AppLanguage
 
 @Composable
 fun AppOffersScreen(
     viewModel: AffiliateViewModel,
+    currentLanguage: AppLanguage,
     modifier: Modifier = Modifier
 ) {
     val adsList by viewModel.appDownloadAds.collectAsState()
@@ -299,7 +302,7 @@ fun AppOfferCard(
                             color = Color(0xFF047857)
                         )
                         Text(
-                            text = "Rp ${String.format("%,.0f", ad.rewardRupiah)}",
+                            text = ${GlobalPointsManager.formatBalanceIdr(ad.rewardRupiah, currentLanguage.code)},
                             fontSize = 10.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color(0xFF065F46)
