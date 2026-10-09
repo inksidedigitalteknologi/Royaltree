@@ -22,14 +22,26 @@ async function checkAdmin(req, res, next) {
     try {
         // Opsyen 1: x-admin-token (web panel)
         const adminToken = req.headers['x-admin-token'];
-        if (adminToken && global.__adminTokens.has(adminToken)) {
+        
+        // DEBUG LOG
+        console.log(`[checkAdmin] token prefix=${adminToken ? adminToken.substring(0, 12) : 'NULL'}, mapSize=${global.__adminTokens ? global.__adminTokens.size : 'NO_MAP'}`);
+        if (global.__adminTokens) {
+            const keys = [...global.__adminTokens.keys()].map(k => k.substring(0, 12));
+            console.log(`[checkAdmin] keys in map: ${JSON.stringify(keys)}`);
+        }
+        
+        if (adminToken && global.__adminTokens && global.__adminTokens.has(adminToken)) {
             const tokenData = global.__adminTokens.get(adminToken);
             if (tokenData.expiresAt > Date.now()) {
+                console.log(`[checkAdmin] ✅ token match`);
                 req.adminUser = { source: 'web', token: adminToken };
                 return next();
             } else {
+                console.log(`[checkAdmin] ⚠️ token expired`);
                 global.__adminTokens.delete(adminToken);
             }
+        } else {
+            console.log(`[checkAdmin] ❌ token NOT in map`);
         }
 
         // Opsyen 2: Firebase ID token

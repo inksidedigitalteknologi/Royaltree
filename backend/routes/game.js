@@ -339,6 +339,7 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
         const adClaimsMap = room.adClaimsMap || {};
         const adClaimsToday = adClaimsMap[today] || 0;
         const AD_CLAIM_LIMIT_PER_DAY = gameConfig.adClaimLimitPerDay || 5;
+        const MIN_CLAIM_RTP = gameConfig.minClaimRtp || 0.01;
 
         if (adClaimsToday >= AD_CLAIM_LIMIT_PER_DAY) {
             return res.status(429).json({
@@ -637,7 +638,6 @@ router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => 
         const {
             name,
             tier,
-            pricePoints,
             powerGhs,
             pointsPerDay,
             iconEmoji
@@ -646,20 +646,14 @@ router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => 
         // Compute pointsPerMinute dari catalog (bukan dari request)
         const pointsPerMinute = parseFloat((pointsPerDay / (24 * 60)).toFixed(8));
 
-        console.log(`[BUY] User ${uid} beli ${lookupId} — rate=${pointsPerMinute}/min, price=${pricePoints}`);
+        console.log(`[BUY] User ${uid} beli ${lookupId} — rate=${pointsPerMinute}/min, tokenCost=${catalogItem.tokenCost}`);
 
         const userRef = db.collection('users').doc(uid);
         const userDoc = await userRef.get();
         const userData = userDoc.data();
 
-        if ((userData.points || 0) < pricePoints) {
-            return res.status(400).json({
-                success: false,
-                message: 'Poin tidak mencukupi.'
-            });
-        }
-
         // ============ BUG FIX: Guna tokenCost (Miner Token) ============
+        // (Buang duplicate pricePoints check — catalog guna tokenCost)
         const tokenCost = catalogItem.tokenCost || 0;
         if ((userData.minerTokens || 0) < tokenCost) {
             return res.status(400).json({
