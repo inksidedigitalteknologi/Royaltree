@@ -413,7 +413,7 @@ fun ActiveLinkCard(
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text("EPC", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text(${GlobalPointsManager.formatBalanceIdr(epc, currentLanguage.code)}, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                        Text(GlobalPointsManager.formatBalanceIdr(epc, currentLanguage.code), fontWeight = FontWeight.Bold, fontSize = 13.sp)
                     }
                 }
             }

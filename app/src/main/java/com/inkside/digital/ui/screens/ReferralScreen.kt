@@ -201,7 +201,7 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
         item {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 StatCard(Modifier.weight(1f), LanguageManager.translate("referral_friends", currentLanguage, "Teman"), referredCount.toString(), LanguageManager.translate("referral_invited", currentLanguage, "Diundang"))
-                StatCard(Modifier.weight(1f), LanguageManager.translate("referral_commission", currentLanguage, "Komisi"), ${GlobalPointsManager.formatBalanceIdr(affiliateBalance.toDouble(), currentLanguage.code)}, LanguageManager.translate("referral_total", currentLanguage, "Total"))
+                StatCard(Modifier.weight(1f), LanguageManager.translate("referral_commission", currentLanguage, "Komisi"), "${GlobalPointsManager.formatBalanceIdr(affiliateBalance.toDouble(), currentLanguage.code)}", LanguageManager.translate("referral_total", currentLanguage, "Total"))
             }
         }
 
