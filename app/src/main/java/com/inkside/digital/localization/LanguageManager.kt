@@ -2299,12 +2299,12 @@ object LanguageManager {
             AppLanguage.JAPANESE to "残高"
         ),
         "profile_commission" to mapOf(
-            AppLanguage.INDONESIAN to "💰 Komisi",
-            AppLanguage.ENGLISH to "💰 Commission",
-            AppLanguage.SPANISH to "💰 Comisión",
-            AppLanguage.CHINESE to "💰 佣金",
-            AppLanguage.ARABIC to "💰 عمولة",
-            AppLanguage.JAPANESE to "💰 手数料"
+            AppLanguage.INDONESIAN to "Komisi",
+            AppLanguage.ENGLISH to "Commission",
+            AppLanguage.SPANISH to "Comisión",
+            AppLanguage.CHINESE to "佣金",
+            AppLanguage.ARABIC to "عمولة",
+            AppLanguage.JAPANESE to "手数料"
         ),
         "profile_edit" to mapOf(
             AppLanguage.INDONESIAN to "Edit Profil",
@@ -2339,12 +2339,12 @@ object LanguageManager {
             AppLanguage.JAPANESE to "ログアウト"
         ),
         "profile_mining_status" to mapOf(
-            AppLanguage.INDONESIAN to "⛏️ Status Mining",
-            AppLanguage.ENGLISH to "⛏️ Mining Status",
-            AppLanguage.SPANISH to "⛏️ Estado de Minería",
-            AppLanguage.CHINESE to "⛏️ 挖矿状态",
-            AppLanguage.ARABIC to "⛏️ حالة التعدين",
-            AppLanguage.JAPANESE to "⛏️ マイニング状況"
+            AppLanguage.INDONESIAN to "Status Mining",
+            AppLanguage.ENGLISH to "Mining Status",
+            AppLanguage.SPANISH to "Estado de Minería",
+            AppLanguage.CHINESE to "挖矿状态",
+            AppLanguage.ARABIC to "حالة التعدين",
+            AppLanguage.JAPANESE to "マイニング状況"
         ),
         "profile_name" to mapOf(
             AppLanguage.INDONESIAN to "Nama Lengkap",
@@ -2371,12 +2371,12 @@ object LanguageManager {
             AppLanguage.JAPANESE to "パワー"
         ),
         "profile_quick_actions" to mapOf(
-            AppLanguage.INDONESIAN to "⚡ Aksi Cepat",
-            AppLanguage.ENGLISH to "⚡ Quick Actions",
-            AppLanguage.SPANISH to "⚡ Acciones Rápidas",
-            AppLanguage.CHINESE to "⚡ 快捷操作",
-            AppLanguage.ARABIC to "⚡ إجراءات سريعة",
-            AppLanguage.JAPANESE to "⚡ クイックアクション"
+            AppLanguage.INDONESIAN to "Aksi Cepat",
+            AppLanguage.ENGLISH to "Quick Actions",
+            AppLanguage.SPANISH to "Acciones Rápidas",
+            AppLanguage.CHINESE to "快捷操作",
+            AppLanguage.ARABIC to "إجراءات سريعة",
+            AppLanguage.JAPANESE to "クイックアクション"
         ),
         "profile_referral_friends" to mapOf(
             AppLanguage.INDONESIAN to "👥 Teman",
@@ -2451,12 +2451,12 @@ object LanguageManager {
             AppLanguage.JAPANESE to "アップグレード"
         ),
         "profile_title" to mapOf(
-            AppLanguage.INDONESIAN to "👤 Profil",
-            AppLanguage.ENGLISH to "👤 Profile",
-            AppLanguage.SPANISH to "👤 Perfil",
-            AppLanguage.CHINESE to "👤 个人资料",
-            AppLanguage.ARABIC to "👤 الملف الشخصي",
-            AppLanguage.JAPANESE to "👤 プロフィール"
+            AppLanguage.INDONESIAN to "Profil",
+            AppLanguage.ENGLISH to "Profile",
+            AppLanguage.SPANISH to "Perfil",
+            AppLanguage.CHINESE to "个人资料",
+            AppLanguage.ARABIC to "الملف الشخصي",
+            AppLanguage.JAPANESE to "プロフィール"
         ),
         "profile_total" to mapOf(
             AppLanguage.INDONESIAN to "Total",
