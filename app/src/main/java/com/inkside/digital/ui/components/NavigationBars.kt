@@ -174,7 +174,7 @@ fun AppTopBar(
 
                 // M52: Logo Royaltree — coin RTP
                 Image(
-                    painter = androidx.compose.ui.res.painterResource(com.inkside.digital.R.drawable.ic_rtp),
+                    painter = androidx.compose.ui.res.painterResource(com.inkside.digital.R.drawable.rtp_coin),
                     contentDescription = "Royaltree Logo",
                     modifier = Modifier
                         .size(36.dp)

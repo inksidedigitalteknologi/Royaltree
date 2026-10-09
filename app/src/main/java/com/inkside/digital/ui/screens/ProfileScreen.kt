@@ -716,7 +716,7 @@ fun RtpAmount(
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Image(
-            painter = painterResource(R.drawable.ic_rtp),
+            painter = painterResource(R.drawable.rtp_coin),
             contentDescription = "RTP",
             modifier = Modifier.size(iconSize)
         )
