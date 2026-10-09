@@ -1091,22 +1091,24 @@ fun MainAffiliateAppContent(
         AdRewardModal(
             onDismiss = onAdRewardDismiss,
             onRewardEarned = {
-                val activity = context.findActivity()
-                if (activity != null) {
-                    AdManager.showRewardedAdForReward(
-                        activity = activity,
-                        userId = user?.id ?: "",
-                        onSuccess = { points ->
-                            onAdRewardDismiss()
-                            onAdRewardEarned(points)
-                        },
-                        onFailure = { reason, message ->
-                            onAdRewardDismiss()
-                            onAdBlockedSetReason(reason.name)
-                        }
-                    )
-                } else {
-                    onAdRewardDismiss()
+                coroutineScope.launch {
+                    val activity = context.findActivity()
+                    if (activity != null) {
+                        AdManager.showRewardedAdForReward(
+                            activity = activity,
+                            userId = user?.id ?: "",
+                            onSuccess = { points ->
+                                onAdRewardDismiss()
+                                onAdRewardEarned(points)
+                            },
+                            onFailure = { reason, message ->
+                                onAdRewardDismiss()
+                                onAdBlockedSetReason(reason.name)
+                            }
+                        )
+                    } else {
+                        onAdRewardDismiss()
+                    }
                 }
             }
         )
