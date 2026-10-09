@@ -63,6 +63,7 @@ import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.viewmodel.AppScreen
 import com.inkside.digital.ui.screens.ProfileAvatarWithFrame
+import com.inkside.digital.util.GlobalPointsManager
 
 @Composable
 fun AppDrawer(
@@ -316,7 +317,7 @@ private fun DrawerHeader(user: UserEntity?) {
                 InfoChip(
                     modifier = Modifier.weight(1f),
                     label = "Saldo",
-                    value = "Rp " + formatNumber(user?.balance ?: 0.0)
+                    value = GlobalPointsManager.formatBalanceIdr(user?.balance ?: 0.0, currentLanguage.code)
                 )
                 InfoChip(
                     modifier = Modifier.weight(1f),

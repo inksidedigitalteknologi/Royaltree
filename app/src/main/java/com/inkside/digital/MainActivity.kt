@@ -792,6 +792,7 @@ fun MainAffiliateAppContent(
                     WithdrawalScreen(
                         user = user,
                         withdrawals = withdrawals,
+                        currentLanguage = currentLanguage,
                         onSubmitWithdrawal = { amount, channelType, providerName, accountDestination, accountHolderName ->
                             onWithdrawSubmit(amount, channelType, providerName, accountDestination, accountHolderName, "")
                         }
