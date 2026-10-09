@@ -410,7 +410,7 @@ fun GameRoomScreenContent(
 
     // Modal: Confirmation Beli Item — Framed Style
     selectedItemToBuy?.let { item ->
-        val canAfford = (user?.points ?: 0.0) >= item.tokenCost
+        val canAfford = (user?.minerTokens ?: 0) >= item.tokenCost
         val unlockedSlots = roomState?.unlockedSlots ?: 2
         val usedSlots = minerItems
             .filter { it.isPlacedInRoom }
@@ -1557,7 +1557,6 @@ private fun ItemShopTab(
         items(minerItems) { item ->
             ShopMinerCard(
                 item = item,
-                userPoints = userPoints,
                 minerTokens = minerTokens,
                 onBuy = { onBuyItem(item) },
                 onUnlock = { onUnlockMiner(item.id) }
@@ -1569,13 +1568,12 @@ private fun ItemShopTab(
 @Composable
 private fun ShopMinerCard(
     item: GameMinerItemEntity,
-    userPoints: Double,
     minerTokens: Int = 0,
     onBuy: () -> Unit,
     onUnlock: () -> Unit = {}
 ) {
     val rarityColor = tierColor(item.tier)
-    val canAfford = userPoints >= item.tokenCost.toDouble().toDouble()
+    val canAfford = minerTokens >= item.tokenCost
 
     // M50: Auto-switch frame ikut tier miner
     val frameRes = when (item.tier.uppercase()) {
@@ -1727,7 +1725,7 @@ private fun ShopMinerCard(
                             color = RetroGold
                         )
                         Text(
-                            text = " RTP",
+                            text = " Token",
                             fontSize = 11.sp,
                             color = RetroGold.copy(alpha = 0.7f)
                         )
@@ -1761,7 +1759,7 @@ private fun ShopMinerCard(
                         modifier = Modifier.clickable(enabled = canAfford) { onBuy() }
                     ) {
                         Text(
-                            text = if (canAfford) "BELI" else "KURANG ${String.format(Locale.US, "%.0f", item.tokenCost - userPoints)}",
+                            text = if (canAfford) "BELI" else "KURANG ${item.tokenCost - minerTokens}",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Black,
                             color = if (canAfford) Color.Black else Color.White.copy(alpha = 0.7f),
