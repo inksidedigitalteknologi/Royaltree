@@ -1086,31 +1086,30 @@ fun MainAffiliateAppContent(
         )
     }
 
-    // AdMob Rewarded Video — trigger kalau showAdReward = true
-    androidx.compose.runtime.LaunchedEffect(showAdReward) {
-        android.util.Log.d("MinerFlow", "🎯 [3] LaunchedEffect fired: showAdReward=$showAdReward")
-        if (showAdReward) {
-            val activity = context.findActivity()
-            android.util.Log.d("MinerFlow", "🎯 [4] findActivity() = $activity")
-            if (activity != null) {
-                android.util.Log.d("MinerFlow", "🎯 [5] Calling AdManager.showRewardedAdForReward")
-                AdManager.showRewardedAdForReward(
-                    activity = activity,
-                    userId = user?.id ?: "",
-                    onSuccess = { points ->
-                        onAdRewardDismiss()
-                        onAdRewardEarned(points)
-                    },
-                    onFailure = { reason, message ->
-                        android.util.Log.e("MainActivity", "Ad error [$reason]: $message")
-                        onAdRewardDismiss()
-                        onAdBlockedSetReason(reason.name)
-                    }
-                )
-            } else {
-                onAdRewardDismiss()
+    // AdReward Modal — tunjuk modal dulu, user tekan "Tonton Iklan", baru AdMob
+    if (showAdReward) {
+        AdRewardModal(
+            onDismiss = onAdRewardDismiss,
+            onRewardEarned = {
+                val activity = context.findActivity()
+                if (activity != null) {
+                    AdManager.showRewardedAdForReward(
+                        activity = activity,
+                        userId = user?.id ?: "",
+                        onSuccess = { points ->
+                            onAdRewardDismiss()
+                            onAdRewardEarned(points)
+                        },
+                        onFailure = { reason, message ->
+                            onAdRewardDismiss()
+                            onAdBlockedSetReason(reason.name)
+                        }
+                    )
+                } else {
+                    onAdRewardDismiss()
+                }
             }
-        }
+        )
     }
 
     if (adBlockedReason != null) {
