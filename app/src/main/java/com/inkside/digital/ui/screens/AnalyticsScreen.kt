@@ -151,7 +151,7 @@ fun AnalyticsScreen(
                     )
                     KpiCard(
                         title = "Earnings Per Click (EPC)",
-                        value = ${GlobalPointsManager.formatBalanceIdr(averageEpc, currentLanguage.code)},
+                        value = GlobalPointsManager.formatBalanceIdr(averageEpc, currentLanguage.code),
                         subtext = "Nilai per klik",
                         isPositive = true,
                         accentColor = PurpleSecondary,

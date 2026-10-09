@@ -302,7 +302,7 @@ fun AppOfferCard(
                             color = Color(0xFF047857)
                         )
                         Text(
-                            text = ${GlobalPointsManager.formatBalanceIdr(ad.rewardRupiah, currentLanguage.code)},
+                            text = GlobalPointsManager.formatBalanceIdr(ad.rewardRupiah, currentLanguage.code),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color(0xFF065F46)
