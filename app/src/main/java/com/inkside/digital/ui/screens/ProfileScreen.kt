@@ -673,7 +673,7 @@ fun ProfileAvatarWithFrame(
         // Avatar bulat di tengah (75% dari frame — lebih proporsional)
         Box(
             modifier = Modifier
-                .size(size * 0.75f)
+                .size(size * 0.55f)
                 .clip(CircleShape)
                 .background(
                     when (tier) {
