@@ -72,6 +72,7 @@ import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
+import com.inkside.digital.ui.components.RtpAmount
 
 @Composable
 fun ProfileScreen(
@@ -695,36 +696,6 @@ fun ProfileAvatarWithFrame(
             painter = painterResource(frameRes),
             contentDescription = "Frame $tier",
             modifier = Modifier.fillMaxSize()
-        )
-    }
-}
-
-// ============================================================
-// M48: RTP Amount dengan Coin Icon
-// Guna di mana-mana untuk konsisten display RTP
-// ============================================================
-@Composable
-fun RtpAmount(
-    amount: String,
-    fontSize: TextUnit = 14.sp,
-    iconSize: Dp = 16.dp,
-    color: Color = Color.Unspecified,
-    fontWeight: FontWeight = FontWeight.Bold
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Image(
-            painter = painterResource(R.drawable.rtp_coin),
-            contentDescription = "RTP",
-            modifier = Modifier.size(iconSize)
-        )
-        Text(
-            text = amount,
-            fontSize = fontSize,
-            color = color,
-            fontWeight = fontWeight
         )
     }
 }
