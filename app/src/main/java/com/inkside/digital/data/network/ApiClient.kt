@@ -565,6 +565,125 @@ object ApiClient {
         }
     }
 
+    // ============ ADMIN ENDPOINTS ============
+
+    private fun adminHeaders(): Headers {
+        val token = com.inkside.digital.data.preferences.AppThemePreferences.adminToken
+        return Headers.Builder()
+            .add("x-admin-token", token ?: "")
+            .add("Content-Type", "application/json")
+            .build()
+    }
+
+    suspend fun adminGetUsers(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val req = Request.Builder()
+                .url("$BASE_URL/admin/users")
+                .headers(adminHeaders())
+                .get()
+                .build()
+            val resp = OkHttpClient().newCall(req).execute()
+            Result.success(JSONObject(resp.body?.string() ?: "{}"))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun adminGetWithdrawals(status: String = "PENDING"): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val req = Request.Builder()
+                .url("$BASE_URL/admin/withdrawals?status=$status")
+                .headers(adminHeaders())
+                .get()
+                .build()
+            val resp = OkHttpClient().newCall(req).execute()
+            Result.success(JSONObject(resp.body?.string() ?: "{}"))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun adminApproveWithdrawal(id: String, note: String = ""): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().put("note", note).toString()
+                .toRequestBody("application/json".toMediaType())
+            val req = Request.Builder()
+                .url("$BASE_URL/admin/withdrawals/$id/approve")
+                .headers(adminHeaders())
+                .post(body)
+                .build()
+            val resp = OkHttpClient().newCall(req).execute()
+            Result.success(JSONObject(resp.body?.string() ?: "{}"))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun adminRejectWithdrawal(id: String, note: String = ""): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().put("note", note).toString()
+                .toRequestBody("application/json".toMediaType())
+            val req = Request.Builder()
+                .url("$BASE_URL/admin/withdrawals/$id/reject")
+                .headers(adminHeaders())
+                .post(body)
+                .build()
+            val resp = OkHttpClient().newCall(req).execute()
+            Result.success(JSONObject(resp.body?.string() ?: "{}"))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun adminUpdateUser(uid: String, body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val reqBody = body.toString().toRequestBody("application/json".toMediaType())
+            val req = Request.Builder()
+                .url("$BASE_URL/admin/users/$uid")
+                .headers(adminHeaders())
+                .put(reqBody)
+                .build()
+            val resp = OkHttpClient().newCall(req).execute()
+            Result.success(JSONObject(resp.body?.string() ?: "{}"))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun adminBroadcastNotif(title: String, message: String): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject()
+                .put("title", title)
+                .put("message", message)
+                .toString()
+                .toRequestBody("application/json".toMediaType())
+            val req = Request.Builder()
+                .url("$BASE_URL/admin/notifications/broadcast")
+                .headers(adminHeaders())
+                .post(body)
+                .build()
+            val resp = OkHttpClient().newCall(req).execute()
+            Result.success(JSONObject(resp.body?.string() ?: "{}"))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun adminToggleMaintenance(enabled: Boolean): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().put("enabled", enabled).toString()
+                .toRequestBody("application/json".toMediaType())
+            val req = Request.Builder()
+                .url("$BASE_URL/admin/system/maintenance")
+                .headers(adminHeaders())
+                .post(body)
+                .build()
+            val resp = OkHttpClient().newCall(req).execute()
+            Result.success(JSONObject(resp.body?.string() ?: "{}"))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
+    suspend fun adminLogin(password: String): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().put("password", password).toString()
+                .toRequestBody("application/json".toMediaType())
+            val req = Request.Builder()
+                .url("$BASE_URL/admin/login")
+                .post(body)
+                .build()
+            val resp = OkHttpClient().newCall(req).execute()
+            Result.success(JSONObject(resp.body?.string() ?: "{}"))
+        } catch (e: Exception) { Result.failure(e) }
+    }
+
     suspend fun getGameLeaderboard(): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val response: ResponseBody = apiService.getGameLeaderboard()
