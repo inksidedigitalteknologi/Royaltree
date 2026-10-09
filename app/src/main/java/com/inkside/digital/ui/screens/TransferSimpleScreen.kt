@@ -31,6 +31,7 @@ import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.util.GlobalPointsManager
+import com.inkside.digital.ui.components.RtpAmount
 
 @Composable
 fun TransferSimpleScreen(
@@ -115,9 +116,10 @@ fun TransferSimpleScreen(
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Text(
-                                "${GlobalPointsManager.formatRtp(userBalance)} RTP",
+                            RtpAmount(
+                                amount = "${GlobalPointsManager.formatRtp(userBalance)} RTP",
                                 fontSize = 22.sp,
+                                iconSize = 26.dp,
                                 fontWeight = FontWeight.Black,
                                 color = EmeraldLight
                             )
