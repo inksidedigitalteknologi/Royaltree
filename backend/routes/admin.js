@@ -404,11 +404,14 @@ router.post('/notifications/broadcast', checkAdmin, async (req, res) => {
     try {
         const { title, message, type } = req.body;
         if (!title || !message) return res.status(400).json({ success: false, message: 'Title & message wajib' });
-        
+
         const usersSnapshot = await db.collection('users').get();
         const batch = db.batch();
         let count = 0;
+        const fcmTokens = [];
+
         usersSnapshot.forEach(userDoc => {
+            const userData = userDoc.data();
             const notifRef = db.collection('notifications').doc();
             batch.set(notifRef, {
                 userId: userDoc.id,
@@ -418,11 +421,32 @@ router.post('/notifications/broadcast', checkAdmin, async (req, res) => {
                 createdAt: new Date().toISOString(),
                 read: false
             });
+            if (userData.fcmToken) {
+                fcmTokens.push(userData.fcmToken);
+            }
             count++;
         });
         await batch.commit();
-        res.json({ success: true, message: `Broadcast ke ${count} user.` });
+
+        let fcmResult = { success: false, reason: 'NO_TOKENS' };
+        if (fcmTokens.length > 0) {
+            try {
+                const fcmService = require('../services/fcm');
+                fcmResult = await fcmService.sendBatchPush(fcmTokens, title, message, { type: type || 'BROADCAST' });
+                console.log('[BROADCAST] FCM sent to ' + fcmTokens.length + ' tokens');
+            } catch (fcmErr) {
+                console.error('[BROADCAST] FCM error:', fcmErr.message);
+            }
+        }
+
+        res.json({
+            success: true,
+            message: 'Broadcast ke ' + count + ' user.',
+            fcmSent: fcmTokens.length,
+            fcmResult
+        });
     } catch (err) {
+        console.error('[BROADCAST] Error:', err);
         res.status(500).json({ success: false, message: err.message });
     }
 });
