@@ -91,6 +91,7 @@ import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.ui.theme.PurpleSecondary
 import com.inkside.digital.util.GlobalPointsManager
 import java.util.Locale
+import com.inkside.digital.ui.components.RtpAmount
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -259,9 +260,10 @@ fun MissionsScreen(
                                 verticalAlignment = Alignment.Bottom
                             ) {
                                 Column {
-                                    Text(
-                                        text = "${GlobalPointsManager.formatRtp(totalPoints)} RTP",
+                                    RtpAmount(
+                                        amount = "${GlobalPointsManager.formatRtp(totalPoints)} RTP",
                                         fontSize = 28.sp,
+                                        iconSize = 26.dp,
                                         fontWeight = FontWeight.ExtraBold,
                                         color = Color.White
                                     )
