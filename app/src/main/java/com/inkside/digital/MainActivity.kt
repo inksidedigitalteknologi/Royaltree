@@ -1087,9 +1087,12 @@ fun MainAffiliateAppContent(
 
     // AdMob Rewarded Video — trigger kalau showAdReward = true
     androidx.compose.runtime.LaunchedEffect(showAdReward) {
+        android.util.Log.d("MinerFlow", "🎯 [3] LaunchedEffect fired: showAdReward=$showAdReward")
         if (showAdReward) {
             val activity = context.findActivity()
+            android.util.Log.d("MinerFlow", "🎯 [4] findActivity() = $activity")
             if (activity != null) {
+                android.util.Log.d("MinerFlow", "🎯 [5] Calling AdManager.showRewardedAdForReward")
                 AdManager.showRewardedAdForReward(
                     activity = activity,
                     userId = user?.id ?: "",
