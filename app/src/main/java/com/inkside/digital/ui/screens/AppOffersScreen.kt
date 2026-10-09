@@ -66,6 +66,7 @@ fun AppOffersScreen(
 
     AppOffersScreenContent(
         adsList = adsList,
+        currentLanguage = currentLanguage,
         onClaimBannerBonus = { id, name, coins -> viewModel.claimBannerAdBonus(id, name, coins) },
         onDownloadApp = { viewModel.downloadApp(it) },
         onClaimAppReward = { viewModel.claimAppDownloadReward(it) },
@@ -77,6 +78,7 @@ fun AppOffersScreen(
 @Composable
 fun AppOffersScreenContent(
     adsList: List<AppDownloadAdEntity>,
+    currentLanguage: AppLanguage,
     onClaimBannerBonus: (String, String, Int) -> Unit,
     onDownloadApp: (String) -> Unit,
     onClaimAppReward: (String) -> Unit,
