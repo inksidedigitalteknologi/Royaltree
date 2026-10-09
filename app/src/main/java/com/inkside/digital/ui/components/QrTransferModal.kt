@@ -102,6 +102,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
+import com.inkside.digital.ui.components.RtpAmount
 
 typealias PeerRecipient = PeerContact
 
@@ -558,11 +559,11 @@ fun QrTransferModal(
                                             errorMessage = null
                                         }
                                 ) {
-                                    Text(
-                                        text = "${GlobalPointsManager.formatRtp(preset)} RTP",
+                                    RtpAmount(
+                                        amount = "${GlobalPointsManager.formatRtp(preset)} RTP",
                                         fontSize = 10.sp,
+                                        iconSize = 12.dp,
                                         fontWeight = FontWeight.Bold,
-                                        textAlign = TextAlign.Center,
                                         modifier = Modifier.padding(vertical = 6.dp)
                                     )
                                 }
@@ -649,7 +650,7 @@ fun QrTransferModal(
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Text("Jumlah Ditransfer:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                    Text("${GlobalPointsManager.formatRtp(enteredAmount)} RTP", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                    RtpAmount(amount = "${GlobalPointsManager.formatRtp(enteredAmount)} RTP", fontSize = 11.sp, iconSize = 12.dp, fontWeight = FontWeight.Bold)
                                 }
 
                                 Spacer(modifier = Modifier.height(4.dp))
@@ -659,7 +660,7 @@ fun QrTransferModal(
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Text("Potongan Biaya Admin (Fixed):", fontSize = 11.sp, color = Color(0xFFEF4444))
-                                    Text("-${GlobalPointsManager.formatRtp(adminFee)} RTP", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))
+                                    RtpAmount(amount = "-${GlobalPointsManager.formatRtp(adminFee)} RTP", fontSize = 11.sp, iconSize = 12.dp, fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))
                                 }
 
                                 Spacer(modifier = Modifier.height(3.dp))
@@ -682,9 +683,10 @@ fun QrTransferModal(
                                         Text("Bersih Diterima Penerima:", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                         Text("Setara: $${String.format(Locale.US, "%.2f", usdValue)} USD ≈ Rp ${String.format("%,.0f", idrValue)}", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
-                                    Text(
-                                        "${GlobalPointsManager.formatRtp(netReceived)} RTP",
+                                    RtpAmount(
+                                        amount = "${GlobalPointsManager.formatRtp(netReceived)} RTP",
                                         fontSize = 16.sp,
+                                        iconSize = 14.dp,
                                         fontWeight = FontWeight.ExtraBold,
                                         color = EmeraldLight
                                     )
