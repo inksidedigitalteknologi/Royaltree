@@ -407,7 +407,7 @@ fun GameRoomScreenContent(
 
     // Modal: Confirmation Beli Item — Framed Style
     selectedItemToBuy?.let { item ->
-        val canAfford = (user?.minerTokens ?: 0) >= item.tokenCost
+        val canAfford = (user?.points ?: 0.0) >= item.tokenCost
         val unlockedSlots = roomState?.unlockedSlots ?: 2
         val usedSlots = minerItems
             .filter { it.isPlacedInRoom }
@@ -460,7 +460,7 @@ fun GameRoomScreenContent(
                             modifier = Modifier.padding(12.dp),
                             verticalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            BuyStatRow("Harga", "${item.tokenCost} Token", GoldVip)
+                            BuyStatRow("Harga", "${item.tokenCost} RTP", GoldVip)
                             BuyStatRow("Mining Power", "+${item.powerGhs} GH/s", EmeraldLight)
                             BuyStatRow("Rate RTP", "+${String.format(Locale.US, "%.4f", item.pointsPerMinute)}/mnt", EmeraldLight)
                             BuyStatRow("Saldo Anda", "${user?.points ?: 0} RTP", Color.White)
@@ -473,7 +473,7 @@ fun GameRoomScreenContent(
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                text = "Token tidak mencukupi - kurang ${item.tokenCost - (user?.minerTokens ?: 0)} Token",
+                                text = "RTP tidak mencukupi - kurang ${String.format(Locale.US, "%.2f", item.tokenCost - (user?.points ?: 0.0))} RTP",
                                 fontSize = 11.sp,
                                 color = Color(0xFFEF4444),
                                 modifier = Modifier.padding(8.dp)
@@ -810,7 +810,7 @@ private fun MiningRoomTab(
                         Text("⛏️", fontSize = 14.sp)
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "$minerTokens",
+                            text = "${String.format(Locale.US, "%.4f", userPoints)}",
                             fontWeight = FontWeight.Black,
                             fontSize = 13.sp,
                             color = Color.Black
@@ -1492,7 +1492,7 @@ private fun ItemShopTab(
                             ) {
                                 Text("RTP: ", fontSize = 11.sp, color = RetroGold)
                                 Text(
-                                    text = "$minerTokens",
+                                    text = "${String.format(Locale.US, "%.4f", userPoints)}",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Black,
                                     color = RetroGold
@@ -1560,7 +1560,7 @@ private fun ShopMinerCard(
     onUnlock: () -> Unit = {}
 ) {
     val rarityColor = tierColor(item.tier)
-    val canAfford = userPoints >= item.tokenCost
+    val canAfford = userPoints >= item.tokenCost.toDouble().toDouble()
 
     // M50: Auto-switch frame ikut tier miner
     val frameRes = when (item.tier.uppercase()) {
@@ -1742,7 +1742,7 @@ private fun ShopMinerCard(
                         modifier = Modifier.clickable(enabled = canAfford) { onBuy() }
                     ) {
                         Text(
-                            text = if (canAfford) "BELI" else "KURANG ${item.tokenCost - userPoints}",
+                            text = if (canAfford) "BELI" else "KURANG ${String.format(Locale.US, "%.0f", item.tokenCost - userPoints)}",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Black,
                             color = if (canAfford) Color.Black else Color.White.copy(alpha = 0.7f),
