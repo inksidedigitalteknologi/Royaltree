@@ -640,7 +640,8 @@ router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => 
             tier,
             powerGhs,
             pointsPerDay,
-            iconEmoji
+            iconEmoji,
+            bonusPermanentPct = 0
         } = catalogItem;
 
         // Compute pointsPerMinute dari catalog (bukan dari request)
@@ -1470,7 +1471,7 @@ router.post('/miners/claim-token', verifyFirebaseToken, checkFraud, async (req, 
 
         // Update user
         await userRef.update({
-            minerTokens: admin.firestore.FieldValue.increment(tokenAmount),
+            points: admin.firestore.FieldValue.increment(tokenAmount),
             todayTokensEarned: todayTokens + tokenAmount,
             lastTokenDate: today
         });
@@ -1519,17 +1520,17 @@ router.post('/miners/unlock', verifyFirebaseToken, checkFraud, async (req, res) 
         const userDoc = await userRef.get();
         const userData = userDoc.exists ? userDoc.data() : {};
 
-        const currentTokens = userData.minerTokens || 0;
-        if (currentTokens < catalogItem.tokenCost) {
+        const currentPoints = userData.points || 0;
+        if (currentPoints < catalogItem.tokenCost) {
             return res.status(400).json({
                 success: false,
-                message: `Token tidak cukup. Butuh ${catalogItem.tokenCost}, punya ${currentTokens}.`
+                message: `RTP tidak cukup. Butuh ${catalogItem.tokenCost}, punya ${currentPoints.toFixed(4)}.`
             });
         }
 
-        // Potong token
+        // Potong RTP
         await userRef.update({
-            minerTokens: admin.firestore.FieldValue.increment(-catalogItem.tokenCost)
+            points: admin.firestore.FieldValue.increment(-catalogItem.tokenCost)
         });
 
         // Buat instance miner baru — dual-write
