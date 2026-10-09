@@ -1088,45 +1088,35 @@ fun MainAffiliateAppContent(
 
     // AdReward Modal — tunjuk modal dulu, user tekan "Tonton Iklan", baru AdMob
     if (showAdReward) {
-        try {
-            AdRewardModal(
-                onDismiss = onAdRewardDismiss,
-                onRewardEarned = {
+        AdRewardModal(
+            onDismiss = onAdRewardDismiss,
+            onRewardEarned = {
+                coroutineScope.launch {
                     try {
-                        coroutineScope.launch {
-                            try {
-                                val activity = context.findActivity()
-                                if (activity != null) {
-                                    AdManager.showRewardedAdForReward(
-                                        activity = activity,
-                                        userId = user?.id ?: "",
-                                        onSuccess = { points ->
-                                            onAdRewardDismiss()
-                                            onAdRewardEarned(points)
-                                        },
-                                        onFailure = { reason, message ->
-                                            onAdRewardDismiss()
-                                            onAdBlockedSetReason(reason.name)
-                                        }
-                                    )
-                                } else {
+                        val activity = context.findActivity()
+                        if (activity != null) {
+                            AdManager.showRewardedAdForReward(
+                                activity = activity,
+                                userId = user?.id ?: "",
+                                onSuccess = { points ->
                                     onAdRewardDismiss()
+                                    onAdRewardEarned(points)
+                                },
+                                onFailure = { reason, message ->
+                                    onAdRewardDismiss()
+                                    onAdBlockedSetReason(reason.name)
                                 }
-                            } catch (e: Exception) {
-                                android.util.Log.e("AdReward", "Launch error: ${e.message}", e)
-                                onAdRewardDismiss()
-                            }
+                            )
+                        } else {
+                            onAdRewardDismiss()
                         }
                     } catch (e: Exception) {
-                        android.util.Log.e("AdReward", "Callback error: ${e.message}", e)
+                        android.util.Log.e("AdReward", "Launch error: ${e.message}", e)
                         onAdRewardDismiss()
                     }
                 }
-            )
-        } catch (e: Exception) {
-            android.util.Log.e("AdReward", "Modal render error: ${e.message}", e)
-            onAdRewardDismiss()
-        }
+            }
+        )
     }
 
     if (adBlockedReason != null) {
