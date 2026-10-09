@@ -35,6 +35,7 @@ import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.util.GlobalPointsManager
+import com.inkside.digital.ui.components.RtpAmount
 
 @Composable
 fun SweepstakesScreen(
@@ -136,9 +137,10 @@ fun SweepstakesScreen(
                             letterSpacing = 3.sp
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            "${GlobalPointsManager.formatRtp(totalPool)} RTP",
+                        RtpAmount(
+                            amount = "${GlobalPointsManager.formatRtp(totalPool)} RTP",
                             fontSize = 36.sp,
+                            iconSize = 32.dp,
                             fontWeight = FontWeight.Black,
                             color = Color.White
                         )
@@ -438,11 +440,15 @@ fun BuyTicketModal(
                 }
 
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    "Total: ${GlobalPointsManager.formatRtp(totalPrice)} RTP",
-                    fontWeight = FontWeight.Black,
-                    fontSize = 14.sp
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Total: ", fontWeight = FontWeight.Black, fontSize = 14.sp)
+                    RtpAmount(
+                        amount = "${GlobalPointsManager.formatRtp(totalPrice)} RTP",
+                        fontSize = 14.sp,
+                        iconSize = 14.dp,
+                        fontWeight = FontWeight.Black
+                    )
+                }
                 Text(
                     "Anda punya $userTickets/$maxTickets kupon",
                     fontSize = 11.sp,
