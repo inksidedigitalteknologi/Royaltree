@@ -340,12 +340,12 @@ object LanguageManager {
             AppLanguage.JAPANESE to "パッシブ"
         ),
         "game_room_title" to mapOf(
-            AppLanguage.INDONESIAN to "Ruang Mining Royaltree",
-            AppLanguage.ENGLISH to "Royaltree Mining Room",
-            AppLanguage.SPANISH to "Sala de Minería Royaltree",
-            AppLanguage.CHINESE to "Royaltree 挖矿室",
-            AppLanguage.ARABIC to "غرفة تعدين Royaltree",
-            AppLanguage.JAPANESE to "Royaltree マイニングルーム"
+            AppLanguage.INDONESIAN to "Royaltree Miner",
+            AppLanguage.ENGLISH to "Royaltree Miner",
+            AppLanguage.SPANISH to "Royaltree Miner",
+            AppLanguage.CHINESE to "Royaltree Miner",
+            AppLanguage.ARABIC to "Royaltree Miner",
+            AppLanguage.JAPANESE to "Royaltree Miner"
         ),
         "game_room_subtitle" to mapOf(
             AppLanguage.INDONESIAN to "Beli item penambang pakai RTP & panen hasil pasif",
@@ -1473,12 +1473,12 @@ object LanguageManager {
             AppLanguage.JAPANESE to "視聴完了! ✓"
         ),
         "mission_game_promo" to mapOf(
-            AppLanguage.INDONESIAN to "Buka Ruang Mining Royaltree untuk menaruh item dan menghasilkan RTP pasif 24/7!",
-            AppLanguage.ENGLISH to "Open Game Room to place items and generate passive points 24/7!",
-            AppLanguage.SPANISH to "¡Abre Game Room para colocar objetos y generar puntos pasivos 24/7!",
-            AppLanguage.CHINESE to "打开游戏室放置物品，24/7 产生被动积分！",
-            AppLanguage.ARABIC to "افتح غرفة الألعاب لوضع العناصر وتوليد نقاط سلبية 24/7!",
-            AppLanguage.JAPANESE to "ゲームルームを開いてアイテムを配置し、24時間受動的にポイントを生成しましょう！"
+            AppLanguage.INDONESIAN to "Buka Royaltree Miner untuk menaruh item dan menghasilkan RTP pasif 24/7!",
+            AppLanguage.ENGLISH to "Open Royaltree Miner to place items and generate passive RTP 24/7!",
+            AppLanguage.SPANISH to "¡Abre Royaltree Miner para colocar objetos y generar RTP pasivo 24/7!",
+            AppLanguage.CHINESE to "打开 Royaltree Miner 放置物品，24/7 产生被动 RTP！",
+            AppLanguage.ARABIC to "افتح Royaltree Miner لوضع العناصر وتوليد RTP سلبي 24/7!",
+            AppLanguage.JAPANESE to "Royaltree Minerを開いてアイテムを配置し、24時間受動的にRTPを生成しましょう！"
         ),
         "mission_confirm_like" to mapOf(
             AppLanguage.INDONESIAN to "Konfirmasi Suka (+%d RTP)",
