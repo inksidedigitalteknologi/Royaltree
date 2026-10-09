@@ -196,9 +196,12 @@ fun ProfileScreen(
                     }
                     Column(modifier = Modifier.weight(1f)) {
                         Text("RTP", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text(
-                            GlobalPointsManager.formatRtp(user?.points ?: 0.0),
-                            fontSize = 14.sp, fontWeight = FontWeight.Black, color = GoldVip
+                        RtpAmount(
+                            amount = "${GlobalPointsManager.formatRtp(user?.points ?: 0.0)} RTP",
+                            fontSize = 13.sp,
+                            iconSize = 16.dp,
+                            fontWeight = FontWeight.Black,
+                            color = GoldVip
                         )
                     }
                 }
