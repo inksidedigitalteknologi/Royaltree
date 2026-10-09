@@ -301,9 +301,10 @@ fun GameRoomScreenContent(
                         ) {
                             Text("⭐", fontSize = 12.sp)
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "${String.format(Locale.US, "%.4f", (user?.points ?: 0).toDouble())} RTP",
+                            RtpAmount(
+                                amount = "× ${String.format(Locale.US, "%.4f", (user?.points ?: 0).toDouble())}",
                                 fontSize = 12.sp,
+                                iconSize = 14.dp,
                                 fontWeight = FontWeight.Bold,
                                 color = GoldVip
                             )
@@ -688,9 +689,10 @@ private fun HeroBanner(
                 RetroStatBox(
                     emoji = "💰",
                     label = "RTP",
-                    value = String.format(Locale.US, "%.4f", userPoints.toDouble()),
+                    value = "× ${String.format(Locale.US, "%.4f", userPoints.toDouble())}",
                     color = RetroGold,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    useRtpIcon = true
                 )
                 RetroStatBox(
                     emoji = "📊",
@@ -717,7 +719,8 @@ private fun RetroStatBox(
     label: String,
     value: String,
     color: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    useRtpIcon: Boolean = false
 ) {
     Box(
         modifier = modifier
@@ -727,7 +730,15 @@ private fun RetroStatBox(
             .padding(vertical = 8.dp, horizontal = 6.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-            Text(emoji, fontSize = 16.sp)
+            if (useRtpIcon) {
+                Image(
+                    painter = painterResource(R.drawable.rtp_coin),
+                    contentDescription = "RTP",
+                    modifier = Modifier.size(16.dp)
+                )
+            } else {
+                Text(emoji, fontSize = 16.sp)
+            }
             Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = label,
@@ -815,12 +826,11 @@ private fun MiningRoomTab(
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("⛏️", fontSize = 14.sp)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "${String.format(Locale.US, "%.4f", userPoints)}",
-                            fontWeight = FontWeight.Black,
+                        RtpAmount(
+                            amount = "× ${String.format(Locale.US, "%.4f", userPoints)}",
                             fontSize = 13.sp,
+                            iconSize = 14.dp,
+                            fontWeight = FontWeight.Black,
                             color = Color.Black
                         )
                     }
