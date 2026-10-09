@@ -200,7 +200,6 @@ fun GameRoomScreenContent(
     onNavigateToMissions: () -> Unit,
     onBack: () -> Unit,
     currentLanguage: AppLanguage,
-    minerTokens: Int = 0,
     onClaimMinerToken: (String) -> Unit = {},
     onUnlockMiner: (String) -> Unit = {},
     onUnlockSlot: (Int) -> Unit = {}
@@ -368,7 +367,6 @@ fun GameRoomScreenContent(
                             userPoints = user?.points ?: 0.0,
                             minerActiveUntil = minerActiveUntil,
                             minerActiveRemainingMs = minerActiveRemainingMs,
-                            minerTokens = minerTokens,
                             onActivateMiner = onActivateMiner,
                             onClaimMining = onClaimMining,
                             onClaimMinerToken = onClaimMinerToken,
@@ -390,7 +388,6 @@ fun GameRoomScreenContent(
                             currentLanguage = currentLanguage,
                             minerItems = minerItems,
                             userPoints = user?.points ?: 0.0,
-                            minerTokens = minerTokens,
                             onBuyItem = { item -> selectedItemToBuy = item },
                             onUnlockMiner = onUnlockMiner,
                             onNavigateToMissions = onNavigateToMissions
@@ -411,7 +408,7 @@ fun GameRoomScreenContent(
 
     // Modal: Confirmation Beli Item — Framed Style
     selectedItemToBuy?.let { item ->
-        val canAfford = (user?.minerTokens ?: 0) >= item.tokenCost
+        val canAfford = (user?.points ?: 0.0) >= item.tokenCost
         val unlockedSlots = roomState?.unlockedSlots ?: 2
         val usedSlots = minerItems
             .filter { it.isPlacedInRoom }
@@ -766,7 +763,6 @@ private fun MiningRoomTab(
     userPoints: Double = 0.0,
     minerActiveUntil: Long = 0L,
     minerActiveRemainingMs: Long = 0L,
-    minerTokens: Int = 0,
     onActivateMiner: () -> Unit = {},
     onClaimMining: () -> Unit,
     onClaimMinerToken: (String) -> Unit = {},
@@ -1460,7 +1456,6 @@ private fun ItemShopTab(
     currentLanguage: AppLanguage,
     minerItems: List<GameMinerItemEntity>,
     userPoints: Double,
-    minerTokens: Int = 0,
     onBuyItem: (GameMinerItemEntity) -> Unit,
     onUnlockMiner: (String) -> Unit = {},
     onNavigateToMissions: () -> Unit
@@ -1494,7 +1489,7 @@ private fun ItemShopTab(
                             fontSize = 14.sp
                         )
                         Text(
-                            text = LanguageManager.translate("game_unlock_miner_desc", currentLanguage, "Kumpulkan Miner Token dari iklan & misi untuk membuka miner baru!"),
+                            text = LanguageManager.translate("game_unlock_miner_desc", currentLanguage, "Kumpulkan RTP dari iklan & misi untuk membuka miner baru!"),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -1559,7 +1554,7 @@ private fun ItemShopTab(
         items(minerItems) { item ->
             ShopMinerCard(
                 item = item,
-                minerTokens = minerTokens,
+                userPoints = userPoints,
                 onBuy = { onBuyItem(item) },
                 onUnlock = { onUnlockMiner(item.id) }
             )
@@ -1570,12 +1565,12 @@ private fun ItemShopTab(
 @Composable
 private fun ShopMinerCard(
     item: GameMinerItemEntity,
-    minerTokens: Int = 0,
+    userPoints: Double = 0.0,
     onBuy: () -> Unit,
     onUnlock: () -> Unit = {}
 ) {
     val rarityColor = tierColor(item.tier)
-    val canAfford = minerTokens >= item.tokenCost
+    val canAfford = userPoints >= item.tokenCost
 
     // M50: Auto-switch frame ikut tier miner
     val frameRes = when (item.tier.uppercase()) {
@@ -1727,7 +1722,7 @@ private fun ShopMinerCard(
                             color = RetroGold
                         )
                         Text(
-                            text = " Token",
+                            text = " RTP",
                             fontSize = 11.sp,
                             color = RetroGold.copy(alpha = 0.7f)
                         )
@@ -1761,7 +1756,7 @@ private fun ShopMinerCard(
                         modifier = Modifier.clickable(enabled = canAfford) { onBuy() }
                     ) {
                         Text(
-                            text = if (canAfford) "BELI" else "KURANG ${item.tokenCost - minerTokens}",
+                            text = if (canAfford) "BELI" else "KURANG ${String.format(Locale.US, "%.2f", item.tokenCost - userPoints)}",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Black,
                             color = if (canAfford) Color.Black else Color.White.copy(alpha = 0.7f),
