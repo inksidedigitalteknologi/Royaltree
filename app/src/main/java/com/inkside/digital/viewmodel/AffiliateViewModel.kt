@@ -1543,9 +1543,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             loadGameState()
                             loadUserFromBackend()
                         } else {
-                            android.util.Log.w("MinerActive", "❌ activateMiner: success=false, message=${json.optString("message")}")
-                        } else {
-                            showSnackbar(json.optString("message", "Gagal aktifkan miner"))
+                            val errMsg = json.optString("message", "Gagal aktifkan miner")
+                            android.util.Log.w("MinerActive", "❌ activateMiner: success=false, message=$errMsg")
+                            showSnackbar(errMsg)
                         }
                     }
                     .onFailure {
