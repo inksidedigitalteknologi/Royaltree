@@ -54,6 +54,7 @@ import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.viewmodel.AppScreen
 import com.inkside.digital.viewmodel.AdButtonState
 import com.inkside.digital.ui.components.BannerAdView
+import androidx.compose.ui.text.style.TextOverflow
 
 // ==== Accent Colors (tetap sama light/dark) ====
 private val GoldAccent = Color(0xFFFFD700)
@@ -146,9 +147,10 @@ fun HomeScreen(
         item {
             FramedCard(
                 frameRes = R.drawable.card_frame_balance,
-                aspectRatioOverride = 1.5f,           // lebih tinggi (dari ~1.8)
-                paddingPercentHorizontal = 0.12f,
-                paddingPercentVertical = 0.20f         // extra vertical untuk glow
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                aspectRatioOverride = 1.4629f,
+                paddingPercentHorizontal = 0.10f,
+                paddingPercentVertical = 0.16f
             ) {
                 Box(
                     modifier = Modifier
@@ -185,7 +187,7 @@ fun HomeScreen(
                                 .clickable { onOpenWithdraw() }
                         ) {
                             Row(
-                                modifier = Modifier.padding(vertical = 14.dp),
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -193,14 +195,16 @@ fun HomeScreen(
                                     imageVector = Icons.Filled.ArrowUpward,
                                     contentDescription = null,
                                     tint = Color.White,
-                                    modifier = Modifier.size(20.dp)
+                                    modifier = Modifier.size(18.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = LanguageManager.translate("btn_withdraw", currentLanguage, "Tarik Dana"),
-                                    fontSize = 15.sp,
+                                    fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    color = Color.White,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }
