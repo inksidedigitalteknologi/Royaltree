@@ -290,30 +290,7 @@ fun GameRoomScreenContent(
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali")
                     }
                 },
-                actions = {
-                    Surface(
-                        color = Color(0xFF1E293B),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier
-                            .padding(end = 12.dp)
-                            .clickable { onNavigateToMissions() }
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("⭐", fontSize = 12.sp)
-                            Spacer(modifier = Modifier.width(4.dp))
-                            RtpAmount(
-                                amount = "× ${String.format(Locale.US, "%.4f", (user?.points ?: 0).toDouble())}",
-                                fontSize = 12.sp,
-                                iconSize = 14.dp,
-                                fontWeight = FontWeight.Bold,
-                                color = GoldVip
-                            )
-                        }
-                    }
-                },
+                // Chip kuning RTP dah dibuang — sebab ada di stats row bawah
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         }
@@ -704,15 +681,8 @@ private fun HeroBanner(
                     label = "RTP",
                     value = "× ${String.format(Locale.US, "%.4f", userPoints.toDouble())}",
                     color = RetroGold,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1.8f),   // ← lebih luas
                     useRtpIcon = true
-                )
-                RetroStatBox(
-                    emoji = "📊",
-                    label = "UNCLAIMED",
-                    value = String.format(Locale.US, "%.4f", liveUnclaimedPoints),
-                    color = EmeraldLight,
-                    modifier = Modifier.weight(1f)
                 )
                 RetroStatBox(
                     emoji = "⚡",
