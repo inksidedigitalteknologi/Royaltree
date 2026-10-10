@@ -1484,6 +1484,28 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun isMinerActive(): Boolean = _minerActiveUntil.value > System.currentTimeMillis()
 
+    // === COUNTDOWN TICKER — update minerActiveRemainingMs setiap detik ===
+    private var minerCountdownJob: kotlinx.coroutines.Job? = null
+
+    fun startMinerCountdownTicker() {
+        minerCountdownJob?.cancel()
+        minerCountdownJob = viewModelScope.launch {
+            while (true) {
+                val now = System.currentTimeMillis()
+                val remaining = (_minerActiveUntil.value - now).coerceAtLeast(0L)
+                _minerActiveRemainingMs.value = remaining
+                if (remaining <= 0L) break
+                kotlinx.coroutines.delay(1000L)   // tick tiap detik
+            }
+            _minerActiveRemainingMs.value = 0L
+        }
+    }
+
+    fun stopMinerCountdownTicker() {
+        minerCountdownJob?.cancel()
+        minerCountdownJob = null
+    }
+
     fun refreshMinerActiveState() {
         viewModelScope.launch {
             try {
@@ -1492,6 +1514,10 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 _minerActiveUntil.value = room.minerActiveUntil
                 val remaining = (room.minerActiveUntil - now).coerceAtLeast(0L)
                 _minerActiveRemainingMs.value = remaining
+                // Start ticker kalau miner aktif
+                if (remaining > 0L) {
+                    startMinerCountdownTicker()
+                }
             } catch (e: Exception) {
                 android.util.Log.w("AffiliateViewModel", "refreshMinerActiveState error: ${e.message}")
             }
@@ -1507,6 +1533,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             val activeUntil = json.optLong("minerActiveUntil", 0L)
                             _minerActiveUntil.value = activeUntil
                             _minerActiveRemainingMs.value = (activeUntil - System.currentTimeMillis()).coerceAtLeast(0L)
+                            startMinerCountdownTicker()   // ← Start ticker
                             showSnackbar("⛏️ Miner aktif 6 jam!")
                             loadGameState()
                             loadUserFromBackend()
