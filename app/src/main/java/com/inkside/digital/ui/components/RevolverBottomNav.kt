@@ -224,8 +224,8 @@ fun RevolverBottomNav(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .offset(
-                            x = (x).dp,
-                            y = -(navBarHeight / 2).toInt().dp - y.dp
+                            x = x.dp,
+                            y = (-(navBarHeight.value / 2).toInt() - y).dp
                         )
                         .size(iconSize)
                         .scale(if (isSelected) 1.1f else 1f)
