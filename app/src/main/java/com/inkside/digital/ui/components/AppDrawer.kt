@@ -262,7 +262,8 @@ private fun DrawerHeader(user: UserEntity?, currentLanguage: AppLanguage) {
                 ProfileAvatarWithFrame(
                     userName = user?.name,
                     tier = user?.tier ?: "FREE",
-                    size = 56.dp
+                    size = 56.dp,
+                    photoUrl = user?.photoUrl
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {

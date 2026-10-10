@@ -152,7 +152,8 @@ fun ProfileScreen(
                     ProfileAvatarWithFrame(
                         userName = user?.name,
                         tier = user?.tier ?: "FREE",
-                        size = 80.dp
+                        size = 80.dp,
+                        photoUrl = user?.photoUrl
                     )
                     Spacer(modifier = Modifier.width(14.dp))
                     Column(modifier = Modifier.weight(1f)) {
@@ -655,7 +656,8 @@ private fun MiningStatsCard(
 fun ProfileAvatarWithFrame(
     userName: String?,
     tier: String,
-    size: Dp = 120.dp
+    size: Dp = 120.dp,
+    photoUrl: String? = null
 ) {
     // Frame resource per tier
     // Nota: STARTER & PREMIUM guna frame_leaf_free (frame asal JPEG opaque)
@@ -685,12 +687,21 @@ fun ProfileAvatarWithFrame(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = userName?.firstOrNull()?.uppercase() ?: "U",
-                fontSize = (size.value / 4).sp,
-                fontWeight = FontWeight.Black,
-                color = Color.White
-            )
+            if (!photoUrl.isNullOrBlank()) {
+                coil.compose.AsyncImage(
+                    model = photoUrl,
+                    contentDescription = "Profile picture",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                )
+            } else {
+                Text(
+                    text = userName?.firstOrNull()?.uppercase() ?: "U",
+                    fontSize = (size.value / 4).sp,
+                    fontWeight = FontWeight.Black,
+                    color = Color.White
+                )
+            }
         }
         
         // Frame overlay (kalau ada)

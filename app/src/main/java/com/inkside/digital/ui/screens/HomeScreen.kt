@@ -319,7 +319,7 @@ fun HomeScreen(
                 )
                 AdButtonState.COOLDOWN -> Quadruple(
                     LanguageManager.translate("home_wait_moment", currentLanguage, "Tunggu sebentar..."),
-                    "30 detik antar iklan",
+                    LanguageManager.translate("home_wait_cooldown", currentLanguage, "Iklan sedang dimuat"),
                     MaterialTheme.colorScheme.onSurfaceVariant,
                     false
                 )

@@ -597,6 +597,24 @@ class AffiliateRepository(private val dao: AppDao) {
         dao.updateUser(updated)
     }
 
+    /**
+     * Sync photoUrl + name + email dari Firebase Auth ke Room DB.
+     * Dipanggil bila user login / profile update.
+     */
+    suspend fun updateUserPhotoAndProfile(
+        photoUrl: String?,
+        name: String?,
+        email: String?
+    ) = withContext(Dispatchers.IO) {
+        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext
+        val updated = user.copy(
+            photoUrl = photoUrl ?: user.photoUrl,
+            name = if (!name.isNullOrBlank()) name else user.name,
+            email = if (!email.isNullOrBlank()) email else user.email
+        )
+        dao.updateUser(updated)
+    }
+
     suspend fun updateUserLocation(
         lat: Double,
         lng: Double,
