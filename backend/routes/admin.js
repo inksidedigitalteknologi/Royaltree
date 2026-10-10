@@ -402,10 +402,20 @@ router.post('/withdrawals/:id/reject', checkAdmin, async (req, res) => {
 // ============================================================
 router.post('/notifications/broadcast', checkAdmin, async (req, res) => {
     try {
-        const { title, message, type } = req.body;
+        const { title, message, type, targetUid } = req.body;
         if (!title || !message) return res.status(400).json({ success: false, message: 'Title & message wajib' });
 
-        const usersSnapshot = await db.collection('users').get();
+        let usersSnapshot;
+        if (targetUid) {
+            const singleDoc = await db.collection('users').doc(targetUid).get();
+            if (!singleDoc.exists) {
+                return res.status(404).json({ success: false, message: 'User tidak ditemukan' });
+            }
+            usersSnapshot = { forEach: (cb) => cb(singleDoc), size: 1 };
+        } else {
+            usersSnapshot = await db.collection('users').get();
+        }
+
         const batch = db.batch();
         let count = 0;
         const fcmTokens = [];
