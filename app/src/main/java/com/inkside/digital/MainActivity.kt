@@ -326,6 +326,25 @@ fun MainAffiliateApp(
         viewModel.loadMissionsFromBackendV2()
     }
     val user by viewModel.user.collectAsState()
+
+    // Sync photoUrl dari Firebase ke UserEntity (Room DB)
+    androidx.compose.runtime.LaunchedEffect(currentUser?.uid, user?.photoUrl) {
+        currentUser?.let { fbUser ->
+            val fbPhotoUrl = fbUser.photoUrl?.toString()
+            val fbName = fbUser.displayName
+            val fbEmail = fbUser.email
+
+            // Kalau user ada tapi photoUrl kosong/berbeza → sync
+            if (user != null && !fbPhotoUrl.isNullOrBlank() && user?.photoUrl != fbPhotoUrl) {
+                android.util.Log.d("MainActivity", "📷 Sync photoUrl: $fbPhotoUrl")
+                viewModel.syncUserFromFirebase(
+                    photoUrl = fbPhotoUrl,
+                    name = fbName,
+                    email = fbEmail
+                )
+            }
+        }
+    }
     val campaigns by viewModel.campaigns.collectAsState()
     val links by viewModel.links.collectAsState()
     val withdrawals by viewModel.withdrawals.collectAsState()
@@ -1098,36 +1117,40 @@ fun MainAffiliateAppContent(
     }
 
     // AdReward Modal — tunjuk modal dulu, user tekan "Tonton Iklan", baru AdMob
-    if (showAdReward) {
-        AdRewardModal(
-            onDismiss = onAdRewardDismiss,
-            onRewardEarned = {
-                coroutineScope.launch {
-                    try {
-                        val activity = context.findActivity()
-                        if (activity != null) {
-                            AdManager.showRewardedAdForReward(
-                                activity = activity,
-                                userId = user?.id ?: "",
-                                onSuccess = { points ->
-                                    onAdRewardDismiss()
-                                    onAdRewardEarned(points)
-                                },
-                                onFailure = { reason, message ->
-                                    onAdRewardDismiss()
-                                    onAdBlockedSetReason(reason.name)
-                                }
-                            )
-                        } else {
-                            onAdRewardDismiss()
-                        }
-                    } catch (e: Exception) {
-                        android.util.Log.e("AdReward", "Launch error: ${e.message}", e)
+    // Terus tunjuk AdMob rewarded video (skip modal)
+    androidx.compose.runtime.LaunchedEffect(showAdReward) {
+        if (showAdReward) {
+            android.util.Log.d("MinerFlow", "🎯 [3] LaunchedEffect fired: showAdReward=true")
+            coroutineScope.launch {
+                try {
+                    val activity = context.findActivity()
+                    android.util.Log.d("MinerFlow", "🎯 [4] findActivity() = $activity")
+                    if (activity != null) {
+                        android.util.Log.d("MinerFlow", "🎯 [5] Calling AdManager.showRewardedAdForReward")
+                        AdManager.showRewardedAdForReward(
+                            activity = activity,
+                            userId = user?.id ?: "",
+                            onSuccess = { points ->
+                                android.util.Log.d("MinerFlow", "🎯 [8] AdMob reward earned: $points")
+                                onAdRewardDismiss()
+                                // Trigger activate miner (RTP akan generate otomatik)
+                                onAdRewardEarned(points)
+                            },
+                            onFailure = { reason, message ->
+                                android.util.Log.e("MinerFlow", "🎯 [X] AdMob fail: $reason - $message")
+                                onAdRewardDismiss()
+                                onAdBlockedSetReason(reason.name)
+                            }
+                        )
+                    } else {
                         onAdRewardDismiss()
                     }
+                } catch (e: Exception) {
+                    android.util.Log.e("AdReward", "Launch error: ${e.message}", e)
+                    onAdRewardDismiss()
                 }
             }
-        )
+        }
     }
 
     if (adBlockedReason != null) {

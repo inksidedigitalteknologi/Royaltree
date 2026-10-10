@@ -9,6 +9,7 @@ data class UserEntity(
     @PrimaryKey val id: String,
     val name: String = "",
     val email: String = "",
+    val photoUrl: String? = null,
     val phone: String = "",
     val tier: String = "FREE",           // FREE or PREMIUM
     val balance: Double = 0.0,

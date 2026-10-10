@@ -856,12 +856,12 @@ object LanguageManager {
         ),
 
         "sponsor_ad_title" to mapOf(
-            AppLanguage.INDONESIAN to "Tonton Iklan Sponsor (+2-5 RTP)",
-            AppLanguage.ENGLISH to "Watch Sponsor Ad (+2-5 RTP)",
-            AppLanguage.SPANISH to "Ver Anuncio Patrocinado (+2-5 RTP)",
-            AppLanguage.CHINESE to "观看赞助广告 (+2-5 RTP)",
-            AppLanguage.ARABIC to "مشاهدة إعلان (+2-5 RTP)",
-            AppLanguage.JAPANESE to "スポンサー広告を視聴 (+2-5 RTP)"
+            AppLanguage.INDONESIAN to "Tonton Iklan",
+            AppLanguage.ENGLISH to "Watch Ad",
+            AppLanguage.SPANISH to "Ver Anuncio",
+            AppLanguage.CHINESE to "观看广告",
+            AppLanguage.ARABIC to "مشاهدة إعلان",
+            AppLanguage.JAPANESE to "広告を視聴"
         ),
         "global_points_standard" to mapOf(
             AppLanguage.INDONESIAN to "🌍 Standar Nilai RTP Global: 100 RTP = $1.00 USD / USDT",
@@ -1521,20 +1521,20 @@ object LanguageManager {
             AppLanguage.JAPANESE to "閉じる"
         ),
         "home_watch_ad" to mapOf(
-            AppLanguage.INDONESIAN to "Tonton Iklan Sponsor",
-            AppLanguage.ENGLISH to "Watch Sponsor Ad",
-            AppLanguage.SPANISH to "Ver anuncio patrocinado",
-            AppLanguage.CHINESE to "观看赞助广告",
-            AppLanguage.ARABIC to "شاهد إعلان الراعي",
-            AppLanguage.JAPANESE to "スポンサー広告を見る"
+            AppLanguage.INDONESIAN to "Tonton Iklan",
+            AppLanguage.ENGLISH to "Watch Ad",
+            AppLanguage.SPANISH to "Ver Anuncio",
+            AppLanguage.CHINESE to "观看广告",
+            AppLanguage.ARABIC to "شاهد إعلان",
+            AppLanguage.JAPANESE to "広告を見る"
         ),
         "home_watch_ad_desc" to mapOf(
-            AppLanguage.INDONESIAN to "Dapat +2-5 RTP • 30 detik",
-            AppLanguage.ENGLISH to "Get +2-5 RTP • 30 sec",
-            AppLanguage.SPANISH to "Obtén +2-5 RTP • 30 seg",
-            AppLanguage.CHINESE to "获得 +2-5 RTP • 30 秒",
-            AppLanguage.ARABIC to "احصل على +2-5 RTP • 30 ثانية",
-            AppLanguage.JAPANESE to "+2-5 RTP 獲得 • 30秒"
+            AppLanguage.INDONESIAN to "Tonton untuk dapatkan hadiah",
+            AppLanguage.ENGLISH to "Watch to get reward",
+            AppLanguage.SPANISH to "Mira para obtener recompensa",
+            AppLanguage.CHINESE to "观看以获得奖励",
+            AppLanguage.ARABIC to "شاهد للحصول على مكافأة",
+            AppLanguage.JAPANESE to "視聴して報酬を獲得"
         ),
         "home_loading_ad" to mapOf(
             AppLanguage.INDONESIAN to "Memuat iklan...",
@@ -1583,6 +1583,14 @@ object LanguageManager {
             AppLanguage.CHINESE to "明天再来观看",
             AppLanguage.ARABIC to "عد غدًا للمشاهدة مرة أخرى",
             AppLanguage.JAPANESE to "明日また見に来てください"
+        ),
+        "home_wait_cooldown" to mapOf(
+            AppLanguage.INDONESIAN to "Iklan sedang dimuat",
+            AppLanguage.ENGLISH to "Ad is loading",
+            AppLanguage.SPANISH to "El anuncio se está cargando",
+            AppLanguage.CHINESE to "广告正在加载",
+            AppLanguage.ARABIC to "جارٍ تحميل الإعلان",
+            AppLanguage.JAPANESE to "広告を読み込み中"
         ),
         "home_wait_moment" to mapOf(
             AppLanguage.INDONESIAN to "Tunggu sebentar...",

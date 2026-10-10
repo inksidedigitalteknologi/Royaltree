@@ -1795,6 +1795,21 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         transferSuccessReceipt.value = null
     }
 
+    /**
+     * Sync data user dari Firebase Auth (photoUrl, name, email) ke Room DB.
+     * Dipanggil bila user login pertama kali / profile berubah.
+     */
+    fun syncUserFromFirebase(photoUrl: String?, name: String?, email: String?) {
+        viewModelScope.launch {
+            try {
+                repository.updateUserPhotoAndProfile(photoUrl, name, email)
+                android.util.Log.d("AffiliateViewModel", "✅ User synced from Firebase: photoUrl=$photoUrl")
+            } catch (e: Exception) {
+                android.util.Log.e("AffiliateViewModel", "syncUserFromFirebase error: ${e.message}", e)
+            }
+        }
+    }
+
     fun updateUserLocation(lat: Double, lng: Double, city: String, province: String, accuracyMeters: Float = 10f) {
         viewModelScope.launch {
             repository.updateUserLocation(lat, lng, city, province, accuracyMeters)
