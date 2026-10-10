@@ -666,23 +666,24 @@ router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => 
         // ============ Instance ID unik (elak overwrite) ============
         const instanceId = 'miner_' + uid.slice(0, 6) + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
 
-        // Potong Miner Token
+        // Potong RTP + simpan miner
+        // NOTE: guna Date.now() — serverTimestamp() tak berfungsi dalam nested object update
         await userRef.update({
             points: admin.firestore.FieldValue.increment(-tokenCost),
             [`minersOwned.${instanceId}`]: {
-                catalogId: lookupId,
-                instanceId: instanceId,
-                name: name,
-                tier: tier,
-                iconEmoji: iconEmoji,
-                tokenCost: tokenCost,
-                powerGhs: powerGhs,
+                catalogId: lookupId || '',
+                instanceId: instanceId || '',
+                name: name || '',
+                tier: tier || 'COMMON',
+                iconEmoji: iconEmoji || '⛏️',
+                tokenCost: tokenCost || 0,
+                powerGhs: powerGhs || 0,
                 pointsPerMinute: pointsPerMinute || 0,
                 bonusPermanentPct: bonusPermanentPct || 0,
                 isOwned: true,
                 isPlacedInRoom: false,
                 placedSlotIndex: -1,
-                purchasedAt: admin.firestore.FieldValue.serverTimestamp()
+                purchasedAt: Date.now()
             }
         });
 
@@ -1536,40 +1537,43 @@ router.post('/miners/unlock', verifyFirebaseToken, checkFraud, async (req, res) 
         // Buat instance miner baru — dual-write
         const minerInstanceId = 'miner_' + uid.substring(0, 6) + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
 
-        // Simpan ke user doc
+        // Simpan ke user doc — guna Date.now() sebab serverTimestamp() tak berfungsi nested
         await userRef.update({
             [`minersOwned.${minerInstanceId}`]: {
-                catalogId: catalogItem.id,
-                instanceId: minerInstanceId,
-                name: catalogItem.name,
-                tier: catalogItem.tier,
-                iconEmoji: catalogItem.iconEmoji,
+                catalogId: catalogItem.id || '',
+                instanceId: minerInstanceId || '',
+                name: catalogItem.name || '',
+                tier: catalogItem.tier || 'COMMON',
+                iconEmoji: catalogItem.iconEmoji || '⛏️',
                 tokenCost: catalogItem.tokenCost || 0,
-                powerGhs: catalogItem.powerGhs,
+                powerGhs: catalogItem.powerGhs || 0,
                 pointsPerMinute: catalogItem.pointsPerMinute || 0,
+                bonusPermanentPct: catalogItem.bonusPermanentPct || 0,
                 isOwned: true,
                 isPlacedInRoom: false,
                 placedSlotIndex: -1,
-                unlockedAt: admin.firestore.FieldValue.serverTimestamp()
+                unlockedAt: Date.now()
             }
         });
 
-        // Dual-write ke game_miners
+        // Dual-write ke game_miners — guna Date.now()
         const minerRef = db.collection('game_miners').doc(minerInstanceId);
         await minerRef.set({
             userId: uid,
-            catalogId: catalogItem.id,
-            instanceId: minerInstanceId,
-            name: catalogItem.name,
-            tier: catalogItem.tier,
-            iconEmoji: catalogItem.iconEmoji,
+            catalogId: catalogItem.id || '',
+            instanceId: minerInstanceId || '',
+            name: catalogItem.name || '',
+            tier: catalogItem.tier || 'COMMON',
+            iconEmoji: catalogItem.iconEmoji || '⛏️',
             tokenCost: catalogItem.tokenCost || 0,
-            powerGhs: catalogItem.powerGhs,
-            pointsPerDay: catalogItem.pointsPerDay,
+            powerGhs: catalogItem.powerGhs || 0,
+            pointsPerDay: catalogItem.pointsPerDay || 0,
+            pointsPerMinute: catalogItem.pointsPerMinute || 0,
+            bonusPermanentPct: catalogItem.bonusPermanentPct || 0,
             isOwned: true,
             isPlacedInRoom: false,
             placedSlotIndex: -1,
-            unlockedAt: admin.firestore.FieldValue.serverTimestamp()
+            unlockedAt: Date.now()
         });
 
         // Audit log
