@@ -1238,9 +1238,9 @@ class AffiliateRepository(private val dao: AppDao) {
             return@withContext Result.failure(Exception("Anda sudah memiliki item ini. Pasang item ini di rak ruang game."))
         }
 
-        if (user.minerTokens < item.tokenCost) {
-            val shortage = item.tokenCost - user.minerTokens
-            return@withContext Result.failure(Exception("Miner Token tidak cukup! Anda memiliki ${user.minerTokens} Token (Butuh ${item.tokenCost}, kurang $shortage Token). Claim token dari iklan/misi."))
+        if (user.points < item.tokenCost) {
+            val shortage = item.tokenCost - user.points
+            return@withContext Result.failure(Exception("RTP tidak cukup! Anda memiliki ${user.points} RTP (Butuh ${item.tokenCost}, kurang $shortage RTP)."))
         }
 
         val placedMiners = dao.getPlacedMinerItemsSync()
@@ -1253,7 +1253,7 @@ class AffiliateRepository(private val dao: AppDao) {
             item.copy(isOwned = true, isPlacedInRoom = false, placedSlotIndex = -1)
         }
 
-        val updatedUser = user.copy(minerTokens = user.minerTokens - item.tokenCost)
+        val updatedUser = user.copy(points = user.points - item.tokenCost)
         dao.updateUser(updatedUser)
         dao.updateGameMinerItem(updatedItem)
 

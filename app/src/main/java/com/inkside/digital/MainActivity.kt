@@ -886,7 +886,7 @@ fun MainAffiliateAppContent(
                             else -> 6
                         },
                         minerPowerGhs = placedMiners.sumOf { it.powerGhs },
-                        minerTokens = 0,
+                        // minerTokens dibuang — guna points (RTP)
                         roomState = roomState
                     )
                 }
@@ -1219,7 +1219,7 @@ fun MainAffiliateAppPreview() {
                 name = "Preview User",
                 balance = 5000000.0,
                 points = 1200.0,
-                minerTokens = 500
+                // minerTokens dibuang — guna points (RTP)
             ),
             campaigns = emptyList(),
             links = emptyList(),
