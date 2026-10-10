@@ -1514,9 +1514,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 _minerActiveUntil.value = room.minerActiveUntil
                 val remaining = (room.minerActiveUntil - now).coerceAtLeast(0L)
                 _minerActiveRemainingMs.value = remaining
+                android.util.Log.d("MinerActive", "🔄 refreshMinerActiveState: room.minerActiveUntil=${room.minerActiveUntil}, remaining=$remaining")
                 // Start ticker kalau miner aktif
                 if (remaining > 0L) {
                     startMinerCountdownTicker()
+                    android.util.Log.d("MinerActive", "🔄 Ticker restarted")
                 }
             } catch (e: Exception) {
                 android.util.Log.w("AffiliateViewModel", "refreshMinerActiveState error: ${e.message}")
@@ -1531,12 +1533,17 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     .onSuccess { json ->
                         if (json.optBoolean("success", false)) {
                             val activeUntil = json.optLong("minerActiveUntil", 0L)
+                            android.util.Log.d("MinerActive", "✅ activateMiner: activeUntil=$activeUntil")
                             _minerActiveUntil.value = activeUntil
                             _minerActiveRemainingMs.value = (activeUntil - System.currentTimeMillis()).coerceAtLeast(0L)
+                            android.util.Log.d("MinerActive", "✅ State updated: minerActiveUntil=${_minerActiveUntil.value}, remainingMs=${_minerActiveRemainingMs.value}")
                             startMinerCountdownTicker()   // ← Start ticker
+                            android.util.Log.d("MinerActive", "✅ Ticker started")
                             showSnackbar("⛏️ Miner aktif 6 jam!")
                             loadGameState()
                             loadUserFromBackend()
+                        } else {
+                            android.util.Log.w("MinerActive", "❌ activateMiner: success=false, message=${json.optString("message")}")
                         } else {
                             showSnackbar(json.optString("message", "Gagal aktifkan miner"))
                         }

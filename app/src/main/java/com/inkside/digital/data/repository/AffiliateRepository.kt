@@ -1560,7 +1560,10 @@ class AffiliateRepository(private val dao: AppDao) {
                     baseRate = roomJson.optDouble("baseRate", 0.0),
                     permanentBonusPct = roomJson.optDouble("permanentBonusPct", 0.0),
                     miniGameBonusPct = roomJson.optDouble("miniGameBonusPct", 0.0),
-                    totalBonusPct = roomJson.optDouble("totalBonusPct", 0.0)
+                    totalBonusPct = roomJson.optDouble("totalBonusPct", 0.0),
+                    // ✅ CRITICAL FIX: Simpan minerActiveUntil + minerActivatedAt dari backend
+                    minerActiveUntil = roomJson.optLong("minerActiveUntil", existing?.minerActiveUntil ?: 0L),
+                    minerActivatedAt = roomJson.optLong("minerActivatedAt", existing?.minerActivatedAt ?: 0L)
                 )
                 dao.insertGameRoomState(room)
             }
