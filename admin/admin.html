@@ -701,6 +701,7 @@ tbody tr:last-child td {
     <button class="tab" data-tab="daily" onclick="switchTab('daily')">🎁 Daily Reward</button>
     <button class="tab" data-tab="ads" onclick="switchTab('ads')">📺 Ad Vendors</button>
     <button class="tab" data-tab="audit" onclick="switchTab('audit')">📋 Audit Log</button>
+    <button class="tab" data-tab="broadcast" onclick="switchTab('broadcast')">📢 Broadcast</button>
   </div>
   <div class="card" id="content">
     <div class="loading">Memuat data...</div>
@@ -845,6 +846,7 @@ function switchTab(tab) {
   else if (tab === 'daily') loadDailyConfig();
   else if (tab === 'ads') loadAdConfig();
   else if (tab === 'audit') loadAuditLogs();
+  else if (tab === 'broadcast') loadBroadcastTab();
 }
 
 function loadAll() {
@@ -1785,6 +1787,102 @@ async function saveGameConfig() {
   const data = await api('/admin/game-config', 'PUT', body, true);
   alert(data.success ? '✅ Config disimpan' : '❌ Gagal: ' + (data.message || 'Unknown'));
 }
+
+// ============================================================
+// BROADCAST NOTIFICATION
+// ============================================================
+function loadBroadcastTab() {
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div class="card-header">
+      <h2>📢 Hantar Notifikasi Push</h2>
+    </div>
+    <p style="color: #94a3b8; margin-bottom: 20px;">
+      Hantar push notification ke HP user. Notifikasi juga masuk ke inbox dalam app.
+    </p>
+
+    <div class="form-group">
+      <label>Target Penerima</label>
+      <select id="broadcast-target" style="width: 100%; padding: 10px; background: #1e293b; color: white; border: 1px solid #334155; border-radius: 8px;">
+        <option value="all">📢 Semua User (Broadcast)</option>
+        <option value="one">👤 1 User (Spesifik UID)</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="uid-group" style="display:none">
+      <label>UID User</label>
+      <input type="text" id="broadcast-uid" placeholder="Contoh: VTmp1Za0Awc8juAg..."
+             style="width: 100%; padding: 10px; background: #1e293b; color: white; border: 1px solid #334155; border-radius: 8px;">
+    </div>
+
+    <div class="form-group">
+      <label>Tajuk Notifikasi</label>
+      <input type="text" id="broadcast-title" placeholder="Contoh: Promo Spesial Hari Ini"
+             style="width: 100%; padding: 10px; background: #1e293b; color: white; border: 1px solid #334155; border-radius: 8px;">
+    </div>
+
+    <div class="form-group">
+      <label>Mesej Notifikasi</label>
+      <textarea id="broadcast-message" rows="4" placeholder="Tulis mesej untuk user..."
+                style="width: 100%; padding: 10px; background: #1e293b; color: white; border: 1px solid #334155; border-radius: 8px; resize: vertical;"></textarea>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button class="btn btn-primary" onclick="sendBroadcast()" style="flex: 1;">
+        📤 Hantar Sekarang
+      </button>
+      <button class="btn" onclick="previewBroadcast()" style="flex: 1;">
+        👁️ Preview
+      </button>
+    </div>
+
+    <div id="broadcast-result" style="margin-top: 20px;"></div>
+  `;
+
+  document.getElementById('broadcast-target').addEventListener('change', (e) => {
+    document.getElementById('uid-group').style.display = e.target.value === 'one' ? 'block' : 'none';
+  });
+}
+
+async function sendBroadcast() {
+  const target = document.getElementById('broadcast-target').value;
+  const uid = document.getElementById('broadcast-uid').value.trim();
+  const title = document.getElementById('broadcast-title').value.trim();
+  const message = document.getElementById('broadcast-message').value.trim();
+
+  if (!title || !message) { notify('Tajuk & mesej wajib diisi', 'error'); return; }
+  if (target === 'one' && !uid) { notify('UID wajib untuk target 1 user', 'error'); return; }
+
+  if (!confirm('Hantar notifikasi ke ' + (target === 'all' ? 'SEMUA USER' : 'user ' + uid) + '?')) return;
+
+  const result = document.getElementById('broadcast-result');
+  result.innerHTML = '<p style="color: #94a3b8">Menghantar...</p>';
+
+  try {
+    const data = await api('/admin/notifications/broadcast', 'POST', {
+      title, message, targetUid: target === 'one' ? uid : null
+    }, true);
+
+    if (data.success) {
+      result.innerHTML = '<div style="padding: 16px; background: #10b98120; border: 1px solid #10b981; border-radius: 8px; color: #10b981;"><strong>Berjaya!</strong><br>Broadcast ke: <strong>' + (data.count || 0) + '</strong> user<br>FCM sent: <strong>' + (data.fcmSent || 0) + '</strong> token</div>';
+      notify('Notifikasi berjaya dihantar!', 'success');
+    } else {
+      result.innerHTML = '<div style="padding: 16px; background: #ef444420; border: 1px solid #ef4444; border-radius: 8px; color: #ef4444;"><strong>Gagal:</strong> ' + data.message + '</div>';
+      notify(data.message, 'error');
+    }
+  } catch (e) {
+    result.innerHTML = '<div style="padding: 16px; background: #ef444420; border: 1px solid #ef4444; border-radius: 8px; color: #ef4444;"><strong>Error:</strong> ' + e.message + '</div>';
+    notify('Error: ' + e.message, 'error');
+  }
+}
+
+function previewBroadcast() {
+  const title = document.getElementById('broadcast-title').value || 'Tajuk Notifikasi';
+  const message = document.getElementById('broadcast-message').value || 'Mesej akan muncul di sini...';
+
+  document.getElementById('broadcast-result').innerHTML = '<div style="padding: 16px; background: #0f172a; border: 1px solid #334155; border-radius: 12px;"><p style="color: #94a3b8; font-size: 11px; margin-bottom: 8px;">PREVIEW — Ini yang user akan nampak:</p><div style="background: #1e293b; padding: 12px; border-radius: 8px; border-left: 4px solid #10b981;"><div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;"><div style="width: 32px; height: 32px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 8px; display: flex; align-items: center; justify-content: center;">🌳</div><div><div style="color: #10b981; font-size: 11px; font-weight: bold;">Royaltree</div><div style="color: #64748b; font-size: 10px;">sekarang</div></div></div><div style="font-weight: bold; margin-bottom: 4px;">' + title + '</div><div style="color: #cbd5e1; font-size: 13px;">' + message + '</div></div></div>';
+}
+
 </script>
 
 </body>
