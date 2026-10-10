@@ -147,7 +147,10 @@ fun GameRoomScreen(
     // Start bila Game Room dibuka, stop bila keluar
     DisposableEffect(Unit) {
         viewModel.startAutoClaim()
-        onDispose { viewModel.stopAutoClaim() }
+        onDispose {
+            viewModel.stopAutoClaim()
+            viewModel.stopMinerCountdownTicker()
+        }
     }
 
     val minerActiveUntil by viewModel.minerActiveUntil.collectAsState()
