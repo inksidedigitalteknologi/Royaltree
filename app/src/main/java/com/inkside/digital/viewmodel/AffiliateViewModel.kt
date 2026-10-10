@@ -994,55 +994,78 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
      */
     fun buyAndPlaceGameMinerItem(itemId: String) {
         viewModelScope.launch {
-            val result = repository.buyGameMinerItem(itemId)
-            result.onSuccess { msg ->
-                showSnackbar(msg)
+            try {
+                android.util.Log.d("BuyMiner", "🛒 buyAndPlaceGameMinerItem START: $itemId")
 
-                val item = repository.getGameMinerItemByIdSync(itemId)
-                if (item != null) {
-                    val body = org.json.JSONObject().apply {
-                        put("catalogId", item.catalogId)
-                        put("instanceId", item.id)
-                        put("tier", item.tier)
-                        put("name", item.name)
-                        put("tokenCost", item.tokenCost)
-                        put("powerGhs", item.powerGhs)
-                        put("pointsPerMinute", item.pointsPerMinute)
-                        put("iconEmoji", item.iconEmoji)
-                    }
-                    ApiClient.buyMiner(body)
-                        .onSuccess {
-                            android.util.Log.d("BuyMiner", "Miner synced")
+                val result = repository.buyGameMinerItem(itemId)
+                result.onSuccess { msg ->
+                    android.util.Log.d("BuyMiner", "✅ Lokal OK: $msg")
+                    showSnackbar(msg)
 
-                            val roomState = gameRoomState.value
-                            val unlockedSlots = roomState?.unlockedSlots ?: 2
-                            val usedSlots = gameMinerItems.value
-                                .filter { it.isPlacedInRoom && it.id != itemId }
-                                .map { it.placedSlotIndex }
-                                .toSet()
-                            val emptySlot = (0 until unlockedSlots).firstOrNull { it !in usedSlots }
-
-                            if (emptySlot != null) {
-                                repository.toggleMinerSlot(itemId, emptySlot)
-                                val placeBody = org.json.JSONObject().apply {
-                                    put("minerId", itemId)
-                                    put("slotIndex", emptySlot)
-                                }
-                                ApiClient.placeMiner(placeBody)
-                                showSnackbar("${item.name} dipasang di Slot ${emptySlot + 1}")
-                            } else {
-                                showSnackbar("${item.name} disimpan — slot penuh")
+                    try {
+                        val item = repository.getGameMinerItemByIdSync(itemId)
+                        if (item != null) {
+                            android.util.Log.d("BuyMiner", "📡 Sync backend: catalogId=${item.catalogId}")
+                            val body = org.json.JSONObject().apply {
+                                put("catalogId", item.catalogId)
+                                put("instanceId", item.id)
+                                put("tier", item.tier)
+                                put("name", item.name)
+                                put("tokenCost", item.tokenCost)
+                                put("powerGhs", item.powerGhs)
+                                put("pointsPerMinute", item.pointsPerMinute)
+                                put("iconEmoji", item.iconEmoji)
                             }
+                            ApiClient.buyMiner(body)
+                                .onSuccess { resp ->
+                                    val success = resp.optBoolean("success", false)
+                                    android.util.Log.d("BuyMiner", "✅ Sync response: $resp")
+                                    if (!success) {
+                                        showSnackbar("Backend reject: ${resp.optString("message")}")
+                                        return@onSuccess
+                                    }
 
-                            loadGameState()
+                                    val roomState = gameRoomState.value
+                                    val unlockedSlots = roomState?.unlockedSlots ?: 2
+                                    val usedSlots = gameMinerItems.value
+                                        .filter { it.isPlacedInRoom && it.id != itemId }
+                                        .map { it.placedSlotIndex }
+                                        .toSet()
+                                    val emptySlot = (0 until unlockedSlots).firstOrNull { it !in usedSlots }
+
+                                    if (emptySlot != null) {
+                                        repository.toggleMinerSlot(itemId, emptySlot)
+                                        val placeBody = org.json.JSONObject().apply {
+                                            put("minerId", itemId)
+                                            put("slotIndex", emptySlot)
+                                        }
+                                        ApiClient.placeMiner(placeBody)
+                                        showSnackbar("${item.name} dipasang di Slot ${emptySlot + 1}")
+                                    } else {
+                                        showSnackbar("${item.name} disimpan — slot penuh")
+                                    }
+
+                                    loadGameState()
+                                }
+                                .onFailure { err ->
+                                    android.util.Log.e("BuyMiner", "❌ Sync failed: ${err.message}", err)
+                                    showSnackbar("⚠️ Gagal sync ke server: ${err.message}")
+                                }
+                        } else {
+                            android.util.Log.e("BuyMiner", "❌ Item null selepas beli!")
+                            showSnackbar("⚠️ Item tak jumpa")
                         }
-                        .onFailure { err ->
-                            android.util.Log.e("BuyMiner", "Sync failed: ${err.message}")
-                            showSnackbar("Gagal sync ke server")
-                        }
+                    } catch (e: Exception) {
+                        android.util.Log.e("BuyMiner", "❌ Sync exception: ${e.message}", e)
+                        showSnackbar("⚠️ Sync error: ${e.message}")
+                    }
+                }.onFailure { error ->
+                    android.util.Log.e("BuyMiner", "❌ Lokal fail: ${error.message}", error)
+                    showSnackbar(error.message ?: "Gagal membeli item penambang")
                 }
-            }.onFailure { error ->
-                showSnackbar(error.message ?: "Gagal membeli item penambang")
+            } catch (e: Exception) {
+                android.util.Log.e("BuyMiner", "❌ Fatal error: ${e.message}", e)
+                showSnackbar("Error: ${e.message}")
             }
         }
     }
