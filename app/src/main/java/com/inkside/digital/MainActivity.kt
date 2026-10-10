@@ -768,11 +768,10 @@ fun MainAffiliateAppContent(
             )
         },
         bottomBar = {
-            AppBottomNavigationBar(
+            com.inkside.digital.ui.components.RevolverBottomNav(
                 currentScreen = currentScreen,
-                isAdminMode = isAdminMode,
-                currentLanguage = currentLanguage,
-                onNavigate = { onNavigate(it) }
+                onNavigate = { onNavigate(it) },
+                isAdminMode = isAdminMode
             )
         },
         snackbarHost = {
