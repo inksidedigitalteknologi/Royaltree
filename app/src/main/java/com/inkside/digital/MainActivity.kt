@@ -328,11 +328,12 @@ fun MainAffiliateApp(
     val user by viewModel.user.collectAsState()
 
     // Sync photoUrl dari Firebase ke UserEntity (Room DB)
-    androidx.compose.runtime.LaunchedEffect(currentUser?.uid, user?.photoUrl) {
-        currentUser?.let { fbUser ->
-            val fbPhotoUrl = fbUser.photoUrl?.toString()
-            val fbName = fbUser.displayName
-            val fbEmail = fbUser.email
+    androidx.compose.runtime.LaunchedEffect(user?.id, user?.photoUrl) {
+        val fbUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+        fbUser?.let {
+            val fbPhotoUrl = it.photoUrl?.toString()
+            val fbName = it.displayName
+            val fbEmail = it.email
 
             // Kalau user ada tapi photoUrl kosong/berbeza → sync
             if (user != null && !fbPhotoUrl.isNullOrBlank() && user?.photoUrl != fbPhotoUrl) {
