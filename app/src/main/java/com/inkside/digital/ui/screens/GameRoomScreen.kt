@@ -409,7 +409,10 @@ fun GameRoomScreenContent(
 
     // Modal: Confirmation Beli Item — Framed Style
     selectedItemToBuy?.let { item ->
-        val canAfford = (user?.points ?: 0.0) >= item.tokenCost
+        val userPoints = user?.points ?: 0.0
+        val canAfford = userPoints >= item.tokenCost
+        // Debug log untuk trace
+        android.util.Log.d("GameRoomBuy", "canAfford check: userPoints=$userPoints, tokenCost=${item.tokenCost}, canAfford=$canAfford")
         val unlockedSlots = roomState?.unlockedSlots ?: 2
         val usedSlots = minerItems
             .filter { it.isPlacedInRoom }
@@ -500,10 +503,17 @@ fun GameRoomScreenContent(
                         }
                         Button(
                             onClick = {
-                                if (hasEmptySlot) {
-                                    onBuyAndPlaceGameMinerItem(item.id)
-                                } else {
-                                    onBuyGameMinerItem(item.id)
+                                android.util.Log.d("GameRoomBuy", "🔘 Button diklik: item=${item.id}, hasEmptySlot=$hasEmptySlot, canAfford=$canAfford")
+                                try {
+                                    if (hasEmptySlot) {
+                                        android.util.Log.d("GameRoomBuy", "→ onBuyAndPlaceGameMinerItem")
+                                        onBuyAndPlaceGameMinerItem(item.id)
+                                    } else {
+                                        android.util.Log.d("GameRoomBuy", "→ onBuyGameMinerItem")
+                                        onBuyGameMinerItem(item.id)
+                                    }
+                                } catch (e: Exception) {
+                                    android.util.Log.e("GameRoomBuy", "❌ Error onClick: ${e.message}", e)
                                 }
                                 selectedItemToBuy = null
                             },
