@@ -94,7 +94,6 @@ fun ProfileScreen(
     minerSlotsUsed: Int = 0,
     minerSlotsMax: Int = 6,
     minerPowerGhs: Double = 0.0,
-    minerTokens: Int = 0,
     roomState: GameRoomStateEntity? = null  // M46: Sinkron data dengan Mining Room
 ) {
     var name by remember { mutableStateOf(user?.name ?: "") }
