@@ -552,6 +552,12 @@ fun MainAffiliateApp(
         onAddSteps = { viewModel.addSteps(it) },
         onConvertSteps = { viewModel.convertStepsToCoins() },
         onClaimMining = { viewModel.setPendingMiningClaim(true); viewModel.showAdRewardModal.value = true },
+        onActivateMiner = {
+            android.util.Log.d("MinerFlow", "🎯 [1] Butang Aktifkan Miner ditekan (MainActivity)")
+            viewModel.setPendingMinerActivate(true)
+            viewModel.showAdRewardModal.value = true
+            android.util.Log.d("MinerFlow", "🎯 [2] showAdRewardModal = true di-set")
+        },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
         onBuyAndPlaceGameMinerItem = { id -> viewModel.buyAndPlaceGameMinerItem(id) },
@@ -690,6 +696,7 @@ fun MainAffiliateAppContent(
     onAddSteps: (Int) -> Unit,
     onConvertSteps: () -> Unit,
     onClaimMining: () -> Unit,
+    onActivateMiner: () -> Unit = {},
     onToggleMinerSlot: (String, Int) -> Unit,
     onBuyGameMinerItem: (String) -> Unit,
     onBuyAndPlaceGameMinerItem: (String) -> Unit = {},
@@ -965,6 +972,7 @@ fun MainAffiliateAppContent(
                         placedMiners = placedMiners,
                         roomState = roomState,
                         onClaimMining = onClaimMining,
+                        onActivateMiner = onActivateMiner,
                         onToggleMinerSlot = onToggleMinerSlot,
                         onBuyGameMinerItem = onBuyGameMinerItem,
                         onBuyAndPlaceGameMinerItem = onBuyAndPlaceGameMinerItem,
