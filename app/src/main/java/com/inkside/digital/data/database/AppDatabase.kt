@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
         GameMinerItemEntity::class,
         GameRoomStateEntity::class
     ],
-    version = 4,  // Bump: GameMinerItemEntity pricePoints → tokenCost + catalogId + UserEntity.minerTokens
+    version = 5,  // Bump: UserEntity.photoUrl added
     exportSchema = false  // No-op, sudah ada migration manual
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -151,6 +151,14 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // ============ MIGRATION 4 → 5 ============
+        // UserEntity: tambah photoUrl (untuk Google profile picture)
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE users ADD COLUMN photoUrl TEXT")
+            }
+        }
+
         fun getDatabase(context: Context, scope: CoroutineScope): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -158,7 +166,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "royaltree.db"
                 )
-                    .addMigrations(MIGRATION_2_3, MIGRATION_3_4)  // MIGRATION PROPER
+                    .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)  // MIGRATION PROPER
                     .addCallback(DatabaseCallback(scope))
                     .fallbackToDestructiveMigration(dropAllTables = true)
                     .build()
