@@ -1025,6 +1025,7 @@ fun MainAffiliateAppContent(
                 }
             }  // close when (currentScreen)
             }  // close AnimatedBackground
+            }  // close Box konten
 
             // ✅ RevolverBottomNav sebagai overlay floating di atas konten
             com.inkside.digital.ui.components.RevolverBottomNav(
@@ -1033,7 +1034,7 @@ fun MainAffiliateAppContent(
                 isAdminMode = isAdminMode,
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
-        }  // close Box
+        }  // close Box utama
     }  // close Scaffold content
     }  // penutup ModalNavigationDrawer
 
