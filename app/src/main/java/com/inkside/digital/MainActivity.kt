@@ -1135,6 +1135,14 @@ fun MainAffiliateAppContent(
                     android.util.Log.d("MinerFlow", "🎯 [4] findActivity() = $activity")
                     if (activity != null) {
                         android.util.Log.d("MinerFlow", "🎯 [5] Calling AdManager.showRewardedAdForReward")
+                        // ✅ FIX: Pilih mode berdasarkan pendingMinerActivate
+                        val adMode = if (pendingMinerActivate) {
+                            android.util.Log.d("MinerFlow", "🎯 [5a] Mode = MINER_ACTIVATE (skip /ads/reward)")
+                            AdManager.AdMode.MINER_ACTIVATE
+                        } else {
+                            android.util.Log.d("MinerFlow", "🎯 [5b] Mode = REWARD (normal)")
+                            AdManager.AdMode.REWARD
+                        }
                         AdManager.showRewardedAdForReward(
                             activity = activity,
                             userId = user?.id ?: "",
@@ -1148,7 +1156,8 @@ fun MainAffiliateAppContent(
                                 android.util.Log.e("MinerFlow", "🎯 [X] AdMob fail: $reason - $message")
                                 onAdRewardDismiss()
                                 onAdBlockedSetReason(reason.name)
-                            }
+                            },
+                            mode = adMode   // ✅ Pass mode
                         )
                     } else {
                         onAdRewardDismiss()
