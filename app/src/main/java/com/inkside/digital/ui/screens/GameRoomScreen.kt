@@ -797,19 +797,23 @@ private fun MiningRoomTab(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            Brush.linearGradient(
-                                colors = listOf(
-                                    RetroBrown,
-                                    RetroBgDark,
-                                    Color(0xFF0F0805)
-                                )
-                            )
-                        )
-                        .border(2.dp, RetroBorder, RoundedCornerShape(20.dp))
-                        .padding(18.dp)
                 ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    // ==== PNG FRAME ====
+                    Image(
+                        painter = painterResource(id = com.inkside.digital.R.drawable.card_frame_mining),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .matchParentSize()
+                            .scale(1.08f),
+                        contentScale = androidx.compose.ui.layout.ContentScale.FillBounds
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp, vertical = 28.dp),
+                        verticalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
                         // ==== HEADER: Title + Chip ====
                         Row(
                             modifier = Modifier.fillMaxWidth(),
