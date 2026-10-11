@@ -1608,10 +1608,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             _minerActiveRemainingMs.value = (activeUntil - System.currentTimeMillis()).coerceAtLeast(0L)
                             android.util.Log.d("MinerActive", "✅ State updated: minerActiveUntil=${_minerActiveUntil.value}, remainingMs=${_minerActiveRemainingMs.value}")
                             startMinerCountdownTicker()   // ← Start ticker
-                            android.util.Log.d("MinerActive", "✅ Ticker started")
+                            android.util.Log.d("MinerActive", "✅ Ticker started, state=AKTIF")
                             showSnackbar("⛏️ Miner aktif 6 jam!")
-                            loadGameState()
-                            loadUserFromBackend()
+                            // ❌ JANGAN panggil loadGameState() di sini
+                            // karena akan re-fetch dan reset _minerActiveUntil
+                            // loadGameState()
+                            // loadUserFromBackend()
                         } else {
                             val errMsg = json.optString("message", "Gagal aktifkan miner")
                             android.util.Log.w("MinerActive", "❌ activateMiner: success=false, message=$errMsg")

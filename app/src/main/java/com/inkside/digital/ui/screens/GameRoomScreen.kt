@@ -788,37 +788,12 @@ private fun MiningRoomTab(
     ) {
         // ==== Hero Banner Retro + Token Counter ====
         item {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                HeroBanner(
-                    totalPowerGhs = totalPowerGhs,
-                    liveUnclaimedPoints = liveUnclaimedPoints,
-                    generationRatePerMin = generationRatePerMin,
-                    userPoints = userPoints
-                )
-                // Token badge di pojok kanan atas
-                Surface(
-                    color = RetroGold,
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(8.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RtpAmount(
-                            amount = "${GlobalPointsManager.formatRtp(userPoints)}",
-                            fontSize = 13.sp,
-                            iconSize = 14.dp,
-                            fontWeight = FontWeight.Black,
-                            color = Color.Black
-                        )
-                    }
-                }
-            }
+            HeroBanner(
+                totalPowerGhs = totalPowerGhs,
+                liveUnclaimedPoints = liveUnclaimedPoints,
+                generationRatePerMin = generationRatePerMin,
+                userPoints = userPoints
+            )
         }
 
         // Hero Room Power & Harvest Dashboard (lama)
