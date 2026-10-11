@@ -157,6 +157,11 @@ fun GameRoomScreen(
     val minerActiveUntil by viewModel.minerActiveUntil.collectAsState()
     val minerActiveRemainingMs by viewModel.minerActiveRemainingMs.collectAsState()
 
+    // ✅ DEBUG: Log setiap perubahan
+    LaunchedEffect(minerActiveUntil) {
+        android.util.Log.d("MinerFlow", "UI re-render: minerActiveUntil=$minerActiveUntil, remaining=$minerActiveRemainingMs")
+    }
+
     androidx.compose.runtime.LaunchedEffect(Unit) {
         viewModel.loadGameStateThenRefreshMiner()
     }
