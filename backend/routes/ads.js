@@ -93,6 +93,7 @@ router.post('/reward', verifyFirebaseToken, checkFraud, async (req, res) => {
         const { vendor, transactionId } = req.body;
 
         if (!vendor || !transactionId) {
+            console.error('[ADS/REWARD] 400: vendor/txId kosong. vendor=', vendor, 'txId=', transactionId, 'body=', req.body);
             return res.status(400).json({
                 success: false,
                 message: 'Vendor dan transactionId wajib diisi.'
@@ -111,6 +112,7 @@ router.post('/reward', verifyFirebaseToken, checkFraud, async (req, res) => {
             : 0;
 
         if (todayAdsWatched >= MAX_ADS_PER_DAY) {
+            console.error('[ADS/REWARD] 400: batas harian. todayAdsWatched=', todayAdsWatched, 'MAX=', MAX_ADS_PER_DAY);
             return res.status(400).json({
                 success: false,
                 message: 'Batas tonton video hari ini sudah tercapai.'
@@ -121,6 +123,7 @@ router.post('/reward', verifyFirebaseToken, checkFraud, async (req, res) => {
         const txRef = db.collection('ad_transactions').doc(transactionId);
         const txDoc = await txRef.get();
         if (txDoc.exists) {
+            console.error('[ADS/REWARD] 400: transaksi sudah dipakai. txId=', transactionId);
             return res.status(400).json({
                 success: false,
                 message: 'Transaksi sudah digunakan.'
