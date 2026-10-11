@@ -786,15 +786,6 @@ private fun MiningRoomTab(
         verticalArrangement = Arrangement.spacedBy(14.dp),
         contentPadding = PaddingValues(vertical = 14.dp)
     ) {
-        // ==== Hero Banner Retro + Token Counter ====
-        item {
-            HeroBanner(
-                totalPowerGhs = totalPowerGhs,
-                liveUnclaimedPoints = liveUnclaimedPoints,
-                generationRatePerMin = generationRatePerMin,
-                userPoints = userPoints
-            )
-        }
 
         // Hero Room Power & Harvest Dashboard (lama)
         item {
@@ -819,12 +810,27 @@ private fun MiningRoomTab(
                         .padding(18.dp)
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                        // Info chip: Rak Terisi
+                        // ==== HEADER: Title + Chip ====
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End,
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            Column {
+                                Text(
+                                    text = "MINING TYCOON",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Black,
+                                    color = EmeraldLight,
+                                    letterSpacing = 2.sp
+                                )
+                                Text(
+                                    text = "Royaltree Points Miner",
+                                    fontSize = 10.sp,
+                                    color = RetroAmber,
+                                    letterSpacing = 1.sp
+                                )
+                            }
                             Surface(
                                 color = Color(0xFF1E293B).copy(alpha = 0.8f),
                                 shape = RoundedCornerShape(8.dp)
@@ -837,6 +843,35 @@ private fun MiningRoomTab(
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                                 )
                             }
+                        }
+
+                        // ==== STATS ROW ====
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            RetroStatBox(
+                                emoji = "🔥",
+                                label = "POWER",
+                                value = "${String.format("%.0f", totalPowerGhs)} GH/s",
+                                color = RetroAmber,
+                                modifier = Modifier.weight(1f)
+                            )
+                            RetroStatBox(
+                                emoji = "💰",
+                                label = "RTP",
+                                value = "${GlobalPointsManager.formatRtp(userPoints.toDouble())}",
+                                color = RetroGold,
+                                modifier = Modifier.weight(1.8f),
+                                useRtpIcon = true
+                            )
+                            RetroStatBox(
+                                emoji = "⚡",
+                                label = "RATE",
+                                value = "${String.format(Locale.US, "%.4f", generationRatePerMin)}/m",
+                                color = EmeraldLight,
+                                modifier = Modifier.weight(1f)
+                            )
                         }
 
                         // Unclaimed Points Box & Claim Button
