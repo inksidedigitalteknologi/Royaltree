@@ -1436,38 +1436,68 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
      */
     fun loadGameStateThenRefreshMiner() {
         viewModelScope.launch {
+            android.util.Log.d("MinerFlow", "════════ START loadGameStateThenRefreshMiner ════════")
+            
+            // STEP 1: Fetch API
             try {
-                ApiClient.getGameState().onSuccess { json ->
-                    if (json.optBoolean("success", false)) {
+                android.util.Log.d("MinerFlow", "[STEP 1] Fetching getGameState()...")
+                val result = ApiClient.getGameState()
+                
+                result.onSuccess { json ->
+                    android.util.Log.d("MinerFlow", "[STEP 1a] API success. Response: $json")
+                    
+                    val success = json.optBoolean("success", false)
+                    android.util.Log.d("MinerFlow", "[STEP 1b] success=$success")
+                    
+                    if (success) {
+                        // Cek room & minerActiveUntil di response
+                        val data = json.optJSONObject("data")
+                        val room = data?.optJSONObject("room")
+                        val minerActiveUntilFromApi = room?.optLong("minerActiveUntil", -1L)
+                        android.util.Log.d("MinerFlow", "[STEP 1c] Response room.minerActiveUntil=$minerActiveUntilFromApi")
+                        
+                        // Sync ke Room DB
                         repository.syncGameStateFromBackend(json)
-                        android.util.Log.d("MinerFlow", "[1] Game state loaded")
+                        android.util.Log.d("MinerFlow", "[STEP 1d] Sync to Room DB done")
                     }
                 }.onFailure { error ->
-                    android.util.Log.w("MinerFlow", "[1] Gagal load: ${error.message}")
+                    android.util.Log.e("MinerFlow", "[STEP 1] API FAILED: ${error.message}", error)
                 }
             } catch (e: Exception) {
-                android.util.Log.e("MinerFlow", "loadGameStateThenRefreshMiner error: ${e.message}")
+                android.util.Log.e("MinerFlow", "[STEP 1] EXCEPTION: ${e.message}", e)
             }
+            
+            // STEP 2: Baca dari Room DB
             try {
+                android.util.Log.d("MinerFlow", "[STEP 2] Reading Room DB...")
                 val room = repository.getGameRoomStateOnce()
+                
                 if (room == null) {
-                    android.util.Log.w("MinerFlow", "[2] Room DB masih null")
+                    android.util.Log.e("MinerFlow", "[STEP 2a] Room DB NULL!")
                     return@launch
                 }
+                
+                android.util.Log.d("MinerFlow", "[STEP 2b] Room DB: minerActiveUntil=${room.minerActiveUntil}")
+                
                 val now = System.currentTimeMillis()
                 _minerActiveUntil.value = room.minerActiveUntil
                 val remaining = (room.minerActiveUntil - now).coerceAtLeast(0L)
                 _minerActiveRemainingMs.value = remaining
-                android.util.Log.d("MinerFlow", "[2] minerActiveUntil=${room.minerActiveUntil}, remaining=$remaining")
+                
+                android.util.Log.d("MinerFlow", "[STEP 2c] now=$now, minerActiveUntil=${room.minerActiveUntil}, remaining=$remaining (${remaining/1000/60} menit)")
+                
                 if (remaining > 0L) {
                     startMinerCountdownTicker()
-                    android.util.Log.d("MinerFlow", "[3] Ticker started")
+                    android.util.Log.d("MinerFlow", "[STEP 3] ✅ Ticker started — MINER AKTIF")
                 } else {
                     stopMinerCountdownTicker()
+                    android.util.Log.d("MinerFlow", "[STEP 3] ⛔ Miner EXPIRED / TIDAK AKTIF")
                 }
             } catch (e: Exception) {
-                android.util.Log.e("MinerFlow", "refresh error: ${e.message}")
+                android.util.Log.e("MinerFlow", "[STEP 2] EXCEPTION: ${e.message}", e)
             }
+            
+            android.util.Log.d("MinerFlow", "════════ END loadGameStateThenRefreshMiner ════════")
         }
     }
 
