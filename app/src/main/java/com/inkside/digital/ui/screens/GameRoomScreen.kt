@@ -844,34 +844,12 @@ private fun MiningRoomTab(
                         .padding(18.dp)
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                        // Info chip: Rak Terisi
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                            horizontalArrangement = Arrangement.End,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(10.dp)
-                                        .clip(CircleShape)
-                                        .background(if (placedMiners.isNotEmpty()) EmeraldLight.copy(alpha = pulseAlpha) else Color.Gray)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = when {
-                                        placedMiners.isEmpty() -> "RAK KOSONG - PASANG ITEM"
-                                        minerActiveUntil > System.currentTimeMillis() -> "MINING AKTIF (24/7 ONLINE)"
-                                        else -> "RATE: ${String.format(Locale.US, "%.4f", generationRatePerMin)}/m"
-                                    },
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = when {
-                                        placedMiners.isEmpty() -> Color(0xFF94A3B8)
-                                        minerActiveUntil > System.currentTimeMillis() -> EmeraldLight
-                                        else -> Color(0xFF94A3B8)  // gray untuk rate info
-                                    }
-                                )
-                            }
                             Surface(
                                 color = Color(0xFF1E293B).copy(alpha = 0.8f),
                                 shape = RoundedCornerShape(8.dp)
@@ -883,76 +861,6 @@ private fun MiningRoomTab(
                                     color = Color.White,
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                                 )
-                            }
-                        }
-
-                        // Hash Power & Rate Row
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Surface(
-                                color = Color(0xFF0F172A).copy(alpha = 0.8f),
-                                shape = RoundedCornerShape(14.dp),
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Column(modifier = Modifier.padding(12.dp)) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(imageVector = Icons.Filled.Speed, contentDescription = null, tint = ElectricBlue, modifier = Modifier.size(14.dp))
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text(LanguageManager.translate("game_total_hash", currentLanguage, "Total Hash Rate"), fontSize = 10.sp, color = Color(0xFF94A3B8))
-                                    }
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = "${String.format(Locale.US, "%.1f", totalPowerGhs)} GH/s",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White
-                                    )
-                                    if (bonusPowerGhs > 0) {
-                                        Text(
-                                            text = "+${bonusPowerGhs.toInt()} GH/s Boost Arcade",
-                                            fontSize = 9.sp,
-                                            color = GoldVip,
-                                            fontWeight = FontWeight.SemiBold
-                                        )
-                                    }
-                                }
-                            }
-
-                            Surface(
-                                color = Color(0xFF0F172A).copy(alpha = 0.8f),
-                                shape = RoundedCornerShape(14.dp),
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Column(modifier = Modifier.padding(12.dp)) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(imageVector = Icons.Filled.Bolt, contentDescription = null, tint = EmeraldLight, modifier = Modifier.size(14.dp))
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text(LanguageManager.translate("game_point_speed", currentLanguage, "Kecepatan Poin"), fontSize = 10.sp, color = Color(0xFF94A3B8))
-                                    }
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = "+${String.format(Locale.US, "%.4f", generationRatePerMin)} /mnt",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = EmeraldLight
-                                    )
-                                    Text(
-                                        text = "≈ +${String.format(Locale.US, "%.1f", generationRatePerMin * 60)} RTP/Jam",
-                                        fontSize = 9.sp,
-                                        color = Color(0xFF94A3B8)
-                                    )
-                                    // M43: Bonus breakdown (dari server)
-                                    if ((roomState?.totalBonusPct ?: 0.0) > 0.0) {
-                                        Text(
-                                            text = "+${String.format(Locale.US, "%.2f", roomState?.totalBonusPct ?: 0.0)}% bonus",
-                                            fontSize = 9.sp,
-                                            color = Color(0xFFFFB800),
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
-                                }
                             }
                         }
 
