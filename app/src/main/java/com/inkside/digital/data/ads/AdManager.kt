@@ -18,11 +18,19 @@ object AdManager {
 
     private const val TAG = "AdManager"
 
+    /**
+     * Mode iklan:
+     * - REWARD: reward iklan biasa (panggil /ads/reward)
+     * - MINER_ACTIVATE: aktivasi miner (SKIP /ads/reward, langsung sukses)
+     */
+    enum class AdMode { REWARD, MINER_ACTIVATE }
+
     suspend fun showRewardedAdForReward(
         activity: Activity,
         userId: String,
         onSuccess: (points: Int) -> Unit,
-        onFailure: (reason: AdFailureReason, message: String) -> Unit
+        onFailure: (reason: AdFailureReason, message: String) -> Unit,
+        mode: AdMode = AdMode.REWARD   // ✅ Default: REWARD
     ) {
         Log.d("MinerFlow", "🎯 [6] AdManager.showRewardedAdForReward START — userId=$userId")
         // 1. Load ad
@@ -40,9 +48,18 @@ object AdManager {
         AdMobProvider.showRewardedAd(
             activity = activity,
             onRewardEarned = { rewardAmount, rewardType ->
-                Log.d(TAG, "Reward earned: $rewardAmount $rewardType")
+                Log.d(TAG, "Reward earned: $rewardAmount $rewardType (mode=$mode)")
 
-                // 3. Kirim ke backend (background)
+                // ✅ FIX: Kalau MINER_ACTIVATE, SKIP /ads/reward
+                if (mode == AdMode.MINER_ACTIVATE) {
+                    Log.d(TAG, "⛏️ Miner activate mode — skip /ads/reward, langsung onSuccess")
+                    CoroutineScope(Dispatchers.Main).launch {
+                        onSuccess(0)   // points = 0 (tidak ada reward)
+                    }
+                    return@showRewardedAd
+                }
+
+                // 3. Kirim ke backend (background) — untuk REWARD mode
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
                         withContext(Dispatchers.Main) {
