@@ -157,7 +157,7 @@ fun GameRoomScreen(
     val minerActiveRemainingMs by viewModel.minerActiveRemainingMs.collectAsState()
 
     androidx.compose.runtime.LaunchedEffect(Unit) {
-        viewModel.refreshMinerActiveState()
+        viewModel.loadGameStateThenRefreshMiner()
     }
 
     GameRoomScreenContent(
