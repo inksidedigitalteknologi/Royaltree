@@ -160,8 +160,12 @@ object GlobalPointsManager {
      *   200.123456 -> "200.1235"
      */
     fun formatRtp(value: Double): String {
-        return if (value == value.toLong().toDouble()) {
-            value.toLong().toString()
+        // Format dengan pemisah ribuan + 2 desimal
+        // 29635.0 -> "29,635.00"
+        // 1234567.89 -> "1,234,567.89"
+        // 0.1333 -> "0.13"
+        return if (value >= 1.0) {
+            String.format(Locale.US, "%,.2f", value)
         } else {
             String.format(Locale.US, "%.4f", value)
         }

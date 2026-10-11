@@ -679,7 +679,7 @@ private fun HeroBanner(
                 RetroStatBox(
                     emoji = "💰",
                     label = "RTP",
-                    value = "× ${String.format(Locale.US, "%.4f", userPoints.toDouble())}",
+                    value = "${GlobalPointsManager.formatRtp(userPoints.toDouble())}",
                     color = RetroGold,
                     modifier = Modifier.weight(1.8f),   // ← lebih luas
                     useRtpIcon = true
@@ -810,7 +810,7 @@ private fun MiningRoomTab(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RtpAmount(
-                            amount = "× ${String.format(Locale.US, "%.4f", userPoints)}",
+                            amount = "${GlobalPointsManager.formatRtp(userPoints)}",
                             fontSize = 13.sp,
                             iconSize = 14.dp,
                             fontWeight = FontWeight.Black,
