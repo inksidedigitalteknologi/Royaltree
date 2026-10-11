@@ -45,7 +45,11 @@ app.use('/api/v1/transfer', transferRoutes);
 app.use('/admin', express.static('/root/Royaltree/admin'));
 
 // Kunci Otentikasi Admin Portal
-const API_SECRET_KEY = process.env.ROYALTREE_API_KEY || "rt_secret_portal_key_2026";
+const API_SECRET_KEY = process.env.ROYALTREE_API_KEY;
+if (!API_SECRET_KEY) {
+    console.error("❌ FATAL: ROYALTREE_API_KEY tidak di-set di .env");
+    process.exit(1);
+}
 
 // Middleware Validasi API Key
 function authenticateToken(req, res, next) {

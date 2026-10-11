@@ -52,7 +52,7 @@ object ApiClient {
     private const val KEY_API_KEY = "portal_api_key"
 
     const val DEFAULT_BASE_URL = "http://45.41.204.21:3000/api/v1/"
-    const val DEFAULT_API_KEY = "rt_secret_portal_key_2026"
+    const val DEFAULT_API_KEY = com.inkside.digital.BuildConfig.ROYALTREE_API_KEY
 
     private var currentBaseUrl: String = DEFAULT_BASE_URL
     private var currentApiKey: String = DEFAULT_API_KEY

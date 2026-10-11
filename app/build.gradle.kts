@@ -1,4 +1,13 @@
 import com.google.gms.googleservices.GoogleServicesPlugin.MissingGoogleServicesStrategy
+import java.util.Properties
+
+// Load local.properties untuk secret keys
+val localProperties = Properties().apply {
+    val localFile = rootProject.file("local.properties")
+    if (localFile.exists()) {
+        localFile.inputStream().use { load(it) }
+    }
+}
 
 plugins {
   alias(libs.plugins.android.application)
@@ -28,6 +37,13 @@ android {
     versionName = appVersionName
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+    // ✅ SECURITY: API key dari local.properties (tidak hardcode)
+    buildConfigField(
+      "String",
+      "ROYALTREE_API_KEY",
+      "\"${localProperties["royaltree.api.key"] ?: ""}\""
+    )
   }
 
   signingConfigs {

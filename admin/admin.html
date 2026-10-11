@@ -724,7 +724,16 @@ tbody tr:last-child td {
 <script>
 // ============ CONFIG ============
 const API_BASE = window.location.origin + '/api/v1';
-const API_KEY = 'rt_secret_portal_key_2026';
+// ✅ SECURITY: Ambil API key dari localStorage atau prompt
+let API_KEY = localStorage.getItem('rt_api_key');
+if (!API_KEY) {
+    API_KEY = prompt('Masukkan API Key admin:');
+    if (API_KEY) localStorage.setItem('rt_api_key', API_KEY);
+}
+if (!API_KEY) {
+    alert('API Key diperlukan untuk akses admin panel.');
+    window.location.href = 'about:blank';
+}
 let currentTab = 'users';
 let editingItem = null;
 let editingCollection = null;

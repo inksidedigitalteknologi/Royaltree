@@ -16,7 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-$API_SECRET_KEY = "rt_secret_portal_key_2026"; // Sesuaikan dengan Secret Key Anda
+// ✅ SECURITY: Ambil dari environment variable
+$API_SECRET_KEY = getenv('ROYALTREE_API_KEY') ?: die("FATAL: ROYALTREE_API_KEY tidak di-set");
 
 function checkAuth($secret) {
     $headers = getallheaders();

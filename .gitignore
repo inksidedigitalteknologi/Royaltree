@@ -35,3 +35,5 @@ backend/node_modules/
 *.bak-*
 *.bak2-*
 admin/*.backup
+local.properties
+.env
