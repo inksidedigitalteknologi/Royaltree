@@ -1432,6 +1432,46 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     /**
+     * FIX RACE CONDITION: Load game state DULU, baru refresh miner active.
+     */
+    fun loadGameStateThenRefreshMiner() {
+        viewModelScope.launch {
+            try {
+                ApiClient.getGameState().onSuccess { json ->
+                    if (json.optBoolean("success", false)) {
+                        repository.syncGameStateFromBackend(json)
+                        android.util.Log.d("MinerFlow", "[1] Game state loaded")
+                    }
+                }.onFailure { error ->
+                    android.util.Log.w("MinerFlow", "[1] Gagal load: ${error.message}")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("MinerFlow", "loadGameStateThenRefreshMiner error: ${e.message}")
+            }
+            try {
+                val room = repository.getGameRoomStateOnce()
+                if (room == null) {
+                    android.util.Log.w("MinerFlow", "[2] Room DB masih null")
+                    return@launch
+                }
+                val now = System.currentTimeMillis()
+                _minerActiveUntil.value = room.minerActiveUntil
+                val remaining = (room.minerActiveUntil - now).coerceAtLeast(0L)
+                _minerActiveRemainingMs.value = remaining
+                android.util.Log.d("MinerFlow", "[2] minerActiveUntil=${room.minerActiveUntil}, remaining=$remaining")
+                if (remaining > 0L) {
+                    startMinerCountdownTicker()
+                    android.util.Log.d("MinerFlow", "[3] Ticker started")
+                } else {
+                    stopMinerCountdownTicker()
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("MinerFlow", "refresh error: ${e.message}")
+            }
+        }
+    }
+
+    /**
      * Claim mining points — sync ke backend.
      */
     // ============ MINING CLAIM (Wajib Iklan + Cooldown 1 Jam) ============
