@@ -99,6 +99,7 @@ import com.inkside.digital.ui.screens.auth.VerifyEmailScreen
 import com.inkside.digital.viewmodel.AffiliateViewModel
 import com.inkside.digital.viewmodel.AppScreen
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.Alignment
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -739,6 +740,7 @@ fun MainAffiliateAppContent(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = false,   // ← FIX: disable swipe-to-open, hanya via tombol hamburger
         drawerContent = {
             ModalDrawerSheet {
                 AppDrawer(
@@ -767,13 +769,6 @@ fun MainAffiliateAppContent(
                 onOpenNotifs = { onNavigate(AppScreen.NOTIFICATIONS) }
             )
         },
-        bottomBar = {
-            com.inkside.digital.ui.components.RevolverBottomNav(
-                currentScreen = currentScreen,
-                onNavigate = { onNavigate(it) },
-                isAdminMode = isAdminMode
-            )
-        },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { data ->
                 androidx.compose.material3.Snackbar(
@@ -788,9 +783,13 @@ fun MainAffiliateAppContent(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
         ) {
-            // ============ FIX: Wrap dengan AnimatedBackground (daun jatuh) ============
+            // ============ KONTEN UTAMA — hanya padding top (bukan bottom) ============
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = innerPadding.calculateTopPadding())
+            ) {
             com.inkside.digital.ui.components.AnimatedBackground {
                 when (currentScreen) {
                 AppScreen.HOME -> {
@@ -1026,6 +1025,14 @@ fun MainAffiliateAppContent(
                 }
             }  // close when (currentScreen)
             }  // close AnimatedBackground
+
+            // ✅ RevolverBottomNav sebagai overlay floating di atas konten
+            com.inkside.digital.ui.components.RevolverBottomNav(
+                currentScreen = currentScreen,
+                onNavigate = { onNavigate(it) },
+                isAdminMode = isAdminMode,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
         }  // close Box
     }  // close Scaffold content
     }  // penutup ModalNavigationDrawer
