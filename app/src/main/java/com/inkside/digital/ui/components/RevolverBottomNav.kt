@@ -20,7 +20,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
@@ -331,7 +332,7 @@ fun RevolverBottomNav(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 24.dp)
-                    .size(centerSize)
+                    .size(centerSize * 0.85f)
                     .scale(if (isExpanded) 1.05f else 1f)
                     .shadow(
                         elevation = 12.dp,
@@ -435,11 +436,10 @@ fun RevolverBottomNav(
                             )
                         )
                 )
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = if (isExpanded) "Close" else "Open",
-                    tint = Color.Black.copy(alpha = 0.85f),
-                    modifier = Modifier.size(28.dp)
+                Image(
+                    painter = painterResource(id = com.inkside.digital.R.drawable.rtp_coin),
+                    contentDescription = "RTP",
+                    modifier = Modifier.size(32.dp)
                 )
             }
         }
