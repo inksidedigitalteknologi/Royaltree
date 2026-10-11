@@ -742,7 +742,7 @@ fun MainAffiliateAppContent(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = false,   // ← FIX: disable swipe-to-open, hanya via tombol hamburger
+        gesturesEnabled = true,   // ← FIX: enable swipe untuk tutup drawer
         drawerContent = {
             ModalDrawerSheet {
                 AppDrawer(
