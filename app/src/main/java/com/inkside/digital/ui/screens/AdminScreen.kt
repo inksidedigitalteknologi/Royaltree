@@ -110,7 +110,7 @@ fun AdminScreen(
     locationLogs: List<UserLocationLogEntity> = emptyList(),
     systemSettings: SystemSettingsEntity? = null,
     portalBaseUrl: String = "http://45.41.204.21:5000/api/v1/",
-    portalApiKey: String = "rt_secret_portal_key_2026",
+    portalApiKey: String = com.inkside.digital.BuildConfig.ROYALTREE_API_KEY,
     portalStatus: String = "IDLE",
     portalStatusMessage: String = "Belum diuji",
     isSyncingWithPortal: Boolean = false,
@@ -1090,7 +1090,7 @@ fun AdminPortalEndpointSection(
                     value = portalApiKey,
                     onValueChange = onApiKeyChange,
                     label = { Text("API Secret Key (Bearer Token)", fontSize = 11.sp) },
-                    placeholder = { Text("Contoh: rt_secret_portal_key_2026") },
+                    placeholder = { Text("Contoh: <API_KEY>") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("input_portal_api_key"),
@@ -1207,7 +1207,7 @@ fun AdminPortalEndpointSection(
                         path = "/api/v1/users/sync",
                         title = "3. User Sync (Sinkronisasi Data Pengguna)",
                         desc = "Mengunggah profil user, saldo, poin RTP, langkah kaki, dan referral ke database portal.",
-                        curl = "curl -X POST \"http://localhost:3000/api/v1/users/sync\" \\\n  -H \"Authorization: Bearer rt_secret_portal_key_2026\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"id\":\"user_001\",\"name\":\"Hendra Wijaya\",\"points\":1850,\"balance\":4750000}'",
+                        curl = "curl -X POST \"http://localhost:3000/api/v1/users/sync\" \\\n  -H \"Authorization: Bearer <API_KEY>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"id\":\"user_001\",\"name\":\"Hendra Wijaya\",\"points\":1850,\"balance\":4750000}'",
                         sampleResponse = "{\n  \"success\": true,\n  \"message\": \"Data pengguna berhasil disinkronkan ke portal.\"\n}"
                     ),
                     EndpointSpec(
@@ -1215,7 +1215,7 @@ fun AdminPortalEndpointSection(
                         path = "/api/v1/withdrawals",
                         title = "4. Penarikan Dana & Approval",
                         desc = "Mengambil daftar permohonan withdraw (GET) dan menyetujui / membayar penarikan (PUT).",
-                        curl = "curl -X PUT \"http://localhost:3000/api/v1/withdrawals/WD-90412/status\" \\\n  -H \"Authorization: Bearer rt_secret_portal_key_2026\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"status\":\"PAID\",\"adminNotes\":\"Ditransfer via BCA Bisnis\"}'",
+                        curl = "curl -X PUT \"http://localhost:3000/api/v1/withdrawals/WD-90412/status\" \\\n  -H \"Authorization: Bearer <API_KEY>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"status\":\"PAID\",\"adminNotes\":\"Ditransfer via BCA Bisnis\"}'",
                         sampleResponse = "{\n  \"success\": true,\n  \"message\": \"Status penarikan berhasil diubah menjadi PAID.\"\n}"
                     ),
                     EndpointSpec(
@@ -1398,7 +1398,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const SECRET = "rt_secret_portal_key_2026";
+const SECRET = process.env.ROYALTREE_API_KEY;
 
 // Health Check
 app.get('/api/v1/health', (req, res) => {

@@ -7,7 +7,7 @@ File ini mendokumentasikan spesifikasi REST API resmi untuk menghubungkan aplika
 ## 🔑 Autentikasi
 Kecuali endpoint publik seperti `/health`, semua permintaan dari aplikasi menyertakan header:
 ```http
-Authorization: Bearer rt_secret_portal_key_2026
+Authorization: Bearer <API_KEY>
 Content-Type: application/json
 ```
 
