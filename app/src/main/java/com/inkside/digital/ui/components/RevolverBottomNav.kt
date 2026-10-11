@@ -3,7 +3,6 @@ package com.inkside.digital.ui.components
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,14 +18,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,18 +38,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.inkside.digital.viewmodel.AppScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -71,13 +69,10 @@ private val GoldVip = Color(0xFFFBBF24)
 private val GoldBright = Color(0xFFFDE68A)
 private val GoldAmber = Color(0xFFF59E0B)
 private val GoldDark = Color(0xFFB45309)
-private val ChromeLight = Color(0xFFE2E8F0)
-private val Chrome = Color(0xFF94A3B8)
 private val ChromeDark = Color(0xFF475569)
 private val MetalDeep = Color(0xFF1E293B)
 private val TextPrimary = Color(0xFFFFFFFF)
 private val TextSecondary = Color(0xFFCBD5E1)
-private val TextMuted = Color(0xFF64748B)
 
 data class RevolverNavItem(
     val screen: AppScreen,
@@ -85,15 +80,6 @@ data class RevolverNavItem(
     val icon: ImageVector
 )
 
-/**
- * Revolver Bottom Nav — Premium Royal Sci-Fi HUD
- *
- * UX:
- * - Tap center → expand + overlay gelap
- * - Drag center → rotate chamber
- * - Tap outside → dismiss
- * - Tap icon → navigate
- */
 @Composable
 fun RevolverBottomNav(
     currentScreen: AppScreen,
@@ -104,7 +90,6 @@ fun RevolverBottomNav(
     val haptic = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
 
-    // 5 menu — Miner di top center (paling visual)
     val items = remember(isAdminMode) {
         if (isAdminMode) {
             listOf(
@@ -112,15 +97,15 @@ fun RevolverBottomNav(
                 RevolverNavItem(AppScreen.HOME, "Home", Icons.Filled.Home),
                 RevolverNavItem(AppScreen.MISSIONS, "Missions", Icons.Filled.Star),
                 RevolverNavItem(AppScreen.GAME_ROOM, "Game", Icons.Filled.PlayArrow),
-                RevolverNavItem(AppScreen.PROFILE, "Profile", Icons.Filled.Person)
+                RevolverNavItem(AppScreen.PROFILE, "Profile", Icons.Filled.AccountCircle)
             )
         } else {
             listOf(
-                RevolverNavItem(AppScreen.GAME_MINING, "Miner", Icons.Filled.PlayArrow),  // 0° — atas
-                RevolverNavItem(AppScreen.GAME_ROOM, "Game", Icons.Filled.PlayArrow),     // 72°
-                RevolverNavItem(AppScreen.PROFILE, "Profile", Icons.Filled.Person),       // 144°
-                RevolverNavItem(AppScreen.HOME, "Home", Icons.Filled.Home),               // 216°
-                RevolverNavItem(AppScreen.MISSIONS, "Missions", Icons.Filled.Star)        // 288°
+                RevolverNavItem(AppScreen.GAME_MINING, "Miner", Icons.Filled.PlayArrow),
+                RevolverNavItem(AppScreen.GAME_ROOM, "Game", Icons.Filled.PlayArrow),
+                RevolverNavItem(AppScreen.PROFILE, "Profile", Icons.Filled.AccountCircle),
+                RevolverNavItem(AppScreen.HOME, "Home", Icons.Filled.Home),
+                RevolverNavItem(AppScreen.MISSIONS, "Missions", Icons.Filled.Star)
             )
         }
     }
@@ -172,10 +157,11 @@ fun RevolverBottomNav(
 
     val containerHeight = 180.dp
     val centerSize = 64.dp
+    val centerGlow = 88.dp
     val orbitRadius = 96.dp
 
     Box(modifier = modifier.fillMaxSize()) {
-        // ==== OVERLAY GELAP saat expanded ====
+        // ==== OVERLAY GELAP ====
         if (isExpanded) {
             Box(
                 modifier = Modifier
@@ -192,7 +178,6 @@ fun RevolverBottomNav(
             )
         }
 
-        // ==== CHAMBER + ICONS + CENTER ====
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -200,26 +185,41 @@ fun RevolverBottomNav(
                 .align(Alignment.BottomCenter),
             contentAlignment = Alignment.BottomCenter
         ) {
-            // ==== CHAMBER ARC (dashed emerald) ====
+            // ==== CHAMBER ARC ====
             if (isExpanded) {
                 Canvas(
                     modifier = Modifier
-                        .size(orbitRadius * 2 + 40.dp)
+                        .size(orbitRadius * 2 + 60.dp)
                         .align(Alignment.BottomCenter)
                         .padding(bottom = 24.dp)
                 ) {
-                    drawCircle(
-                        color = EmeraldPrimary.copy(alpha = 0.25f),
-                        radius = size.minDimension / 2,
-                        style = Stroke(
-                            width = 1.5.dp.toPx(),
-                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(8f, 12f), 0f)
-                        )
-                    )
+                    val radius = size.minDimension / 2
+
                     drawCircle(
                         color = EmeraldPrimary.copy(alpha = 0.08f),
-                        radius = size.minDimension / 2 - 4.dp.toPx(),
-                        style = Stroke(width = 12.dp.toPx())
+                        radius = radius,
+                        style = Stroke(width = 24.dp.toPx())
+                    )
+
+                    drawCircle(
+                        color = EmeraldPrimary.copy(alpha = 0.35f),
+                        radius = radius,
+                        style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round)
+                    )
+
+                    drawCircle(
+                        color = EmeraldLight.copy(alpha = 0.15f),
+                        radius = radius - 6.dp.toPx(),
+                        style = Stroke(width = 1.dp.toPx())
+                    )
+
+                    drawCircle(
+                        color = EmeraldPrimary.copy(alpha = 0.15f),
+                        radius = radius + 10.dp.toPx(),
+                        style = Stroke(
+                            width = 1.dp.toPx(),
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(6f, 14f), 0f)
+                        )
                     )
                 }
             }
@@ -237,6 +237,27 @@ fun RevolverBottomNav(
                     val xPx = orbitRadius.value * cos(rad)
                     val yPx = orbitRadius.value * sin(rad)
 
+                    // Glow radial gradient
+                    if (isSelected) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = 24.dp)
+                                .offset(x = xPx.dp, y = yPx.dp)
+                                .size(iconSize + 28.dp)
+                                .background(
+                                    Brush.radialGradient(
+                                        colors = listOf(
+                                            EmeraldPrimary.copy(alpha = 0.55f),
+                                            EmeraldPrimary.copy(alpha = 0.25f),
+                                            Color.Transparent
+                                        )
+                                    ),
+                                    CircleShape
+                                )
+                        )
+                    }
+
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
@@ -246,8 +267,13 @@ fun RevolverBottomNav(
                             .scale(if (isSelected) 1.1f else 1f)
                             .clip(CircleShape)
                             .background(
-                                if (isSelected) EmeraldDeep
-                                else MetalDeep
+                                Brush.radialGradient(
+                                    colors = if (isSelected) {
+                                        listOf(EmeraldDeep, EmeraldDark)
+                                    } else {
+                                        listOf(MetalDeep, SurfaceDeep)
+                                    }
+                                )
                             )
                             .border(
                                 width = if (isSelected) 2.dp else 1.dp,
@@ -281,17 +307,49 @@ fun RevolverBottomNav(
                 }
             }
 
-            // ==== CENTER BUTTON (Gold Core) ====
+            // ==== CENTER BUTTON — Layer 1: Glow ====
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 24.dp)
+                    .size(centerGlow)
+                    .scale(if (isExpanded) 1.05f else 1f)
+                    .background(
+                        Brush.radialGradient(
+                            colors = listOf(
+                                GoldVip.copy(alpha = 0.65f),
+                                GoldAmber.copy(alpha = 0.35f),
+                                Color.Transparent
+                            )
+                        ),
+                        CircleShape
+                    )
+            )
+
+            // ==== CENTER BUTTON — Layer 2: Main ====
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 24.dp)
                     .size(centerSize)
                     .scale(if (isExpanded) 1.05f else 1f)
+                    .shadow(
+                        elevation = 12.dp,
+                        shape = CircleShape,
+                        ambientColor = GoldAmber,
+                        spotColor = GoldAmber
+                    )
                     .clip(CircleShape)
                     .background(
-                        Brush.linearGradient(
-                            colors = listOf(GoldBright, GoldVip, GoldAmber)
+                        Brush.radialGradient(
+                            colors = listOf(
+                                GoldBright,
+                                GoldVip,
+                                GoldAmber,
+                                GoldDark
+                            ),
+                            center = Offset(0.3f, 0.3f),
+                            radius = 120f
                         )
                     )
                     .border(
@@ -362,10 +420,25 @@ fun RevolverBottomNav(
                     },
                 contentAlignment = Alignment.Center
             ) {
+                Box(
+                    modifier = Modifier
+                        .size(centerSize - 12.dp)
+                        .clip(CircleShape)
+                        .background(
+                            Brush.radialGradient(
+                                colors = listOf(
+                                    Color.White.copy(alpha = 0.4f),
+                                    Color.Transparent
+                                ),
+                                center = Offset(0.3f, 0.3f),
+                                radius = 80f
+                            )
+                        )
+                )
                 Icon(
                     imageVector = Icons.Filled.Menu,
                     contentDescription = if (isExpanded) "Close" else "Open",
-                    tint = Color.Black,
+                    tint = Color.Black.copy(alpha = 0.85f),
                     modifier = Modifier.size(28.dp)
                 )
             }
