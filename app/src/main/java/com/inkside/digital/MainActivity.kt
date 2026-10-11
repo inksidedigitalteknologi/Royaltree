@@ -422,6 +422,7 @@ fun MainAffiliateApp(
     val vmAlias: AffiliateViewModel = viewModel
     MainAffiliateAppContent(
         user = user,
+        pendingMinerActivate = pendingMinerActivate,
         campaigns = campaigns,
         links = links,
         withdrawals = withdrawals,
@@ -599,6 +600,7 @@ private fun android.content.Context.findActivity(): android.app.Activity? = when
 @Composable
 fun MainAffiliateAppContent(
     user: UserEntity?,
+    pendingMinerActivate: Boolean = false,
     campaigns: List<CampaignEntity>,
     links: List<AffiliateLinkEntity>,
     withdrawals: List<WithdrawalEntity>,
