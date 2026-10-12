@@ -159,7 +159,6 @@ fun GameRoomScreen(
 
     // ✅ DEBUG: Log setiap perubahan
     LaunchedEffect(minerActiveUntil) {
-        android.util.Log.d("MinerFlow", "UI re-render: minerActiveUntil=$minerActiveUntil, remaining=$minerActiveRemainingMs")
     }
 
     androidx.compose.runtime.LaunchedEffect(Unit) {
@@ -174,10 +173,8 @@ fun GameRoomScreen(
         minerActiveUntil = minerActiveUntil,
         minerActiveRemainingMs = minerActiveRemainingMs,
         onActivateMiner = { 
-            android.util.Log.d("MinerFlow", "🎯 [1] Butang Aktifkan Miner ditekan")
             viewModel.setPendingMinerActivate(true)
             viewModel.showAdRewardModal.value = true
-            android.util.Log.d("MinerFlow", "🎯 [2] showAdRewardModal = true di-set")
         },
         onClaimMining = { viewModel.showAdRewardModal.value = true; viewModel.setPendingMiningClaim(true) },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
