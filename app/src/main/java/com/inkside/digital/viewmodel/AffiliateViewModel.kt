@@ -1480,8 +1480,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 android.util.Log.d("MinerFlow", "[STEP 2b] Room DB: minerActiveUntil=${room.minerActiveUntil}")
                 
                 val now = System.currentTimeMillis()
-                _minerActiveUntil.value = room.minerActiveUntil
-                val remaining = (room.minerActiveUntil - now).coerceAtLeast(0L)
+                if (room.minerActiveUntil > _minerActiveUntil.value) { _minerActiveUntil.value = room.minerActiveUntil }
+                val remaining = (_minerActiveUntil.value - now).coerceAtLeast(0L)
                 _minerActiveRemainingMs.value = remaining
                 
                 android.util.Log.d("MinerFlow", "[STEP 2c] now=$now, minerActiveUntil=${room.minerActiveUntil}, remaining=$remaining (${remaining/1000/60} menit)")
