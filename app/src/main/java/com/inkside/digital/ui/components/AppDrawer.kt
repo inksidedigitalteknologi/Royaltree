@@ -65,6 +65,7 @@ import com.inkside.digital.viewmodel.AppScreen
 import com.inkside.digital.ui.screens.ProfileAvatarWithFrame
 import com.inkside.digital.util.GlobalPointsManager
 import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Chat
 
 @Composable
 fun AppDrawer(
@@ -156,6 +157,14 @@ fun AppDrawer(
             Spacer(modifier = Modifier.height(4.dp))
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             Spacer(modifier = Modifier.height(4.dp))
+
+            // ============ MENU GLOBAL CHAT ============
+            DrawerItem(
+                icon = Icons.Default.Chat,
+                label = LanguageManager.translate("chat_title", currentLanguage, "Global Chat"),
+                selected = currentScreen == AppScreen.GLOBAL_CHAT,
+                onClick = { onNavigate(AppScreen.GLOBAL_CHAT); onCloseDrawer() }
+            )
 
             // ============ MENU WHITEPAPER ============
             DrawerItem(

@@ -109,6 +109,7 @@ import androidx.work.WorkManager
 import com.inkside.digital.worker.MiningWorker
 import java.util.concurrent.TimeUnit
 import com.inkside.digital.ui.screens.WhitepaperScreen
+import com.inkside.digital.ui.screens.GlobalChatScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -943,6 +944,14 @@ fun MainAffiliateAppContent(
 
                 AppScreen.WHITEPAPER -> {
                     WhitepaperScreen(
+                        currentLanguage = currentLanguage,
+                        onBack = { onNavigate(AppScreen.HOME) }
+                    )
+                }
+
+                AppScreen.GLOBAL_CHAT -> {
+                    GlobalChatScreen(
+                        currentUserId = user?.id ?: "",
                         currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.HOME) }
                     )

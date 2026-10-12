@@ -269,6 +269,13 @@ interface RoyaltreeApiService {
 
     @GET("transfer/history")
     suspend fun getTransferHistory(): ResponseBody
+
+    // ==== GLOBAL CHAT ====
+    @GET("chat/messages")
+    suspend fun getChatMessages(): ResponseBody
+
+    @POST("chat/send")
+    suspend fun sendChatMessage(@Body body: RequestBody): ResponseBody
 }
 
 

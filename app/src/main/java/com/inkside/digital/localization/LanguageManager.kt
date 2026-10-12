@@ -1976,6 +1976,38 @@ object LanguageManager {
             AppLanguage.ARABIC to "خروج",
             AppLanguage.JAPANESE to "終了"
         ),
+        "chat_title" to mapOf(
+            AppLanguage.INDONESIAN to "Global Chat",
+            AppLanguage.ENGLISH to "Global Chat",
+            AppLanguage.SPANISH to "Chat Global",
+            AppLanguage.CHINESE to "全球聊天",
+            AppLanguage.ARABIC to "الدردشة العالمية",
+            AppLanguage.JAPANESE to "グローバルチャット"
+        ),
+        "chat_subtitle" to mapOf(
+            AppLanguage.INDONESIAN to "50 pesan terakhir",
+            AppLanguage.ENGLISH to "Last 50 messages",
+            AppLanguage.SPANISH to "Últimos 50 mensajes",
+            AppLanguage.CHINESE to "最近50条消息",
+            AppLanguage.ARABIC to "آخر 50 رسالة",
+            AppLanguage.JAPANESE to "最後の50メッセージ"
+        ),
+        "chat_empty" to mapOf(
+            AppLanguage.INDONESIAN to "Belum ada pesan",
+            AppLanguage.ENGLISH to "No messages yet",
+            AppLanguage.SPANISH to "Aún no hay mensajes",
+            AppLanguage.CHINESE to "暂无消息",
+            AppLanguage.ARABIC to "لا توجد رسائل بعد",
+            AppLanguage.JAPANESE to "メッセージはまだありません"
+        ),
+        "chat_hint" to mapOf(
+            AppLanguage.INDONESIAN to "Tulis pesan...",
+            AppLanguage.ENGLISH to "Type a message...",
+            AppLanguage.SPANISH to "Escribe un mensaje...",
+            AppLanguage.CHINESE to "输入消息...",
+            AppLanguage.ARABIC to "اكتب رسالة...",
+            AppLanguage.JAPANESE to "メッセージを入力..."
+        ),
         "wp_title" to mapOf(
             AppLanguage.INDONESIAN to "Royaltree Whitepaper",
             AppLanguage.ENGLISH to "Royaltree Whitepaper",
