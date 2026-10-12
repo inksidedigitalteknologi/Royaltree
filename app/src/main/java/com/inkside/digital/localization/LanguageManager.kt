@@ -1720,6 +1720,70 @@ object LanguageManager {
             AppLanguage.ARABIC to "السعر:",
             AppLanguage.JAPANESE to "価格:"
         ),
+        "game_mining_tycoon" to mapOf(
+            AppLanguage.INDONESIAN to "MINING TYCOON",
+            AppLanguage.ENGLISH to "MINING TYCOON",
+            AppLanguage.SPANISH to "MINING TYCOON",
+            AppLanguage.CHINESE to "MINING TYCOON",
+            AppLanguage.ARABIC to "MINING TYCOON",
+            AppLanguage.JAPANESE to "MINING TYCOON"
+        ),
+        "game_points_miner" to mapOf(
+            AppLanguage.INDONESIAN to "Royaltree Points Miner",
+            AppLanguage.ENGLISH to "Royaltree Points Miner",
+            AppLanguage.SPANISH to "Minero de Puntos Royaltree",
+            AppLanguage.CHINESE to "Royaltree积分矿工",
+            AppLanguage.ARABIC to "عامل تعدين نقاط رويالتري",
+            AppLanguage.JAPANESE to "ロイヤルツリーポイントマイナー"
+        ),
+        "game_rack_filled" to mapOf(
+            AppLanguage.INDONESIAN to "%s Rak Terisi",
+            AppLanguage.ENGLISH to "%s Rack Filled",
+            AppLanguage.SPANISH to "%s Estante Lleno",
+            AppLanguage.CHINESE to "%s 槽位已满",
+            AppLanguage.ARABIC to "%s رف ممتلئ",
+            AppLanguage.JAPANESE to "%s ラック満杯"
+        ),
+        "game_miner_active" to mapOf(
+            AppLanguage.INDONESIAN to "MINER SEDANG AKTIF",
+            AppLanguage.ENGLISH to "MINER IS ACTIVE",
+            AppLanguage.SPANISH to "MINERO ACTIVO",
+            AppLanguage.CHINESE to "矿工活跃",
+            AppLanguage.ARABIC to "عامل التعدين نشط",
+            AppLanguage.JAPANESE to "マイナー稼働中"
+        ),
+        "game_miner_inactive" to mapOf(
+            AppLanguage.INDONESIAN to "MINER TIDAK AKTIF",
+            AppLanguage.ENGLISH to "MINER NOT ACTIVE",
+            AppLanguage.SPANISH to "MINERO INACTIVO",
+            AppLanguage.CHINESE to "矿工未活跃",
+            AppLanguage.ARABIC to "عامل التعدين غير نشط",
+            AppLanguage.JAPANESE to "マイナー停止中"
+        ),
+        "game_miner_hint" to mapOf(
+            AppLanguage.INDONESIAN to "Aktifkan untuk mula mining",
+            AppLanguage.ENGLISH to "Activate to start mining",
+            AppLanguage.SPANISH to "Activa para comenzar a minar",
+            AppLanguage.CHINESE to "激活以开始挖矿",
+            AppLanguage.ARABIC to "قم بالتنشيط لبدء التعدين",
+            AppLanguage.JAPANESE to "有効化してマイニングを開始"
+        ),
+        "game_miner_wait" to mapOf(
+            AppLanguage.INDONESIAN to "Aktif — tunggu tamat",
+            AppLanguage.ENGLISH to "Active — wait until end",
+            AppLanguage.SPANISH to "Activo — espera el final",
+            AppLanguage.CHINESE to "活跃 — 等待结束",
+            AppLanguage.ARABIC to "نشط — انتظر حتى النهاية",
+            AppLanguage.JAPANESE to "稼働中 — 終了まで待機"
+        ),
+        "game_miner_button" to mapOf(
+            AppLanguage.INDONESIAN to "Aktifkan Miner (Tonton Iklan)",
+            AppLanguage.ENGLISH to "Activate Miner (Watch Ad)",
+            AppLanguage.SPANISH to "Activar Minero (Ver Anuncio)",
+            AppLanguage.CHINESE to "激活矿工（观看广告）",
+            AppLanguage.ARABIC to "تنشيط عامل التعدين (مشاهدة إعلان)",
+            AppLanguage.JAPANESE to "マイナーを有効化（広告を見る）"
+        ),
         "game_mining_power" to mapOf(
             AppLanguage.INDONESIAN to "Mining Power:",
             AppLanguage.ENGLISH to "Mining Power:",

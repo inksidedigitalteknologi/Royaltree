@@ -625,84 +625,6 @@ fun GameRoomScreenContent(
 // TAB 0: RUANG RAK MINING (ROLLERCOIN RACK ROOM)
 // -------------------------------------------------------------
 @Composable
-private fun HeroBanner(
-    totalPowerGhs: Double,
-    liveUnclaimedPoints: Double,
-    generationRatePerMin: Double,
-    userPoints: Double = 0.0
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .background(
-                Brush.linearGradient(
-                    listOf(RetroBrown, RetroBgDark, Color(0xFF0F0805))
-                )
-            )
-            .border(2.dp, RetroBorder, RoundedCornerShape(20.dp))
-            .padding(20.dp)
-    ) {
-        // Emoji besar background
-        Text(
-            text = "⛏️",
-            fontSize = 110.sp,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 8.dp),
-            color = Color.White.copy(alpha = 0.08f)
-        )
-
-        Column {
-            Text(
-                text = "MINING TYCOON",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Black,
-                color = EmeraldLight,
-                letterSpacing = 2.sp
-            )
-            Text(
-                text = "Royaltree Points Miner",
-                fontSize = 11.sp,
-                color = RetroAmber,
-                letterSpacing = 1.sp
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Stats row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                RetroStatBox(
-                    emoji = "🔥",
-                    label = "POWER",
-                    value = "${String.format("%.0f", totalPowerGhs)} GH/s",
-                    color = RetroAmber,
-                    modifier = Modifier.weight(1f)
-                )
-                RetroStatBox(
-                    emoji = "💰",
-                    label = "RTP",
-                    value = "${GlobalPointsManager.formatRtp(userPoints.toDouble())}",
-                    color = RetroGold,
-                    modifier = Modifier.weight(1.8f),   // ← lebih luas
-                    useRtpIcon = true
-                )
-                RetroStatBox(
-                    emoji = "⚡",
-                    label = "RATE",
-                    value = "${String.format(Locale.US, "%.4f", generationRatePerMin)}/m",
-                    color = EmeraldLight,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-    }
-}
-
-@Composable
 private fun RetroStatBox(
     emoji: String,
     label: String,
@@ -827,14 +749,14 @@ private fun MiningRoomTab(
                         ) {
                             Column {
                                 Text(
-                                    text = "MINING TYCOON",
+                                    text = LanguageManager.translate("game_mining_tycoon", currentLanguage, "MINING TYCOON"),
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Black,
                                     color = EmeraldLight,
                                     letterSpacing = 2.sp
                                 )
                                 Text(
-                                    text = "Royaltree Points Miner",
+                                    text = LanguageManager.translate("game_points_miner", currentLanguage, "Royaltree Points Miner"),
                                     fontSize = 10.sp,
                                     color = RetroAmber,
                                     letterSpacing = 1.sp
@@ -845,7 +767,7 @@ private fun MiningRoomTab(
                                 shape = RoundedCornerShape(8.dp)
                             ) {
                                 Text(
-                                    text = "${placedMiners.size}/${roomState?.unlockedSlots ?: 6} Rak Terisi",
+                                    text = String.format(LanguageManager.translate("game_rack_filled", currentLanguage, "%s Rak Terisi"), "${placedMiners.size}/${roomState?.unlockedSlots ?: 6}"),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White,
@@ -861,14 +783,14 @@ private fun MiningRoomTab(
                         ) {
                             RetroStatBox(
                                 emoji = "🔥",
-                                label = "POWER",
+                                label = LanguageManager.translate("game_mining_power", currentLanguage, "POWER"),
                                 value = "${String.format("%.0f", totalPowerGhs)} GH/s",
                                 color = RetroAmber,
                                 modifier = Modifier.weight(1f)
                             )
                             RetroStatBox(
                                 emoji = "💰",
-                                label = "RTP",
+                                label = LanguageManager.translate("game_mining_rtp", currentLanguage, "RTP"),
                                 value = "${GlobalPointsManager.formatRtp(userPoints.toDouble())}",
                                 color = RetroGold,
                                 modifier = Modifier.weight(1.8f),
@@ -876,7 +798,7 @@ private fun MiningRoomTab(
                             )
                             RetroStatBox(
                                 emoji = "⚡",
-                                label = "RATE",
+                                label = LanguageManager.translate("game_mining_rate", currentLanguage, "RATE"),
                                 value = "${String.format(Locale.US, "%.4f", generationRatePerMin)}/m",
                                 color = EmeraldLight,
                                 modifier = Modifier.weight(1f)
@@ -897,50 +819,38 @@ private fun MiningRoomTab(
                                 val isMinerActive = minerActiveUntil > System.currentTimeMillis()
 
                                 if (isMinerActive) {
-                                    // Miner sedang aktif — tunjuk countdown
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
+                                    // Miner sedang aktif — KOTAK ABU-ABU dengan status + countdown
+                                    Surface(
+                                        color = Color(0xFF334155),
+                                        shape = RoundedCornerShape(12.dp),
+                                        modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        Column {
-                                            Text(
-                                                text = "⛏️ MINER SEDANG AKTIF",
-                                                fontSize = 10.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = EmeraldLight
-                                            )
-                                            Text(
-                                                text = formatMinerCountdown(minerActiveRemainingMs),
-                                                fontSize = 22.sp,
-                                                fontWeight = FontWeight.ExtraBold,
-                                                color = Color.White
-                                            )
-                                        }
-                                        Text("✅", fontSize = 28.sp)
-                                    }
-
-                                    // Button disabled — miner dah aktif
-                                    Button(
-                                        onClick = { },
-                                        enabled = false,
-                                        colors = ButtonDefaults.buttonColors(
-                                            disabledContainerColor = Color(0xFF334155),
-                                            disabledContentColor = Color.White.copy(alpha = 0.7f)
-                                        ),
-                                        shape = RoundedCornerShape(10.dp),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(44.dp)
-                                    ) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Icon(imageVector = Icons.Filled.Timer, contentDescription = null, tint = Color.White.copy(alpha = 0.7f), modifier = Modifier.size(16.dp))
-                                            Spacer(modifier = Modifier.width(6.dp))
-                                            Text(
-                                                text = "⏱ Aktif — tunggu tamat",
-                                                color = Color.White.copy(alpha = 0.7f),
-                                                fontWeight = FontWeight.Bold,
-                                                fontSize = 13.sp
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 16.dp, vertical = 14.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Column {
+                                                Text(
+                                                    text = "⛏️ ${LanguageManager.translate("game_miner_active", currentLanguage, "MINER SEDANG AKTIF")}",
+                                                    fontSize = 11.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = EmeraldLight
+                                                )
+                                                Text(
+                                                    text = formatMinerCountdown(minerActiveRemainingMs),
+                                                    fontSize = 24.sp,
+                                                    fontWeight = FontWeight.ExtraBold,
+                                                    color = Color.White
+                                                )
+                                            }
+                                            Icon(
+                                                imageVector = Icons.Filled.Bolt,
+                                                contentDescription = "Active",
+                                                tint = GoldVip,
+                                                modifier = Modifier.size(32.dp)
                                             )
                                         }
                                     }
@@ -953,13 +863,13 @@ private fun MiningRoomTab(
                                     ) {
                                         Column {
                                             Text(
-                                                text = "⛔ MINER TIDAK AKTIF",
+                                                text = "⛔ ${LanguageManager.translate("game_miner_inactive", currentLanguage, "MINER TIDAK AKTIF")}",
                                                 fontSize = 10.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 color = Color(0xFFF87171)
                                             )
                                             Text(
-                                                text = "Aktifkan untuk mula mining",
+                                                text = LanguageManager.translate("game_miner_hint", currentLanguage, "Aktifkan untuk mula mining"),
                                                 fontSize = 13.sp,
                                                 fontWeight = FontWeight.Medium,
                                                 color = Color(0xFF94A3B8)
@@ -982,7 +892,7 @@ private fun MiningRoomTab(
                                             Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
                                             Spacer(modifier = Modifier.width(6.dp))
                                             Text(
-                                                text = "🎬 Aktifkan Miner (Tonton Iklan)",
+                                                text = "🎬 ${LanguageManager.translate("game_miner_button", currentLanguage, "Aktifkan Miner (Tonton Iklan)")}",
                                                 color = Color.Black,
                                                 fontWeight = FontWeight.Bold,
                                                 fontSize = 13.sp
