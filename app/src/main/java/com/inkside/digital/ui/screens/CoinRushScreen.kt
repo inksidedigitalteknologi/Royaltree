@@ -55,6 +55,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.border
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
+import com.inkside.digital.R
 
 // ==== Colors — Neon Cyberpunk ====
 private val EmeraldPrimary = Color(0xFF10B981)
