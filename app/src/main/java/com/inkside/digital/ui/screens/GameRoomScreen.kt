@@ -115,6 +115,7 @@ import androidx.compose.ui.res.painterResource
 import com.inkside.digital.ui.components.RtpAmount
 import androidx.compose.ui.draw.scale
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.HorizontalDivider
 
 @OptIn(ExperimentalMaterial3Api::class)
 // ==== Retro Pixel Palette ====
@@ -224,12 +225,24 @@ fun GameRoomScreenContent(
     val bonusPowerGhs = roomState?.tempPowerBonusGhs ?: 0.0
     val totalPowerGhs = basePowerGhs + bonusPowerGhs
 
-    // M43 ANTI-FRAUD: Guna ratePerMin dari server
-    // Fallback ke client-side kira kalau server belum hantar
+    // ✅ DINAMIS: Sum pointsPerMinute dari semua placed miners (client-side, real-time)
+    // Server rate jadi fallback kalau client kosong
     val generationRatePerMin = remember(roomState?.ratePerMin, placedMiners) {
-        val serverRate = roomState?.ratePerMin ?: 0.0
-        if (serverRate > 0.0) serverRate
-        else placedMiners.sumOf { it.pointsPerMinute }  // fallback
+        // Prioritas 1: sum client-side (real-time, akurat)
+        val clientRate = placedMiners.sumOf { it.pointsPerMinute }
+        if (clientRate > 0.0) return@remember clientRate
+        
+        // Prioritas 2: fallback ke server rate
+        roomState?.ratePerMin ?: 0.0
+    }
+
+    // ✅ Breakdown per miner (untuk display)
+    val minerBreakdown = remember(placedMiners) {
+        placedMiners
+            .sortedByDescending { it.pointsPerMinute }
+            .map { miner ->
+                Triple(miner.name, miner.pointsPerMinute, miner.powerGhs)
+            }
     }
 
     LaunchedEffect(roomState, placedMiners, minerActiveUntil) {
@@ -804,38 +817,106 @@ private fun MiningRoomTab(
 
                         // ==== LIVE MINING TICKER ====
                         Surface(
-                            color = Color(0xFF0F172A).copy(alpha = 0.6f),
+                            color = Color(0xFF0F172A).copy(alpha = 0.7f),
                             shape = RoundedCornerShape(10.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                            Column(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Bolt,
-                                        contentDescription = null,
-                                        tint = EmeraldLight,
-                                        modifier = Modifier.size(14.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
+                                // Baris 1: Rate + Unclaimed
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Bolt,
+                                            contentDescription = null,
+                                            tint = EmeraldLight,
+                                            modifier = Modifier.size(14.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = "+${String.format(Locale.US, "%.4f", generationRatePerMin)} RTP/mnt",
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = EmeraldLight
+                                        )
+                                    }
                                     Text(
-                                        text = "+${String.format(Locale.US, "%.4f", generationRatePerMin)} RTP/mnt",
-                                        fontSize = 10.sp,
-                                        color = Color(0xFF94A3B8)
+                                        text = "${GlobalPointsManager.formatRtp(liveUnclaimedPoints)} RTP",
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = GoldVip
                                     )
                                 }
-                                Text(
-                                    text = "${GlobalPointsManager.formatRtp(liveUnclaimedPoints)} RTP",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = GoldVip
-                                )
+
+                                // Baris 2: Breakdown per miner (kalau > 1 miner)
+                                if (minerBreakdown.size > 1) {
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    HorizontalDivider(
+                                        color = Color(0xFF334155),
+                                        thickness = 0.5.dp
+                                    )
+                                    Spacer(modifier = Modifier.height(6.dp))
+
+                                    minerBreakdown.take(3).forEach { item ->
+                                        val (name, rate, power) = item
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 1.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier.weight(1f)
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(3.dp)
+                                                        .clip(CircleShape)
+                                                        .background(EmeraldPrimary.copy(alpha = 0.6f))
+                                                )
+                                                Spacer(modifier = Modifier.width(6.dp))
+                                                Text(
+                                                    text = name.take(14),
+                                                    fontSize = 9.sp,
+                                                    color = Color(0xFF94A3B8),
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                                Spacer(modifier = Modifier.width(4.dp))
+                                                Text(
+                                                    text = "⚡${power.toInt()}",
+                                                    fontSize = 8.sp,
+                                                    color = Color(0xFF64748B)
+                                                )
+                                            }
+                                            Text(
+                                                text = "+${String.format(Locale.US, "%.4f", rate)}/m",
+                                                fontSize = 9.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color(0xFF94A3B8)
+                                            )
+                                        }
+                                    }
+
+                                    if (minerBreakdown.size > 3) {
+                                        Text(
+                                            text = "... +${minerBreakdown.size - 3} miner lagi",
+                                            fontSize = 9.sp,
+                                            color = Color(0xFF64748B),
+                                            modifier = Modifier.padding(top = 4.dp, start = 9.dp)
+                                        )
+                                    }
+                                }
                             }
+                        }
+
                         }
 
                         // Unclaimed Points Box & Claim Button
