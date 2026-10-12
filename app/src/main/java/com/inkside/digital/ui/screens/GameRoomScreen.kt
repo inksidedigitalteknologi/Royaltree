@@ -809,15 +809,14 @@ private fun MiningRoomTab(
                         painter = painterResource(id = com.inkside.digital.R.drawable.card_frame_mining),
                         contentDescription = null,
                         modifier = Modifier
-                            .matchParentSize()
-                            .scale(1.08f),
-                        contentScale = androidx.compose.ui.layout.ContentScale.FillBounds
+                            .matchParentSize(),
+                        contentScale = androidx.compose.ui.layout.ContentScale.Crop
                     )
 
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 24.dp, vertical = 28.dp),
+                            .padding(horizontal = 28.dp, vertical = 32.dp),
                         verticalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
                         // ==== HEADER: Title + Chip ====
