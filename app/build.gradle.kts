@@ -22,8 +22,8 @@ plugins {
 // ============ VERSIONING ============
 // Format: V1.xx → 1.00, 1.01, 1.02, ..., 1.10, ..., 2.00
 // versionCode = major * 100 + minor (1.00 = 100, 1.01 = 101)
-val appVersionName = "1.09"
-val appVersionCode = 109
+val appVersionName = "1.10"
+val appVersionCode = 110
 
 android {
   namespace = "com.inkside.digital"
