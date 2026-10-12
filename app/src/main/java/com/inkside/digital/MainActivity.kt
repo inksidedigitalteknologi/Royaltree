@@ -601,7 +601,7 @@ private fun android.content.Context.findActivity(): android.app.Activity? = when
 
 @Composable
 fun MainAffiliateAppContent(
-    viewModel: AffiliateViewModel,
+    viewModel: AffiliateViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     user: UserEntity?,
     pendingMinerActivate: Boolean = false,
     campaigns: List<CampaignEntity>,
