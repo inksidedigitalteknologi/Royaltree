@@ -1072,6 +1072,7 @@ fun MainAffiliateAppContent(
                 currentScreen = currentScreen,
                 onNavigate = { onNavigate(it) },
                 isAdminMode = isAdminMode,
+                currentLanguage = currentLanguage,
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
         }  // close Box utama
