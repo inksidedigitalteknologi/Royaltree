@@ -101,6 +101,13 @@ import com.inkside.digital.viewmodel.AppScreen
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
 import com.inkside.digital.ui.screens.GameRoomScreen
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.inkside.digital.worker.MiningWorker
+import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,6 +116,28 @@ class MainActivity : ComponentActivity() {
         AppThemePreferences.init(this)   // Load dark mode & bahasa
         AppThemePreferences.loadAdminToken(this)  // Load admin token (kalau ada)
         AdManager.init(this)              // Init AdMob SDK
+
+        // ✅ Jadwalkan MiningWorker (background auto-claim setiap 15 menit)
+        try {
+            val miningWorkRequest = PeriodicWorkRequestBuilder<MiningWorker>(
+                MiningWorker.INTERVAL_MINUTES, TimeUnit.MINUTES
+            )
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build()
+                )
+                .build()
+
+            WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                MiningWorker.WORK_NAME,
+                ExistingPeriodicWorkPolicy.KEEP,
+                miningWorkRequest
+            )
+            android.util.Log.d("MainActivity", "✅ MiningWorker scheduled (15 min)")
+        } catch (e: Exception) {
+            android.util.Log.e("MainActivity", "❌ Failed to schedule MiningWorker: ${e.message}")
+        }
         setContent {
             MyApplicationTheme(
                 darkTheme = true  // Force dark mode

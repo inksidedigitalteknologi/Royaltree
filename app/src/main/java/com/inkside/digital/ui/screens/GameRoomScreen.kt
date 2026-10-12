@@ -788,7 +788,7 @@ private fun MiningRoomTab(
                             RetroStatBox(
                                 emoji = "💰",
                                 label = LanguageManager.translate("game_mining_rtp", currentLanguage, "RTP"),
-                                value = "${GlobalPointsManager.formatRtp(userPoints.toDouble())}",
+                                value = "${GlobalPointsManager.formatRtp(userPoints + liveUnclaimedPoints)}",
                                 color = RetroGold,
                                 modifier = Modifier.weight(1.8f),
                                 useRtpIcon = true
@@ -800,6 +800,42 @@ private fun MiningRoomTab(
                                 color = EmeraldLight,
                                 modifier = Modifier.weight(1f)
                             )
+                        }
+
+                        // ==== LIVE MINING TICKER ====
+                        Surface(
+                            color = Color(0xFF0F172A).copy(alpha = 0.6f),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Bolt,
+                                        contentDescription = null,
+                                        tint = EmeraldLight,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "+${String.format(Locale.US, "%.4f", generationRatePerMin)} RTP/mnt",
+                                        fontSize = 10.sp,
+                                        color = Color(0xFF94A3B8)
+                                    )
+                                }
+                                Text(
+                                    text = "${GlobalPointsManager.formatRtp(liveUnclaimedPoints)} RTP",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = GoldVip
+                                )
+                            }
                         }
 
                         // Unclaimed Points Box & Claim Button
