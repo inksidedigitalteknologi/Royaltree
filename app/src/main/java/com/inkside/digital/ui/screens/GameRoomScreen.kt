@@ -236,14 +236,7 @@ fun GameRoomScreenContent(
         roomState?.ratePerMin ?: 0.0
     }
 
-    // ✅ Breakdown per miner (untuk display)
-    val minerBreakdown = remember(placedMiners) {
-        placedMiners
-            .sortedByDescending { it.pointsPerMinute }
-            .map { miner ->
-                Triple(miner.name, miner.pointsPerMinute, miner.powerGhs)
-            }
-    }
+    // (minerBreakdown dipindah ke MiningRoomTab)
 
     LaunchedEffect(roomState, placedMiners, minerActiveUntil) {
         while (true) {
@@ -707,6 +700,16 @@ private fun MiningRoomTab(
     onUnlockSlot: (slotIndex: Int) -> Unit = {}
 ) {
     val unlockedSlots = roomState?.unlockedSlots ?: 2
+
+    // ✅ Breakdown per miner (untuk display)
+    val minerBreakdown = remember(placedMiners) {
+        placedMiners
+            .sortedByDescending { it.pointsPerMinute }
+            .map { miner ->
+                Triple(miner.name, miner.pointsPerMinute, miner.powerGhs)
+            }
+    }
+
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseAlpha by infiniteTransition.animateFloat(
         initialValue = 0.3f,
@@ -1412,7 +1415,7 @@ private fun RackSlotItemCard(
                         text = "Slot ${slotIndex + 1}",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextSecondary
+                        color = Color(0xFFCBD5E1)
                     )
                     Text(
                         text = "Tap untuk isi",
