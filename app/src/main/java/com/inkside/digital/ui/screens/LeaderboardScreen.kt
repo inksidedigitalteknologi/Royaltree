@@ -50,6 +50,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.border
 import androidx.compose.ui.text.style.TextOverflow
 import com.inkside.digital.ui.theme.EmeraldPrimary
+import com.inkside.digital.R
 
 data class LeaderboardEntry(
     val rank: Int,
@@ -229,11 +230,23 @@ fun LeaderboardScreen(
 
 @Composable
 private fun PodiumCard(entry: LeaderboardEntry, rank: Int, modifier: Modifier = Modifier) {
-    val (height, frameRes, medal, glowColor) = when (rank) {
-        1 -> Quadruple(150.dp, R.drawable.card_frame_legendary, "👑", Color(0xFFFFD700))
-        2 -> Quadruple(125.dp, R.drawable.card_frame_epic, "🥈", Color(0xFFC0C0C0))
-        else -> Quadruple(105.dp, R.drawable.card_frame_rare, "🥉", Color(0xFFCD7F32))
+    data class PodiumStyle(
+        val height: androidx.compose.ui.unit.Dp,
+        val frameRes: Int,
+        val medal: String,
+        val glowColor: Color
+    )
+
+    val style = when (rank) {
+        1 -> PodiumStyle(150.dp, R.drawable.card_frame_legendary, "👑", Color(0xFFFFD700))
+        2 -> PodiumStyle(125.dp, R.drawable.card_frame_epic, "🥈", Color(0xFFC0C0C0))
+        else -> PodiumStyle(105.dp, R.drawable.card_frame_rare, "🥉", Color(0xFFCD7F32))
     }
+
+    val height = style.height
+    val frameRes = style.frameRes
+    val medal = style.medal
+    val glowColor = style.glowColor
 
     Box(
         modifier = modifier
