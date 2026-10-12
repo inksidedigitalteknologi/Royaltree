@@ -64,6 +64,7 @@ import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.viewmodel.AppScreen
 import com.inkside.digital.ui.screens.ProfileAvatarWithFrame
 import com.inkside.digital.util.GlobalPointsManager
+import androidx.compose.material.icons.filled.MenuBook
 
 @Composable
 fun AppDrawer(
@@ -155,6 +156,14 @@ fun AppDrawer(
             Spacer(modifier = Modifier.height(4.dp))
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             Spacer(modifier = Modifier.height(4.dp))
+
+            // ============ MENU WHITEPAPER ============
+            DrawerItem(
+                icon = Icons.Default.MenuBook,
+                label = LanguageManager.translate("wp_title", currentLanguage, "Whitepaper"),
+                selected = currentScreen == AppScreen.WHITEPAPER,
+                onClick = { onNavigate(AppScreen.WHITEPAPER); onCloseDrawer() }
+            )
 
             // ============ MENU PROFIL ============
             DrawerItem(

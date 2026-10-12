@@ -45,6 +45,11 @@ import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.util.GlobalPointsManager
 import com.inkside.digital.ui.components.RtpAmount
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.border
+import androidx.compose.ui.text.style.TextOverflow
+import com.inkside.digital.ui.theme.EmeraldPrimary
 
 data class LeaderboardEntry(
     val rank: Int,
@@ -224,91 +229,176 @@ fun LeaderboardScreen(
 
 @Composable
 private fun PodiumCard(entry: LeaderboardEntry, rank: Int, modifier: Modifier = Modifier) {
-    val (height, color, medal) = when (rank) {
-        1 -> Triple(140.dp, Color(0xFFFFD700), "🥇")
-        2 -> Triple(110.dp, Color(0xFFC0C0C0), "🥈")
-        else -> Triple(90.dp, Color(0xFFCD7F32), "🥉")
+    val (height, frameRes, medal, glowColor) = when (rank) {
+        1 -> Quadruple(150.dp, R.drawable.card_frame_legendary, "👑", Color(0xFFFFD700))
+        2 -> Quadruple(125.dp, R.drawable.card_frame_epic, "🥈", Color(0xFFC0C0C0))
+        else -> Quadruple(105.dp, R.drawable.card_frame_rare, "🥉", Color(0xFFCD7F32))
     }
 
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        modifier = modifier.height(height)
+    Box(
+        modifier = modifier
+            .height(height)
+            .clip(RoundedCornerShape(16.dp))
     ) {
-        Box(
+        // Frame PNG
+        Image(
+            painter = painterResource(id = frameRes),
+            contentDescription = null,
+            modifier = Modifier.matchParentSize(),
+            contentScale = androidx.compose.ui.layout.ContentScale.Crop
+        )
+
+        // Konten
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Brush.verticalGradient(listOf(color, color.copy(alpha = 0.6f)))),
-            contentAlignment = Alignment.BottomCenter
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Column(
-                modifier = Modifier.padding(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            // Medal + Rank
+            Text(medal, fontSize = 28.sp)
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // Avatar
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF0F172A))
+                    .border(2.dp, glowColor, CircleShape),
+                contentAlignment = Alignment.Center
             ) {
-                Text(medal, fontSize = 24.sp)
                 Text(
-                    text = entry.name,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    maxLines = 1
-                )
-                RtpAmount(
-                    amount = "${GlobalPointsManager.formatRtp(entry.points)} RTP",
-                    fontSize = 10.sp,
-                    iconSize = 12.dp,
-                    color = Color.Black.copy(alpha = 0.7f)
+                    text = entry.name.take(1).uppercase(),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Black,
+                    color = glowColor
                 )
             }
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // Nama
+            Text(
+                text = entry.name,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            // RTP
+            Text(
+                text = "${GlobalPointsManager.formatRtp(entry.points)} RTP",
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                color = GoldVip
+            )
         }
     }
 }
 
 @Composable
 private fun LeaderboardRow(entry: LeaderboardEntry, isCurrentUser: Boolean = false) {
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (entry.isCurrentUser)
-                MaterialTheme.colorScheme.primaryContainer
-            else
-                MaterialTheme.colorScheme.surfaceVariant
-        ),
-        modifier = Modifier.fillMaxWidth()
+    val borderColor = if (isCurrentUser) EmeraldPrimary else Color(0xFF334155)
+    val borderWidth = if (isCurrentUser) 1.5.dp else 1.dp
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .clip(RoundedCornerShape(12.dp))
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        // Frame PNG
+        Image(
+            painter = painterResource(id = R.drawable.card_frame_common),
+            contentDescription = null,
+            modifier = Modifier.matchParentSize(),
+            contentScale = androidx.compose.ui.layout.ContentScale.Crop
+        )
+
+        // Border highlight untuk user sendiri
+        if (isCurrentUser) {
             Box(
                 modifier = Modifier
-                    .size(36.dp)
+                    .matchParentSize()
+                    .border(borderWidth, borderColor, RoundedCornerShape(12.dp))
+            )
+        }
+
+        // Konten
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Rank badge
+            Box(
+                modifier = Modifier
+                    .size(34.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface),
+                    .background(Color(0xFF0F172A))
+                    .border(1.dp, borderColor, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "#${entry.rank}",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Black,
+                    color = if (isCurrentUser) EmeraldPrimary else Color(0xFF94A3B8)
                 )
             }
-            Spacer(modifier = Modifier.width(14.dp))
-            Text(
-                text = entry.name,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f)
-            )
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            // Avatar
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF0F172A))
+                    .border(1.dp, GoldVip.copy(alpha = 0.5f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = entry.name.take(1).uppercase(),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Black,
+                    color = GoldVip
+                )
+            }
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            // Nama
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = entry.name,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isCurrentUser) EmeraldPrimary else Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                if (isCurrentUser) {
+                    Text(
+                        text = "You",
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = EmeraldPrimary.copy(alpha = 0.7f)
+                    )
+                }
+            }
+
+            // RTP
             RtpAmount(
                 amount = "${GlobalPointsManager.formatRtp(entry.points)} RTP",
-                fontSize = 13.sp,
+                fontSize = 12.sp,
                 iconSize = 14.dp,
-                color = GoldVip
+                color = GoldVip,
+                fontWeight = FontWeight.Bold
             )
         }
     }

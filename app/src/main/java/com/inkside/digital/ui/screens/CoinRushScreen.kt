@@ -50,11 +50,16 @@ import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.components.BannerAdView
 import kotlinx.coroutines.delay
 import kotlin.random.Random
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.border
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 
 // ==== Colors — Neon Cyberpunk ====
-private val NeonCyan = Color(0xFF06B6D4)
-private val NeonMagenta = Color(0xFFEC4899)
-private val NeonYellow = Color(0xFFFACC15)
+private val EmeraldPrimary = Color(0xFF10B981)
+private val EmeraldDark = Color(0xFF047857)
+private val GoldVip = Color(0xFFFBBF24)
 private val DarkDeep = Color(0xFF05060F)
 private val DarkCard = Color(0xFF0F172A)
 
@@ -145,7 +150,7 @@ fun CoinRushScreen(
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     Text(LanguageManager.translate("game_hub_coinrush", currentLanguage, "Coin Rush"), color = Color.White, fontWeight = FontWeight.Black, fontSize = 18.sp)
-                    Text(LanguageManager.translate("coinrush_tagline", currentLanguage, "Tap koin sebelum hilang!"), color = NeonCyan, fontSize = 11.sp)
+                    Text(LanguageManager.translate("coinrush_tagline", currentLanguage, "Tap koin sebelum hilang!"), color = EmeraldPrimary, fontSize = 11.sp)
                 }
             }
 
@@ -156,8 +161,8 @@ fun CoinRushScreen(
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                HudCard(label = "SKOR", value = "$score", accent = NeonYellow, modifier = Modifier.weight(1f))
-                HudCard(label = "MASA", value = "${timeLeftMs / 1000}s", accent = NeonMagenta, modifier = Modifier.weight(1f))
+                HudCard(label = LanguageManager.translate("coinrush_score", currentLanguage, "SKOR"), value = "$score", accent = GoldVip, modifier = Modifier.weight(1f))
+                HudCard(label = LanguageManager.translate("coinrush_time", currentLanguage, "WAKTU"), value = "${timeLeftMs / 1000}s", accent = EmeraldPrimary, modifier = Modifier.weight(1f))
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -172,8 +177,8 @@ fun CoinRushScreen(
                     .background(
                         Brush.radialGradient(
                             listOf(
-                                NeonCyan.copy(alpha = 0.12f),
-                                NeonMagenta.copy(alpha = 0.08f),
+                                EmeraldPrimary.copy(alpha = 0.12f),
+                                EmeraldDark.copy(alpha = 0.08f),
                                 Color.Transparent
                             )
                         )
@@ -211,7 +216,7 @@ fun CoinRushScreen(
                         Text("🎰", fontSize = 64.sp)
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            "Tekan MULA untuk bermain",
+                            LanguageManager.translate("coinrush_start_hint", currentLanguage, "Tekan MULAI untuk bermain"),
                             color = Color.White,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold
@@ -224,10 +229,10 @@ fun CoinRushScreen(
                                 coins.clear()
                                 isPlaying = true
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = NeonCyan),
+                            colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("MULA", color = Color.Black, fontWeight = FontWeight.Black)
+                            Text(LanguageManager.translate("coinrush_start", currentLanguage, "MULAI"), color = Color.Black, fontWeight = FontWeight.Black)
                         }
                     }
                 }
@@ -240,7 +245,7 @@ fun CoinRushScreen(
                         Text("🏁", fontSize = 64.sp)
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(LanguageManager.translate("coinrush_final_score", currentLanguage, "Skor Akhir"), color = Color.White, fontSize = 13.sp)
-                        Text("$score", color = NeonYellow, fontSize = 42.sp, fontWeight = FontWeight.Black)
+                        Text("$score", color = GoldVip, fontSize = 42.sp, fontWeight = FontWeight.Black)
                         Spacer(modifier = Modifier.height(12.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             Button(
@@ -251,17 +256,17 @@ fun CoinRushScreen(
                                     isFinished = false
                                     isPlaying = true
                                 },
-                                colors = ButtonDefaults.buttonColors(containerColor = NeonCyan),
+                                colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
-                                Text("MAIN LAGI", color = Color.Black, fontWeight = FontWeight.Black)
+                                Text(LanguageManager.translate("coinrush_play_again", currentLanguage, "MAIN LAGI"), color = Color.Black, fontWeight = FontWeight.Black)
                             }
                             Button(
                                 onClick = { onBack() },
-                                colors = ButtonDefaults.buttonColors(containerColor = NeonMagenta),
+                                colors = ButtonDefaults.buttonColors(containerColor = EmeraldDark),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
-                                Text("KELUAR", color = Color.White, fontWeight = FontWeight.Black)
+                                Text(LanguageManager.translate("coinrush_exit", currentLanguage, "KELUAR"), color = Color.White, fontWeight = FontWeight.Black)
                             }
                         }
                     }
@@ -307,27 +312,63 @@ private fun CoinSprite(
     onClick: () -> Unit
 ) {
     var pressed by remember { mutableStateOf(false) }
-    val scale by animateFloatAsState(
+
+    // Scale pop saat muncul
+    val appearScale = remember { androidx.compose.animation.core.Animatable(0f) }
+    LaunchedEffect(Unit) {
+        appearScale.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = 200, easing = androidx.compose.animation.core.FastOutSlowInEasing)
+        )
+    }
+
+    val pressScale by animateFloatAsState(
         targetValue = if (pressed) 0.7f else 1f,
         animationSpec = tween(durationMillis = 120),
         label = "coinScale"
     )
 
+    val finalScale = appearScale.value * pressScale
+
     Box(
         modifier = Modifier
             .offset(x = xDp, y = yDp)
-            .size(56.dp)
-            .scale(scale)
-            .clip(CircleShape)
-            .background(
-                Brush.radialGradient(listOf(NeonYellow, Color(0xFFFFA500)))
-            )
+            .size(60.dp)
+            .scale(finalScale)
             .clickable {
                 pressed = true
                 onClick()
             },
         contentAlignment = Alignment.Center
     ) {
-        Text("💰", fontSize = 28.sp)
+        // Glow luar
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .background(
+                    Brush.radialGradient(
+                        colors = listOf(
+                            GoldVip.copy(alpha = 0.6f),
+                            GoldVip.copy(alpha = 0.2f),
+                            Color.Transparent
+                        )
+                    ),
+                    CircleShape
+                )
+        )
+
+        // Coin icon
+        Image(
+            painter = painterResource(id = R.drawable.rtp_coin),
+            contentDescription = "RTP",
+            modifier = Modifier
+                .size(44.dp)
+                .clip(CircleShape)
+                .border(
+                    width = 2.dp,
+                    color = GoldVip.copy(alpha = 0.8f),
+                    shape = CircleShape
+                )
+        )
     }
 }
