@@ -507,3 +507,207 @@ router.post('/login', async (req, res) => {
 });
 
 module.exports = router;
+
+// ============================================================
+// ADMIN STATS — Overview Dashboard
+// GET /api/v1/admin/stats
+// ============================================================
+router.get('/stats', checkAdmin, async (req, res) => {
+    try {
+        // Total users
+        const usersSnapshot = await db.collection('users').count().get();
+        const totalUsers = usersSnapshot.data().count;
+
+        // Total RTP (sum points)
+        const usersData = await db.collection('users').select('points').get();
+        let totalRTP = 0;
+        usersData.forEach(doc => {
+            totalRTP += (doc.data().points || 0);
+        });
+
+        // Total miners
+        let totalMiners = 0;
+        usersData.forEach(doc => {
+            const minersOwned = doc.data().minersOwned || {};
+            totalMiners += Object.keys(minersOwned).length;
+        });
+
+        // Active miners (minerActiveUntil > now)
+        const now = Date.now();
+        const roomsSnapshot = await db.collection('game_rooms').get();
+        let activeMiners = 0;
+        let totalPoolFund = 0;
+        roomsSnapshot.forEach(doc => {
+            const data = doc.data();
+            if ((data.minerActiveUntil || 0) > now) activeMiners++;
+            totalPoolFund += (data.poolFundContribution || 0);
+        });
+
+        // Total transactions
+        const txSnapshot = await db.collection('transactions').count().get();
+        const totalTransactions = txSnapshot.data().count;
+
+        // Pending withdrawals
+        const pendingWdSnapshot = await db.collection('withdrawals')
+            .where('status', '==', 'PENDING')
+            .count().get();
+        const pendingWithdrawals = pendingWdSnapshot.data().count;
+
+        // Total blocks
+        const blocksSnapshot = await db.collection('blocks').count().get();
+        const totalBlocks = blocksSnapshot.data().count;
+
+        // Chat messages
+        const chatSnapshot = await db.collection('global_chat').count().get();
+        const totalChatMessages = chatSnapshot.data().count;
+
+        return res.json({
+            success: true,
+            data: {
+                totalUsers,
+                totalRTP: parseFloat(totalRTP.toFixed(2)),
+                totalMiners,
+                activeMiners,
+                totalPoolFund: parseFloat(totalPoolFund.toFixed(2)),
+                totalTransactions,
+                pendingWithdrawals,
+                totalBlocks,
+                totalChatMessages,
+                timestamp: now
+            }
+        });
+    } catch (error) {
+        console.error('[ADMIN/STATS] Error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// MINING STATS
+// GET /api/v1/admin/mining/pool-fund
+// ============================================================
+router.get('/mining/pool-fund', checkAdmin, async (req, res) => {
+    try {
+        const configDoc = await db.collection('game_config').doc('default').get();
+        const config = configDoc.exists ? configDoc.data() : {};
+
+        const poolFund = config.poolFund || 0;
+        const totalCollected = config.poolFundTotalCollected || 0;
+        const totalPaidOut = config.poolFundTotalPaidOut || 0;
+
+        return res.json({
+            success: true,
+            data: {
+                balance: poolFund,
+                totalCollected,
+                totalPaidOut,
+                devProfit: totalCollected - totalPaidOut,
+                health: poolFund > 1000 ? 'HEALTHY' : (poolFund > 200 ? 'LOW' : 'CRITICAL'),
+                timestamp: Date.now()
+            }
+        });
+    } catch (error) {
+        console.error('[ADMIN/POOL] Error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// BLOCK HISTORY
+// GET /api/v1/admin/mining/blocks
+// ============================================================
+router.get('/mining/blocks', checkAdmin, async (req, res) => {
+    try {
+        const limit = Math.min(parseInt(req.query.limit) || 50, 100);
+        const snapshot = await db.collection('blocks')
+            .orderBy('height', 'desc')
+            .limit(limit)
+            .get();
+
+        const blocks = [];
+        snapshot.forEach(doc => {
+            blocks.push({ id: doc.id, ...doc.data() });
+        });
+
+        return res.json({ success: true, blocks, count: blocks.length });
+    } catch (error) {
+        console.error('[ADMIN/BLOCKS] Error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// CHAT MODERATION — List
+// GET /api/v1/admin/chat/messages
+// ============================================================
+router.get('/chat/messages', checkAdmin, async (req, res) => {
+    try {
+        const limit = Math.min(parseInt(req.query.limit) || 100, 200);
+        const snapshot = await db.collection('global_chat')
+            .orderBy('timestamp', 'desc')
+            .limit(limit)
+            .get();
+
+        const messages = [];
+        snapshot.forEach(doc => {
+            messages.push({ id: doc.id, ...doc.data() });
+        });
+
+        return res.json({ success: true, messages, count: messages.length });
+    } catch (error) {
+        console.error('[ADMIN/CHAT] Error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// CHAT MODERATION — Delete
+// DELETE /api/v1/admin/chat/:id
+// ============================================================
+router.delete('/chat/:id', checkAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        await db.collection('global_chat').doc(id).delete();
+        return res.json({ success: true, message: 'Pesan dihapus.' });
+    } catch (error) {
+        console.error('[ADMIN/CHAT-DELETE] Error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// CAMPAIGNS
+// GET /api/v1/admin/campaigns
+// ============================================================
+router.get('/campaigns', checkAdmin, async (req, res) => {
+    try {
+        const snapshot = await db.collection('campaigns').limit(100).get();
+        const campaigns = [];
+        snapshot.forEach(doc => {
+            campaigns.push({ id: doc.id, ...doc.data() });
+        });
+        return res.json({ success: true, campaigns, count: campaigns.length });
+    } catch (error) {
+        console.error('[ADMIN/CAMPAIGNS] Error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// MISSIONS
+// GET /api/v1/admin/missions
+// ============================================================
+router.get('/missions', checkAdmin, async (req, res) => {
+    try {
+        const snapshot = await db.collection('missions').limit(100).get();
+        const missions = [];
+        snapshot.forEach(doc => {
+            missions.push({ id: doc.id, ...doc.data() });
+        });
+        return res.json({ success: true, missions, count: missions.length });
+    } catch (error) {
+        console.error('[ADMIN/MISSIONS] Error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+

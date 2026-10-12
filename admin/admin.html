@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Royaltree Admin Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -24,6 +25,155 @@ body {
   min-height: 100vh;
   font-size: 14px;
   line-height: 1.6;
+}
+
+/* ============ STAT CARDS ============ */
+.stat-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.9));
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 14px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, #10B981, #FBBF24);
+}
+
+.stat-card .label {
+  font-size: 11px;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.stat-card .value {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.stat-card .sub {
+  font-size: 11px;
+  color: #94A3B8;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.chart-container {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.chart-container h3 {
+  font-size: 13px;
+  color: #94A3B8;
+  margin-bottom: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pool-health {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.pool-health.healthy {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.pool-health.low {
+  background: rgba(251, 191, 36, 0.2);
+  color: #FBBF24;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.pool-health.critical {
+  background: rgba(239, 68, 68, 0.2);
+  color: #F87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.chat-msg {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.chat-msg .msg-body {
+  flex: 1;
+}
+
+.chat-msg .msg-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.chat-msg .msg-user {
+  font-size: 12px;
+  font-weight: 700;
+  color: #FBBF24;
+}
+
+.chat-msg .msg-time {
+  font-size: 10px;
+  color: #64748B;
+}
+
+.chat-msg .msg-text {
+  font-size: 12px;
+  color: #CBD5E1;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.btn-delete {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #F87171;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-delete:hover {
+  background: rgba(239, 68, 68, 0.3);
 }
 
 /* ============ LOGIN SCREEN ============ */
@@ -692,7 +842,10 @@ tbody tr:last-child td {
 <div class="content">
   <div class="stats-grid" id="stats"></div>
   <div class="tabs">
-    <button class="tab active" data-tab="users" onclick="switchTab('users')">👥 Users</button>
+    <button class="tab active" data-tab="dashboard" onclick="switchTab('dashboard')">📊 Dashboard</button>
+    <button class="tab" data-tab="users" onclick="switchTab('users')">👥 Users</button>
+    <button class="tab" data-tab="mining" onclick="switchTab('mining')">⛏️ Mining</button>
+    <button class="tab" data-tab="chat" onclick="switchTab('chat')">💬 Chat</button>
     <button class="tab" data-tab="withdrawals" onclick="switchTab('withdrawals')">💰 Withdrawals</button>
     <button class="tab" data-tab="campaigns" onclick="switchTab('campaigns')">📢 Campaigns</button>
     <button class="tab" data-tab="missions" onclick="switchTab('missions')">🎯 Missions</button>
@@ -846,7 +999,10 @@ async function loadStats() {
 function switchTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-  if (tab === 'users') loadUsers();
+  if (tab === 'dashboard') loadDashboard();
+  else if (tab === 'users') loadUsers();
+  else if (tab === 'mining') loadMining();
+  else if (tab === 'chat') loadChat();
   else if (tab === 'withdrawals') loadWithdrawals();
   else if (tab === 'campaigns') loadCampaigns();
   else if (tab === 'missions') loadMissions();
@@ -860,7 +1016,7 @@ function switchTab(tab) {
 
 function loadAll() {
   loadStats();
-  switchTab(currentTab);
+  switchTab(currentTab || 'dashboard');
 }
 
 // ============ MODAL ============
@@ -1883,6 +2039,232 @@ async function sendBroadcast() {
     result.innerHTML = '<div style="padding: 16px; background: #ef444420; border: 1px solid #ef4444; border-radius: 8px; color: #ef4444;"><strong>Error:</strong> ' + e.message + '</div>';
     notify('Error: ' + e.message, 'error');
   }
+}
+
+// ============ DASHBOARD ============
+let dashboardChart = null;
+
+async function loadDashboard() {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading">Loading dashboard...</div>';
+
+  try {
+    const data = await api('/admin/stats', 'GET', null, true);
+    if (!data.success) {
+      content.innerHTML = '<div class="error">' + (data.message || 'Gagal load') + '</div>';
+      return;
+    }
+
+    const d = data.data;
+
+    content.innerHTML = `
+      <div class="stat-grid">
+        <div class="stat-card"><div class="label">👥 Total Users</div><div class="value">${d.totalUsers}</div><div class="sub">Terdaftar</div></div>
+        <div class="stat-card"><div class="label">💰 Total RTP</div><div class="value">${d.totalRTP.toLocaleString()}</div><div class="sub">Dalam peredaran</div></div>
+        <div class="stat-card"><div class="label">⛏️ Total Miners</div><div class="value">${d.totalMiners}</div><div class="sub">${d.activeMiners} aktif</div></div>
+        <div class="stat-card"><div class="label">🏦 Pool Fund</div><div class="value">${d.totalPoolFund.toLocaleString()}</div><div class="sub">RTP</div></div>
+        <div class="stat-card"><div class="label">📊 Transactions</div><div class="value">${d.totalTransactions}</div><div class="sub">Total</div></div>
+        <div class="stat-card"><div class="label">💸 Pending WD</div><div class="value">${d.pendingWithdrawals}</div><div class="sub">Perlu approve</div></div>
+        <div class="stat-card"><div class="label">🧱 Total Blocks</div><div class="value">${d.totalBlocks}</div><div class="sub">Block mined</div></div>
+        <div class="stat-card"><div class="label">💬 Chat</div><div class="value">${d.totalChatMessages}</div><div class="sub">Global chat</div></div>
+      </div>
+
+      <div class="chart-container">
+        <h3>📈 RTP Distribution</h3>
+        <canvas id="rtpChart" height="80"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3>⚡ Mining Overview</h3>
+        <canvas id="miningChart" height="80"></canvas>
+      </div>
+    `;
+
+    // RTP Doughnut
+    const rtpCtx = document.getElementById('rtpChart');
+    if (rtpCtx) {
+      if (dashboardChart) dashboardChart.destroy();
+      dashboardChart = new Chart(rtpCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['User Balance', 'Pool Fund'],
+          datasets: [{
+            data: [d.totalRTP, d.totalPoolFund],
+            backgroundColor: ['#10B981', '#FBBF24'],
+            borderColor: ['#047857', '#B45309'],
+            borderWidth: 2
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { labels: { color: '#CBD5E1' } } } }
+      });
+    }
+
+    // Mining Bar
+    const miningCtx = document.getElementById('miningChart');
+    if (miningCtx) {
+      new Chart(miningCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Total Miners', 'Active', 'Blocks'],
+          datasets: [{
+            label: 'Count',
+            data: [d.totalMiners, d.activeMiners, d.totalBlocks],
+            backgroundColor: ['#10B981', '#34D399', '#FBBF24'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#CBD5E1' }, grid: { display: false } },
+            y: { ticks: { color: '#CBD5E1' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } }
+          }
+        }
+      });
+    }
+  } catch (e) {
+    content.innerHTML = '<div class="error">Error: ' + e.message + '</div>';
+  }
+}
+
+// ============ MINING ============
+async function loadMining() {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading">Loading mining...</div>';
+
+  try {
+    const [poolData, blocksData] = await Promise.all([
+      api('/admin/mining/pool-fund', 'GET', null, true),
+      api('/admin/mining/blocks?limit=50', 'GET', null, true)
+    ]);
+
+    const pool = poolData.success ? poolData.data : {};
+    const blocks = blocksData.success ? blocksData.blocks : [];
+    const healthClass = (pool.health || 'CRITICAL').toLowerCase();
+
+    content.innerHTML = `
+      <div class="stat-grid">
+        <div class="stat-card"><div class="label">🏦 Pool Fund</div><div class="value">${(pool.balance || 0).toLocaleString()}</div><div class="sub"><span class="pool-health ${healthClass}">${pool.health || 'N/A'}</span></div></div>
+        <div class="stat-card"><div class="label">📥 Collected</div><div class="value">${(pool.totalCollected || 0).toLocaleString()}</div><div class="sub">Dari rate</div></div>
+        <div class="stat-card"><div class="label">📤 Paid Out</div><div class="value">${(pool.totalPaidOut || 0).toLocaleString()}</div><div class="sub">Block reward</div></div>
+        <div class="stat-card"><div class="label">💎 Dev Profit</div><div class="value">${(pool.devProfit || 0).toLocaleString()}</div><div class="sub">Selisih</div></div>
+      </div>
+
+      <div class="chart-container">
+        <h3>📊 Pool Fund</h3>
+        <canvas id="poolChart" height="80"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3>🧱 Block History (Last 50)</h3>
+        <div style="overflow-x:auto">
+          <table style="width:100%; font-size:12px;">
+            <thead><tr><th>#</th><th>Hash</th><th>Reward</th><th>Status</th><th>Time</th></tr></thead>
+            <tbody>
+              ${blocks.length === 0 ? '<tr><td colspan="5" style="text-align:center;padding:20px;color:#64748B;">Belum ada block</td></tr>' :
+                blocks.map(b => `<tr>
+                  <td><strong>#${b.height || '?'}</strong></td>
+                  <td style="font-family:monospace;font-size:10px;">${(b.hash||'').substring(0,16)}...</td>
+                  <td style="color:#FBBF24;font-weight:600;">+${b.reward || 0} RTP</td>
+                  <td><span class="pool-health ${b.status==='CONFIRMED'?'healthy':'low'}">${b.status || 'N/A'}</span></td>
+                  <td style="font-size:10px;color:#64748B;">${b.timestamp ? new Date(b.timestamp).toLocaleString() : '-'}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    const poolCtx = document.getElementById('poolChart');
+    if (poolCtx) {
+      new Chart(poolCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Collected', 'Paid Out', 'Balance', 'Dev Profit'],
+          datasets: [{
+            label: 'RTP',
+            data: [pool.totalCollected || 0, pool.totalPaidOut || 0, pool.balance || 0, pool.devProfit || 0],
+            backgroundColor: ['#10B981', '#EF4444', '#FBBF24', '#34D399'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#CBD5E1' }, grid: { display: false } },
+            y: { ticks: { color: '#CBD5E1' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } }
+          }
+        }
+      });
+    }
+  } catch (e) {
+    content.innerHTML = '<div class="error">Error: ' + e.message + '</div>';
+  }
+}
+
+// ============ CHAT ============
+async function loadChat() {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading">Loading chat...</div>';
+
+  try {
+    const data = await api('/admin/chat/messages?limit=100', 'GET', null, true);
+
+    if (!data.success) {
+      content.innerHTML = '<div class="error">' + data.message + '</div>';
+      return;
+    }
+
+    const messages = data.messages || [];
+
+    content.innerHTML = `
+      <div class="stat-grid">
+        <div class="stat-card"><div class="label">💬 Total Messages</div><div class="value">${messages.length}</div><div class="sub">Ditampilkan</div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h3 style="font-size:14px;color:#94A3B8;">💬 Recent Messages</h3>
+        <button class="btn btn-primary" onclick="loadChat()" style="padding:6px 12px;font-size:11px;">🔄 Refresh</button>
+      </div>
+      <div id="chatList">
+        ${messages.length === 0 ? '<div style="text-align:center;color:#64748B;padding:40px;">Belum ada pesan</div>' :
+          messages.map(m => `<div class="chat-msg" id="chat-${m.id}">
+            <div class="msg-body">
+              <div class="msg-header">
+                <span class="msg-user">${escapeHtml(m.userName || 'Anonymous')}</span>
+                <span class="msg-time">${m.timestamp ? new Date(m.timestamp).toLocaleString() : '-'}</span>
+              </div>
+              <div class="msg-text">${escapeHtml(m.message || '')}</div>
+            </div>
+            <button class="btn-delete" onclick="deleteChat('${m.id}')">🗑️ Hapus</button>
+          </div>`).join('')}
+      </div>
+    `;
+  } catch (e) {
+    content.innerHTML = '<div class="error">Error: ' + e.message + '</div>';
+  }
+}
+
+async function deleteChat(id) {
+  if (!confirm('Hapus pesan ini?')) return;
+  try {
+    const data = await api('/admin/chat/' + id, 'DELETE', null, true);
+    if (data.success) {
+      document.getElementById('chat-' + id)?.remove();
+      notify('✅ Pesan dihapus', 'success');
+    } else {
+      notify('❌ ' + (data.message || 'Gagal'), 'error');
+    }
+  } catch (e) {
+    notify('❌ Error: ' + e.message, 'error');
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 function previewBroadcast() {
