@@ -100,6 +100,7 @@ import com.inkside.digital.viewmodel.AffiliateViewModel
 import com.inkside.digital.viewmodel.AppScreen
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
+import com.inkside.digital.ui.screens.GameRoomScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -421,6 +422,7 @@ fun MainAffiliateApp(
 
     val vmAlias: AffiliateViewModel = viewModel
     MainAffiliateAppContent(
+        viewModel = viewModel,
         user = user,
         pendingMinerActivate = pendingMinerActivate,
         campaigns = campaigns,
@@ -599,6 +601,7 @@ private fun android.content.Context.findActivity(): android.app.Activity? = when
 
 @Composable
 fun MainAffiliateAppContent(
+    viewModel: AffiliateViewModel,
     user: UserEntity?,
     pendingMinerActivate: Boolean = false,
     campaigns: List<CampaignEntity>,
@@ -986,21 +989,12 @@ fun MainAffiliateAppContent(
                 }
 
                 AppScreen.GAME_MINING -> {
-                    GameRoomScreenContent(
+                    GameRoomScreen(
+                        viewModel = viewModel,
                         user = user,
-                        minerItems = minerItems,
-                        placedMiners = placedMiners,
-                        roomState = roomState,
-                        onClaimMining = onClaimMining,
-                        onActivateMiner = onActivateMiner,
-                        onToggleMinerSlot = onToggleMinerSlot,
-                        onBuyGameMinerItem = onBuyGameMinerItem,
-                        onBuyAndPlaceGameMinerItem = onBuyAndPlaceGameMinerItem,
-                        onFinishGame = onFinishGame,
-                        onNavigateToMissions = { onNavigate(AppScreen.MISSIONS) },
-                        onBack = { onNavigate(AppScreen.GAME_ROOM) },
                         currentLanguage = currentLanguage,
-                        onUnlockSlot = onUnlockSlot
+                        onNavigateToMissions = { onNavigate(AppScreen.MISSIONS) },
+                        onBack = { onNavigate(AppScreen.GAME_ROOM) }
                     )
                 }
 
