@@ -1142,7 +1142,6 @@ private fun MiningRoomTab(
             }
         }
     }
-}
 
 @Composable
 private fun LockedSlotCard(
