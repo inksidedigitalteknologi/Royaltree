@@ -61,7 +61,8 @@ enum class AppScreen {
     PROFILE,
     NOTIFICATIONS,
     SWEEPSTAKES,
-    TRANSFER
+    TRANSFER,
+    WHITEPAPER
 }
 
 // ==== Ad Button State ====

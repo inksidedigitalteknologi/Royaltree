@@ -108,6 +108,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.inkside.digital.worker.MiningWorker
 import java.util.concurrent.TimeUnit
+import com.inkside.digital.ui.screens.WhitepaperScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -938,6 +939,13 @@ fun MainAffiliateAppContent(
 
                 AppScreen.REFERRAL -> {
                     ReferralScreen(user = user, currentLanguage = currentLanguage)
+                }
+
+                AppScreen.WHITEPAPER -> {
+                    WhitepaperScreen(
+                        currentLanguage = currentLanguage,
+                        onBack = { onNavigate(AppScreen.HOME) }
+                    )
                 }
 
                 AppScreen.SETTINGS -> {

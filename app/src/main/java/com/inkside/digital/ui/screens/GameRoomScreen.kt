@@ -1124,48 +1124,73 @@ private fun RackSlotItemCard(
     onAssign: () -> Unit
 ) {
     val isOccupied = miner != null
-    val borderColor = if (isOccupied) RetroGold else RetroBorder.copy(alpha = 0.5f)
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(110.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(if (isOccupied) RetroCard else RetroBgDark.copy(alpha = 0.7f))
-            .border(
-                width = if (isOccupied) 2.dp else 1.dp,
-                color = borderColor,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .clickable(enabled = !isOccupied) { onAssign() }
+            .height(120.dp)
+            .clip(RoundedCornerShape(14.dp))
     ) {
+        // ==== PNG FRAME BACKGROUND ====
         if (isOccupied) {
-            // ==== Occupied Slot ====
+            Image(
+                painter = painterResource(id = R.drawable.card_frame_common),
+                contentDescription = null,
+                modifier = Modifier.matchParentSize(),
+                contentScale = androidx.compose.ui.layout.ContentScale.Crop
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(
+                        Brush.linearGradient(
+                            listOf(
+                                Color(0xFF0F172A),
+                                Color(0xFF020617)
+                            )
+                        )
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = EmeraldPrimary.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(14.dp)
+                    )
+            )
+        }
+
+        // ==== CONTENT ====
+        if (isOccupied) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
+                    .fillMaxSize()
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Icon + LED
+                // Icon miner
                 Box(
                     modifier = Modifier
-                        .size(46.dp)
-                        .clip(RoundedCornerShape(10.dp))
+                        .size(52.dp)
+                        .clip(RoundedCornerShape(12.dp))
                         .background(Color(0xFF0F0805))
-                        .border(1.dp, RetroBorder.copy(alpha = 0.5f), RoundedCornerShape(10.dp)),
+                        .border(
+                            width = 1.5.dp,
+                            color = RetroGold.copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(12.dp)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
                         painter = painterResource(R.drawable.micro_chip),
                         contentDescription = miner!!.name,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(32.dp)
                     )
+                    // LED indicator
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .padding(4.dp)
-                            .size(6.dp)
+                            .padding(5.dp)
+                            .size(7.dp)
                             .clip(CircleShape)
                             .background(RetroGold.copy(alpha = pulseAlpha))
                     )
@@ -1174,6 +1199,7 @@ private fun RackSlotItemCard(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
+                    // Nama + tier badge
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = miner.name,
@@ -1181,7 +1207,8 @@ private fun RackSlotItemCard(
                             fontSize = 13.sp,
                             color = RetroGold,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Surface(
@@ -1193,34 +1220,36 @@ private fun RackSlotItemCard(
                                 fontSize = 8.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = RetroAmber,
-                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                                modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
                             )
                         }
                     }
+
                     Spacer(modifier = Modifier.height(4.dp))
+
+                    // Stats
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "Slot ${slotIndex + 1}",
-                            fontSize = 10.sp,
-                            color = Color.White.copy(alpha = 0.6f)
-                        )
-                        Text(
-                            text = " • +${miner.powerGhs} GH/s",
+                            text = "⚡ ${miner.powerGhs} GH/s",
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = RetroAmber
                         )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "💰 +${String.format(Locale.US, "%.4f", miner.pointsPerMinute)}/mnt",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = EmeraldLight
+                        )
                     }
-                    Text(
-                        text = "+${String.format(Locale.US, "%.4f", miner.pointsPerMinute)} RTP/mnt",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = EmeraldLight
-                    )
                 }
 
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Tombol Lepas
                 Surface(
-                    color = Color.Transparent,
+                    color = Color(0xFFEF4444).copy(alpha = 0.15f),
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .border(1.dp, Color(0xFFEF4444).copy(alpha = 0.5f), RoundedCornerShape(8.dp))
@@ -1236,48 +1265,46 @@ private fun RackSlotItemCard(
                 }
             }
         } else {
-            // ==== Empty Slot ====
+            // ==== EMPTY SLOT ====
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clickable { onAssign() }
-                    .padding(8.dp),
+                    .clickable { onAssign() },
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Box(
                     modifier = Modifier
-                        .size(36.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFF0F0805))
-                        .border(1.dp, RetroBorder.copy(alpha = 0.4f), RoundedCornerShape(8.dp)),
+                        .size(38.dp)
+                        .clip(CircleShape)
+                        .background(EmeraldPrimary.copy(alpha = 0.15f))
+                        .border(1.dp, EmeraldPrimary.copy(alpha = 0.4f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("⛏️", fontSize = 18.sp)
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = null,
+                        tint = EmeraldPrimary,
+                        modifier = Modifier.size(22.dp)
+                    )
                 }
-
                 Spacer(modifier = Modifier.height(6.dp))
-
-                Text(
-                    text = "Slot ${slotIndex + 1}",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 11.sp,
-                    color = Color.White.copy(alpha = 0.85f)
-                )
-
                 Text(
                     text = "Tap untuk isi",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = EmeraldPrimary.copy(alpha = 0.7f)
+                )
+                Text(
+                    text = "Slot ${slotIndex + 1}",
                     fontSize = 9.sp,
-                    color = RetroAmber.copy(alpha = 0.9f)
+                    color = Color(0xFF64748B)
                 )
             }
         }
     }
 }
 
-// -------------------------------------------------------------
-// LOADING STATE
-// -------------------------------------------------------------
 @Composable
 private fun LoadingState(currentLanguage: AppLanguage) {
     Box(

@@ -1928,6 +1928,150 @@ object LanguageManager {
             AppLanguage.ARABIC to "اضغط على العملات قبل أن تختفي!",
             AppLanguage.JAPANESE to "コインが消える前にタップ！"
         ),
+        "coinrush_score" to mapOf(
+            AppLanguage.INDONESIAN to "SKOR",
+            AppLanguage.ENGLISH to "SCORE",
+            AppLanguage.SPANISH to "PUNTUACIÓN",
+            AppLanguage.CHINESE to "得分",
+            AppLanguage.ARABIC to "النتيجة",
+            AppLanguage.JAPANESE to "スコア"
+        ),
+        "coinrush_time" to mapOf(
+            AppLanguage.INDONESIAN to "WAKTU",
+            AppLanguage.ENGLISH to "TIME",
+            AppLanguage.SPANISH to "TIEMPO",
+            AppLanguage.CHINESE to "时间",
+            AppLanguage.ARABIC to "الوقت",
+            AppLanguage.JAPANESE to "時間"
+        ),
+        "coinrush_start_hint" to mapOf(
+            AppLanguage.INDONESIAN to "Tekan MULAI untuk bermain",
+            AppLanguage.ENGLISH to "Press START to play",
+            AppLanguage.SPANISH to "Presiona INICIAR para jugar",
+            AppLanguage.CHINESE to "按开始按钮开始游戏",
+            AppLanguage.ARABIC to "اضغط ابدأ للعب",
+            AppLanguage.JAPANESE to "スタートを押してプレイ"
+        ),
+        "coinrush_start" to mapOf(
+            AppLanguage.INDONESIAN to "MULAI",
+            AppLanguage.ENGLISH to "START",
+            AppLanguage.SPANISH to "INICIAR",
+            AppLanguage.CHINESE to "开始",
+            AppLanguage.ARABIC to "ابدأ",
+            AppLanguage.JAPANESE to "スタート"
+        ),
+        "coinrush_play_again" to mapOf(
+            AppLanguage.INDONESIAN to "MAIN LAGI",
+            AppLanguage.ENGLISH to "PLAY AGAIN",
+            AppLanguage.SPANISH to "JUGAR DE NUEVO",
+            AppLanguage.CHINESE to "再玩一次",
+            AppLanguage.ARABIC to "العب مرة أخرى",
+            AppLanguage.JAPANESE to "もう一度プレイ"
+        ),
+        "coinrush_exit" to mapOf(
+            AppLanguage.INDONESIAN to "KELUAR",
+            AppLanguage.ENGLISH to "EXIT",
+            AppLanguage.SPANISH to "SALIR",
+            AppLanguage.CHINESE to "退出",
+            AppLanguage.ARABIC to "خروج",
+            AppLanguage.JAPANESE to "終了"
+        ),
+        "wp_title" to mapOf(
+            AppLanguage.INDONESIAN to "Royaltree Whitepaper",
+            AppLanguage.ENGLISH to "Royaltree Whitepaper",
+            AppLanguage.SPANISH to "Royaltree Whitepaper",
+            AppLanguage.CHINESE to "Royaltree 白皮书",
+            AppLanguage.ARABIC to "الورقة البيضاء رويالتري",
+            AppLanguage.JAPANESE to "ロイヤルツリーホワイトペーパー"
+        ),
+        "wp_subtitle" to mapOf(
+            AppLanguage.INDONESIAN to "Versi 1.0 • 2026",
+            AppLanguage.ENGLISH to "Version 1.0 • 2026",
+            AppLanguage.SPANISH to "Versión 1.0 • 2026",
+            AppLanguage.CHINESE to "版本 1.0 • 2026",
+            AppLanguage.ARABIC to "الإصدار 1.0 • 2026",
+            AppLanguage.JAPANESE to "バージョン 1.0 • 2026"
+        ),
+        "wp_what_title" to mapOf(
+            AppLanguage.INDONESIAN to "Apa itu Royaltree?",
+            AppLanguage.ENGLISH to "What is Royaltree?",
+            AppLanguage.SPANISH to "¿Qué es Royaltree?",
+            AppLanguage.CHINESE to "什么是Royaltree？",
+            AppLanguage.ARABIC to "ما هو رويالتري؟",
+            AppLanguage.JAPANESE to "Royaltreeとは？"
+        ),
+        "wp_what_content" to mapOf(
+            AppLanguage.INDONESIAN to "Royaltree adalah platform mining berbasis mobile yang menggabungkan gamifikasi, teknologi blockchain-inspired, dan ekonomi token yang adil. Pengguna dapat menambang RTP melalui miner virtual, menyelesaikan misi, dan mengikuti mini-game.",
+            AppLanguage.ENGLISH to "Royaltree is a mobile-based mining platform that combines gamification, blockchain-inspired technology, and a fair token economy. Users can mine RTP through virtual miners, complete missions, and join mini-games.",
+            AppLanguage.SPANISH to "Royaltree es una plataforma de minería móvil que combina gamificación, tecnología inspirada en blockchain y una economía de tokens justa.",
+            AppLanguage.CHINESE to "Royaltree是一个基于移动端的挖矿平台，结合了游戏化、区块链启发技术和公平的代币经济。",
+            AppLanguage.ARABIC to "رويالتري هي منصة تعدين قائمة على الهاتف المحمول تجمع بين اللعب والتكنولوجيا المستوحاة من البلوكشين واقتصاد رمزي عادل.",
+            AppLanguage.JAPANESE to "Royaltreeは、ゲーミフィケーション、ブロックチェーンにインスパイアされた技術、公平なトークン経済を組み合わせたモバイルベースのマイニングプラットフォームです。"
+        ),
+        "wp_mining_title" to mapOf(
+            AppLanguage.INDONESIAN to "Cara Mining",
+            AppLanguage.ENGLISH to "How to Mine",
+            AppLanguage.SPANISH to "Cómo Minar",
+            AppLanguage.CHINESE to "如何挖矿",
+            AppLanguage.ARABIC to "كيفية التعدين",
+            AppLanguage.JAPANESE to "マイニング方法"
+        ),
+        "wp_mining_content" to mapOf(
+            AppLanguage.INDONESIAN to "1. Beli miner dari marketplace\n2. Tempatkan miner di rak\n3. Aktifkan miner 6 jam dengan menonton iklan\n4. Miner menghasilkan RTP secara pasif\n5. Block reward dibagikan setiap 30 menit",
+            AppLanguage.ENGLISH to "1. Buy miners from marketplace\n2. Place miners on rack\n3. Activate miner for 6 hours by watching ads\n4. Miners generate RTP passively\n5. Block reward distributed every 30 minutes",
+            AppLanguage.SPANISH to "1. Compra mineros\n2. Colócalos en el estante\n3. Activa 6 horas con anuncios\n4. Generan RTP pasivamente\n5. Recompensa cada 30 minutos",
+            AppLanguage.CHINESE to "1. 从市场购买矿工\n2. 放置在架子上\n3. 观看广告激活6小时\n4. 矿工被动生成RTP\n5. 每30分钟分配区块奖励",
+            AppLanguage.ARABIC to "1. اشترِ عمال التعدين\n2. ضعهم على الرف\n3. نشط لمدة 6 ساعات\n4. ينتجون RTP بشكل سلبي\n5. مكافأة الكتلة كل 30 دقيقة",
+            AppLanguage.JAPANESE to "1. マーケットプレイスでマイナーを購入\n2. ラックに配置\n3. 広告を見て6時間有効化\n4. マイナーが受動的にRTPを生成\n5. ブロック報酬は30分ごと"
+        ),
+        "wp_token_title" to mapOf(
+            AppLanguage.INDONESIAN to "Token RTP",
+            AppLanguage.ENGLISH to "RTP Token",
+            AppLanguage.SPANISH to "Token RTP",
+            AppLanguage.CHINESE to "RTP 代币",
+            AppLanguage.ARABIC to "رمز RTP",
+            AppLanguage.JAPANESE to "RTPトークン"
+        ),
+        "wp_token_content" to mapOf(
+            AppLanguage.INDONESIAN to "RTP adalah token utility internal Royaltree. Digunakan untuk:\n• Membeli & upgrade miner\n• Transfer ke sesama pengguna\n• Menukar dengan reward\n\nTotal supply terbatas, dengan halving setiap 1,000 block.",
+            AppLanguage.ENGLISH to "RTP is Royaltree's internal utility token. Used for:\n• Buying & upgrading miners\n• Transferring to other users\n• Exchanging for rewards\n\nLimited supply, with halving every 1,000 blocks.",
+            AppLanguage.SPANISH to "RTP es el token de utilidad interno. Usado para:\n• Comprar y mejorar mineros\n• Transferir a otros usuarios\n• Canjear recompensas\n\nSuministro limitado.",
+            AppLanguage.CHINESE to "RTP是Royaltree的内部实用代币。用于：\n• 购买和升级矿工\n• 转账给其他用户\n• 兑换奖励\n\n供应有限，每1,000个区块减半。",
+            AppLanguage.ARABIC to "RTP هو رمز المنفعة الداخلي. يُستخدم لـ:\n• شراء وترقية عمال التعدين\n• التحويل للمستخدمين الآخرين\n• استبدال المكافآت\n\nعرض محدود.",
+            AppLanguage.JAPANESE to "RTPはRoyaltreeの内部ユーティリティトークンです。用途：\n• マイナーの購入とアップグレード\n• 他のユーザーへの転送\n• 報酬との交換\n\n供給量は限られており、1,000ブロックごとに半減します。"
+        ),
+        "wp_economy_title" to mapOf(
+            AppLanguage.INDONESIAN to "Ekonomi",
+            AppLanguage.ENGLISH to "Economy",
+            AppLanguage.SPANISH to "Economía",
+            AppLanguage.CHINESE to "经济",
+            AppLanguage.ARABIC to "الاقتصاد",
+            AppLanguage.JAPANESE to "経済"
+        ),
+        "wp_economy_content" to mapOf(
+            AppLanguage.INDONESIAN to "Ekonomi Royaltree dirancang berkelanjutan:\n• 10% rate user masuk ke Pool Fund\n• Pool Fund membiayai block reward\n• Difficulty naik seiring total hashrate\n• Anti-whale: diminishing return & soft cap",
+            AppLanguage.ENGLISH to "Royaltree's economy is designed for sustainability:\n• 10% of user rate goes to Pool Fund\n• Pool Fund finances block rewards\n• Difficulty rises with total hashrate\n• Anti-whale: diminishing return & soft cap",
+            AppLanguage.SPANISH to "La economía de Royaltree está diseñada para la sostenibilidad:\n• 10% de la tasa del usuario va al Pool Fund\n• El Pool Fund financia las recompensas\n• La dificultad aumenta con el hashrate\n• Anti-ballena: retorno decreciente",
+            AppLanguage.CHINESE to "Royaltree的经济设计为可持续：\n• 用户费率的10%进入资金池\n• 资金池为区块奖励提供资金\n• 难度随总算力上升\n• 反巨鲸：收益递减和软上限",
+            AppLanguage.ARABIC to "اقتصاد رويالتري مصمم للاستدامة:\n• 10% من معدل المستخدم يذهب إلى صندوق المجمع\n• الصندوق يمول مكافآت الكتلة\n• تزداد الصعوبة مع إجمالي الهاش\n• مكافحة الحيتان: عوائد متناقصة",
+            AppLanguage.JAPANESE to "Royaltreeの経済は持続可能性のために設計されています：\n• ユーザーレートの10%がプールファンドへ\n• プールファンドがブロック報酬を賄う\n• 難易度は総ハッシュレートに応じて上昇\n• アンチホエール：収穫逓減とソフトキャップ"
+        ),
+        "wp_roadmap_title" to mapOf(
+            AppLanguage.INDONESIAN to "Roadmap",
+            AppLanguage.ENGLISH to "Roadmap",
+            AppLanguage.SPANISH to "Hoja de Ruta",
+            AppLanguage.CHINESE to "路线图",
+            AppLanguage.ARABIC to "خارطة الطريق",
+            AppLanguage.JAPANESE to "ロードマップ"
+        ),
+        "wp_roadmap_content" to mapOf(
+            AppLanguage.INDONESIAN to "Q4 2026: Rilis publik, mining tycoon\nQ1 2027: Mini-game arcade, leaderboard musiman\nQ2 2027: Secondary market, tier miner baru\nQ3 2027: Integrasi e-wallet, withdrawal langsung",
+            AppLanguage.ENGLISH to "Q4 2026: Public release, mining tycoon\nQ1 2027: Mini-game arcade, seasonal leaderboard\nQ2 2027: Secondary market, new miner tiers\nQ3 2027: E-wallet integration, direct withdrawal",
+            AppLanguage.SPANISH to "Q4 2026: Lanzamiento público\nQ1 2027: Mini-juegos arcade\nQ2 2027: Mercado secundario\nQ3 2027: Integración de billetera",
+            AppLanguage.CHINESE to "2026年Q4：公开发布\n2027年Q1：街机小游戏、季节性排行榜\n2027年Q2：二级市场、新矿工等级\n2027年Q3：电子钱包整合、直接提现",
+            AppLanguage.ARABIC to "Q4 2026: الإصدار العام\nQ1 2027: ألعاب مصغرة\nQ2 2027: السوق الثانوي\nQ3 2027: تكامل المحفظة",
+            AppLanguage.JAPANESE to "2026年Q4：公開リリース\n2027年Q1：ミニゲームアーケード\n2027年Q2：セカンダリマーケット\n2027年Q3：Eウォレット統合"
+        ),
         "coinrush_final_score" to mapOf(
             AppLanguage.INDONESIAN to "Skor Akhir",
             AppLanguage.ENGLISH to "Final Score",
