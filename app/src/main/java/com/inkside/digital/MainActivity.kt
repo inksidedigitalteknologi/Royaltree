@@ -577,10 +577,8 @@ fun MainAffiliateApp(
         onConvertSteps = { viewModel.convertStepsToCoins() },
         onClaimMining = { viewModel.setPendingMiningClaim(true); viewModel.showAdRewardModal.value = true },
         onActivateMiner = {
-            android.util.Log.d("MinerFlow", "🎯 [1] Butang Aktifkan Miner ditekan (MainActivity)")
             viewModel.setPendingMinerActivate(true)
             viewModel.showAdRewardModal.value = true
-            android.util.Log.d("MinerFlow", "🎯 [2] showAdRewardModal = true di-set")
         },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
@@ -1124,32 +1122,25 @@ fun MainAffiliateAppContent(
     // Terus tunjuk AdMob rewarded video (skip modal)
     androidx.compose.runtime.LaunchedEffect(showAdReward) {
         if (showAdReward) {
-            android.util.Log.d("MinerFlow", "🎯 [3] LaunchedEffect fired: showAdReward=true")
             coroutineScope.launch {
                 try {
                     val activity = context.findActivity()
-                    android.util.Log.d("MinerFlow", "🎯 [4] findActivity() = $activity")
                     if (activity != null) {
-                        android.util.Log.d("MinerFlow", "🎯 [5] Calling AdManager.showRewardedAdForReward")
                         // ✅ FIX: Pilih mode berdasarkan pendingMinerActivate
                         val adMode = if (pendingMinerActivate) {
-                            android.util.Log.d("MinerFlow", "🎯 [5a] Mode = MINER_ACTIVATE (skip /ads/reward)")
                             AdManager.AdMode.MINER_ACTIVATE
                         } else {
-                            android.util.Log.d("MinerFlow", "🎯 [5b] Mode = REWARD (normal)")
                             AdManager.AdMode.REWARD
                         }
                         AdManager.showRewardedAdForReward(
                             activity = activity,
                             userId = user?.id ?: "",
                             onSuccess = { points ->
-                                android.util.Log.d("MinerFlow", "🎯 [8] AdMob reward earned: $points")
                                 onAdRewardDismiss()
                                 // Trigger activate miner (RTP akan generate otomatik)
                                 onAdRewardEarned(points)
                             },
                             onFailure = { reason, message ->
-                                android.util.Log.e("MinerFlow", "🎯 [X] AdMob fail: $reason - $message")
                                 onAdRewardDismiss()
                                 onAdBlockedSetReason(reason.name)
                             },

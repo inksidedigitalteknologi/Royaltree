@@ -1436,68 +1436,52 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
      */
     fun loadGameStateThenRefreshMiner() {
         viewModelScope.launch {
-            android.util.Log.d("MinerFlow", "════════ START loadGameStateThenRefreshMiner ════════")
             
             // STEP 1: Fetch API
             try {
-                android.util.Log.d("MinerFlow", "[STEP 1] Fetching getGameState()...")
                 val result = ApiClient.getGameState()
                 
                 result.onSuccess { json ->
-                    android.util.Log.d("MinerFlow", "[STEP 1a] API success. Response: $json")
                     
                     val success = json.optBoolean("success", false)
-                    android.util.Log.d("MinerFlow", "[STEP 1b] success=$success")
                     
                     if (success) {
                         // Cek room & minerActiveUntil di response
                         val data = json.optJSONObject("data")
                         val room = data?.optJSONObject("room")
                         val minerActiveUntilFromApi = room?.optLong("minerActiveUntil", -1L)
-                        android.util.Log.d("MinerFlow", "[STEP 1c] Response room.minerActiveUntil=$minerActiveUntilFromApi")
                         
                         // Sync ke Room DB
                         repository.syncGameStateFromBackend(json)
-                        android.util.Log.d("MinerFlow", "[STEP 1d] Sync to Room DB done")
                     }
                 }.onFailure { error ->
-                    android.util.Log.e("MinerFlow", "[STEP 1] API FAILED: ${error.message}", error)
                 }
             } catch (e: Exception) {
-                android.util.Log.e("MinerFlow", "[STEP 1] EXCEPTION: ${e.message}", e)
             }
             
             // STEP 2: Baca dari Room DB
             try {
-                android.util.Log.d("MinerFlow", "[STEP 2] Reading Room DB...")
                 val room = repository.getGameRoomStateOnce()
                 
                 if (room == null) {
-                    android.util.Log.e("MinerFlow", "[STEP 2a] Room DB NULL!")
                     return@launch
                 }
                 
-                android.util.Log.d("MinerFlow", "[STEP 2b] Room DB: minerActiveUntil=${room.minerActiveUntil}")
                 
                 val now = System.currentTimeMillis()
                 if (room.minerActiveUntil > _minerActiveUntil.value) { _minerActiveUntil.value = room.minerActiveUntil }
                 val remaining = (_minerActiveUntil.value - now).coerceAtLeast(0L)
                 _minerActiveRemainingMs.value = remaining
                 
-                android.util.Log.d("MinerFlow", "[STEP 2c] now=$now, minerActiveUntil=${room.minerActiveUntil}, remaining=$remaining (${remaining/1000/60} menit)")
                 
                 if (remaining > 0L) {
                     startMinerCountdownTicker()
-                    android.util.Log.d("MinerFlow", "[STEP 3] ✅ Ticker started — MINER AKTIF")
                 } else {
                     stopMinerCountdownTicker()
-                    android.util.Log.d("MinerFlow", "[STEP 3] ⛔ Miner EXPIRED / TIDAK AKTIF")
                 }
             } catch (e: Exception) {
-                android.util.Log.e("MinerFlow", "[STEP 2] EXCEPTION: ${e.message}", e)
             }
             
-            android.util.Log.d("MinerFlow", "════════ END loadGameStateThenRefreshMiner ════════")
         }
     }
 
@@ -1584,11 +1568,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 _minerActiveUntil.value = room.minerActiveUntil
                 val remaining = (room.minerActiveUntil - now).coerceAtLeast(0L)
                 _minerActiveRemainingMs.value = remaining
-                android.util.Log.d("MinerActive", "🔄 refreshMinerActiveState: room.minerActiveUntil=${room.minerActiveUntil}, remaining=$remaining")
                 // Start ticker kalau miner aktif
                 if (remaining > 0L) {
                     startMinerCountdownTicker()
-                    android.util.Log.d("MinerActive", "🔄 Ticker restarted")
                 }
             } catch (e: Exception) {
                 android.util.Log.w("AffiliateViewModel", "refreshMinerActiveState error: ${e.message}")
@@ -1603,12 +1585,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     .onSuccess { json ->
                         if (json.optBoolean("success", false)) {
                             val activeUntil = json.optLong("minerActiveUntil", 0L)
-                            android.util.Log.d("MinerActive", "✅ activateMiner: activeUntil=$activeUntil")
                             _minerActiveUntil.value = activeUntil
                             _minerActiveRemainingMs.value = (activeUntil - System.currentTimeMillis()).coerceAtLeast(0L)
-                            android.util.Log.d("MinerActive", "✅ State updated: minerActiveUntil=${_minerActiveUntil.value}, remainingMs=${_minerActiveRemainingMs.value}")
                             startMinerCountdownTicker()   // ← Start ticker
-                            android.util.Log.d("MinerActive", "✅ Ticker started, state=AKTIF")
                             showSnackbar("⛏️ Miner aktif 6 jam!")
                             // ❌ JANGAN panggil loadGameState() di sini
                             // karena akan re-fetch dan reset _minerActiveUntil
@@ -1616,7 +1595,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             // loadUserFromBackend()
                         } else {
                             val errMsg = json.optString("message", "Gagal aktifkan miner")
-                            android.util.Log.w("MinerActive", "❌ activateMiner: success=false, message=$errMsg")
                             showSnackbar(errMsg)
                         }
                     }
