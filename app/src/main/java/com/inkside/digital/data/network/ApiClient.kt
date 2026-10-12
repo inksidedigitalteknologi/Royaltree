@@ -364,6 +364,31 @@ object ApiClient {
         }
     }
 
+    // ==== GLOBAL CHAT ====
+    suspend fun getChatMessages(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response: ResponseBody = apiService.getChatMessages()
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun sendChatMessage(message: String): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().apply {
+                put("message", message)
+            }
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
+            val response: ResponseBody = apiService.sendChatMessage(requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun getDailyStatus(): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val response: ResponseBody = apiService.getDailyStatus()
