@@ -455,6 +455,59 @@ object ApiClient {
 
     // ============ GAME — MINING TYCOON ============
 
+    // ============ THERMAL + LOCATION (sensor monitoring) ============
+    suspend fun updateThermal(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val reqBody = body.toString().toRequestBody(JSON_MEDIA)
+            val resp: ResponseBody = apiService.updateThermal(reqBody)
+            resetAdBlockFlag()
+            Result.success(JSONObject(resp.string()))
+        } catch (e: UnknownHostException) {
+            _adBlockDetected.value = true
+            Result.failure(e)
+        } catch (e: SocketTimeoutException) {
+            _adBlockDetected.value = true
+            Result.failure(e)
+        } catch (e: retrofit2.HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val json = JSONObject(errorBody)
+                json.put("httpCode", e.code())
+                Result.success(json)
+            } catch (parseErr: Exception) {
+                Result.failure(e)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateLocation(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val reqBody = body.toString().toRequestBody(JSON_MEDIA)
+            val resp: ResponseBody = apiService.updateLocation(reqBody)
+            resetAdBlockFlag()
+            Result.success(JSONObject(resp.string()))
+        } catch (e: UnknownHostException) {
+            _adBlockDetected.value = true
+            Result.failure(e)
+        } catch (e: SocketTimeoutException) {
+            _adBlockDetected.value = true
+            Result.failure(e)
+        } catch (e: retrofit2.HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val json = JSONObject(errorBody)
+                json.put("httpCode", e.code())
+                Result.success(json)
+            } catch (parseErr: Exception) {
+                Result.failure(e)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun getGameState(): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val response: ResponseBody = apiService.getGameState()

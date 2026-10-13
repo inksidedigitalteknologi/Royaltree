@@ -2,6 +2,7 @@
 // Endpoint Game Room — Mining Tycoon + Coin Rush
 
 const express = require('express');
+const anomaly = require('../services/anomaly');
 const router = express.Router();
 const admin = require('firebase-admin');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
@@ -509,6 +510,7 @@ router.post('/mining/activate', verifyFirebaseToken, checkFraud, async (req, res
 router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) => {
     try {
         const { uid } = req.firebaseUser;
+        anomaly.trackActivity(uid, 'CLAIM');
 
         const roomRef = db.collection('game_rooms').doc(uid);
         const roomDoc = await roomRef.get();
@@ -1595,6 +1597,101 @@ router.post('/miners/unlock', verifyFirebaseToken, checkFraud, async (req, res) 
     } catch (error) {
         console.error('Unlock miner error:', error);
         return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// THERMAL MONITORING (battery temp dari HP user)
+// ============================================================
+router.post('/thermal', verifyFirebaseToken, async (req, res) => {
+    try {
+        const uid = req.user.uid;
+        const { phone_temp, battery_level, is_charging } = req.body || {};
+
+        // Validasi
+        const temp = Number(phone_temp);
+        const level = Number(battery_level);
+        if (!Number.isFinite(temp) || temp < -20 || temp > 100) {
+            return res.status(400).json({ success: false, error: 'Invalid phone_temp' });
+        }
+
+        const now = admin.firestore.FieldValue.serverTimestamp();
+
+        // Simpan ke game_state user
+        await db.collection('game_states').doc(uid).set({
+            thermal: {
+                phone_temp: temp,
+                battery_level: Number.isFinite(level) ? level : 0,
+                is_charging: !!is_charging,
+                updatedAt: now
+            }
+        }, { merge: true });
+
+        // Log history (max 100 entry)
+        await db.collection('thermal_logs').add({
+            uid,
+            phone_temp: temp,
+            battery_level: Number.isFinite(level) ? level : 0,
+            is_charging: !!is_charging,
+            createdAt: now
+        });
+
+        // Anti-fraud: suhu tinggi + hashrate tinggi = suspicious
+        const hashrateFactor =
+            temp >= 50 ? 0.30 :
+            temp >= 45 ? 0.50 :
+            temp >= 40 ? 0.70 :
+            temp >= 35 ? 0.85 :
+            temp >= 30 ? 0.95 : 1.00;
+
+        res.json({
+            success: true,
+            thermal: {
+                phone_temp: temp,
+                battery_level: level,
+                is_charging: !!is_charging
+            },
+            hashrate_factor: hashrateFactor,
+            timestamp: Date.now()
+        });
+
+    } catch (err) {
+        console.error('[thermal] error:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ============================================================
+// LOCATION (region detection dari GPS user)
+// ============================================================
+router.post('/location', verifyFirebaseToken, async (req, res) => {
+    try {
+        const uid = req.user.uid;
+        const { region, latitude, longitude } = req.body || {};
+
+        const lat = Number(latitude);
+        const lon = Number(longitude);
+
+        const now = admin.firestore.FieldValue.serverTimestamp();
+
+        await db.collection('game_states').doc(uid).set({
+            location: {
+                region: String(region || 'Unknown').substring(0, 32),
+                latitude: Number.isFinite(lat) ? lat : 0,
+                longitude: Number.isFinite(lon) ? lon : 0,
+                updatedAt: now
+            }
+        }, { merge: true });
+
+        res.json({
+            success: true,
+            location: { region, latitude: lat, longitude: lon },
+            timestamp: Date.now()
+        });
+
+    } catch (err) {
+        console.error('[location] error:', err);
+        res.status(500).json({ success: false, error: err.message });
     }
 });
 
