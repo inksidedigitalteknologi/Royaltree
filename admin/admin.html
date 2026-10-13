@@ -27,6 +27,234 @@ body {
   line-height: 1.6;
 }
 
+/* ============ SIDEBAR LAYOUT ============ */
+body {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  background: linear-gradient(180deg, #020617, #0a0e1a);
+  border-right: 1px solid rgba(16, 185, 129, 0.15);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 20px 18px;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-header .logo {
+  font-size: 18px;
+  font-weight: 800;
+  color: #10B981;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-header .badge {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: rgba(251, 191, 36, 0.2);
+  color: #FBBF24;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  letter-spacing: 1px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-section {
+  padding: 12px 18px 6px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  color: #94A3B8;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.2s;
+  text-decoration: none;
+  position: relative;
+}
+
+.nav-item:hover {
+  background: rgba(16, 185, 129, 0.08);
+  color: #E2E8F0;
+}
+
+.nav-item.active {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10B981;
+  border-left-color: #10B981;
+  font-weight: 700;
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: #10B981;
+  border-radius: 3px 0 0 3px;
+}
+
+.sidebar-footer {
+  padding: 16px 18px;
+  border-top: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.btn-logout-sidebar {
+  width: 100%;
+  padding: 10px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #F87171;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout-sidebar:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 240px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0a0e1a;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(2, 6, 23, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.topbar h1 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #E2E8F0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-toggle {
+  display: none;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10B981;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 99;
+}
+
+.content {
+  padding: 20px;
+  flex: 1;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .sidebar-overlay.active {
+    display: block;
+  }
+  .main-content {
+    margin-left: 0;
+  }
+  .menu-toggle {
+    display: flex;
+  }
+  .topbar {
+    padding: 12px 14px;
+  }
+  .topbar h1 {
+    font-size: 14px;
+  }
+  .content {
+    padding: 14px;
+  }
+  .stat-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  .stat-card {
+    padding: 12px;
+  }
+  .stat-card .value {
+    font-size: 18px;
+  }
+}
+
 /* ============ STAT CARDS ============ */
 .stat-card {
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.9));
@@ -828,37 +1056,65 @@ tbody tr:last-child td {
     <p>Masukkan password untuk melanjutkan</p>
     <div id="loginError" class="login-error"></div>
     <input type="password" id="loginPassword" placeholder="Password" onkeypress="if(event.key===String.fromCharCode(13))doLogin()">
+    <input type="password" id="loginApiKey" placeholder="API Key" onkeypress="if(event.key===String.fromCharCode(13))doLogin()" style="margin-top:10px;">
     <button id="loginBtn" onclick="doLogin()">Login</button>
   </div>
 </div>
 <div id="mainApp" class="hidden">
-<div class="header">
-  <h1>🌳 Royaltree Admin Panel</h1>
-  <div class="header-actions">
-    <button class="btn-secondary" onclick="loadAll()">🔄 Refresh</button>
-    <button class="btn-danger" onclick="doLogout()">🚪 Logout</button>
-  </div>
-</div>
-<div class="content">
-  <div class="stats-grid" id="stats"></div>
-  <div class="tabs">
-    <button class="tab active" data-tab="dashboard" onclick="switchTab('dashboard')">📊 Dashboard</button>
-    <button class="tab" data-tab="users" onclick="switchTab('users')">👥 Users</button>
-    <button class="tab" data-tab="mining" onclick="switchTab('mining')">⛏️ Mining</button>
-    <button class="tab" data-tab="chat" onclick="switchTab('chat')">💬 Chat</button>
-    <button class="tab" data-tab="withdrawals" onclick="switchTab('withdrawals')">💰 Withdrawals</button>
-    <button class="tab" data-tab="campaigns" onclick="switchTab('campaigns')">📢 Campaigns</button>
-    <button class="tab" data-tab="missions" onclick="switchTab('missions')">🎯 Missions</button>
-    <button class="tab" data-tab="game" onclick="switchTab('game')">🎮 Game Config</button>
-    <button class="tab" data-tab="config" onclick="switchTab('config')">⚙️ Config</button>
-    <button class="tab" data-tab="daily" onclick="switchTab('daily')">🎁 Daily Reward</button>
-    <button class="tab" data-tab="ads" onclick="switchTab('ads')">📺 Ad Vendors</button>
-    <button class="tab" data-tab="audit" onclick="switchTab('audit')">📋 Audit Log</button>
-    <button class="tab" data-tab="broadcast" onclick="switchTab('broadcast')">📢 Broadcast</button>
-  </div>
-  <div class="card" id="content">
-    <div class="loading">Memuat data...</div>
-  </div>
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="logo">🌳 Royaltree</span>
+      <span class="badge">ADMIN</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <a class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">📊 Dashboard</a>
+      <a class="nav-item" data-page="users" onclick="switchPage('users')">👥 Users</a>
+      <a class="nav-item" data-page="mining" onclick="switchPage('mining')">⛏️ Mining</a>
+      <a class="nav-item" data-page="chat" onclick="switchPage('chat')">💬 Chat</a>
+
+      <div class="nav-section">Keuangan</div>
+      <a class="nav-item" data-page="withdrawals" onclick="switchPage('withdrawals')">💰 Withdrawals</a>
+
+      <div class="nav-section">Game</div>
+      <a class="nav-item" data-page="campaigns" onclick="switchPage('campaigns')">📢 Campaigns</a>
+      <a class="nav-item" data-page="missions" onclick="switchPage('missions')">🎯 Missions</a>
+      <a class="nav-item" data-page="game" onclick="switchPage('game')">🎮 Game Config</a>
+      <a class="nav-item" data-page="ads" onclick="switchPage('ads')">📺 Ad Vendors</a>
+      <a class="nav-item" data-page="daily" onclick="switchPage('daily')">🎁 Daily Reward</a>
+
+      <div class="nav-section">System</div>
+      <a class="nav-item" data-page="audit" onclick="switchPage('audit')">📋 Audit Log</a>
+      <a class="nav-item" data-page="broadcast" onclick="switchPage('broadcast')">📢 Broadcast</a>
+      <a class="nav-item" data-page="config" onclick="switchPage('config')">⚙️ Config</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout-sidebar" onclick="doLogout()">🚪 Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <h1 id="pageTitle">📊 Dashboard</h1>
+      <div class="topbar-actions">
+        <button class="btn-secondary" onclick="loadAll()">🔄 Refresh</button>
+      </div>
+    </header>
+
+    <div id="content" class="content">
+      <div class="loading">Memuat data...</div>
+    </div>
+  </main>
+
 </div>
 <div class="notification" id="notification"></div>
 <div class="modal-overlay" id="modalOverlay">
@@ -894,11 +1150,20 @@ let editingCollection = null;
 // ============ API HELPER ============
 async function api(path, method = 'GET', body = null, auth = false) {
   const headers = { 'Content-Type': 'application/json' };
-  if (auth) headers['Authorization'] = 'Bearer ' + API_KEY;
+
+  // API key dari sessionStorage (di-set saat login)
+  const adminApiKey = sessionStorage.getItem('adminApiKey');
+  if (auth && adminApiKey) {
+    headers['Authorization'] = 'Bearer ' + adminApiKey;
+  }
+
+  // Admin token
   const adminToken = sessionStorage.getItem('adminToken');
   if (adminToken) headers['x-admin-token'] = adminToken;
+
   const opts = { method, headers };
   if (body) opts.body = JSON.stringify(body);
+
   try {
     const res = await fetch(API_BASE + path, opts);
     return await res.json();
@@ -996,27 +1261,70 @@ async function loadStats() {
 }
 
 // ============ TAB SWITCHING ============
-function switchTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-  if (tab === 'dashboard') loadDashboard();
-  else if (tab === 'users') loadUsers();
-  else if (tab === 'mining') loadMining();
-  else if (tab === 'chat') loadChat();
-  else if (tab === 'withdrawals') loadWithdrawals();
-  else if (tab === 'campaigns') loadCampaigns();
-  else if (tab === 'missions') loadMissions();
-  else if (tab === 'game') loadGameConfig();
-  else if (tab === 'config') loadConfig();
-  else if (tab === 'daily') loadDailyConfig();
-  else if (tab === 'ads') loadAdConfig();
-  else if (tab === 'audit') loadAuditLogs();
-  else if (tab === 'broadcast') loadBroadcastTab();
+function switchPage(page) {
+  currentTab = page;
+
+  // Update nav active
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.page === page);
+  });
+
+  // Update page title
+  const titles = {
+    dashboard: '📊 Dashboard',
+    users: '👥 Users',
+    mining: '⛏️ Mining',
+    chat: '💬 Chat',
+    withdrawals: '💰 Withdrawals',
+    campaigns: '📢 Campaigns',
+    missions: '🎯 Missions',
+    game: '🎮 Game Config',
+    config: '⚙️ Config',
+    daily: '🎁 Daily Reward',
+    ads: '📺 Ad Vendors',
+    audit: '📋 Audit Log',
+    broadcast: '📢 Broadcast'
+  };
+  const titleEl = document.getElementById('pageTitle');
+  if (titleEl) titleEl.textContent = titles[page] || '📊 Dashboard';
+
+  // Tutup sidebar di mobile
+  closeSidebar();
+
+  // Load content
+  if (page === 'dashboard') loadDashboard();
+  else if (page === 'users') loadUsers();
+  else if (page === 'mining') loadMining();
+  else if (page === 'chat') loadChat();
+  else if (page === 'withdrawals') loadWithdrawals();
+  else if (page === 'campaigns') loadCampaigns();
+  else if (page === 'missions') loadMissions();
+  else if (page === 'game') loadGameConfig();
+  else if (page === 'config') loadConfig();
+  else if (page === 'daily') loadDailyConfig();
+  else if (page === 'ads') loadAdConfig();
+  else if (page === 'audit') loadAuditLogs();
+  else if (page === 'broadcast') loadBroadcastTab();
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (!sidebar || !overlay) return;
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+}
+
+function closeSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar) sidebar.classList.remove('open');
+  if (overlay) overlay.classList.remove('active');
 }
 
 function loadAll() {
   loadStats();
-  switchTab(currentTab || 'dashboard');
+  switchPage(currentTab || 'dashboard');
 }
 
 // ============ MODAL ============
@@ -1704,10 +2012,16 @@ document.addEventListener('keydown', (e) => {
 // ============ ADMIN LOGIN ============
 function doLogin() {
   const password = document.getElementById('loginPassword').value;
+  const apiKey = document.getElementById('loginApiKey').value;
   const btn = document.getElementById('loginBtn');
   const errEl = document.getElementById('loginError');
   if (!password) {
     errEl.textContent = 'Password wajib diisi.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!apiKey) {
+    errEl.textContent = 'API Key wajib diisi.';
     errEl.style.display = 'block';
     return;
   }
@@ -1717,7 +2031,7 @@ function doLogin() {
   fetch(API_BASE + '/admin/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password })
+    body: JSON.stringify({ password, apiKey })
   })
   .then(r => r.json())
   .then(data => {
@@ -1726,6 +2040,7 @@ function doLogin() {
     if (data.success) {
       sessionStorage.setItem('adminToken', data.token);
       sessionStorage.setItem('adminExpiresAt', data.expiresAt);
+      sessionStorage.setItem('adminApiKey', apiKey);
       showMainApp();
     } else {
       errEl.textContent = data.message || 'Login gagal.';

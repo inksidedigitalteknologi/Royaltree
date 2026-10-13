@@ -492,21 +492,37 @@ router.put('/rates', checkAdmin, async (req, res) => {
 
 router.post('/login', async (req, res) => {
     try {
-        const { password } = req.body;
+        const { password, apiKey } = req.body;
         const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'royaltree_admin_2026';
-        if (password !== ADMIN_PASSWORD) {
+        const API_KEY = process.env.ROYALTREE_API_KEY;
+
+        // Verifikasi password
+        if (!password || password !== ADMIN_PASSWORD) {
             return res.status(401).json({ success: false, message: 'Password salah' });
         }
+
+        // Verifikasi API key
+        if (!apiKey || !API_KEY || apiKey !== API_KEY) {
+            return res.status(401).json({ success: false, message: 'API Key salah' });
+        }
+
+        // Generate admin token
         const token = 'admin_' + Math.random().toString(36).substr(2, 24) + Date.now();
         if (!global.__adminTokens) global.__adminTokens = new Map();
-        global.__adminTokens.set(token, { expiresAt: Date.now() + (24 * 60 * 60 * 1000) });
-        res.json({ success: true, token, message: 'Login admin berhasil' });
+        const expiresAt = Date.now() + (24 * 60 * 60 * 1000);
+        global.__adminTokens.set(token, { expiresAt });
+
+        console.log('[ADMIN] Login sukses');
+        res.json({
+            success: true,
+            token,
+            expiresAt,
+            message: 'Login admin berhasil'
+        });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
 });
-
-module.exports = router;
 
 // ============================================================
 // ADMIN STATS — Overview Dashboard
@@ -711,3 +727,4 @@ router.get('/missions', checkAdmin, async (req, res) => {
     }
 });
 
+module.exports = router;
