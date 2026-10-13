@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Users — Royaltree Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/admin.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="d-flex">
+  <div id="admin-sidebar"></div>
+
+  <div class="flex-grow-1" style="min-width:0;">
+    <div id="admin-navbar"></div>
+
+    <main class="admin-content">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+          <h4 class="mb-1 fw-bold">Users</h4>
+          <p class="text-muted mb-0 small">Manage user, lihat detail, ban/unban</p>
+        </div>
+        <div class="d-flex gap-2">
+          <input type="text" class="form-control form-control-sm" id="searchInput"
+                 placeholder="Cari nama / email / id..." style="min-width:240px;">
+          <button class="btn btn-sm btn-outline-secondary" id="refreshBtn">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-2">
+                <div class="stat-icon bg-primary-subtle text-primary"><i class="bi bi-people"></i></div>
+              </div>
+              <div class="stat-value" id="statTotal">0</div>
+              <div class="stat-label">Total Users</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-2">
+                <div class="stat-icon bg-danger-subtle text-danger"><i class="bi bi-hammer"></i></div>
+              </div>
+              <div class="stat-value" id="statBanned">0</div>
+              <div class="stat-label">Banned</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-2">
+                <div class="stat-icon bg-success-subtle text-success"><i class="bi bi-coin"></i></div>
+              </div>
+              <div class="stat-value" id="statBalance">0</div>
+              <div class="stat-label">Total Balance</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-2">
+                <div class="stat-icon bg-warning-subtle text-warning"><i class="bi bi-star"></i></div>
+              </div>
+              <div class="stat-value" id="statRoyal">0</div>
+              <div class="stat-label">Royal Tier</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card stat-card">
+        <div class="card-body p-0" id="usersTable">
+          <div class="text-center py-5">
+            <div class="spinner-border text-primary"></div>
+            <p class="text-muted small mt-2 mb-0">Memuat users...</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Modal Detail User -->
+<div class="modal fade" id="userModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Detail User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <div class="text-center py-4"><div class="spinner-border"></div></div>
+      </div>
+      <div class="modal-footer" id="modalFooter"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/layout.js"></script>
+<script>
+(async function () {
+  AdminLayout.init('Users');
+
+  let allUsers = [];
+  const modal = new bootstrap.Modal(document.getElementById('userModal'));
+
+  function tierBadge(tier) {
+    const map = {
+      'ROYAL': 'bg-warning text-dark',
+      'DIAMOND': 'bg-info text-dark',
+      'GOLD': 'bg-warning',
+      'SILVER': 'bg-secondary',
+      'BRONZE': 'bg-danger'
+    };
+    return `<span class="badge ${map[tier] || 'bg-light text-dark'}">${tier || 'FREE'}</span>`;
+  }
+
+  function renderStats(users) {
+    const total = users.length;
+    const banned = users.filter(u => u.banned || u.isBanned).length;
+    const totalBalance = users.reduce((s, u) => s + (u.balance || 0), 0);
+    const royal = users.filter(u => u.tier === 'ROYAL').length;
+
+    document.getElementById('statTotal').textContent = AdminAPI.fmtNumber(total);
+    document.getElementById('statBanned').textContent = AdminAPI.fmtNumber(banned);
+    document.getElementById('statBalance').textContent = AdminAPI.fmtNumber(totalBalance);
+    document.getElementById('statRoyal').textContent = AdminAPI.fmtNumber(royal);
+  }
+
+  function renderTable(users) {
+    const el = document.getElementById('usersTable');
+
+    if (users.length === 0) {
+      el.innerHTML = `
+        <div class="text-center py-5">
+          <i class="bi bi-people text-muted" style="font-size:3rem;"></i>
+          <h5 class="mt-3">Tidak Ada User</h5>
+        </div>`;
+      return;
+    }
+
+    el.innerHTML = `
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Email</th>
+              <th>Tier</th>
+              <th class="text-end">Balance</th>
+              <th class="text-end">Points</th>
+              <th class="text-center">Status</th>
+              <th class="text-end">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${users.map(u => {
+              const isBanned = u.banned || u.isBanned;
+              return `
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center me-2"
+                         style="width:32px;height:32px;font-size:14px;font-weight:600;">
+                      ${AdminAPI.escapeHtml((u.name || 'U')[0].toUpperCase())}
+                    </div>
+                    <div>
+                      <div class="fw-semibold small">${AdminAPI.escapeHtml(u.name || '-')}</div>
+                      <code class="text-muted" style="font-size:0.7rem;">${AdminAPI.escapeHtml((u.id || '').slice(0, 12))}...</code>
+                    </div>
+                  </div>
+                </td>
+                <td class="small">${AdminAPI.escapeHtml(u.email || '-')}</td>
+                <td>${tierBadge(u.tier)}</td>
+                <td class="text-end small">${AdminAPI.fmtNumber(u.balance || 0)}</td>
+                <td class="text-end small">${AdminAPI.fmtNumber((u.points || 0).toFixed(0))}</td>
+                <td class="text-center">
+                  ${isBanned
+                    ? '<span class="badge bg-danger">Banned</span>'
+                    : '<span class="badge bg-success">Active</span>'}
+                </td>
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary" onclick="viewUser('${u.id}')" title="Detail">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    ${isBanned
+                      ? `<button class="btn btn-outline-success" onclick="unbanUser('${u.id}')" title="Unban"><i class="bi bi-check-circle"></i></button>`
+                      : `<button class="btn btn-outline-danger" onclick="banUser('${u.id}')" title="Ban"><i class="bi bi-hammer"></i></button>`}
+                  </div>
+                </td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  async function loadUsers() {
+    document.getElementById('usersTable').innerHTML = `
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary"></div>
+      </div>`;
+
+    const res = await AdminAPI.getUsers();
+    if (!res.success) {
+      document.getElementById('usersTable').innerHTML = `
+        <div class="alert alert-danger m-3">${AdminAPI.escapeHtml(res.message || 'Error')}</div>`;
+      return;
+    }
+
+    allUsers = res.data || res.users || [];
+    renderStats(allUsers);
+    renderTable(allUsers);
+  }
+
+  // ============ SEARCH ============
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    if (!q) {
+      renderTable(allUsers);
+      return;
+    }
+    const filtered = allUsers.filter(u =>
+      (u.name || '').toLowerCase().includes(q) ||
+      (u.email || '').toLowerCase().includes(q) ||
+      (u.id || '').toLowerCase().includes(q) ||
+      (u.phone || '').toLowerCase().includes(q)
+    );
+    renderTable(filtered);
+  });
+
+  document.getElementById('refreshBtn').onclick = () => {
+    loadUsers();
+    AdminAPI.toast('Data diperbarui', 'success');
+  };
+
+  // ============ ACTIONS ============
+  window.viewUser = async (id) => {
+    document.getElementById('modalBody').innerHTML = '<div class="text-center py-4"><div class="spinner-border"></div></div>';
+    document.getElementById('modalFooter').innerHTML = '';
+    modal.show();
+
+    const res = await AdminAPI.getUser(id);
+    if (!res.success) {
+      document.getElementById('modalBody').innerHTML = `<div class="alert alert-danger">${AdminAPI.escapeHtml(res.message || 'Error')}</div>`;
+      return;
+    }
+
+    const u = res.data || res.user || res;
+    const isBanned = u.banned || u.isBanned;
+
+    document.getElementById('modalBody').innerHTML = `
+      <div class="row g-3">
+        <div class="col-md-6"><strong>Nama:</strong> ${AdminAPI.escapeHtml(u.name || '-')}</div>
+        <div class="col-md-6"><strong>Email:</strong> ${AdminAPI.escapeHtml(u.email || '-')}</div>
+        <div class="col-md-6"><strong>UID:</strong> <code class="small">${AdminAPI.escapeHtml(u.id || u.uid || '-')}</code></div>
+        <div class="col-md-6"><strong>Phone:</strong> ${AdminAPI.escapeHtml(u.phone || '-')}</div>
+        <div class="col-md-6"><strong>Tier:</strong> ${tierBadge(u.tier)}</div>
+        <div class="col-md-6"><strong>Referral Code:</strong> <code>${AdminAPI.escapeHtml(u.referralCode || '-')}</code></div>
+        <div class="col-md-6"><strong>Balance:</strong> ${AdminAPI.fmtNumber(u.balance || 0)}</div>
+        <div class="col-md-6"><strong>Points:</strong> ${AdminAPI.fmtNumber((u.points || 0).toFixed(2))}</div>
+        <div class="col-md-6"><strong>Miner Tokens:</strong> ${AdminAPI.fmtNumber(u.minerTokens || 0)}</div>
+        <div class="col-md-6"><strong>Check-in Streak:</strong> ${u.checkInStreak || 0} hari</div>
+        <div class="col-md-6"><strong>Today Steps:</strong> ${AdminAPI.fmtNumber(u.todaySteps || 0)}</div>
+        <div class="col-md-6"><strong>Today Ads:</strong> ${u.todayAdsWatched || 0}</div>
+        <div class="col-md-6"><strong>Last Login:</strong> ${AdminAPI.fmtDate(u.lastLoginAt)}</div>
+        <div class="col-md-6"><strong>Created:</strong> ${AdminAPI.fmtDate(u.createdAt)}</div>
+        <div class="col-12"><strong>Status:</strong> ${isBanned ? '<span class="badge bg-danger">Banned</span>' : '<span class="badge bg-success">Active</span>'}</div>
+      </div>`;
+
+    document.getElementById('modalFooter').innerHTML = `
+      <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+      ${isBanned
+        ? `<button class="btn btn-success" onclick="unbanUser('${u.id}'); bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();">
+             <i class="bi bi-check-circle me-1"></i>Unban
+           </button>`
+        : `<button class="btn btn-danger" onclick="banUser('${u.id}'); bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();">
+             <i class="bi bi-hammer me-1"></i>Ban
+           </button>`}`;
+  };
+
+  window.banUser = async (id) => {
+    const reason = prompt('Alasan ban:', 'Fraud / abuse');
+    if (reason === null) return;
+    const res = await AdminAPI.banUser(id, reason);
+    if (res.success) {
+      AdminAPI.toast('User dibanned', 'success');
+      loadUsers();
+    } else {
+      AdminAPI.toast(res.message || 'Gagal ban', 'error');
+    }
+  };
+
+  window.unbanUser = async (id) => {
+    if (!confirm('Unban user ini?')) return;
+    const res = await AdminAPI.unbanUser(id);
+    if (res.success) {
+      AdminAPI.toast('User di-unban', 'success');
+      loadUsers();
+    } else {
+      AdminAPI.toast(res.message || 'Gagal unban', 'error');
+    }
+  };
+
+  await loadUsers();
+})();
+</script>
+</body>
+</html>

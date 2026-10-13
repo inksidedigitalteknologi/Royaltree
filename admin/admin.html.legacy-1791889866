@@ -1,0 +1,2562 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royaltree Admin Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0a0e1a;
+  background-image:
+    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(251, 191, 36, 0.06) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(59, 130, 246, 0.05) 0px, transparent 50%);
+  color: #e2e8f0;
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ============ SIDEBAR LAYOUT ============ */
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  background: linear-gradient(180deg, #020617, #0a0e1a);
+  border-right: 1px solid rgba(16, 185, 129, 0.15);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 20px 18px;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-header .logo {
+  font-size: 18px;
+  font-weight: 800;
+  color: #10B981;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-header .badge {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: rgba(251, 191, 36, 0.2);
+  color: #FBBF24;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  letter-spacing: 1px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-section {
+  padding: 12px 18px 6px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  color: #94A3B8;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.2s;
+  text-decoration: none;
+  position: relative;
+}
+
+.nav-item:hover {
+  background: rgba(16, 185, 129, 0.08);
+  color: #E2E8F0;
+}
+
+.nav-item.active {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10B981;
+  border-left-color: #10B981;
+  font-weight: 700;
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: #10B981;
+  border-radius: 3px 0 0 3px;
+}
+
+.sidebar-footer {
+  padding: 16px 18px;
+  border-top: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.btn-logout-sidebar {
+  width: 100%;
+  padding: 10px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #F87171;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout-sidebar:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+.main-content {
+  margin-left: 240px;
+  width: calc(100% - 240px);
+  min-height: 100vh;
+  background: #0a0e1a;
+  box-sizing: border-box;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(2, 6, 23, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.topbar h1 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #E2E8F0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-toggle {
+  display: none;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10B981;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 99;
+}
+
+.content {
+  padding: 20px;
+  flex: 1;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .sidebar-overlay.active {
+    display: block;
+  }
+  .main-content {
+    margin-left: 0;
+  }
+  .menu-toggle {
+    display: flex;
+  }
+  .topbar {
+    padding: 12px 14px;
+  }
+  .topbar h1 {
+    font-size: 14px;
+  }
+  .content {
+    padding: 14px;
+  }
+  .stat-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  .stat-card {
+    padding: 12px;
+  }
+  .stat-card .value {
+    font-size: 18px;
+  }
+}
+
+/* ============ STAT CARDS ============ */
+.stat-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.9));
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 14px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, #10B981, #FBBF24);
+}
+
+.stat-card .label {
+  font-size: 11px;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.stat-card .value {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.stat-card .sub {
+  font-size: 11px;
+  color: #94A3B8;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.chart-container {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.chart-container h3 {
+  font-size: 13px;
+  color: #94A3B8;
+  margin-bottom: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pool-health {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.pool-health.healthy {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.pool-health.low {
+  background: rgba(251, 191, 36, 0.2);
+  color: #FBBF24;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.pool-health.critical {
+  background: rgba(239, 68, 68, 0.2);
+  color: #F87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.chat-msg {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.chat-msg .msg-body {
+  flex: 1;
+}
+
+.chat-msg .msg-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.chat-msg .msg-user {
+  font-size: 12px;
+  font-weight: 700;
+  color: #FBBF24;
+}
+
+.chat-msg .msg-time {
+  font-size: 10px;
+  color: #64748B;
+}
+
+.chat-msg .msg-text {
+  font-size: 12px;
+  color: #CBD5E1;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.btn-delete {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #F87171;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-delete:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+/* ============ LOGIN SCREEN ============ */
+.login-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 16px;
+  background: radial-gradient(circle at center, #1e293b 0%, #0a0e1a 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-screen::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(16, 185, 129, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(251, 191, 36, 0.10) 0%, transparent 40%);
+  animation: rotate 30s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.login-box {
+  position: relative;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 24px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(16, 185, 129, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.login-box h1 {
+  font-size: 28px;
+  margin-bottom: 8px;
+  text-align: center;
+  background: linear-gradient(135deg, #10b981 0%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.login-box p {
+  font-size: 14px;
+  color: #94a3b8;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  font-size: 15px;
+  margin-bottom: 16px;
+  color: #e2e8f0;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.login-box input::placeholder {
+  color: #64748b;
+}
+
+.login-box input:focus {
+  outline: none;
+  border-color: #10b981;
+  background: rgba(30, 41, 59, 0.9);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.login-box button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+  letter-spacing: 0.3px;
+}
+
+.login-box button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
+}
+
+.login-box button:disabled {
+  background: #334155;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.login-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+}
+
+/* ============ APP LAYOUT ============ */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============ HEADER ============ */
+.header {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.header h1 {
+  font-size: 20px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #10b981 0%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.3px;
+}
+
+.header .user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.header .user-info strong {
+  color: #10b981;
+  font-weight: 600;
+}
+
+/* ============ TABS ============ */
+.tabs {
+  display: flex;
+  gap: 6px;
+  padding: 20px 32px 0 32px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.tab {
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-radius: 12px 12px 0 0;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+  transition: all 0.2s;
+  font-family: inherit;
+  position: relative;
+  margin-bottom: -1px;
+}
+
+.tab:hover {
+  color: #e2e8f0;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.tab.active {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border-bottom: 2px solid #10b981;
+}
+
+/* ============ CONTENT ============ */
+/* .content kedua dihapus — pakai yang pertama (baris 209) */
+
+.panel h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #f1f5f9;
+  letter-spacing: -0.3px;
+}
+
+.panel > p {
+  color: #94a3b8;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+/* ============ CARDS ============ */
+.card {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+}
+
+.card:hover {
+  border-color: rgba(16, 185, 129, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ============ STATS ============ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(15, 23, 42, 0.6) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+}
+
+.stat-card .label {
+  font-size: 12px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.stat-card .value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #f1f5f9;
+  letter-spacing: -0.5px;
+}
+
+.stat-card .value.gold {
+  color: #fbbf24;
+}
+
+.stat-card .value.emerald {
+  color: #10b981;
+}
+
+/* ============ FIELDSET ============ */
+fieldset {
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  background: rgba(15, 23, 42, 0.4);
+}
+
+fieldset legend {
+  padding: 0 12px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #10b981;
+  letter-spacing: 0.3px;
+}
+
+/* ============ INPUTS ============ */
+label {
+  display: block;
+  font-size: 13px;
+  color: #cbd5e1;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="email"],
+select,
+textarea {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  font-size: 14px;
+  color: #e2e8f0;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #10b981;
+  background: rgba(30, 41, 59, 0.9);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+/* ============ BUTTONS ============ */
+button {
+  font-family: inherit;
+}
+
+.btn-primary {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+  letter-spacing: 0.3px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+}
+
+.btn-secondary {
+  padding: 10px 20px;
+  background: rgba(30, 41, 59, 0.8);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-right: 8px;
+}
+
+.btn-secondary:hover {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
+}
+
+/* ============ TABLES ============ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+thead {
+  background: rgba(16, 185, 129, 0.1);
+  border-bottom: 2px solid rgba(16, 185, 129, 0.2);
+}
+
+th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #10b981;
+  font-weight: 700;
+}
+
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+  color: #cbd5e1;
+}
+
+tbody tr {
+  transition: all 0.15s;
+}
+
+tbody tr:hover {
+  background: rgba(16, 185, 129, 0.05);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============ BADGES ============ */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.badge-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-warning {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.badge-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-info {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* ============ SCROLLBAR ============ */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.3);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.5);
+}
+
+/* ============ ANIMATIONS ============ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.panel {
+  animation: fadeIn 0.3s ease;
+}
+
+/* ============ MODAL ============ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: none;  /* Default hidden */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-overlay.active {
+  display: flex;  /* Tunjuk bila ada .show class */
+}
+
+.modal {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal h3 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #f1f5f9;
+  font-weight: 700;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .header { padding: 12px 16px; }
+  .content { padding: 16px; }
+  .tabs { padding: 12px 16px 0 16px; }
+  .tab { padding: 10px 14px; font-size: 12px; }
+  .panel h2 { font-size: 20px; }
+  .stat-card .value { font-size: 22px; }
+}
+
+.hidden {
+  display: none !important;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.header-actions .btn-secondary,
+.header-actions .btn-danger {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+/* ============ LEGACY BTN ALIASES ============ */
+.btn {
+  padding: 10px 20px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.btn.btn-primary,
+.btn-primary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.btn.btn-primary:hover,
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+}
+
+.btn.btn-secondary,
+.btn-secondary {
+  background: rgba(30, 41, 59, 0.8);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.btn.btn-secondary:hover,
+.btn-secondary:hover {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.btn.btn-danger,
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
+.btn.btn-danger:hover,
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+}
+
+.btn.btn-sm.btn-primary {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.btn.btn-sm.btn-danger {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+</style>
+</head>
+<body>
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <h1>🌳 Royaltree Admin</h1>
+    <p>Masukkan password untuk melanjutkan</p>
+    <div id="loginError" class="login-error"></div>
+    <input type="password" id="loginPassword" placeholder="Password" onkeypress="if(event.key===String.fromCharCode(13))doLogin()">
+    <input type="password" id="loginApiKey" placeholder="API Key" onkeypress="if(event.key===String.fromCharCode(13))doLogin()" style="margin-top:10px;">
+    <button id="loginBtn" onclick="doLogin()">Login</button>
+  </div>
+</div>
+<div id="mainApp" class="hidden">
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="logo">🌳 Royaltree</span>
+      <span class="badge">ADMIN</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <a class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">📊 Dashboard</a>
+      <a class="nav-item" data-page="users" onclick="switchPage('users')">👥 Users</a>
+      <a class="nav-item" data-page="mining" onclick="switchPage('mining')">⛏️ Mining</a>
+      <a class="nav-item" data-page="chat" onclick="switchPage('chat')">💬 Chat</a>
+
+      <div class="nav-section">Keuangan</div>
+      <a class="nav-item" data-page="withdrawals" onclick="switchPage('withdrawals')">💰 Withdrawals</a>
+
+      <div class="nav-section">Game</div>
+      <a class="nav-item" data-page="campaigns" onclick="switchPage('campaigns')">📢 Campaigns</a>
+      <a class="nav-item" data-page="missions" onclick="switchPage('missions')">🎯 Missions</a>
+      <a class="nav-item" data-page="game" onclick="switchPage('game')">🎮 Game Config</a>
+      <a class="nav-item" data-page="ads" onclick="switchPage('ads')">📺 Ad Vendors</a>
+      <a class="nav-item" data-page="daily" onclick="switchPage('daily')">🎁 Daily Reward</a>
+
+      <div class="nav-section">System</div>
+      <a class="nav-item" data-page="audit" onclick="switchPage('audit')">📋 Audit Log</a>
+      <a class="nav-item" data-page="broadcast" onclick="switchPage('broadcast')">📢 Broadcast</a>
+      <a class="nav-item" data-page="config" onclick="switchPage('config')">⚙️ Config</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout-sidebar" onclick="doLogout()">🚪 Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <h1 id="pageTitle">📊 Dashboard</h1>
+      <div class="topbar-actions">
+        <button class="btn-secondary" onclick="loadAll()">🔄 Refresh</button>
+      </div>
+    </header>
+
+    <div id="content" class="content">
+      <div class="loading">Memuat data...</div>
+    </div>
+  </main>
+
+</div>
+<div class="notification" id="notification"></div>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Form</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+      <button class="btn btn-primary" onclick="submitForm()" id="modalSubmit">Simpan</button>
+    </div>
+  </div>
+</div>
+<script>
+// ============ CONFIG ============
+const API_BASE = window.location.origin + '/api/v1';
+// ✅ SECURITY: Ambil API key dari localStorage atau prompt
+let API_KEY = localStorage.getItem('rt_api_key');
+if (!API_KEY) {
+    API_KEY = prompt('Masukkan API Key admin:');
+    if (API_KEY) localStorage.setItem('rt_api_key', API_KEY);
+}
+if (!API_KEY) {
+    alert('API Key diperlukan untuk akses admin panel.');
+    window.location.href = 'about:blank';
+}
+let currentTab = 'users';
+let editingItem = null;
+let editingCollection = null;
+
+// ============ API HELPER ============
+async function api(path, method = 'GET', body = null, auth = false) {
+  const headers = { 'Content-Type': 'application/json' };
+
+  // API key dari sessionStorage (di-set saat login)
+  const adminApiKey = sessionStorage.getItem('adminApiKey');
+  if (auth && adminApiKey) {
+    headers['Authorization'] = 'Bearer ' + adminApiKey;
+  }
+
+  // Admin token
+  const adminToken = sessionStorage.getItem('adminToken');
+  if (adminToken) headers['x-admin-token'] = adminToken;
+
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+
+  try {
+    const res = await fetch(API_BASE + path, opts);
+    return await res.json();
+  } catch (e) {
+    return { success: false, message: 'Network error: ' + e.message };
+  }
+}
+
+// ============ NOTIFICATION ============
+function notify(msg, type = 'success') {
+  const el = document.getElementById('notification');
+  el.textContent = msg;
+  el.className = 'notification ' + type;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 3500);
+}
+
+// ============ FORMAT HELPERS ============
+function formatRupiah(n) {
+  return 'Rp ' + (n || 0).toLocaleString('id-ID');
+}
+
+function formatDate(ts) {
+  if (!ts) return '-';
+  const d = new Date(typeof ts === 'number' ? ts : ts);
+  return d.toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+
+// ═══ Currency & RTP Formatter ═══
+function formatRtp(value) {
+  const num = Number(value) || 0;
+  return Number.isInteger(num) ? num.toString() : num.toFixed(4);
+}
+
+function formatBalance(valueIdr, language) {
+  const num = Number(valueIdr) || 0;
+  if (language === 'en') {
+    const usd = num / 16000;
+    return '$' + usd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  return 'Rp ' + num.toLocaleString('id-ID');
+}
+
+function getTier(points, currentTier) {
+  if (currentTier) return currentTier;
+  const p = Number(points) || 0;
+  if (p >= 100000) return 'ROYAL';
+  if (p >= 10000) return 'VIP';
+  if (p >= 1000) return 'PREMIUM';
+  return 'FREE';
+}
+
+function getTierBadge(tier) {
+  const map = {
+    'ROYAL': 'badge-warning',    // gold/yellow
+    'VIP': 'badge-info',         // blue
+    'PREMIUM': 'badge-danger',   // red
+    'FREE': 'badge-success'      // green
+  };
+  return map[tier] || 'badge-success';
+}
+
+function statusBadge(status) {
+  const map = {
+    'PAID': 'badge-success', 'APPROVED': 'badge-info', 'PENDING': 'badge-warning',
+    'REJECTED': 'badge-danger', 'ACTIVE': 'badge-success', 'INACTIVE': 'badge-info',
+    'COMPLETED': 'badge-success', 'FAILED': 'badge-danger', 'CANCELLED': 'badge-danger'
+  };
+  const cls = map[status] || 'badge-info';
+  return `<span class="badge ${cls}">${status || '-'}</span>`;
+}
+
+// ============ STATS ============
+// loadStats() dihapus — sudah digantikan oleh loadDashboard()
+
+// ============ TAB SWITCHING ============
+function switchPage(page) {
+  currentTab = page;
+
+  // Update nav active
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.page === page);
+  });
+
+  // Update page title
+  const titles = {
+    dashboard: '📊 Dashboard',
+    users: '👥 Users',
+    mining: '⛏️ Mining',
+    chat: '💬 Chat',
+    withdrawals: '💰 Withdrawals',
+    campaigns: '📢 Campaigns',
+    missions: '🎯 Missions',
+    game: '🎮 Game Config',
+    config: '⚙️ Config',
+    daily: '🎁 Daily Reward',
+    ads: '📺 Ad Vendors',
+    audit: '📋 Audit Log',
+    broadcast: '📢 Broadcast'
+  };
+  const titleEl = document.getElementById('pageTitle');
+  if (titleEl) titleEl.textContent = titles[page] || '📊 Dashboard';
+
+  // Tutup sidebar di mobile
+  closeSidebar();
+
+  // Load content
+  if (page === 'dashboard') loadDashboard();
+  else if (page === 'users') loadUsers();
+  else if (page === 'mining') loadMining();
+  else if (page === 'chat') loadChat();
+  else if (page === 'withdrawals') loadWithdrawals();
+  else if (page === 'campaigns') loadCampaigns();
+  else if (page === 'missions') loadMissions();
+  else if (page === 'game') loadGameConfig();
+  else if (page === 'config') loadConfig();
+  else if (page === 'daily') loadDailyConfig();
+  else if (page === 'ads') loadAdConfig();
+  else if (page === 'audit') loadAuditLogs();
+  else if (page === 'broadcast') loadBroadcastTab();
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (!sidebar || !overlay) return;
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+}
+
+function closeSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar) sidebar.classList.remove('open');
+  if (overlay) overlay.classList.remove('active');
+}
+
+function loadAll() {
+  switchPage(currentTab || 'dashboard');
+}
+
+// ============ MODAL ============
+function openModal(title, collection, item, fields) {
+  editingItem = item;
+  editingCollection = collection;
+  document.getElementById('modalTitle').textContent = title;
+  let html = '';
+  fields.forEach(f => {
+    const val = item && item[f.name] !== undefined ? item[f.name] : (f.default || '');
+    const req = f.required ? '<span class="required">*</span>' : '';
+    const disabled = f.disabled ? 'disabled' : '';
+    html += `<div class="form-group"><label>${f.label} ${req}</label>`;
+    if (f.type === 'select') {
+      html += `<select id="f_${f.name}" ${disabled}>`;
+      f.options.forEach(o => {
+        const ov = typeof o === 'object' ? o.value : o;
+        const ol = typeof o === 'object' ? o.label : o;
+        html += `<option value="${ov}" ${val == ov ? 'selected' : ''}>${ol}</option>`;
+      });
+      html += '</select>';
+    } else if (f.type === 'textarea') {
+      html += `<textarea id="f_${f.name}" rows="3" ${disabled}>${val}</textarea>`;
+    } else {
+      html += `<input type="${f.type}" id="f_${f.name}" value="${val}" ${disabled}>`;
+    }
+    html += '</div>';
+  });
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  editingItem = null;
+  editingCollection = null;
+}
+
+async function submitForm() {
+  const fields = document.querySelectorAll('#modalBody input, #modalBody select, #modalBody textarea');
+  const body = {};
+  fields.forEach(f => {
+    const name = f.id.replace('f_', '');
+    if (f.type === 'number') body[name] = parseFloat(f.value) || 0;
+    else body[name] = f.value;
+  });
+  const btn = document.getElementById('modalSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Menyimpan...';
+  let data;
+  if (editingItem) {
+    data = await api('/' + editingCollection + '/' + editingItem.id, 'PUT', body, true);
+  } else {
+    if (editingCollection === 'users') data = await api('/users/sync', 'POST', body, true);
+    else data = await api('/' + editingCollection, 'POST', body, true);
+  }
+  btn.disabled = false;
+  btn.textContent = 'Simpan';
+  if (data.success) {
+    notify('Berhasil disimpan!', 'success');
+    closeModal();
+    loadAll();
+  } else {
+    notify(data.message || 'Gagal menyimpan.', 'error');
+  }
+}
+
+// ============ DELETE ============
+async function deleteItem(collection, id) {
+  if (!confirm(`Yakin hapus ${collection} dengan ID "${id}"? Tindakan ini tidak bisa dibatalkan.`)) return;
+  const data = await api('/' + collection + '/' + id, 'DELETE', null, true);
+  if (data.success) {
+    notify('Berhasil dihapus!', 'success');
+    loadAll();
+  } else {
+    notify(data.message || 'Gagal menghapus.', 'error');
+  }
+}
+
+// ============ USERS ============
+let usersData = [];
+
+async function loadUsers() {
+  const data = await api('/users', 'GET', null, true);
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  usersData = data.data || [];
+  let html = `
+    <div class="card-header">
+      <h2>👥 Users (${usersData.length})</h2>
+      <div style="display:flex;gap:8px;">
+        <input class="search-box" placeholder="Cari user..." oninput="filterUsers(this.value)" id="userSearch">
+        <button class="btn btn-primary" onclick="openUserModal()">+ Tambah User</button>
+      </div>
+    </div>
+    <table id="usersTable">
+      <thead><tr>
+        <th>ID</th><th>Nama</th><th>Email</th><th>Tier</th><th>Points</th><th>Balance</th><th>Updated</th><th>Aksi</th>
+      </tr></thead>
+      <tbody>`;
+  usersData.forEach(u => {
+    const tier = getTier(u.points, u.tier);
+    const badge = getTierBadge(tier);
+    const adminLang = window.adminLanguage || 'id';
+    html += `<tr>
+      <td><code>${u.id}</code></td>
+      <td>${u.name || '-'}</td>
+      <td>${u.email || '-'}</td>
+      <td><span class="badge ${badge}">${tier}</span></td>
+      <td>${formatRtp(u.points)}</td>
+      <td>${formatBalance(u.balance, adminLang)}</td>
+      <td>${formatDate(u.updatedAt)}</td>
+      <td>
+        <button class="btn btn-sm btn-primary" onclick="editUser('${u.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteItem('users','${u.id}')">Hapus</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function filterUsers(q) {
+  const rows = document.querySelectorAll('#usersTable tbody tr');
+  q = q.toLowerCase();
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function openUserModal() {
+  openModal('Tambah User', 'users', null, [
+    { name: 'id', label: 'ID User', type: 'text', required: true },
+    { name: 'name', label: 'Nama', type: 'text' },
+    { name: 'email', label: 'Email', type: 'email' },
+    { name: 'phone', label: 'Telepon', type: 'text' },
+    { name: 'tier', label: 'Tier', type: 'select', options: ['FREE', 'PREMIUM', 'VIP', 'ROYAL'] },
+    { name: 'points', label: 'Points', type: 'number', default: 0 },
+    { name: 'balance', label: 'Balance', type: 'number', default: 0 },
+    { name: 'referralCode', label: 'Kode Referral', type: 'text' },
+    { name: 'city', label: 'Kota', type: 'text' }
+  ]);
+}
+
+function editUser(id) {
+  const u = usersData.find(x => x.id === id);
+  if (!u) return;
+  openModal('Edit User: ' + id, 'users', u, [
+    { name: 'id', label: 'ID User', type: 'text', disabled: true },
+    { name: 'name', label: 'Nama', type: 'text' },
+    { name: 'email', label: 'Email', type: 'email' },
+    { name: 'phone', label: 'Telepon', type: 'text' },
+    { name: 'tier', label: 'Tier', type: 'select', options: ['FREE', 'PREMIUM', 'VIP', 'ROYAL'] },
+    { name: 'points', label: 'Points', type: 'number' },
+    { name: 'balance', label: 'Balance', type: 'number' },
+    { name: 'referralCode', label: 'Kode Referral', type: 'text' },
+    { name: 'city', label: 'Kota', type: 'text' }
+  ]);
+}
+
+// ============ WITHDRAWALS ============
+let withdrawalsData = [];
+
+async function loadWithdrawals() {
+  const data = await api('/withdrawals', 'GET', null, true);
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  withdrawalsData = data.data || [];
+  const pending = withdrawalsData.filter(w => w.status === 'PENDING').length;
+  let html = `
+    <div class="card-header">
+      <h2>💰 Withdrawals (${withdrawalsData.length}) — ${pending} pending</h2>
+      <div style="display:flex;gap:8px;">
+        <input class="search-box" placeholder="Cari withdrawal..." oninput="filterWithdrawals(this.value)" id="wdSearch">
+        <button class="btn btn-primary" onclick="openWithdrawalModal()">+ Tambah</button>
+      </div>
+    </div>
+    <table id="wdTable">
+      <thead><tr>
+        <th>ID</th><th>User</th><th>Amount</th><th>Channel</th><th>Provider</th><th>Status</th><th>Diminta</th><th>Aksi</th>
+      </tr></thead>
+      <tbody>`;
+  withdrawalsData.forEach(w => {
+    html += `<tr>
+      <td><code>${w.id}</code></td>
+      <td>${w.userName || w.userId}</td>
+      <td><b>${formatRupiah(w.amount)}</b></td>
+      <td>${w.channelType || '-'}</td>
+      <td>${w.providerName || '-'}</td>
+      <td>${statusBadge(w.status)}</td>
+      <td>${formatDate(w.requestedAt)}</td>
+      <td>
+        ${w.status === 'PENDING' ? `
+          <button class="btn btn-sm btn-success" onclick="updateWd('${w.id}','PAID')">✓ Paid</button>
+          <button class="btn btn-sm btn-danger" onclick="updateWd('${w.id}','REJECTED')">✗ Reject</button>
+        ` : ''}
+        <button class="btn btn-sm btn-primary" onclick="editWithdrawal('${w.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteItem('withdrawals','${w.id}')">Hapus</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function filterWithdrawals(q) {
+  const rows = document.querySelectorAll('#wdTable tbody tr');
+  q = q.toLowerCase();
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+async function updateWd(id, status) {
+  const notes = prompt(`Catatan admin untuk ${id} (opsional):`, '');
+  if (notes === null) return;
+  const data = await api('/withdrawals/' + id + '/status', 'PUT', { status, adminNotes: notes || 'Diubah via Admin Panel' }, true);
+  if (data.success) { notify('Status diupdate ke ' + status, 'success'); loadAll(); }
+  else notify(data.message || 'Gagal update.', 'error');
+}
+
+function openWithdrawalModal() {
+  openModal('Tambah Withdrawal', 'withdrawals', null, [
+    { name: 'id', label: 'ID Withdrawal', type: 'text', required: true },
+    { name: 'userId', label: 'User ID', type: 'text', required: true },
+    { name: 'userName', label: 'Nama User', type: 'text' },
+    { name: 'amount', label: 'Amount (Rp)', type: 'number', required: true },
+    { name: 'currency', label: 'Currency', type: 'select', options: ['IDR', 'USD'] },
+    { name: 'channelType', label: 'Channel', type: 'select', options: ['E_WALLET', 'BANK', 'CRYPTO'] },
+    { name: 'providerName', label: 'Provider', type: 'text' },
+    { name: 'accountDestination', label: 'No. Tujuan', type: 'text' },
+    { name: 'accountHolderName', label: 'Nama Pemilik', type: 'text' },
+    { name: 'status', label: 'Status', type: 'select', options: ['PENDING', 'APPROVED', 'PAID', 'REJECTED'] },
+    { name: 'fee', label: 'Fee', type: 'number', default: 0 },
+    { name: 'netAmount', label: 'Net Amount', type: 'number', default: 0 },
+    { name: 'txRef', label: 'Tx Reference', type: 'text' }
+  ]);
+}
+
+function editWithdrawal(id) {
+  const w = withdrawalsData.find(x => x.id === id);
+  if (!w) return;
+  openModal('Edit Withdrawal: ' + id, 'withdrawals', w, [
+    { name: 'id', label: 'ID', type: 'text', disabled: true },
+    { name: 'userId', label: 'User ID', type: 'text' },
+    { name: 'userName', label: 'Nama User', type: 'text' },
+    { name: 'amount', label: 'Amount (Rp)', type: 'number' },
+    { name: 'currency', label: 'Currency', type: 'select', options: ['IDR', 'USD'] },
+    { name: 'channelType', label: 'Channel', type: 'select', options: ['E_WALLET', 'BANK', 'CRYPTO'] },
+    { name: 'providerName', label: 'Provider', type: 'text' },
+    { name: 'accountDestination', label: 'No. Tujuan', type: 'text' },
+    { name: 'accountHolderName', label: 'Nama Pemilik', type: 'text' },
+    { name: 'status', label: 'Status', type: 'select', options: ['PENDING', 'APPROVED', 'PAID', 'REJECTED'] },
+    { name: 'fee', label: 'Fee', type: 'number' },
+    { name: 'netAmount', label: 'Net Amount', type: 'number' },
+    { name: 'txRef', label: 'Tx Reference', type: 'text' },
+    { name: 'adminNotes', label: 'Catatan Admin', type: 'textarea' }
+  ]);
+}
+
+// ============ CAMPAIGNS ============
+let campaignsData = [];
+
+async function loadCampaigns() {
+  const data = await api('/campaigns');
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  campaignsData = data.data || [];
+  let html = `
+    <div class="card-header">
+      <h2>📢 Campaigns (${campaignsData.length})</h2>
+      <div style="display:flex;gap:8px;">
+        <input class="search-box" placeholder="Cari campaign..." oninput="filterCampaigns(this.value)" id="campSearch">
+        <button class="btn btn-primary" onclick="openCampaignModal()">+ Tambah Campaign</button>
+      </div>
+    </div>
+    <table id="campTable">
+      <thead><tr>
+        <th>ID</th><th>Judul</th><th>Kategori</th><th>Merchant</th><th>Komisi</th><th>Status</th><th>Aksi</th>
+      </tr></thead>
+      <tbody>`;
+  campaignsData.forEach(c => {
+    html += `<tr>
+      <td><code>${c.id}</code></td>
+      <td>${c.title || '-'}</td>
+      <td>${c.category || '-'}</td>
+      <td>${c.merchantName || '-'}</td>
+      <td>${c.commissionDisplay || '-'}</td>
+      <td>${statusBadge(c.status)}</td>
+      <td>
+        <button class="btn btn-sm btn-primary" onclick="editCampaign('${c.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteItem('campaigns','${c.id}')">Hapus</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function filterCampaigns(q) {
+  const rows = document.querySelectorAll('#campTable tbody tr');
+  q = q.toLowerCase();
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function openCampaignModal() {
+  openModal('Tambah Campaign', 'campaigns', null, [
+    { name: 'id', label: 'ID Campaign', type: 'text', required: true },
+    { name: 'title', label: 'Judul', type: 'text', required: true },
+    { name: 'category', label: 'Kategori', type: 'text' },
+    { name: 'merchantName', label: 'Merchant', type: 'text' },
+    { name: 'commissionDisplay', label: 'Komisi (tampilan)', type: 'text' },
+    { name: 'payoutType', label: 'Payout Type', type: 'select', options: ['CPS', 'CPC', 'CPA', 'CPM'] },
+    { name: 'baseCommissionRate', label: 'Rate Komisi (%)', type: 'number', default: 0 },
+    { name: 'status', label: 'Status', type: 'select', options: ['ACTIVE', 'INACTIVE'] }
+  ]);
+}
+
+function editCampaign(id) {
+  const c = campaignsData.find(x => x.id === id);
+  if (!c) return;
+  openModal('Edit Campaign: ' + id, 'campaigns', c, [
+    { name: 'id', label: 'ID', type: 'text', disabled: true },
+    { name: 'title', label: 'Judul', type: 'text' },
+    { name: 'category', label: 'Kategori', type: 'text' },
+    { name: 'merchantName', label: 'Merchant', type: 'text' },
+    { name: 'commissionDisplay', label: 'Komisi (tampilan)', type: 'text' },
+    { name: 'payoutType', label: 'Payout Type', type: 'select', options: ['CPS', 'CPC', 'CPA', 'CPM'] },
+    { name: 'baseCommissionRate', label: 'Rate Komisi (%)', type: 'number' },
+    { name: 'status', label: 'Status', type: 'select', options: ['ACTIVE', 'INACTIVE'] }
+  ]);
+}
+
+// ============ MISSIONS ============
+let missionsData = [];
+
+async function loadMissions() {
+  const data = await api('/missions');
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  missionsData = data.data || [];
+  let html = `
+    <div class="card-header">
+      <h2>🎯 Missions (${missionsData.length})</h2>
+      <div style="display:flex;gap:8px;">
+        <input class="search-box" placeholder="Cari misi..." oninput="filterMissions(this.value)" id="misSearch">
+        <button class="btn btn-primary" onclick="openMissionModal()">+ Tambah Mission</button>
+      </div>
+    </div>
+    <table id="misTable">
+      <thead><tr>
+        <th>ID</th><th>Judul</th><th>Kategori</th><th>Reward</th><th>Platform</th><th>Durasi</th><th>Aksi</th>
+      </tr></thead>
+      <tbody>`;
+  missionsData.forEach(m => {
+    html += `<tr>
+      <td><code>${m.id}</code></td>
+      <td>${m.title || '-'}</td>
+      <td>${m.category || '-'}</td>
+      <td><b>${m.rtpReward || 0}</b> pts</td>
+      <td>${m.targetPlatform || '-'}</td>
+      <td>${m.durationSeconds || 0}s</td>
+      <td>
+        <button class="btn btn-sm btn-primary" onclick="editMission('${m.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteItem('missions','${m.id}')">Hapus</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function filterMissions(q) {
+  const rows = document.querySelectorAll('#misTable tbody tr');
+  q = q.toLowerCase();
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function openMissionModal() {
+  openModal('Tambah Mission', 'missions', null, [
+    { name: 'id', label: 'ID Mission', type: 'text', required: true },
+    { name: 'title', label: 'Judul', type: 'text', required: true },
+    { name: 'category', label: 'Kategori', type: 'text' },
+    { name: 'rtpReward', label: 'Reward (points)', type: 'number', default: 0 },
+    { name: 'type', label: 'Tipe', type: 'select', options: ['ENGAGEMENT_MISSION', 'DAILY_TASK', 'WEEKLY_TASK'] },
+    { name: 'targetPlatform', label: 'Platform', type: 'text' },
+    { name: 'durationSeconds', label: 'Durasi (detik)', type: 'number', default: 10 },
+    { name: 'actionUrl', label: 'URL Aksi', type: 'text' }
+  ]);
+}
+
+function editMission(id) {
+  const m = missionsData.find(x => x.id === id);
+  if (!m) return;
+  openModal('Edit Mission: ' + id, 'missions', m, [
+    { name: 'id', label: 'ID', type: 'text', disabled: true },
+    { name: 'title', label: 'Judul', type: 'text' },
+    { name: 'category', label: 'Kategori', type: 'text' },
+    { name: 'rtpReward', label: 'Reward (points)', type: 'number' },
+    { name: 'type', label: 'Tipe', type: 'select', options: ['ENGAGEMENT_MISSION', 'DAILY_TASK', 'WEEKLY_TASK'] },
+    { name: 'targetPlatform', label: 'Platform', type: 'text' },
+    { name: 'durationSeconds', label: 'Durasi (detik)', type: 'number' },
+    { name: 'actionUrl', label: 'URL Aksi', type: 'text' }
+  ]);
+}
+
+// ============ CONFIG ============
+let configData = {};
+
+async function loadConfig() {
+  const data = await api('/config');
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  configData = data.data || {};
+  let html = `
+    <div class="card-header">
+      <h2>⚙️ Konfigurasi Sistem</h2>
+      <button class="btn btn-primary" onclick="saveConfig()">💾 Simpan Perubahan</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Mode Maintenance</label>
+        <select id="cfg_maintenanceMode">
+          <option value="false" ${!configData.maintenanceMode ? 'selected' : ''}>OFF</option>
+          <option value="true" ${configData.maintenanceMode ? 'selected' : ''}>ON</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Server Version</label>
+        <input type="text" id="cfg_serverVersion" value="${configData.serverVersion || ''}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Min Withdrawal E-Wallet (Rp)</label>
+        <input type="number" id="cfg_minWithdrawalEWallet" value="${configData.minWithdrawalEWallet || 0}">
+      </div>
+      <div class="form-group">
+        <label>Min Withdrawal Bank (Rp)</label>
+        <input type="number" id="cfg_minWithdrawalBank" value="${configData.minWithdrawalBank || 0}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Min Withdrawal Crypto (Rp)</label>
+        <input type="number" id="cfg_minWithdrawalCrypto" value="${configData.minWithdrawalCrypto || 0}">
+      </div>
+      <div class="form-group">
+        <label>Points per USD</label>
+        <input type="number" id="cfg_pointsPerUsdRate" value="${configData.pointsPerUsdRate || 0}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Komisi Tier FREE (%)</label>
+        <input type="number" id="cfg_freeTierCommissionRate" value="${configData.freeTierCommissionRate || 0}">
+      </div>
+      <div class="form-group">
+        <label>Komisi Tier VIP (%)</label>
+        <input type="number" id="cfg_vipTierCommissionRate" value="${configData.vipTierCommissionRate || 0}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>IDR per 100 Points</label>
+        <input type="number" id="cfg_idrPerHundredPoints" value="${configData.idrPerHundredPoints || 0}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Pengumuman</label>
+      <textarea id="cfg_announcement" rows="3">${configData.announcement || ''}</textarea>
+    </div>
+  `;
+  document.getElementById('content').innerHTML = html;
+}
+
+async function saveConfig() {
+  const body = {
+    maintenanceMode: document.getElementById('cfg_maintenanceMode').value === 'true',
+    serverVersion: document.getElementById('cfg_serverVersion').value,
+    minWithdrawalEWallet: parseFloat(document.getElementById('cfg_minWithdrawalEWallet').value) || 0,
+    minWithdrawalBank: parseFloat(document.getElementById('cfg_minWithdrawalBank').value) || 0,
+    minWithdrawalCrypto: parseFloat(document.getElementById('cfg_minWithdrawalCrypto').value) || 0,
+    pointsPerUsdRate: parseFloat(document.getElementById('cfg_pointsPerUsdRate').value) || 0,
+    freeTierCommissionRate: parseFloat(document.getElementById('cfg_freeTierCommissionRate').value) || 0,
+    vipTierCommissionRate: parseFloat(document.getElementById('cfg_vipTierCommissionRate').value) || 0,
+    idrPerHundredPoints: parseFloat(document.getElementById('cfg_idrPerHundredPoints').value) || 0,
+    announcement: document.getElementById('cfg_announcement').value
+  };
+  const data = await api('/config', 'PUT', body, true);
+  if (data.success) { notify('Konfigurasi disimpan!', 'success'); loadAll(); }
+  else notify(data.message || 'Gagal simpan.', 'error');
+}
+
+// ============ DAILY REWARD CONFIG ============
+async function loadDailyConfig() {
+  const data = await api('/admin/daily-config', 'GET', null, true);
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  const cfg = data.data || {};
+  const recovery = cfg.streakRecovery || {};
+  let html = `
+    <div class="card-header">
+      <h2>🎁 Daily Reward Config</h2>
+      <button class="btn btn-primary" onclick="saveDailyConfig()">💾 Simpan</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Weekday Points (Sen-Jum)</label>
+        <input type="number" id="cfg_weekdayPoints" value="${cfg.weekdayPoints || 50}">
+      </div>
+      <div class="form-group">
+        <label>Weekend Points (Sab-Min)</label>
+        <input type="number" id="cfg_weekendPoints" value="${cfg.weekendPoints || 100}">
+      </div>
+    </div>
+    <h3 style="margin-top:20px">Streak Recovery</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Max Hari Dipulihkan</label>
+        <input type="number" id="cfg_maxDaysBack" value="${recovery.maxDaysBack || 7}">
+      </div>
+      <div class="form-group">
+        <label>Max Iklan/Hari</label>
+        <input type="number" id="cfg_maxAdsPerDay" value="${recovery.maxAdsPerDay || 1}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Harga Poin per Hari</label>
+        <input type="number" id="cfg_pointCostPerDay" value="${recovery.pointCostPerDay || 500}">
+      </div>
+      <div class="form-group">
+        <label>Aktifkan Recovery</label>
+        <select id="cfg_recoveryEnabled">
+          <option value="true" ${recovery.enabled ? 'selected' : ''}>ON</option>
+          <option value="false" ${!recovery.enabled ? 'selected' : ''}>OFF</option>
+        </select>
+      </div>
+    </div>
+  `;
+  document.getElementById('content').innerHTML = html;
+}
+
+async function saveDailyConfig() {
+  const body = {
+    weekdayPoints: parseInt(document.getElementById('cfg_weekdayPoints').value),
+    weekendPoints: parseInt(document.getElementById('cfg_weekendPoints').value),
+    streakRecovery: {
+      enabled: document.getElementById('cfg_recoveryEnabled').value === 'true',
+      maxDaysBack: parseInt(document.getElementById('cfg_maxDaysBack').value),
+      maxAdsPerDay: parseInt(document.getElementById('cfg_maxAdsPerDay').value),
+      pointCostPerDay: parseInt(document.getElementById('cfg_pointCostPerDay').value),
+      allowPointRecovery: true,
+      allowAdRecovery: true
+    }
+  };
+  const data = await api('/admin/daily-config', 'PUT', body, true);
+  notify(data.message || 'Config disimpan', data.success ? 'success' : 'error');
+}
+
+// ============ AD VENDORS CONFIG ============
+async function loadAdConfig() {
+  const data = await api('/admin/ad-config', 'GET', null, true);
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  const cfg = data.data || {};
+  const admob = cfg.admob || {};
+  let html = `
+    <div class="card-header">
+      <h2>📺 Ad Vendors Config</h2>
+      <button class="btn btn-primary" onclick="saveAdConfig()">💾 Simpan</button>
+    </div>
+    <div class="form-group">
+      <label>Primary Vendor</label>
+      <select id="cfg_primary">
+        <option value="admob" ${cfg.primary === 'admob' ? 'selected' : ''}>AdMob</option>
+        <option value="unity" ${cfg.primary === 'unity' ? 'selected' : ''}>Unity Ads</option>
+      </select>
+    </div>
+    <h3 style="margin-top:20px">AdMob Config</h3>
+    <div class="form-group">
+      <label>AdMob App ID</label>
+      <input type="text" id="cfg_admobAppId" value="${admob.appId || 'ca-app-pub-5261912953437884~3728027368'}">
+    </div>
+    <div class="form-group">
+      <label>Rewarded Ad Unit ID</label>
+      <input type="text" id="cfg_admobRewardedUnitId" value="${admob.rewardedUnitId || 'ca-app-pub-5261912953437884/9112305270'}">
+    </div>
+    <div class="form-group">
+      <label>Aktifkan AdMob</label>
+      <select id="cfg_admobEnabled">
+        <option value="true" ${admob.enabled ? 'selected' : ''}>ON</option>
+        <option value="false" ${!admob.enabled ? 'selected' : ''}>OFF</option>
+      </select>
+    </div>
+  `;
+  document.getElementById('content').innerHTML = html;
+}
+
+async function saveAdConfig() {
+  const body = {
+    primary: document.getElementById('cfg_primary').value,
+    admob: {
+      enabled: document.getElementById('cfg_admobEnabled').value === 'true',
+      appId: document.getElementById('cfg_admobAppId').value,
+      rewardedUnitId: document.getElementById('cfg_admobRewardedUnitId').value
+    }
+  };
+  const data = await api('/admin/ad-config', 'PUT', body, true);
+  notify(data.message || 'Config disimpan', data.success ? 'success' : 'error');
+}
+
+// ============ AUDIT LOG ============
+async function loadAuditLogs() {
+  const data = await api('/admin/audit-logs?limit=100', 'GET', null, true);
+  if (!data.success) {
+    document.getElementById('content').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${data.message}</p></div>`;
+    return;
+  }
+  const logs = data.data || [];
+  let html = `
+    <div class="card-header">
+      <h2>📋 Audit Log</h2>
+      <span style="color:#888">${logs.length} aktivitas</span>
+    </div>
+  `;
+  if (logs.length === 0) {
+    html += `<div class="empty-state"><div class="icon">📭</div><p>Belum ada aktivitas</p></div>`;
+  } else {
+    html += `<table><thead><tr>
+      <th>Waktu</th><th>User ID</th><th>Aksi</th><th>Detail</th>
+    </tr></thead><tbody>`;
+    logs.forEach(log => {
+      const time = log.timestamp ? new Date(log.timestamp._seconds * 1000).toLocaleString('id-ID') : '-';
+      const userId = log.userId || '-';
+      const action = log.action || '-';
+      const detail = log.points ? `+${log.points} poin` : (log.method || '-');
+      html += `<tr>
+        <td>${time}</td>
+        <td style="font-family:monospace;font-size:11px">${userId.substring(0, 12)}...</td>
+        <td><span class="badge">${action}</span></td>
+        <td>${detail}</td>
+      </tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+  document.getElementById('content').innerHTML = html;
+}
+
+
+// ============ INIT ============
+document.addEventListener('DOMContentLoaded', () => {
+  loadAll();
+});
+
+// Tutup modal jika klik overlay
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'modalOverlay') closeModal();
+});
+
+// Tutup modal dengan ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ============ ADMIN LOGIN ============
+function doLogin() {
+  const password = document.getElementById('loginPassword').value;
+  const apiKey = document.getElementById('loginApiKey').value;
+  const btn = document.getElementById('loginBtn');
+  const errEl = document.getElementById('loginError');
+  if (!password) {
+    errEl.textContent = 'Password wajib diisi.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!apiKey) {
+    errEl.textContent = 'API Key wajib diisi.';
+    errEl.style.display = 'block';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Memproses...';
+  errEl.style.display = 'none';
+  fetch(API_BASE + '/admin/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password, apiKey })
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.disabled = false;
+    btn.textContent = 'Login';
+    if (data.success) {
+      sessionStorage.setItem('adminToken', data.token);
+      sessionStorage.setItem('adminExpiresAt', data.expiresAt);
+      sessionStorage.setItem('adminApiKey', apiKey);
+      showMainApp();
+    } else {
+      errEl.textContent = data.message || 'Login gagal.';
+      errEl.style.display = 'block';
+    }
+  })
+  .catch(err => {
+    btn.disabled = false;
+    btn.textContent = 'Login';
+    errEl.textContent = 'Network error: ' + err.message;
+    errEl.style.display = 'block';
+  });
+}
+
+function doLogout() {
+  const token = sessionStorage.getItem('adminToken');
+  if (token) {
+    fetch(API_BASE + '/admin/logout', {
+      method: 'POST',
+      headers: { 'x-admin-token': token }
+    }).catch(() => {});
+  }
+  sessionStorage.removeItem('adminToken');
+  sessionStorage.removeItem('adminExpiresAt');
+  showLoginScreen();
+}
+
+function showLoginScreen() {
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('mainApp').classList.add('hidden');
+  document.getElementById('loginPassword').value = '';
+}
+
+function showMainApp() {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('mainApp').classList.remove('hidden');
+  loadAll();
+}
+
+function checkAuth() {
+  const token = sessionStorage.getItem('adminToken');
+  const expiresAt = parseInt(sessionStorage.getItem('adminExpiresAt') || '0');
+  if (!token || Date.now() > expiresAt) {
+    sessionStorage.removeItem('adminToken');
+    sessionStorage.removeItem('adminExpiresAt');
+    showLoginScreen();
+    return false;
+  }
+  // Verifikasi token ke server
+  fetch(API_BASE + '/admin/verify', { headers: { 'x-admin-token': token } })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) showMainApp();
+      else { sessionStorage.removeItem('adminToken'); showLoginScreen(); }
+    })
+    .catch(() => showLoginScreen());
+  return true;
+}
+
+// Inisialisasi: cek auth dulu
+window.addEventListener('DOMContentLoaded', () => {
+  checkAuth();
+});
+</script>
+</div>
+
+<!-- ============================================================ -->
+<!-- GAME CONFIG PANEL -->
+<!-- ============================================================ -->
+<div id="game" class="panel" style="display:none;">
+  <h2>🎮 Game Configuration</h2>
+  <p>Atur parameter game mining, exchange rate, dan rate limit. Perubahan akan diambil oleh server dalam masa 5 minit.</p>
+
+  <!-- Info Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="label">💵 Exchange Rate</div>
+      <div class="value gold">1 RTP = Rp <span id="statRtpIdr">30</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="label">⛏️ Mining Rate</div>
+      <div class="value emerald"><span id="statMiningRate">0.0144</span> /GH/s</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">🛡️ Ad Limit</div>
+      <div class="value"><span id="statAdLimit">5</span> /hari</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">🎮 Minigame Limit</div>
+      <div class="value"><span id="statMiniLimit">10</span> /hari</div>
+    </div>
+  </div>
+
+  <!-- Exchange Rate -->
+  <fieldset>
+    <legend>💰 Exchange Rate</legend>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div>
+        <label>USD → IDR (Rupiah per $1)</label>
+        <input type="number" id="gcUsdToIdr" placeholder="15000">
+      </div>
+      <div>
+        <label>RTP → USD (Berapa RTP = $1)</label>
+        <input type="number" id="gcRtpToUsd" placeholder="500">
+      </div>
+    </div>
+    <p style="margin-top:12px; font-size:12px; color:#94a3b8; padding:12px; background:rgba(16,185,129,0.05); border-radius:8px;">
+      ℹ️ <strong>Preview:</strong> 1 RTP = $<span id="gcRtpToUsdPreview">0.002</span> = Rp <span id="gcRtpToIdrPreview">30</span>
+    </p>
+  </fieldset>
+
+  <!-- Mining -->
+  <fieldset>
+    <legend>⛏️ Mining Configuration</legend>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div>
+        <label>Rate per GH/s</label>
+        <input type="number" id="gcMiningRate" step="0.0001" placeholder="0.0144">
+      </div>
+      <div>
+        <label>Min Claim (RTP)</label>
+        <input type="number" id="gcMinClaim" step="0.001" placeholder="0.01">
+      </div>
+      <div>
+        <label>Claim Cooldown (jam)</label>
+        <input type="number" id="gcClaimCooldown" placeholder="3">
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- Rate Limits -->
+  <fieldset>
+    <legend>🛡️ Rate Limits</legend>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div>
+        <label>Ad Claim / hari</label>
+        <input type="number" id="gcAdLimit" placeholder="5">
+      </div>
+      <div>
+        <label>Minigame / hari</label>
+        <input type="number" id="gcMinigameLimit" placeholder="10">
+      </div>
+      <div>
+        <label>Minigame Cooldown (minit)</label>
+        <input type="number" id="gcMinigameCooldown" placeholder="5">
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- Bonus -->
+  <fieldset>
+    <legend>🎁 Bonus Configuration</legend>
+    <div style="max-width:300px;">
+      <label>Minigame Bonus Cap (%)</label>
+      <input type="number" id="gcBonusCap" step="0.1" placeholder="20">
+      <p style="margin-top:8px; font-size:12px; color:#94a3b8;">
+        Had maksimum bonus dari mini-game (hidden dari user).
+      </p>
+    </div>
+  </fieldset>
+
+  <!-- Save Button -->
+  <div style="display:flex; gap:12px; margin-top:24px;">
+    <button class="btn-primary" onclick="saveGameConfig()">💾 Simpan Config</button>
+    <button class="btn-secondary" onclick="loadGameConfig()">🔄 Reset</button>
+  </div>
+
+  <p style="margin-top:16px; font-size:12px; color:#64748b;">
+    <strong>Nota:</strong> Config akan diambil server dalam masa 5 minit. Restart server untuk kesan serta-merta.
+  </p>
+</div>
+
+<script>
+async function loadGameConfig() {
+  try {
+    const data = await api('/admin/game-config', 'GET', null, true);
+    if (!data || !data.data) return alert('Gagal load config');
+    const d = data.data;
+    document.getElementById('gcUsdToIdr').value = d.usdToIdr || 15000;
+    document.getElementById('gcRtpToUsd').value = d.rtpToUsd || 500;
+    document.getElementById('gcMiningRate').value = d.miningRatePerGhs || 0.0144;
+    document.getElementById('gcMinClaim').value = d.minClaimRtp || 0.01;
+    document.getElementById('gcClaimCooldown').value = (d.claimCooldownMs || 10800000) / 3600000;
+    document.getElementById('gcAdLimit').value = d.adClaimLimitPerDay || 5;
+    document.getElementById('gcMinigameLimit').value = d.minigameLimitPerDay || 10;
+    document.getElementById('gcMinigameCooldown').value = (d.minigameCooldownMs || 300000) / 60000;
+    document.getElementById('gcBonusCap').value = d.minigameBonusCap || 20;
+    
+    // Update stats
+    document.getElementById('statRtpIdr').textContent = (d.rtpToIdr || 30).toFixed(0);
+    document.getElementById('statMiningRate').textContent = d.miningRatePerGhs || 0.0144;
+    document.getElementById('statAdLimit').textContent = d.adClaimLimitPerDay || 5;
+    document.getElementById('statMiniLimit').textContent = d.minigameLimitPerDay || 10;
+    
+    updateRatePreview();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+function updateRatePreview() {
+  const usdToIdr = parseFloat(document.getElementById('gcUsdToIdr').value) || 15000;
+  const rtpToUsd = parseFloat(document.getElementById('gcRtpToUsd').value) || 500;
+  document.getElementById('gcRtpToUsdPreview').textContent = (1 / rtpToUsd).toFixed(5);
+  document.getElementById('gcRtpToIdrPreview').textContent = (usdToIdr / rtpToUsd).toFixed(2);
+}
+
+document.addEventListener('input', function(e) {
+  if (e.target.id === 'gcUsdToIdr' || e.target.id === 'gcRtpToUsd') updateRatePreview();
+});
+
+async function saveGameConfig() {
+  const body = {
+    usdToIdr: parseFloat(document.getElementById('gcUsdToIdr').value),
+    rtpToUsd: parseFloat(document.getElementById('gcRtpToUsd').value),
+    miningRatePerGhs: parseFloat(document.getElementById('gcMiningRate').value),
+    minClaimRtp: parseFloat(document.getElementById('gcMinClaim').value),
+    claimCooldownMs: parseFloat(document.getElementById('gcClaimCooldown').value) * 3600000,
+    adClaimLimitPerDay: parseInt(document.getElementById('gcAdLimit').value),
+    minigameLimitPerDay: parseInt(document.getElementById('gcMinigameLimit').value),
+    minigameCooldownMs: parseFloat(document.getElementById('gcMinigameCooldown').value) * 60000,
+    minigameBonusCap: parseFloat(document.getElementById('gcBonusCap').value)
+  };
+  const data = await api('/admin/game-config', 'PUT', body, true);
+  alert(data.success ? '✅ Config disimpan' : '❌ Gagal: ' + (data.message || 'Unknown'));
+}
+
+// ============================================================
+// BROADCAST NOTIFICATION
+// ============================================================
+function loadBroadcastTab() {
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div class="card-header">
+      <h2>📢 Hantar Notifikasi Push</h2>
+    </div>
+    <p style="color: #94a3b8; margin-bottom: 20px;">
+      Hantar push notification ke HP user. Notifikasi juga masuk ke inbox dalam app.
+    </p>
+
+    <div class="form-group">
+      <label>Target Penerima</label>
+      <select id="broadcast-target" style="width: 100%; padding: 10px; background: #1e293b; color: white; border: 1px solid #334155; border-radius: 8px;">
+        <option value="all">📢 Semua User (Broadcast)</option>
+        <option value="one">👤 1 User (Spesifik UID)</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="uid-group" style="display:none">
+      <label>UID User</label>
+      <input type="text" id="broadcast-uid" placeholder="Contoh: VTmp1Za0Awc8juAg..."
+             style="width: 100%; padding: 10px; background: #1e293b; color: white; border: 1px solid #334155; border-radius: 8px;">
+    </div>
+
+    <div class="form-group">
+      <label>Tajuk Notifikasi</label>
+      <input type="text" id="broadcast-title" placeholder="Contoh: Promo Spesial Hari Ini"
+             style="width: 100%; padding: 10px; background: #1e293b; color: white; border: 1px solid #334155; border-radius: 8px;">
+    </div>
+
+    <div class="form-group">
+      <label>Mesej Notifikasi</label>
+      <textarea id="broadcast-message" rows="4" placeholder="Tulis mesej untuk user..."
+                style="width: 100%; padding: 10px; background: #1e293b; color: white; border: 1px solid #334155; border-radius: 8px; resize: vertical;"></textarea>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button class="btn btn-primary" onclick="sendBroadcast()" style="flex: 1;">
+        📤 Hantar Sekarang
+      </button>
+      <button class="btn" onclick="previewBroadcast()" style="flex: 1;">
+        👁️ Preview
+      </button>
+    </div>
+
+    <div id="broadcast-result" style="margin-top: 20px;"></div>
+  `;
+
+  document.getElementById('broadcast-target').addEventListener('change', (e) => {
+    document.getElementById('uid-group').style.display = e.target.value === 'one' ? 'block' : 'none';
+  });
+}
+
+async function sendBroadcast() {
+  const target = document.getElementById('broadcast-target').value;
+  const uid = document.getElementById('broadcast-uid').value.trim();
+  const title = document.getElementById('broadcast-title').value.trim();
+  const message = document.getElementById('broadcast-message').value.trim();
+
+  if (!title || !message) { notify('Tajuk & mesej wajib diisi', 'error'); return; }
+  if (target === 'one' && !uid) { notify('UID wajib untuk target 1 user', 'error'); return; }
+
+  if (!confirm('Hantar notifikasi ke ' + (target === 'all' ? 'SEMUA USER' : 'user ' + uid) + '?')) return;
+
+  const result = document.getElementById('broadcast-result');
+  result.innerHTML = '<p style="color: #94a3b8">Menghantar...</p>';
+
+  try {
+    const data = await api('/admin/notifications/broadcast', 'POST', {
+      title, message, targetUid: target === 'one' ? uid : null
+    }, true);
+
+    if (data.success) {
+      result.innerHTML = '<div style="padding: 16px; background: #10b98120; border: 1px solid #10b981; border-radius: 8px; color: #10b981;"><strong>Berjaya!</strong><br>Broadcast ke: <strong>' + (data.count || 0) + '</strong> user<br>FCM sent: <strong>' + (data.fcmSent || 0) + '</strong> token</div>';
+      notify('Notifikasi berjaya dihantar!', 'success');
+    } else {
+      result.innerHTML = '<div style="padding: 16px; background: #ef444420; border: 1px solid #ef4444; border-radius: 8px; color: #ef4444;"><strong>Gagal:</strong> ' + data.message + '</div>';
+      notify(data.message, 'error');
+    }
+  } catch (e) {
+    result.innerHTML = '<div style="padding: 16px; background: #ef444420; border: 1px solid #ef4444; border-radius: 8px; color: #ef4444;"><strong>Error:</strong> ' + e.message + '</div>';
+    notify('Error: ' + e.message, 'error');
+  }
+}
+
+// ============ DASHBOARD ============
+let dashboardChart = null;
+
+async function loadDashboard() {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading">Loading dashboard...</div>';
+
+  try {
+    const data = await api('/admin/stats', 'GET', null, true);
+    if (!data.success) {
+      content.innerHTML = '<div class="error">' + (data.message || 'Gagal load') + '</div>';
+      return;
+    }
+
+    const d = data.data;
+
+    content.innerHTML = `
+      <div class="stat-grid">
+        <div class="stat-card"><div class="label">👥 Total Users</div><div class="value">${d.totalUsers}</div><div class="sub">Terdaftar</div></div>
+        <div class="stat-card"><div class="label">💰 Total RTP</div><div class="value">${d.totalRTP.toLocaleString()}</div><div class="sub">Dalam peredaran</div></div>
+        <div class="stat-card"><div class="label">⛏️ Total Miners</div><div class="value">${d.totalMiners}</div><div class="sub">${d.activeMiners} aktif</div></div>
+        <div class="stat-card"><div class="label">🏦 Pool Fund</div><div class="value">${d.totalPoolFund.toLocaleString()}</div><div class="sub">RTP</div></div>
+        <div class="stat-card"><div class="label">📊 Transactions</div><div class="value">${d.totalTransactions}</div><div class="sub">Total</div></div>
+        <div class="stat-card"><div class="label">💸 Pending WD</div><div class="value">${d.pendingWithdrawals}</div><div class="sub">Perlu approve</div></div>
+        <div class="stat-card"><div class="label">🧱 Total Blocks</div><div class="value">${d.totalBlocks}</div><div class="sub">Block mined</div></div>
+        <div class="stat-card"><div class="label">💬 Chat</div><div class="value">${d.totalChatMessages}</div><div class="sub">Global chat</div></div>
+      </div>
+
+      <div class="chart-container">
+        <h3>📈 RTP Distribution</h3>
+        <canvas id="rtpChart" height="80"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3>⚡ Mining Overview</h3>
+        <canvas id="miningChart" height="80"></canvas>
+      </div>
+    `;
+
+    // RTP Doughnut
+    const rtpCtx = document.getElementById('rtpChart');
+    if (rtpCtx) {
+      if (dashboardChart) dashboardChart.destroy();
+      dashboardChart = new Chart(rtpCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['User Balance', 'Pool Fund'],
+          datasets: [{
+            data: [d.totalRTP, d.totalPoolFund],
+            backgroundColor: ['#10B981', '#FBBF24'],
+            borderColor: ['#047857', '#B45309'],
+            borderWidth: 2
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { labels: { color: '#CBD5E1' } } } }
+      });
+    }
+
+    // Mining Bar
+    const miningCtx = document.getElementById('miningChart');
+    if (miningCtx) {
+      new Chart(miningCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Total Miners', 'Active', 'Blocks'],
+          datasets: [{
+            label: 'Count',
+            data: [d.totalMiners, d.activeMiners, d.totalBlocks],
+            backgroundColor: ['#10B981', '#34D399', '#FBBF24'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#CBD5E1' }, grid: { display: false } },
+            y: { ticks: { color: '#CBD5E1' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } }
+          }
+        }
+      });
+    }
+  } catch (e) {
+    content.innerHTML = '<div class="error">Error: ' + e.message + '</div>';
+  }
+}
+
+// ============ MINING ============
+async function loadMining() {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading">Loading mining...</div>';
+
+  try {
+    const [poolData, blocksData] = await Promise.all([
+      api('/admin/mining/pool-fund', 'GET', null, true),
+      api('/admin/mining/blocks?limit=50', 'GET', null, true)
+    ]);
+
+    const pool = poolData.success ? poolData.data : {};
+    const blocks = blocksData.success ? blocksData.blocks : [];
+    const healthClass = (pool.health || 'CRITICAL').toLowerCase();
+
+    content.innerHTML = `
+      <div class="stat-grid">
+        <div class="stat-card"><div class="label">🏦 Pool Fund</div><div class="value">${(pool.balance || 0).toLocaleString()}</div><div class="sub"><span class="pool-health ${healthClass}">${pool.health || 'N/A'}</span></div></div>
+        <div class="stat-card"><div class="label">📥 Collected</div><div class="value">${(pool.totalCollected || 0).toLocaleString()}</div><div class="sub">Dari rate</div></div>
+        <div class="stat-card"><div class="label">📤 Paid Out</div><div class="value">${(pool.totalPaidOut || 0).toLocaleString()}</div><div class="sub">Block reward</div></div>
+        <div class="stat-card"><div class="label">💎 Dev Profit</div><div class="value">${(pool.devProfit || 0).toLocaleString()}</div><div class="sub">Selisih</div></div>
+      </div>
+
+      <div class="chart-container">
+        <h3>📊 Pool Fund</h3>
+        <canvas id="poolChart" height="80"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3>🧱 Block History (Last 50)</h3>
+        <div style="overflow-x:auto">
+          <table style="width:100%; font-size:12px;">
+            <thead><tr><th>#</th><th>Hash</th><th>Reward</th><th>Status</th><th>Time</th></tr></thead>
+            <tbody>
+              ${blocks.length === 0 ? '<tr><td colspan="5" style="text-align:center;padding:20px;color:#64748B;">Belum ada block</td></tr>' :
+                blocks.map(b => `<tr>
+                  <td><strong>#${b.height || '?'}</strong></td>
+                  <td style="font-family:monospace;font-size:10px;">${(b.hash||'').substring(0,16)}...</td>
+                  <td style="color:#FBBF24;font-weight:600;">+${b.reward || 0} RTP</td>
+                  <td><span class="pool-health ${b.status==='CONFIRMED'?'healthy':'low'}">${b.status || 'N/A'}</span></td>
+                  <td style="font-size:10px;color:#64748B;">${b.timestamp ? new Date(b.timestamp).toLocaleString() : '-'}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    const poolCtx = document.getElementById('poolChart');
+    if (poolCtx) {
+      new Chart(poolCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Collected', 'Paid Out', 'Balance', 'Dev Profit'],
+          datasets: [{
+            label: 'RTP',
+            data: [pool.totalCollected || 0, pool.totalPaidOut || 0, pool.balance || 0, pool.devProfit || 0],
+            backgroundColor: ['#10B981', '#EF4444', '#FBBF24', '#34D399'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#CBD5E1' }, grid: { display: false } },
+            y: { ticks: { color: '#CBD5E1' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } }
+          }
+        }
+      });
+    }
+  } catch (e) {
+    content.innerHTML = '<div class="error">Error: ' + e.message + '</div>';
+  }
+}
+
+// ============ CHAT ============
+async function loadChat() {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading">Loading chat...</div>';
+
+  try {
+    const data = await api('/admin/chat/messages?limit=100', 'GET', null, true);
+
+    if (!data.success) {
+      content.innerHTML = '<div class="error">' + data.message + '</div>';
+      return;
+    }
+
+    const messages = data.messages || [];
+
+    content.innerHTML = `
+      <div class="stat-grid">
+        <div class="stat-card"><div class="label">💬 Total Messages</div><div class="value">${messages.length}</div><div class="sub">Ditampilkan</div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h3 style="font-size:14px;color:#94A3B8;">💬 Recent Messages</h3>
+        <button class="btn btn-primary" onclick="loadChat()" style="padding:6px 12px;font-size:11px;">🔄 Refresh</button>
+      </div>
+      <div id="chatList">
+        ${messages.length === 0 ? '<div style="text-align:center;color:#64748B;padding:40px;">Belum ada pesan</div>' :
+          messages.map(m => `<div class="chat-msg" id="chat-${m.id}">
+            <div class="msg-body">
+              <div class="msg-header">
+                <span class="msg-user">${escapeHtml(m.userName || 'Anonymous')}</span>
+                <span class="msg-time">${m.timestamp ? new Date(m.timestamp).toLocaleString() : '-'}</span>
+              </div>
+              <div class="msg-text">${escapeHtml(m.message || '')}</div>
+            </div>
+            <button class="btn-delete" onclick="deleteChat('${m.id}')">🗑️ Hapus</button>
+          </div>`).join('')}
+      </div>
+    `;
+  } catch (e) {
+    content.innerHTML = '<div class="error">Error: ' + e.message + '</div>';
+  }
+}
+
+async function deleteChat(id) {
+  if (!confirm('Hapus pesan ini?')) return;
+  try {
+    const data = await api('/admin/chat/' + id, 'DELETE', null, true);
+    if (data.success) {
+      document.getElementById('chat-' + id)?.remove();
+      notify('✅ Pesan dihapus', 'success');
+    } else {
+      notify('❌ ' + (data.message || 'Gagal'), 'error');
+    }
+  } catch (e) {
+    notify('❌ Error: ' + e.message, 'error');
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function previewBroadcast() {
+  const title = document.getElementById('broadcast-title').value || 'Tajuk Notifikasi';
+  const message = document.getElementById('broadcast-message').value || 'Mesej akan muncul di sini...';
+
+  document.getElementById('broadcast-result').innerHTML = '<div style="padding: 16px; background: #0f172a; border: 1px solid #334155; border-radius: 12px;"><p style="color: #94a3b8; font-size: 11px; margin-bottom: 8px;">PREVIEW — Ini yang user akan nampak:</p><div style="background: #1e293b; padding: 12px; border-radius: 8px; border-left: 4px solid #10b981;"><div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;"><div style="width: 32px; height: 32px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 8px; display: flex; align-items: center; justify-content: center;">🌳</div><div><div style="color: #10b981; font-size: 11px; font-weight: bold;">Royaltree</div><div style="color: #64748b; font-size: 10px;">sekarang</div></div></div><div style="font-weight: bold; margin-bottom: 4px;">' + title + '</div><div style="color: #cbd5e1; font-size: 13px;">' + message + '</div></div></div>';
+}
+
+</script>
+
+</body>
+</html>

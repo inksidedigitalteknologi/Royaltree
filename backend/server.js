@@ -44,7 +44,9 @@ app.use('/api/v1/transfer', transferRoutes);
 app.use('/api/v1/chat', chatRoutes);
 
 // Serve admin panel
-app.use('/admin', express.static('/root/Royaltree/admin'));
+// Serve admin panel (relative path — portable)
+const path = require('path');
+app.use('/admin', express.static(path.join(__dirname, '../admin')));
 
 // Kunci Otentikasi Admin Portal
 const API_SECRET_KEY = process.env.ROYALTREE_API_KEY;
