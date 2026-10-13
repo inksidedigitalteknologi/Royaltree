@@ -1238,27 +1238,7 @@ function statusBadge(status) {
 }
 
 // ============ STATS ============
-async function loadStats() {
-  try {
-    const [users, withdrawals, campaigns, missions] = await Promise.all([
-      api('/users', 'GET', null, true),
-      api('/withdrawals', 'GET', null, true),
-      api('/campaigns'),
-      api('/missions')
-    ]);
-    const pendingWd = (withdrawals.data || []).filter(w => w.status === 'PENDING').length;
-    const totalBalance = (users.data || []).reduce((s, u) => s + (u.balance || 0), 0);
-    document.getElementById('stats').innerHTML = `
-      <div class="stat"><div class="icon">👥</div><div class="num">${users.total || 0}</div><div class="label">Total Users</div></div>
-      <div class="stat"><div class="icon">💰</div><div class="num">${withdrawals.total || 0}</div><div class="label">Withdrawals (${pendingWd} pending)</div></div>
-      <div class="stat"><div class="icon">📢</div><div class="num">${campaigns.total || 0}</div><div class="label">Campaigns</div></div>
-      <div class="stat"><div class="icon">🎯</div><div class="num">${missions.total || 0}</div><div class="label">Missions</div></div>
-      <div class="stat"><div class="icon">💵</div><div class="num">${formatRupiah(totalBalance)}</div><div class="label">Total Balance</div></div>
-    `;
-  } catch (e) {
-    notify('Gagal memuat statistik: ' + e.message, 'error');
-  }
-}
+// loadStats() dihapus — sudah digantikan oleh loadDashboard()
 
 // ============ TAB SWITCHING ============
 function switchPage(page) {
@@ -1323,7 +1303,6 @@ function closeSidebar() {
 }
 
 function loadAll() {
-  loadStats();
   switchPage(currentTab || 'dashboard');
 }
 
