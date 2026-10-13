@@ -2,6 +2,7 @@
 // Endpoint admin: atur config daily reward & ad vendors
 
 const express = require('express');
+const anomaly = require('../services/anomaly');
 const router = express.Router();
 const admin = require('firebase-admin');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
@@ -723,6 +724,89 @@ router.get('/missions', checkAdmin, async (req, res) => {
         return res.json({ success: true, missions, count: missions.length });
     } catch (error) {
         console.error('[ADMIN/MISSIONS] Error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// ANOMALY — Get list
+// GET /api/v1/admin/anomalies
+// ============================================================
+router.get('/anomalies', checkAdmin, async (req, res) => {
+    try {
+        const limit = Math.min(parseInt(req.query.limit) || 100, 200);
+        const filter = {};
+        if (req.query.severity) filter.severity = req.query.severity;
+        if (req.query.status) filter.status = req.query.status;
+        if (req.query.uid) filter.uid = req.query.uid;
+
+        const anomalies = anomaly.getAnomalies(limit, filter);
+        return res.json({ success: true, anomalies, count: anomalies.length });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// ANOMALY — Stats
+// GET /api/v1/admin/anomalies/stats
+// ============================================================
+router.get('/anomalies/stats', checkAdmin, async (req, res) => {
+    try {
+        const stats = anomaly.getStats();
+        return res.json({ success: true, data: stats });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// ANOMALY — Flagged users
+// GET /api/v1/admin/anomalies/flagged-users
+// ============================================================
+router.get('/anomalies/flagged-users', checkAdmin, async (req, res) => {
+    try {
+        const users = anomaly.getFlaggedUsers();
+        return res.json({ success: true, users, count: users.length });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// ANOMALY — Update status
+// POST /api/v1/admin/anomalies/:id/status
+// ============================================================
+router.post('/anomalies/:id/status', checkAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!['OPEN', 'REVIEWED', 'BANNED', 'DISMISSED'].includes(status)) {
+            return res.status(400).json({ success: false, message: 'Status tidak valid' });
+        }
+
+        const result = anomaly.updateAnomalyStatus(id, status);
+        if (!result) {
+            return res.status(404).json({ success: false, message: 'Anomaly tidak ditemukan' });
+        }
+
+        return res.json({ success: true, anomaly: result });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// ANOMALY — Clear user flag
+// POST /api/v1/admin/users/:uid/clear-flag
+// ============================================================
+router.post('/users/:uid/clear-flag', checkAdmin, async (req, res) => {
+    try {
+        const { uid } = req.params;
+        anomaly.clearUserFlag(uid);
+        return res.json({ success: true, message: 'Flag cleared' });
+    } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
     }
 });
