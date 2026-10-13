@@ -270,6 +270,13 @@ interface RoyaltreeApiService {
     @GET("transfer/history")
     suspend fun getTransferHistory(): ResponseBody
 
+    // ==== THERMAL + LOCATION ====
+    @POST("game/thermal")
+    suspend fun updateThermal(@Body body: RequestBody): ResponseBody
+
+    @POST("game/location")
+    suspend fun updateLocation(@Body body: RequestBody): ResponseBody
+
     // ==== GLOBAL CHAT ====
     @GET("chat/messages")
     suspend fun getChatMessages(): ResponseBody

@@ -37,6 +37,8 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import com.inkside.digital.sensor.BatteryTempHelper
+import com.inkside.digital.sensor.LocationHelper
 
 enum class AppScreen {
     HOME,
@@ -1527,6 +1529,24 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     /**
      * Claim mining dengan iklan. transactionId dari AdMob callback.
      */
+    // ============ THERMAL STATE ============
+    private val _batteryTemp = MutableStateFlow(0f)
+    val batteryTemp: StateFlow<Float> = _batteryTemp.asStateFlow()
+
+    private val _batteryLevel = MutableStateFlow(0)
+    val batteryLevel: StateFlow<Int> = _batteryLevel.asStateFlow()
+
+    private val _isCharging = MutableStateFlow(false)
+    val isCharging: StateFlow<Boolean> = _isCharging.asStateFlow()
+
+    private val _tempStatus = MutableStateFlow(BatteryTempHelper.TempStatus.NORMAL)
+    val tempStatus: StateFlow<BatteryTempHelper.TempStatus> = _tempStatus.asStateFlow()
+
+    private val _userRegion = MutableStateFlow("Unknown")
+    val userRegion: StateFlow<String> = _userRegion.asStateFlow()
+
+    private var thermalMonitorJob: kotlinx.coroutines.Job? = null
+
     // ============ MINER ACTIVE STATE (6 jam) ============
     private val _minerActiveUntil = MutableStateFlow(0L)
     val minerActiveUntil: StateFlow<Long> = _minerActiveUntil.asStateFlow()
@@ -1605,6 +1625,72 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     }
             } catch (e: Exception) {
                 showSnackbar("Aktivasi error: ${e.message}")
+            }
+        }
+    }
+
+    // ============ THERMAL MONITORING ============
+    fun startThermalMonitoring() {
+        thermalMonitorJob?.cancel()
+        thermalMonitorJob = viewModelScope.launch {
+            BatteryTempHelper.startMonitoring(getApplication(), this) { temp, level, charging ->
+                _batteryTemp.value = temp
+                _batteryLevel.value = level
+                _isCharging.value = charging
+                _tempStatus.value = BatteryTempHelper.getTempStatus(temp)
+
+                // Kirim ke backend setiap 30 detik (atau saat suhu berubah drastis)
+                val now = System.currentTimeMillis()
+                if (now - lastThermalSync > 30000) {
+                    lastThermalSync = now
+                    syncThermalToBackend(temp, level, charging)
+                }
+            }
+        }
+    }
+
+    fun stopThermalMonitoring() {
+        BatteryTempHelper.stopMonitoring()
+        thermalMonitorJob?.cancel()
+        thermalMonitorJob = null
+    }
+
+    private var lastThermalSync = 0L
+
+    private fun syncThermalToBackend(temp: Float, level: Int, charging: Boolean) {
+        viewModelScope.launch {
+            try {
+                val body = org.json.JSONObject().apply {
+                    put("phone_temp", temp)
+                    put("battery_level", level)
+                    put("is_charging", charging)
+                }
+                ApiClient.updateThermal(body)
+            } catch (e: Exception) {
+                android.util.Log.w("Thermal", "Sync error: ${e.message}")
+            }
+        }
+    }
+
+    // ============ LOCATION ============
+    fun fetchUserRegion() {
+        viewModelScope.launch {
+            try {
+                val location = LocationHelper.getLastLocation(getApplication())
+                    ?: LocationHelper.getCurrentLocation(getApplication())
+                val summary = LocationHelper.getLocationSummary(location)
+                _userRegion.value = summary.region
+                android.util.Log.d("Location", "Region: ${summary.region}, Lat: ${summary.latitude}, Lon: ${summary.longitude}")
+
+                // Kirim ke backend
+                val body = org.json.JSONObject().apply {
+                    put("region", summary.region)
+                    put("latitude", summary.latitude)
+                    put("longitude", summary.longitude)
+                }
+                ApiClient.updateLocation(body)
+            } catch (e: Exception) {
+                android.util.Log.w("Location", "Error: ${e.message}")
             }
         }
     }
