@@ -1,0 +1,138 @@
+/* ============ Royaltree Admin — Custom CSS ============ */
+
+:root {
+  --sidebar-width: 240px;
+  --admin-primary: #16a34a;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: #f5f7fa;
+}
+
+/* Sidebar */
+.sidebar-inner {
+  width: var(--sidebar-width);
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+}
+.sidebar-inner .nav-link {
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 2px;
+  transition: background 0.15s;
+}
+.sidebar-inner .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.sidebar-inner .nav-link.active {
+  background: var(--admin-primary);
+  font-weight: 600;
+}
+
+/* Cards */
+.stat-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.stat-card .stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.stat-card .stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.stat-card .stat-label {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Table */
+.table-hover tbody tr:hover {
+  background: #f9fafb;
+}
+.table th {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Badge severity */
+.badge-severity-LOW      { background: #dbeafe; color: #1e40af; }
+.badge-severity-MEDIUM   { background: #fef3c7; color: #92400e; }
+.badge-severity-HIGH     { background: #fed7aa; color: #9a3412; }
+.badge-severity-CRITICAL { background: #fee2e2; color: #991b1b; }
+
+.badge-status-OPEN      { background: #fee2e2; color: #991b1b; }
+.badge-status-REVIEWED  { background: #fef3c7; color: #92400e; }
+.badge-status-BANNED    { background: #1f2937; color: #ffffff; }
+.badge-status-DISMISSED { background: #e5e7eb; color: #374151; }
+
+/* Login page */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+}
+.login-card {
+  max-width: 400px;
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+/* Content area */
+.admin-content {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Loading */
+.loading-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.8);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+.loading-overlay.active {
+  display: flex;
+}
+
+/* Mobile sidebar via offcanvas */
+@media (max-width: 991.98px) {
+  .sidebar-inner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1045;
+    transform: translateX(-100%);
+    transition: transform 0.25s;
+  }
+  .sidebar-inner.show {
+    transform: translateX(0);
+  }
+}
