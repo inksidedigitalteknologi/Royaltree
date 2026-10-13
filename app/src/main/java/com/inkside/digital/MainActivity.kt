@@ -110,6 +110,11 @@ import com.inkside.digital.worker.MiningWorker
 import java.util.concurrent.TimeUnit
 import com.inkside.digital.ui.screens.WhitepaperScreen
 import com.inkside.digital.ui.screens.GlobalChatScreen
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,6 +123,18 @@ class MainActivity : ComponentActivity() {
         AppThemePreferences.init(this)   // Load dark mode & bahasa
         AppThemePreferences.loadAdminToken(this)  // Load admin token (kalau ada)
         AdManager.init(this)              // Init AdMob SDK
+
+        // ✅ Minta izin notifikasi (Android 13+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    1001
+                )
+            }
+        }
 
         // ✅ Jadwalkan MiningWorker (background auto-claim setiap 15 menit)
         try {
