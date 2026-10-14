@@ -1649,22 +1649,33 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     fun startConfigRefreshObserver() {
         configRefreshObserverJob?.cancel()
         configRefreshObserverJob = viewModelScope.launch {
-            while (true) {
-                val event = com.inkside.digital.data.network.ApiClient.configRefreshEvent
-                if (event != null) {
+            androidx.compose.runtime.snapshotFlow {
+                com.inkside.digital.data.network.ApiClient.configRefreshEvent
+            }
+                .filterNotNull()
+                .collect { event ->
                     android.util.Log.d("ViewModel", "Config refresh: ${event.configType}")
-                    
+
                     when (event.configType) {
                         "game" -> loadGameState()
-                        "ads" -> { /* ads config di-fetch next request */ }
-                        "daily" -> { /* daily config next request */ }
-                        "thermal" -> { /* thermal sync 30s */ }
+                        "ads" -> loadGameState()
+                        "daily" -> { /* next check-in */ }
+                        "thermal" -> {
+                            try {
+                                if (_batteryTemp.value > 0f) {
+                                    val body = org.json.JSONObject().apply {
+                                        put("phone_temp", _batteryTemp.value)
+                                        put("battery_level", _batteryLevel.value)
+                                        put("is_charging", _isCharging.value)
+                                    }
+                                    com.inkside.digital.data.network.ApiClient.updateThermal(body)
+                                }
+                            } catch (e: Exception) {}
+                        }
                     }
-                    
+
                     com.inkside.digital.data.network.ApiClient.consumeConfigRefresh()
                 }
-                kotlinx.coroutines.delay(500L)
-            }
         }
     }
 

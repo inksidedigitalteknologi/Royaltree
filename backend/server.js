@@ -26,6 +26,7 @@ const chatRoutes = require('./routes/chat');
 const sweepstakesJob = require('./jobs/sweepstakesJob');
 const { releasePendingCommission } = require('./services/affiliate');
 const { verifyFirebaseToken, verifyAuthAndBanCheck } = require('./middleware/firebaseAuth');
+const anomaly = require('./services/anomaly');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -1103,6 +1104,14 @@ setTimeout(async () => {
         console.error('[CRON] Initial release error:', error.message);
     }
 }, 10 * 1000); // 10 detik setelah start
+
+// Load anomaly flags dari Firestore (persist across restart)
+anomaly.loadUserFlags().catch(e => console.error('[STARTUP] loadUserFlags:', e.message));
+
+// Auto-save anomaly flags setiap 5 menit
+setInterval(() => {
+    anomaly.saveAllFlags().catch(e => console.error('[CRON] saveAllFlags:', e.message));
+}, 5 * 60 * 1000);
 
 app.listen(PORT, () => {
     console.log(`====================================================`);

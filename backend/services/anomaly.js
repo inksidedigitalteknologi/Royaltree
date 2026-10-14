@@ -243,6 +243,10 @@ function updateAnomalyStatus(id, status) {
 function clearUserFlag(uid) {
   userFlags.delete(uid);
   userActivity.delete(uid);
+  
+  // Delete dari Firestore
+  db.collection('user_flags').doc(uid).delete()
+    .catch(e => console.error('[ANOMALY] delete flag error:', e.message));
 }
 
 /**
@@ -265,6 +269,65 @@ function getStats() {
   return stats;
 }
 
+// ============================================================
+// PERSIST ke Firestore (anti-restart-reset)
+// ============================================================
+async function saveUserFlag(uid) {
+  try {
+    const flag = userFlags.get(uid);
+    if (!flag || flag.score <= 0) return;
+    
+    await db.collection('user_flags').doc(uid).set({
+      score: flag.score,
+      flags: flag.flags || [],
+      lastUpdate: flag.lastUpdate || Date.now(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  } catch (e) {
+    console.error('[ANOMALY/SAVE] Error:', e.message);
+  }
+}
+
+async function loadUserFlags() {
+  try {
+    const snapshot = await db.collection('user_flags').limit(1000).get();
+    let count = 0;
+    
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.score > 0) {
+        userFlags.set(doc.id, {
+          score: data.score || 0,
+          flags: data.flags || [],
+          lastUpdate: data.lastUpdate || Date.now()
+        });
+        count++;
+      }
+    });
+    
+    console.log(`[ANOMALY/LOAD] Loaded ${count} user flags from Firestore`);
+    return count;
+  } catch (e) {
+    console.error('[ANOMALY/LOAD] Error:', e.message);
+    return 0;
+  }
+}
+
+async function saveAllFlags() {
+  try {
+    const promises = [];
+    for (const [uid, flag] of userFlags.entries()) {
+      if (flag.score > 0) promises.push(saveUserFlag(uid));
+    }
+    await Promise.all(promises);
+    console.log(`[ANOMALY/SAVE-ALL] Saved ${promises.length} flags`);
+    return promises.length;
+  } catch (e) {
+    console.error('[ANOMALY/SAVE-ALL] Error:', e.message);
+    return 0;
+  }
+}
+
 module.exports = {
   trackActivity,
   addAnomaly,
@@ -274,5 +337,8 @@ module.exports = {
   updateAnomalyStatus,
   clearUserFlag,
   getStats,
+  saveUserFlag,
+  loadUserFlags,
+  saveAllFlags,
   CONFIG
 };
