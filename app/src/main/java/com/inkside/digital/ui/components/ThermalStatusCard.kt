@@ -44,6 +44,8 @@ fun ThermalStatusCard(viewModel: AffiliateViewModel) {
     val level by viewModel.batteryLevel.collectAsState()
     val charging by viewModel.isCharging.collectAsState()
     val region by viewModel.userRegion.collectAsState()
+    val miningPaused by viewModel.miningPaused.collectAsState()
+    val hashrateFactor by viewModel.hashrateFactor.collectAsState()
 
     // Jangan tampilkan kalau belum ada data suhu
     if (temp == 0f) return
@@ -130,9 +132,11 @@ fun ThermalStatusCard(viewModel: AffiliateViewModel) {
             Spacer(Modifier.height(8.dp))
 
             LinearProgressIndicator(
-                progress = { status.hashrateFactor },
+                progress = { hashrateFactor },
                 modifier = Modifier.fillMaxWidth(),
-                color = if (status == BatteryTempHelper.TempStatus.THROTTLE) {
+                color = if (miningPaused) {
+                    Color(0xFFB71C1C)
+                } else if (status == BatteryTempHelper.TempStatus.THROTTLE) {
                     Color.White
                 } else {
                     Color(0xFF16A34A)
@@ -146,15 +150,46 @@ fun ThermalStatusCard(viewModel: AffiliateViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    "Hashrate: ${(status.hashrateFactor * 100).toInt()}%",
+                    "Hashrate: ${(hashrateFactor * 100).toInt()}%",
                     fontSize = 11.sp,
                     color = textColor
                 )
                 Text(
-                    "Mining speed adjustment",
+                    if (miningPaused) "Mining dijeda" else "Mining speed adjustment",
                     fontSize = 10.sp,
                     color = textColor.copy(alpha = 0.6f)
                 )
+            }
+
+            // ============ BANNER PAUSED ============
+            if (miningPaused) {
+                Spacer(Modifier.height(8.dp))
+                Surface(
+                    color = Color(0xFFB71C1C),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.padding(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("⛔", fontSize = 20.sp)
+                        Spacer(Modifier.width(8.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                "MINING PAUSED",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.sp
+                            )
+                            Text(
+                                "Dinginkan HP sampai < 55°C untuk lanjut",
+                                color = Color.White.copy(alpha = 0.85f),
+                                fontSize = 10.sp
+                            )
+                        }
+                    }
+                }
             }
         }
     }

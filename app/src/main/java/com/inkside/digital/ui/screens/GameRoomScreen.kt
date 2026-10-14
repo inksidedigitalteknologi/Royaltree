@@ -192,7 +192,15 @@ fun GameRoomScreen(
             viewModel.setPendingMinerActivate(true)
             viewModel.showAdRewardModal.value = true
         },
-        onClaimMining = { viewModel.showAdRewardModal.value = true; viewModel.setPendingMiningClaim(true) },
+        onClaimMining = {
+            if (viewModel.miningPaused.value) {
+                // HP terlalu panas — tolak claim
+                viewModel.showThermalPauseAlert.value = true
+            } else {
+                viewModel.showAdRewardModal.value = true
+                viewModel.setPendingMiningClaim(true)
+            }
+        },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
         onBuyAndPlaceGameMinerItem = { id -> viewModel.buyAndPlaceGameMinerItem(id) },
@@ -636,6 +644,35 @@ fun GameRoomScreenContent(
             dismissButton = {
                 OutlinedButton(onClick = { slotToAssignItem = null }) {
                     Text(LanguageManager.translate("common_close", currentLanguage, "Tutup"))
+                }
+            }
+        )
+    }
+
+    // ============================================================
+    // THERMAL PAUSE ALERT — HP terlalu panas, mining dijeda
+    // ============================================================
+    if (viewModel.showThermalPauseAlert.value) {
+        AlertDialog(
+            onDismissRequest = { viewModel.showThermalPauseAlert.value = false },
+            icon = { Text("⛔", fontSize = 40.sp) },
+            title = {
+                Text(
+                    text = "Mining Dijeda",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = "HP terlalu panas. Mining dijeda otomatis sampai suhu turun (< 55°C).\n\nDinginkan HP atau cabut charger untuk lanjut mining."
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = { viewModel.showThermalPauseAlert.value = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A))
+                ) {
+                    Text("OK, Mengerti")
                 }
             }
         )

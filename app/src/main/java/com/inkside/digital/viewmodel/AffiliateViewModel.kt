@@ -1545,6 +1545,16 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     private val _userRegion = MutableStateFlow("Unknown")
     val userRegion: StateFlow<String> = _userRegion.asStateFlow()
 
+    // ============ MINING PAUSE STATE (dari backend) ============
+    private val _miningPaused = MutableStateFlow(false)
+    val miningPaused: StateFlow<Boolean> = _miningPaused.asStateFlow()
+
+    // Alert dialog "HP terlalu panas, mining dijeda"
+    val showThermalPauseAlert = androidx.compose.runtime.mutableStateOf(false)
+
+    private val _hashrateFactor = MutableStateFlow(1.0f)
+    val hashrateFactor: StateFlow<Float> = _hashrateFactor.asStateFlow()
+
     private var thermalMonitorJob: kotlinx.coroutines.Job? = null
 
     // ============ MINER ACTIVE STATE (6 jam) ============
@@ -1665,7 +1675,16 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     put("battery_level", level)
                     put("is_charging", charging)
                 }
-                ApiClient.updateThermal(body)
+                val result = ApiClient.updateThermal(body)
+                result.getOrNull()?.let { json ->
+                    // Parse mining_paused + hashrate_factor dari backend
+                    _miningPaused.value = json.optBoolean("mining_paused", false)
+                    val factor = json.optDouble("hashrate_factor", 1.0)
+                    _hashrateFactor.value = factor.toFloat()
+                    android.util.Log.d("Thermal", "Sync OK: paused=${_miningPaused.value}, factor=$factor")
+                } ?: run {
+                    android.util.Log.w("Thermal", "Sync failed: ${result.exceptionOrNull()?.message}")
+                }
             } catch (e: Exception) {
                 android.util.Log.w("Thermal", "Sync error: ${e.message}")
             }
