@@ -436,7 +436,7 @@ fun MainAffiliateApp(
                 AppScreen.NOTIFICATIONS -> "notifications"
                 AppScreen.PROFILE -> "profile"
                 AppScreen.MISSIONS -> "missions"
-                AppScreen.CHAT -> "chat"
+                AppScreen.GLOBAL_CHAT -> "chat"
                 else -> currentScreen.name.lowercase()
             }
             AnalyticsHelper.logScreen(screenName, "MainActivity")
