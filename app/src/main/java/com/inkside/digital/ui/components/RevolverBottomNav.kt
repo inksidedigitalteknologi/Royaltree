@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,6 +29,8 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.SportsEsports
+import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -97,17 +100,15 @@ fun RevolverBottomNav(
         if (isAdminMode) {
             listOf(
                 CommandItem(AppScreen.ADMIN, "Admin", Icons.Filled.Home),
-                CommandItem(AppScreen.MISSIONS, "Misi", Icons.Filled.Star),
-                CommandItem(AppScreen.GAME_ROOM, "Game", Icons.Filled.PlayArrow),
-                CommandItem(AppScreen.GAME_MINING, "Miner", Icons.Filled.PlayArrow),
+                CommandItem(AppScreen.MISSIONS, "Misi", Icons.Filled.Flag),
+                CommandItem(AppScreen.GAME_ROOM, "Game", Icons.Filled.SportsEsports),
                 CommandItem(AppScreen.PROFILE, "Profil", Icons.Filled.AccountCircle)
             )
         } else {
             listOf(
                 CommandItem(AppScreen.HOME, "Home", Icons.Filled.Home),
-                CommandItem(AppScreen.MISSIONS, "Misi", Icons.Filled.Star),
-                CommandItem(AppScreen.GAME_ROOM, "Game", Icons.Filled.PlayArrow),
-                CommandItem(AppScreen.GAME_MINING, "Miner", Icons.Filled.PlayArrow),
+                CommandItem(AppScreen.MISSIONS, "Misi", Icons.Filled.Flag),
+                CommandItem(AppScreen.GAME_ROOM, "Game", Icons.Filled.SportsEsports),
                 CommandItem(AppScreen.PROFILE, "Profil", Icons.Filled.AccountCircle)
             )
         }
@@ -136,7 +137,8 @@ fun RevolverBottomNav(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .navigationBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             if (!isExpanded) {
                 // ==== COLLAPSED: Coin RTP ====
