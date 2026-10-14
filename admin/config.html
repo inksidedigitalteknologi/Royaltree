@@ -148,6 +148,12 @@
                   <label class="form-check-label small fw-semibold">AdMob Enabled</label>
                 </div>
               </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Max Ads Per Day</label>
+                <input type="number" class="form-control" id="ads_maxAdsPerDay" min="1" max="100" value="20">
+                <div class="form-text small">Jumlah maksimal iklan per user per hari</div>
+              </div>
+
               <div class="col-12">
                 <label class="form-label small fw-semibold">AdMob App ID</label>
                 <input type="text" class="form-control font-monospace" id="ads_admob_appId">
@@ -305,6 +311,7 @@
       document.getElementById('daily_recovery_pointCostPerDay').value = sr.pointCostPerDay ?? 500;
     } else if (type === 'ads') {
       document.getElementById('ads_primary').value = d.primary || 'admob';
+      document.getElementById('ads_maxAdsPerDay').value = d.maxAdsPerDay || 20;
       const admob = d.admob || {};
       document.getElementById('ads_admob_enabled').checked = !!admob.enabled;
       document.getElementById('ads_admob_appId').value = admob.appId || '';
@@ -340,6 +347,7 @@
     } else if (type === 'ads') {
       body = {
         primary: document.getElementById('ads_primary').value,
+        maxAdsPerDay: parseInt(document.getElementById('ads_maxAdsPerDay').value) || 20,
         admob: {
           enabled: document.getElementById('ads_admob_enabled').checked,
           appId: document.getElementById('ads_admob_appId').value.trim(),
