@@ -25,23 +25,29 @@ const transferRoutes = require('./routes/transfer');
 const chatRoutes = require('./routes/chat');
 const sweepstakesJob = require('./jobs/sweepstakesJob');
 const { releasePendingCommission } = require('./services/affiliate');
-const { verifyFirebaseToken } = require('./middleware/firebaseAuth');
+const { verifyFirebaseToken, verifyAuthAndBanCheck } = require('./middleware/firebaseAuth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+// ============================================================
+// ROUTES
+// ============================================================
+// Auth & Admin: TIDAK cek banned (biar user banned bisa login & lihat status)
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/daily', dailyRoutes);
-app.use('/api/v1/ads', adsRoutes);
 app.use('/api/v1/admin', adminRoutes);
-app.use('/api/v1/game', gameRoutes);
-app.use('/api/v1/purchase', purchaseRoutes);
-app.use('/api/v1/affiliate', affiliateRoutes);
-app.use('/api/v1/sweepstakes', sweepstakesRoutes);
-app.use('/api/v1/transfer', transferRoutes);
-app.use('/api/v1/chat', chatRoutes);
+
+// Route sensitif: cek banned (block aksi user banned)
+app.use('/api/v1/daily', verifyAuthAndBanCheck, dailyRoutes);
+app.use('/api/v1/ads', verifyAuthAndBanCheck, adsRoutes);
+app.use('/api/v1/game', verifyAuthAndBanCheck, gameRoutes);
+app.use('/api/v1/purchase', verifyAuthAndBanCheck, purchaseRoutes);
+app.use('/api/v1/affiliate', verifyAuthAndBanCheck, affiliateRoutes);
+app.use('/api/v1/sweepstakes', verifyAuthAndBanCheck, sweepstakesRoutes);
+app.use('/api/v1/transfer', verifyAuthAndBanCheck, transferRoutes);
+app.use('/api/v1/chat', verifyAuthAndBanCheck, chatRoutes);
 
 // Serve admin panel
 // Serve admin panel (relative path — portable)

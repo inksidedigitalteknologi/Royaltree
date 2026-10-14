@@ -326,11 +326,48 @@ router.put('/users/:uid', checkAdmin, async (req, res) => {
 
 router.post('/users/:uid/ban', checkAdmin, async (req, res) => {
     try {
-        await db.collection('users').doc(req.params.uid).update({
+        const { uid } = req.params;
+        const { reason } = req.body;
+        const bannedBy = req.adminUser?.uid || 'admin_web';
+
+        await db.collection('users').doc(uid).update({
             banned: true,
             bannedAt: new Date().toISOString(),
-            bannedReason: req.body.reason || 'Dibanned admin'
+            bannedReason: reason || 'Dibanned admin',
+            bannedBy
         });
+
+        // Notif in-app (banned user tetap dapat notif)
+        try {
+            await db.collection('notifications').add({
+                userId: uid,
+                title: '🚫 Akun Anda Diblokir',
+                message: `Alasan: ${reason || 'Pelanggaran aturan'}. Hubungi support untuk informasi.`,
+                type: 'ACCOUNT_BANNED',
+                severity: 'CRITICAL',
+                timestamp: Date.now(),
+                createdAt: new Date().toISOString(),
+                read: false
+            });
+
+            // FCM push
+            const userDoc = await db.collection('users').doc(uid).get();
+            const userData = userDoc.data() || {};
+            if (userData.fcmToken) {
+                try {
+                    const fcmService = require('../services/fcm');
+                    await fcmService.sendBatchPush(
+                        [userData.fcmToken],
+                        '🚫 Akun Anda Diblokir',
+                        `Alasan: ${reason || 'Pelanggaran aturan'}`,
+                        { type: 'ACCOUNT_BANNED', severity: 'CRITICAL' }
+                    );
+                } catch (e) {}
+            }
+        } catch (e) {
+            console.error('[BAN] Notif error:', e.message);
+        }
+
         res.json({ success: true, message: 'User dibanned' });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
@@ -339,10 +376,46 @@ router.post('/users/:uid/ban', checkAdmin, async (req, res) => {
 
 router.post('/users/:uid/unban', checkAdmin, async (req, res) => {
     try {
-        await db.collection('users').doc(req.params.uid).update({
+        const { uid } = req.params;
+        const unbannedBy = req.adminUser?.uid || 'admin_web';
+
+        await db.collection('users').doc(uid).update({
             banned: false,
-            unbannedAt: new Date().toISOString()
+            unbannedAt: new Date().toISOString(),
+            unbannedBy
         });
+
+        // Notif in-app
+        try {
+            await db.collection('notifications').add({
+                userId: uid,
+                title: '✅ Akun Anda Diaktifkan Kembali',
+                message: 'Akun Anda sudah di-unban. Silakan lanjut mining!',
+                type: 'ACCOUNT_UNBANNED',
+                severity: 'INFO',
+                timestamp: Date.now(),
+                createdAt: new Date().toISOString(),
+                read: false
+            });
+
+            // FCM push
+            const userDoc = await db.collection('users').doc(uid).get();
+            const userData = userDoc.data() || {};
+            if (userData.fcmToken) {
+                try {
+                    const fcmService = require('../services/fcm');
+                    await fcmService.sendBatchPush(
+                        [userData.fcmToken],
+                        '✅ Akun Diaktifkan Kembali',
+                        'Akun Anda sudah di-unban. Selamat mining kembali!',
+                        { type: 'ACCOUNT_UNBANNED', severity: 'INFO' }
+                    );
+                } catch (e) {}
+            }
+        } catch (e) {
+            console.error('[UNBAN] Notif error:', e.message);
+        }
+
         res.json({ success: true, message: 'User di-unban' });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
