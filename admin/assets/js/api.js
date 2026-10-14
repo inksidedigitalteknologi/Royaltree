@@ -168,8 +168,8 @@
     },
 
     // Maintenance
-    toggleMaintenance: (enabled) =>
-      request('/system/maintenance', { method: 'POST', body: { enabled } })
+    toggleMaintenance: (enabled, message = '') =>
+      request('/system/maintenance', { method: 'POST', body: { enabled, message } })
   };
 
   // ============ HELPERS ============

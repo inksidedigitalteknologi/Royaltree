@@ -83,6 +83,32 @@ object ApiClient {
         _configRefreshEvent.value = null
     }
 
+    // ============ Maintenance Mode ============
+    private val _maintenanceMode = androidx.compose.runtime.mutableStateOf(false)
+    val maintenanceMode: Boolean get() = _maintenanceMode.value
+
+    private val _maintenanceMessage = androidx.compose.runtime.mutableStateOf("")
+    val maintenanceMessage: String get() = _maintenanceMessage.value
+
+    fun setMaintenanceMode(enabled: Boolean, message: String = "") {
+        _maintenanceMode.value = enabled
+        _maintenanceMessage.value = message
+    }
+
+    suspend fun checkHealth(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val request = Request.Builder()
+                .url("${currentBaseUrl}health")
+                .get()
+                .build()
+            val response = okHttpClient.newCall(request).execute()
+            val body = response.body?.string() ?: "{}"
+            Result.success(JSONObject(body))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     /**
      * Cek apakah error body mengandung USER_BANNED, lalu set state.
      * Return true jika banned terdeteksi.

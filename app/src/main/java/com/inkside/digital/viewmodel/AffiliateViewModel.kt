@@ -1684,6 +1684,41 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         configRefreshObserverJob = null
     }
 
+    // ============ MAINTENANCE MODE ============
+    private val _maintenanceMode = MutableStateFlow(false)
+    val maintenanceMode: StateFlow<Boolean> = _maintenanceMode.asStateFlow()
+
+    private val _maintenanceMessage = MutableStateFlow("")
+    val maintenanceMessage: StateFlow<String> = _maintenanceMessage.asStateFlow()
+
+    private var maintenanceCheckJob: kotlinx.coroutines.Job? = null
+
+    fun startMaintenanceCheck() {
+        maintenanceCheckJob?.cancel()
+        maintenanceCheckJob = viewModelScope.launch {
+            while (true) {
+                try {
+                    val result = com.inkside.digital.data.network.ApiClient.checkHealth()
+                    result.getOrNull()?.let { json ->
+                        val isMaint = json.optBoolean("maintenance", false)
+                        val msg = json.optString("maintenanceMessage", "")
+                        _maintenanceMode.value = isMaint
+                        _maintenanceMessage.value = msg
+                        com.inkside.digital.data.network.ApiClient.setMaintenanceMode(isMaint, msg)
+                    }
+                } catch (e: Exception) {
+                    // Silent
+                }
+                kotlinx.coroutines.delay(30_000L)
+            }
+        }
+    }
+
+    fun stopMaintenanceCheck() {
+        maintenanceCheckJob?.cancel()
+        maintenanceCheckJob = null
+    }
+
     fun startThermalMonitoring() {
         thermalMonitorJob?.cancel()
         thermalMonitorJob = viewModelScope.launch {
