@@ -786,9 +786,6 @@ private fun MiningRoomTab(
 
         // Hero Room Power & Harvest Dashboard (lama)
         item {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
                     // ==== CARD 1: HEADER ====
                     Column(
                         modifier = Modifier
@@ -939,7 +936,6 @@ private fun MiningRoomTab(
                                     }
                                 }
                             }
-                        }
                         }
 
                         // Unclaimed Points Box & Claim Button
