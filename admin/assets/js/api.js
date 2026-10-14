@@ -139,6 +139,15 @@
 
     // Chat
     getChatMessages: () => request('/chat/messages'),
+    // Config (daily / ads / game) — GET + PUT
+    getConfig: (type) => {
+      const map = { daily: '/daily-config', ads: '/ad-config', game: '/game-config' };
+      return request(map[type] || '/daily-config');
+    },
+    saveConfig: (type, body) => {
+      const map = { daily: '/daily-config', ads: '/ad-config', game: '/game-config' };
+      return request(map[type] || '/daily-config', { method: 'PUT', body });
+    },
     del: (path) => request(path, { method: 'DELETE' }),
 
     // Missions / Campaigns
