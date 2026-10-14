@@ -20,6 +20,7 @@
     <uses-feature android:name="android.hardware.sensor.stepdetector" android:required="false" />
 
     <application
+        android:name=".RoyaltreeApp"
         android:allowBackup="true"
         android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
