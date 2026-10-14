@@ -271,33 +271,112 @@
 
     const u = res.data || res.user || res;
     const isBanned = u.banned || u.isBanned;
+    const uid = u.id || u.uid;
 
     document.getElementById('modalBody').innerHTML = `
       <div class="row g-3">
+        <!-- Section 1: User Info -->
         <div class="col-md-6"><strong>Nama:</strong> ${AdminAPI.escapeHtml(u.name || '-')}</div>
         <div class="col-md-6"><strong>Email:</strong> ${AdminAPI.escapeHtml(u.email || '-')}</div>
-        <div class="col-md-6"><strong>UID:</strong> <code class="small">${AdminAPI.escapeHtml(u.id || u.uid || '-')}</code></div>
         <div class="col-md-6"><strong>Phone:</strong> ${AdminAPI.escapeHtml(u.phone || '-')}</div>
         <div class="col-md-6"><strong>Tier:</strong> ${tierBadge(u.tier)}</div>
         <div class="col-md-6"><strong>Referral Code:</strong> <code>${AdminAPI.escapeHtml(u.referralCode || '-')}</code></div>
+        <div class="col-md-6"><strong>City/Region:</strong> ${AdminAPI.escapeHtml(u.city || u.region || '-')}</div>
+        <div class="col-md-6"><strong>Language:</strong> ${AdminAPI.escapeHtml(u.language || 'id')}</div>
+        <div class="col-md-6"><strong>UID:</strong> <code class="small">${AdminAPI.escapeHtml(uid || '-')}</code></div>
+
+        <div class="col-12"><hr class="my-1"></div>
+
+        <!-- Section 2: Balance -->
         <div class="col-md-6"><strong>Balance:</strong> ${AdminAPI.fmtNumber(u.balance || 0)}</div>
         <div class="col-md-6"><strong>Points:</strong> ${AdminAPI.fmtNumber((u.points || 0).toFixed(2))}</div>
         <div class="col-md-6"><strong>Miner Tokens:</strong> ${AdminAPI.fmtNumber(u.minerTokens || 0)}</div>
-        <div class="col-md-6"><strong>Check-in Streak:</strong> ${u.checkInStreak || 0} hari</div>
+        <div class="col-md-6"><strong>Total Miners:</strong> ${AdminAPI.fmtNumber(u.totalMiners || 0)}</div>
+        <div class="col-md-6"><strong>Referral Count:</strong> ${AdminAPI.fmtNumber(u.referralCount || 0)}</div>
+        <div class="col-md-6"><strong>Mining Logs:</strong> ${AdminAPI.fmtNumber(u.totalMiningLogs || 0)}</div>
+
+        <div class="col-12"><hr class="my-1"></div>
+
+        <!-- Section 3: Activity -->
         <div class="col-md-6"><strong>Today Steps:</strong> ${AdminAPI.fmtNumber(u.todaySteps || 0)}</div>
         <div class="col-md-6"><strong>Today Ads:</strong> ${u.todayAdsWatched || 0}</div>
+        <div class="col-md-6"><strong>Check-in Streak:</strong> ${u.checkInStreak || 0} hari</div>
+        <div class="col-md-6"><strong>Month Check-ins:</strong> ${u.monthCheckInCount || 0}</div>
+
+        <div class="col-12"><hr class="my-1"></div>
+
+        <!-- Section 4: Time & Status -->
         <div class="col-md-6"><strong>Last Login:</strong> ${AdminAPI.fmtDate(u.lastLoginAt)}</div>
+        <div class="col-md-6"><strong>Last Login IP:</strong> <code class="small">${AdminAPI.escapeHtml(u.lastLoginIp || '-')}</code></div>
         <div class="col-md-6"><strong>Created:</strong> ${AdminAPI.fmtDate(u.createdAt)}</div>
-        <div class="col-12"><strong>Status:</strong> ${isBanned ? '<span class="badge bg-danger">Banned</span>' : '<span class="badge bg-success">Active</span>'}</div>
+        <div class="col-md-6"><strong>Updated:</strong> ${AdminAPI.fmtDate(u.updatedAt)}</div>
+        <div class="col-md-6"><strong>FCM:</strong> ${u.hasFcmToken ? '<span class="badge bg-success">✅ Active</span>' : '<span class="badge bg-secondary">❌ None</span>'}</div>
+        <div class="col-md-6"><strong>Mining:</strong> ${u.miningPaused ? '<span class="badge bg-warning text-dark">⏸ Paused</span>' : '<span class="badge bg-success">▶ Active</span>'}</div>
+
+        <div class="col-12">
+          <strong>Status:</strong>
+          ${isBanned
+            ? `<span class="badge bg-danger">Banned</span>
+               ${u.bannedReason ? `<span class="text-muted small ms-2">Reason: ${AdminAPI.escapeHtml(u.bannedReason)}</span>` : ''}
+               ${u.bannedAt ? `<span class="text-muted small ms-2">(${AdminAPI.fmtDate(u.bannedAt)})</span>` : ''}`
+            : '<span class="badge bg-success">Active</span>'}
+        </div>
+
+        ${u.unbannedAt ? `
+          <div class="col-12">
+            <span class="text-muted small">
+              ✅ Unbanned at ${AdminAPI.fmtDate(u.unbannedAt)}
+              ${u.unbannedBy ? ` by ${AdminAPI.escapeHtml(u.unbannedBy)}` : ''}
+            </span>
+          </div>
+        ` : ''}
+
+        ${u.thermal ? `
+          <div class="col-12"><hr class="my-1"></div>
+          <div class="col-12">
+            <h6 class="fw-bold small mb-2"><i class="bi bi-thermometer-half text-danger me-1"></i>Thermal</h6>
+            <div class="row g-2">
+              <div class="col-4 text-center">
+                <div class="fw-bold text-${u.thermal.phone_temp >= 45 ? 'danger' : (u.thermal.phone_temp >= 35 ? 'warning' : 'success')}">
+                  ${(u.thermal.phone_temp || 0).toFixed(1)}°C
+                </div>
+                <div class="small text-muted">Temp</div>
+              </div>
+              <div class="col-4 text-center">
+                <div class="fw-bold">${u.thermal.battery_level || 0}%</div>
+                <div class="small text-muted">Battery</div>
+              </div>
+              <div class="col-4 text-center">
+                <div class="fw-bold">${u.thermal.is_charging ? '⚡' : '🔋'}</div>
+                <div class="small text-muted">${u.thermal.is_charging ? 'Charging' : 'Not Charging'}</div>
+              </div>
+            </div>
+          </div>
+        ` : ''}
+
+        ${u.location ? `
+          <div class="col-12"><hr class="my-1"></div>
+          <div class="col-12">
+            <h6 class="fw-bold small mb-2"><i class="bi bi-geo-alt text-info me-1"></i>Location</h6>
+            <div class="row g-2">
+              <div class="col-md-4"><strong>Region:</strong> ${AdminAPI.escapeHtml(u.location.region || 'Unknown')}</div>
+              <div class="col-md-4"><strong>Lat:</strong> <code class="small">${u.location.latitude || 0}</code></div>
+              <div class="col-md-4"><strong>Lon:</strong> <code class="small">${u.location.longitude || 0}</code></div>
+            </div>
+          </div>
+        ` : ''}
       </div>`;
 
     document.getElementById('modalFooter').innerHTML = `
+      <a href="user-detail.html?uid=${encodeURIComponent(uid)}" class="btn btn-primary">
+        <i class="bi bi-box-arrow-up-right me-1"></i>Open Full Detail
+      </a>
       <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
       ${isBanned
-        ? `<button class="btn btn-success" onclick="unbanUser('${u.id}'); bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();">
+        ? `<button class="btn btn-success" onclick="unbanUser('${uid}'); bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();">
              <i class="bi bi-check-circle me-1"></i>Unban
            </button>`
-        : `<button class="btn btn-danger" onclick="banUser('${u.id}'); bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();">
+        : `<button class="btn btn-danger" onclick="banUser('${uid}'); bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();">
              <i class="bi bi-hammer me-1"></i>Ban
            </button>`}`;
   };
