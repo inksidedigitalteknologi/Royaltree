@@ -189,11 +189,47 @@
     // Helper untuk format
     fmtDate(ts) {
       if (!ts) return '-';
-      const d = ts.toDate ? ts.toDate() : new Date(ts);
-      return d.toLocaleString('id-ID', {
-        day: '2-digit', month: 'short', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-      });
+
+      let d;
+      try {
+        // 1. Firestore Timestamp (client SDK style): { _seconds, _nanoseconds }
+        if (typeof ts === 'object' && ts._seconds !== undefined) {
+          d = new Date(ts._seconds * 1000);
+        }
+        // 2. Firestore Timestamp (admin SDK style): { seconds, nanoseconds }
+        else if (typeof ts === 'object' && ts.seconds !== undefined) {
+          d = new Date(ts.seconds * 1000);
+        }
+        // 3. Firestore Timestamp class with toDate()
+        else if (typeof ts === 'object' && typeof ts.toDate === 'function') {
+          d = ts.toDate();
+        }
+        // 4. ISO string: "2026-10-09T17:41:29.221Z"
+        else if (typeof ts === 'string') {
+          d = new Date(ts);
+        }
+        // 5. Number (epoch ms)
+        else if (typeof ts === 'number') {
+          d = new Date(ts);
+        }
+        // 6. Unknown object
+        else {
+          return '-';
+        }
+
+        if (isNaN(d.getTime())) return '-';
+
+        return d.toLocaleString('id-ID', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } catch (e) {
+        console.warn('[fmtDate] Error:', e, ts);
+        return '-';
+      }
     },
     fmtNumber(n) {
       return new Intl.NumberFormat('id-ID').format(n || 0);

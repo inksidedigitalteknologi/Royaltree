@@ -511,10 +511,81 @@ router.get('/users', checkAdmin, async (req, res) => {
 
 router.get('/users/:uid', checkAdmin, async (req, res) => {
     try {
-        const doc = await db.collection('users').doc(req.params.uid).get();
+        const uid = req.params.uid;
+        const doc = await db.collection('users').doc(uid).get();
         if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan' });
-        res.json({ success: true, data: { id: doc.id, ...doc.data() } });
+
+        const userData = doc.data();
+
+        // ============================================================
+        // COMPUTED FIELDS
+        // ============================================================
+        let referralCount = 0;
+        let totalMiners = 0;
+        let thermal = null;
+        let location = null;
+        let miningPaused = false;
+        let totalMiningLogs = 0;
+
+        try {
+            // 1. Referral count (user yang referredBy == uid)
+            const refSnap = await db.collection('users')
+                .where('referredBy', '==', uid)
+                .count()
+                .get();
+            referralCount = refSnap.data().count;
+        } catch (e) {
+            console.error('[USER-DETAIL] referralCount error:', e.message);
+        }
+
+        try {
+            // 2. Total miners owned
+            const minersOwned = userData.minersOwned || {};
+            totalMiners = Object.keys(minersOwned).length;
+        } catch (e) {}
+
+        try {
+            // 3. Game state (thermal + location)
+            const stateDoc = await db.collection('game_states').doc(uid).get();
+            if (stateDoc.exists) {
+                const state = stateDoc.data();
+                thermal = state.thermal || null;
+                location = state.location || null;
+                miningPaused = state.miningPaused === true;
+            }
+        } catch (e) {
+            console.error('[USER-DETAIL] game_states error:', e.message);
+        }
+
+        try {
+            // 4. Total mining logs
+            const logsSnap = await db.collection('thermal_logs')
+                .where('uid', '==', uid)
+                .count()
+                .get();
+            totalMiningLogs = logsSnap.data().count;
+        } catch (e) {}
+
+        return res.json({
+            success: true,
+            data: {
+                id: doc.id,
+                uid: uid,
+                ...userData,
+                // Computed fields
+                referralCount,
+                totalMiners,
+                thermal,
+                location,
+                miningPaused,
+                totalMiningLogs,
+                hasFcmToken: !!(userData.fcmToken && userData.fcmToken.length > 20),
+                language: userData.language || 'id',
+                banned: userData.banned === true
+            }
+        });
     } catch (err) {
+        console.error('[ADMIN/USER-DETAIL] Error:', err);
         res.status(500).json({ success: false, message: err.message });
     }
 });
