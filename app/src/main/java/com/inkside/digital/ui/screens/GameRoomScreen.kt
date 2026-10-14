@@ -9,6 +9,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,7 +47,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
-import androidx.compose.foundation.BorderStroke
+import BorderStroke
 import androidx.compose.ui.window.Dialog
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
@@ -57,8 +58,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+import LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -72,8 +74,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
+import TextAlign
+import TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.GameMinerItemEntity
@@ -115,7 +119,7 @@ fun GameRoomScreen(
     val roomState by viewModel.gameRoomState.collectAsState()
 
     // M46 FIX: Reload catalog bila data kosong (first launch race condition)
-    androidx.compose.runtime.LaunchedEffect(minerItems.size) {
+    LaunchedEffect(minerItems.size) {
         if (minerItems.isEmpty()) {
             viewModel.loadMinerCatalog()
             viewModel.loadGameState()
@@ -139,7 +143,7 @@ fun GameRoomScreen(
     LaunchedEffect(minerActiveUntil) {
     }
 
-    androidx.compose.runtime.LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) {
         viewModel.loadGameStateThenRefreshMiner()
     }
 
@@ -430,7 +434,7 @@ fun GameRoomScreenContent(
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Text(
-                                text = "Beli ${item.name}",
+                                text = "Beli " + item.name,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 17.sp,
                                 color = Color.White
@@ -497,7 +501,7 @@ fun GameRoomScreenContent(
                                         onBuyGameMinerItem(item.id)
                                     }
                                 } catch (e: Exception) {
-                                    android.util.Log.e("GameRoomBuy", "❌ Error onClick: ${e.message}", e)
+                                    android.util.Log.e("GameRoomBuy", "❌ Error onClick: " + e.message, e)
                                 }
                                 selectedItemToBuy = null
                             },
@@ -697,8 +701,8 @@ private fun RetroStatBox(
                 fontWeight = FontWeight.Black,
                 color = color,
                 maxLines = 1,
-                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
             )
         }
     }
@@ -771,7 +775,7 @@ private fun MiningRoomTab(
                         Surface(
                             color = Color(0xFF0F172A).copy(alpha = 0.85f),
                             shape = RoundedCornerShape(14.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.35f)),
+                            border = BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.35f)),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Row(
@@ -799,7 +803,7 @@ private fun MiningRoomTab(
                                 Surface(
                                     color = EmeraldPrimary.copy(alpha = 0.15f),
                                     shape = RoundedCornerShape(8.dp),
-                                    border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.4f))
+                                    border = BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.4f))
                                 ) {
                                     Text(
                                         text = "${placedMiners.size}/${roomState?.unlockedSlots ?: 6}",
@@ -816,7 +820,7 @@ private fun MiningRoomTab(
                         Surface(
                             color = Color(0xFF0F172A).copy(alpha = 0.85f),
                             shape = RoundedCornerShape(14.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.2f)),
+                            border = BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.2f)),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(
@@ -888,7 +892,7 @@ private fun MiningRoomTab(
                                 }
 
                                 // Miner breakdown — compact
-                                if (minerBreakdown.size > 0) {
+                                if (minerBreakdown.isNotEmpty()) {
                                     val totalRate = minerBreakdown.sumOf { it.second }
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
@@ -1354,7 +1358,7 @@ private fun RackSlotItemCard(
                     Column(horizontalAlignment = Alignment.End) {
                         Text("\uD83D\uDCB0", fontSize = 9.sp)
                         Text(
-                            String.format("%.2f", miner.pointsPerMinute * 1440),
+                            String.format(Locale.US, "%.2f", miner.pointsPerMinute * 1440),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = RetroGold
@@ -1695,7 +1699,7 @@ private fun ShopMinerCard(
                     Surface(
                         color = EmeraldLight.copy(alpha = 0.15f),
                         shape = RoundedCornerShape(8.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.4f))
+                        border = BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.4f))
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
