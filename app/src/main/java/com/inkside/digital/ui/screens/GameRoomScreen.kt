@@ -45,8 +45,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SecondaryScrollableTabRow
-import androidx.compose.material3.SecondaryIndicator
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Surface
 import androidx.compose.ui.window.Dialog
 import androidx.compose.material3.Tab
@@ -307,13 +307,13 @@ fun GameRoomScreenContent(
 
             // Tabs: Ruang Rak (Virtual Room), Toko Item (Shop), Mini-Game (Arcade)
             val tabs = listOf("🖥️ Ruang Rak Mining", "🛒 Toko Item", "🎮 Mini-Game Arcade")
-            SecondaryScrollableTabRow(
+            ScrollableTabRow(
                 selectedTabIndex = activeTab,
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = EmeraldLight,
                 edgePadding = 16.dp,
                 indicator = { tabPositions ->
-                    SecondaryIndicator(
+                    TabRowDefaults.SecondaryIndicator(
                         Modifier.tabIndicatorOffset(tabPositions[activeTab]),
                         color = EmeraldLight
                     )
