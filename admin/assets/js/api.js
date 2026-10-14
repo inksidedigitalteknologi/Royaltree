@@ -152,8 +152,11 @@
     getAuditLogs: () => request('/audit-logs'),
 
     // Notifications
-    broadcastNotification: (title, message) =>
-      request('/notifications/broadcast', { method: 'POST', body: { title, message } }),
+    broadcastNotification: (title, message, type = 'BROADCAST', targetUid) => {
+      const body = { title, message, type };
+      if (targetUid) body.targetUid = targetUid;
+      return request('/notifications/broadcast', { method: 'POST', body });
+    },
 
     // Maintenance
     toggleMaintenance: (enabled) =>
