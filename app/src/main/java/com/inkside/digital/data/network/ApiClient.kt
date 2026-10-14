@@ -47,6 +47,44 @@ object ApiClient {
     
     fun resetAdBlockFlag() { _adBlockDetected.value = false }
 
+    // ============ Banned User State ============
+    // Set true bila backend return 403 USER_BANNED
+    // Global observable — trigger BannedDialog di MainActivity
+    data class BannedInfo(
+        val banned: Boolean = false,
+        val reason: String = "",
+        val bannedAt: String = ""
+    )
+
+    private val _bannedState = androidx.compose.runtime.mutableStateOf(BannedInfo())
+    val bannedState: BannedInfo get() = _bannedState.value
+
+    fun setBanned(reason: String, bannedAt: String) {
+        _bannedState.value = BannedInfo(true, reason, bannedAt)
+    }
+
+    fun resetBanned() { _bannedState.value = BannedInfo() }
+
+    /**
+     * Cek apakah error body mengandung USER_BANNED, lalu set state.
+     * Return true jika banned terdeteksi.
+     */
+    private fun checkBannedResponse(code: Int, errorBody: String?): Boolean {
+        if (code != 403 || errorBody.isNullOrBlank()) return false
+        return try {
+            val json = JSONObject(errorBody)
+            if (json.optString("code") == "USER_BANNED") {
+                setBanned(
+                    json.optString("message", "Akun Anda diblokir"),
+                    json.optString("bannedAt", "")
+                )
+                true
+            } else false
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     private const val PREFS_NAME = "royaltree_portal_prefs"
     private const val KEY_BASE_URL = "portal_base_url"
     private const val KEY_API_KEY = "portal_api_key"
@@ -471,6 +509,8 @@ object ApiClient {
         } catch (e: retrofit2.HttpException) {
             try {
                 val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                // Cek banned user
+                checkBannedResponse(e.code(), errorBody)
                 val json = JSONObject(errorBody)
                 json.put("httpCode", e.code())
                 Result.success(json)

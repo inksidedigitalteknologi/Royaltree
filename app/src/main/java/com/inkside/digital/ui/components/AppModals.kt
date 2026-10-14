@@ -1030,6 +1030,140 @@ fun AdBlockedDialog(
     }
 }
 
+// ============================================================
+// BANNED USER DIALOG
+// ============================================================
+/**
+ * Dialog yang muncul ketika backend return 403 USER_BANNED.
+ * Tidak bisa di-dismiss — user harus logout.
+ */
+@Composable
+fun BannedDialog(
+    bannedInfo: com.inkside.digital.data.network.ApiClient.BannedInfo,
+    onLogout: () -> Unit
+) {
+    if (!bannedInfo.banned) return
+
+    // Format tanggal (kalau ada)
+    val dateText = bannedInfo.bannedAt.let { raw ->
+        if (raw.isBlank()) ""
+        else {
+            try {
+                // ISO 8601 → readable
+                val cleaned = raw.substringBefore("T")
+                "Sejak $cleaned"
+            } catch (e: Exception) { "" }
+        }
+    }
+
+    Dialog(
+        onDismissRequest = { /* TIDAK bisa dismiss — user harus logout */ },
+        properties = androidx.compose.ui.window.DialogProperties(
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false
+        )
+    ) {
+        Card(
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Icon besar
+                Text("\uD83D\uDEAB", fontSize = 64.sp)
+
+                Spacer(Modifier.height(12.dp))
+
+                // Title
+                Text(
+                    "Akun Anda Diblokir",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Black,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                // Reason box
+                Surface(
+                    color = Color(0xFFEF4444).copy(alpha = 0.15f),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(14.dp)
+                    ) {
+                        Text(
+                            "Alasan:",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFDC2626)
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            bannedInfo.reason.ifBlank { "Pelanggaran aturan" },
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+
+                // Tanggal (kalau ada)
+                if (dateText.isNotBlank()) {
+                    Spacer(Modifier.height(10.dp))
+                    Text(
+                        "\uD83D\uDCC5 $dateText",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                Spacer(Modifier.height(16.dp))
+
+                // Info support
+                Text(
+                    "Hubungi support@royaltree.id untuk banding atau informasi lebih lanjut.",
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(Modifier.height(20.dp))
+
+                // Logout button
+                Button(
+                    onClick = onLogout,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFDC2626)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                ) {
+                    Icon(
+                        androidx.compose.material.icons.Icons.AutoMirrored.Filled.ExitToApp,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        "Logout",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+    }
+}
+
+
 @Composable
 fun RedeemPointsModal(
     user: UserEntity?,
