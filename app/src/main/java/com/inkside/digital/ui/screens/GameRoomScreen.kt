@@ -786,195 +786,160 @@ private fun MiningRoomTab(
 
         // Hero Room Power & Harvest Dashboard (lama)
         item {
-            Card(
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+            Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    // ==== PNG FRAME ====
-                    Image(
-                        painter = painterResource(id = com.inkside.digital.R.drawable.card_frame_mining),
-                        contentDescription = null,
-                        modifier = Modifier.matchParentSize(),
-                        contentScale = androidx.compose.ui.layout.ContentScale.Fit
-                    )
-
+                    // ==== CARD 1: HEADER ====
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 28.dp, vertical = 32.dp),
-                        verticalArrangement = Arrangement.spacedBy(14.dp)
+                            .padding(horizontal = 20.dp, vertical = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        // ==== HEADER: Title + Chip ====
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column {
-                                Text(
-                                    text = LanguageManager.translate("game_mining_tycoon", currentLanguage, "MINING TYCOON"),
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Black,
-                                    color = EmeraldLight,
-                                    letterSpacing = 2.sp
-                                )
-                                Text(
-                                    text = LanguageManager.translate("game_points_miner", currentLanguage, "Royaltree Points Miner"),
-                                    fontSize = 10.sp,
-                                    color = RetroAmber,
-                                    letterSpacing = 1.sp
-                                )
-                            }
-                            Surface(
-                                color = Color(0xFF1E293B).copy(alpha = 0.8f),
-                                shape = RoundedCornerShape(8.dp)
-                            ) {
-                                Text(
-                                    text = String.format(LanguageManager.translate("game_rack_filled", currentLanguage, "%s Rak Terisi"), "${placedMiners.size}/${roomState?.unlockedSlots ?: 6}"),
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                                )
-                            }
-                        }
-
-                        // ==== STATS ROW ====
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            RetroStatBox(
-                                emoji = "🔥",
-                                label = LanguageManager.translate("game_mining_power", currentLanguage, "POWER"),
-                                value = HashrateFormatter.format(totalPowerGhs),
-                                color = RetroAmber,
-                                modifier = Modifier.weight(1f)
-                            )
-                            RetroStatBox(
-                                emoji = "💰",
-                                label = LanguageManager.translate("game_mining_rtp", currentLanguage, "RTP"),
-                                value = "${GlobalPointsManager.formatRtp(userPoints + liveUnclaimedPoints)}",
-                                color = RetroGold,
-                                modifier = Modifier.weight(1.8f),
-                                useRtpIcon = true
-                            )
-                            RetroStatBox(
-                                emoji = "⚡",
-                                label = LanguageManager.translate("game_mining_rate", currentLanguage, "RATE"),
-                                value = "${String.format(Locale.US, "%.4f", generationRatePerMin)}/m",
-                                color = EmeraldLight,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-
-                        // ==== LIVE MINING TICKER ====
+                        // Card 1: Header saja
                         Surface(
-                            color = Color(0xFF0F172A).copy(alpha = 0.7f),
-                            shape = RoundedCornerShape(10.dp),
+                            color = Color(0xFF0F172A).copy(alpha = 0.85f),
+                            shape = RoundedCornerShape(14.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.35f)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(Modifier.weight(1f)) {
+                                    Text(
+                                        text = LanguageManager.translate("game_mining_tycoon", currentLanguage, "MINING TYCOON"),
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Black,
+                                        color = EmeraldLight,
+                                        letterSpacing = 1.5.sp
+                                    )
+                                    Text(
+                                        text = LanguageManager.translate("game_points_miner", currentLanguage, "Royaltree Points Miner"),
+                                        fontSize = 10.sp,
+                                        color = RetroAmber,
+                                        letterSpacing = 0.5.sp
+                                    )
+                                }
+                                Surface(
+                                    color = EmeraldPrimary.copy(alpha = 0.15f),
+                                    shape = RoundedCornerShape(8.dp),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.4f))
+                                ) {
+                                    Text(
+                                        text = "${placedMiners.size}/${roomState?.unlockedSlots ?: 6}",
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = EmeraldLight,
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                    )
+                                }
+                            }
+                        }
+
+                        // ==== CARD 2: STATS ====
+                        Surface(
+                            color = Color(0xFF0F172A).copy(alpha = 0.85f),
+                            shape = RoundedCornerShape(14.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.2f)),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                // Baris 1: Rate + Unclaimed
+                                // Stats Row
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(
-                                            imageVector = Icons.Filled.Bolt,
-                                            contentDescription = null,
-                                            tint = EmeraldLight,
-                                            modifier = Modifier.size(14.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(6.dp))
+                                    RetroStatBox(
+                                        emoji = "🔥",
+                                        label = LanguageManager.translate("game_mining_power", currentLanguage, "POWER"),
+                                        value = HashrateFormatter.format(totalPowerGhs),
+                                        color = RetroAmber,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    RetroStatBox(
+                                        emoji = "💰",
+                                        label = LanguageManager.translate("game_mining_rtp", currentLanguage, "RTP"),
+                                        value = "${GlobalPointsManager.formatRtp(userPoints + liveUnclaimedPoints)}",
+                                        color = RetroGold,
+                                        modifier = Modifier.weight(1.5f),
+                                        useRtpIcon = true
+                                    )
+                                    RetroStatBox(
+                                        emoji = "⚡",
+                                        label = LanguageManager.translate("game_mining_rate", currentLanguage, "RATE"),
+                                        value = "${String.format(Locale.US, "%.4f", generationRatePerMin)}/m",
+                                        color = EmeraldLight,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+
+                                // Live ticker — compact single row
+                                Surface(
+                                    color = Color(0xFF064E3B).copy(alpha = 0.4f),
+                                    shape = RoundedCornerShape(10.dp),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(
+                                                imageVector = Icons.Filled.Bolt,
+                                                contentDescription = null,
+                                                tint = EmeraldLight,
+                                                modifier = Modifier.size(14.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text(
+                                                text = "+${String.format(Locale.US, "%.4f", generationRatePerMin)} RTP/mnt",
+                                                fontSize = 11.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = EmeraldLight
+                                            )
+                                        }
                                         Text(
-                                            text = "+${String.format(Locale.US, "%.4f", generationRatePerMin)} RTP/mnt",
+                                            text = "${GlobalPointsManager.formatRtp(liveUnclaimedPoints)} RTP",
+                                            fontSize = 13.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = GoldVip
+                                        )
+                                    }
+                                }
+
+                                // Miner breakdown — compact
+                                if (minerBreakdown.size > 0) {
+                                    val totalRate = minerBreakdown.sumOf { it.second }
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = "🔥 ${placedMiners.size} miner aktif",
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = Color(0xFF94A3B8)
+                                        )
+                                        Text(
+                                            text = "Total: +${String.format(Locale.US, "%.4f", totalRate)}/m",
                                             fontSize = 11.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = EmeraldLight
                                         )
                                     }
-                                    Text(
-                                        text = "${GlobalPointsManager.formatRtp(liveUnclaimedPoints)} RTP",
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = GoldVip
-                                    )
-                                }
-
-                                // Baris 2: Breakdown per miner (kalau > 1 miner)
-                                if (minerBreakdown.size > 1) {
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    HorizontalDivider(
-                                        color = Color(0xFF334155),
-                                        thickness = 0.5.dp
-                                    )
-                                    Spacer(modifier = Modifier.height(6.dp))
-
-                                    minerBreakdown.take(3).forEach { item ->
-                                        val (name, rate, power) = item
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(vertical = 1.dp),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                modifier = Modifier.weight(1f)
-                                            ) {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .size(3.dp)
-                                                        .clip(CircleShape)
-                                                        .background(EmeraldPrimary.copy(alpha = 0.6f))
-                                                )
-                                                Spacer(modifier = Modifier.width(6.dp))
-                                                Text(
-                                                    text = name.take(14),
-                                                    fontSize = 9.sp,
-                                                    color = Color(0xFF94A3B8),
-                                                    maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis
-                                                )
-                                                Spacer(modifier = Modifier.width(4.dp))
-                                                Text(
-                                                    text = "⚡${power.toInt()}",
-                                                    fontSize = 8.sp,
-                                                    color = Color(0xFF64748B)
-                                                )
-                                            }
-                                            Text(
-                                                text = "+${String.format(Locale.US, "%.4f", rate)}/m",
-                                                fontSize = 9.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color(0xFF94A3B8)
-                                            )
-                                        }
-                                    }
-
-                                    if (minerBreakdown.size > 3) {
-                                        Text(
-                                            text = "... +${minerBreakdown.size - 3} miner lagi",
-                                            fontSize = 9.sp,
-                                            color = Color(0xFF64748B),
-                                            modifier = Modifier.padding(top = 4.dp, start = 9.dp)
-                                        )
-                                    }
                                 }
                             }
                         }
-
                         }
 
                         // Unclaimed Points Box & Claim Button
