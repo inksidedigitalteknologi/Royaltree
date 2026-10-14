@@ -45,12 +45,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.SecondaryScrollableTabRow
+import androidx.compose.material3.SecondaryIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.ui.window.Dialog
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -307,13 +307,13 @@ fun GameRoomScreenContent(
 
             // Tabs: Ruang Rak (Virtual Room), Toko Item (Shop), Mini-Game (Arcade)
             val tabs = listOf("🖥️ Ruang Rak Mining", "🛒 Toko Item", "🎮 Mini-Game Arcade")
-            ScrollableTabRow(
+            SecondaryScrollableTabRow(
                 selectedTabIndex = activeTab,
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = EmeraldLight,
                 edgePadding = 16.dp,
                 indicator = { tabPositions ->
-                    TabRowDefaults.SecondaryIndicator(
+                    SecondaryIndicator(
                         Modifier.tabIndicatorOffset(tabPositions[activeTab]),
                         color = EmeraldLight
                     )
@@ -343,10 +343,7 @@ fun GameRoomScreenContent(
                         MiningRoomTab(
                             currentLanguage = currentLanguage,
                             placedMiners = placedMiners,
-                            allMiners = minerItems,
                             totalPowerGhs = totalPowerGhs,
-                            basePowerGhs = basePowerGhs,
-                            bonusPowerGhs = bonusPowerGhs,
                             generationRatePerMin = generationRatePerMin,
                             liveUnclaimedPoints = liveUnclaimedPoints,
                             roomState = roomState,
@@ -354,9 +351,6 @@ fun GameRoomScreenContent(
                             minerActiveUntil = minerActiveUntil,
                             minerActiveRemainingMs = minerActiveRemainingMs,
                             onActivateMiner = onActivateMiner,
-                            onClaimMining = onClaimMining,
-                            onClaimMinerToken = onClaimMinerToken,
-                            onUnlockMiner = onUnlockMiner,
                             onUnplaceMiner = { minerId, slot -> onToggleMinerSlot(minerId, slot) },
                             onOpenShop = { activeTab = 1 },
                             onOpenAssignSlotModal = { slot -> slotToAssignItem = slot },
@@ -709,10 +703,7 @@ private fun RetroStatBox(
 private fun MiningRoomTab(
     currentLanguage: AppLanguage,
     placedMiners: List<GameMinerItemEntity>,
-    allMiners: List<GameMinerItemEntity>,
     totalPowerGhs: Double,
-    basePowerGhs: Double,
-    bonusPowerGhs: Double,
     generationRatePerMin: Double,
     liveUnclaimedPoints: Double,
     roomState: GameRoomStateEntity?,
@@ -720,9 +711,6 @@ private fun MiningRoomTab(
     minerActiveUntil: Long = 0L,
     minerActiveRemainingMs: Long = 0L,
     onActivateMiner: () -> Unit = {},
-    onClaimMining: () -> Unit,
-    onClaimMinerToken: (String) -> Unit = {},
-    onUnlockMiner: (String) -> Unit = {},
     onUnplaceMiner: (minerId: String, slot: Int) -> Unit,
     onOpenShop: () -> Unit,
     onOpenAssignSlotModal: (slotIndex: Int) -> Unit,
