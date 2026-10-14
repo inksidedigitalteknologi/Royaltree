@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Audit Logs — Royaltree Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/admin.css" rel="stylesheet">
+  <script>
+    (function() {
+      if (!localStorage.getItem('royaltree_admin_token')) {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+<div class="d-flex">
+  <div id="admin-sidebar"></div>
+  <div class="flex-grow-1" style="min-width:0;">
+    <div id="admin-navbar"></div>
+
+    <main class="admin-content">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+          <h4 class="mb-1 fw-bold">Audit Logs</h4>
+          <p class="text-muted mb-0 small">Riwayat aktivitas user & sistem</p>
+        </div>
+        <div class="d-flex gap-2">
+          <input type="text" class="form-control form-control-sm" id="searchInput"
+                 placeholder="Cari action / userId..." style="min-width:240px;">
+          <button class="btn btn-sm btn-outline-secondary" id="refreshBtn">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-icon bg-primary-subtle text-primary mb-2">
+                <i class="bi bi-journal-text"></i>
+              </div>
+              <div class="stat-value" id="statTotal">0</div>
+              <div class="stat-label">Total Events</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-icon bg-success-subtle text-success mb-2">
+                <i class="bi bi-people"></i>
+              </div>
+              <div class="stat-value" id="statUsers">0</div>
+              <div class="stat-label">Unique Users</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-icon bg-warning-subtle text-warning mb-2">
+                <i class="bi bi-diagram-3"></i>
+              </div>
+              <div class="stat-value" id="statActions">0</div>
+              <div class="stat-label">Action Types</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-icon bg-info-subtle text-info mb-2">
+                <i class="bi bi-coin"></i>
+              </div>
+              <div class="stat-value" id="statPoints">0</div>
+              <div class="stat-label">Total Points</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card stat-card">
+        <div class="card-body p-0" id="logsTable">
+          <div class="text-center py-5">
+            <div class="spinner-border text-primary"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/layout.js"></script>
+<script>
+(async function () {
+  AdminLayout.init('Audit Logs');
+
+  let allLogs = [];
+
+  function actionBadge(action) {
+    const colors = {
+      'GAME_MINING_CLAIM': 'bg-success',
+      'GAME_MINING_ACTIVATE': 'bg-primary',
+      'DAILY_CHECK_IN': 'bg-info',
+      'WITHDRAWAL_REQUEST': 'bg-warning text-dark',
+      'WITHDRAWAL_APPROVED': 'bg-success',
+      'WITHDRAWAL_REJECTED': 'bg-danger',
+      'AD_REWARD': 'bg-secondary',
+      'USER_BANNED': 'bg-danger',
+      'USER_UNBANNED': 'bg-success',
+      'PURCHASE': 'bg-primary'
+    };
+    const cls = colors[action] || 'bg-light text-dark';
+    return `<span class="badge ${cls}">${AdminAPI.escapeHtml(action || '-')}</span>`;
+  }
+
+  function renderStats(logs) {
+    document.getElementById('statTotal').textContent = AdminAPI.fmtNumber(logs.length);
+    document.getElementById('statUsers').textContent =
+      AdminAPI.fmtNumber(new Set(logs.map(l => l.userId).filter(Boolean)).size);
+    document.getElementById('statActions').textContent =
+      AdminAPI.fmtNumber(new Set(logs.map(l => l.action).filter(Boolean)).size);
+    document.getElementById('statPoints').textContent =
+      AdminAPI.fmtNumber(logs.reduce((s, l) => s + (l.points || 0), 0));
+  }
+
+  function renderTable(logs) {
+    const el = document.getElementById('logsTable');
+
+    if (logs.length === 0) {
+      el.innerHTML = `
+        <div class="text-center py-5">
+          <i class="bi bi-journal-x text-muted" style="font-size:3rem;"></i>
+          <h5 class="mt-3 mb-1">Tidak Ada Log</h5>
+          <p class="text-muted small mb-0">Belum ada aktivitas tercatat</p>
+        </div>`;
+      return;
+    }
+
+    el.innerHTML = `
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>User ID</th>
+              <th class="text-end">Points</th>
+              <th>Waktu</th>
+              <th>Doc ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${logs.map(l => `
+              <tr>
+                <td>${actionBadge(l.action)}</td>
+                <td><code class="small">${AdminAPI.escapeHtml((l.userId || '-').slice(0, 16))}...</code></td>
+                <td class="text-end ${l.points > 0 ? 'text-success' : 'text-muted'}">
+                  ${l.points ? '+' + AdminAPI.fmtNumber(l.points.toFixed(4)) : '-'}
+                </td>
+                <td class="small text-muted">${AdminAPI.fmtDate(l.timestamp)}</td>
+                <td><code class="small text-muted">${AdminAPI.escapeHtml((l.id || '').slice(0, 10))}</code></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  async function loadLogs() {
+    const el = document.getElementById('logsTable');
+    el.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
+
+    const res = await AdminAPI.getAuditLogs();
+    if (!res.success) {
+      el.innerHTML = `<div class="alert alert-danger m-3">${AdminAPI.escapeHtml(res.message || 'Error')}</div>`;
+      return;
+    }
+
+    allLogs = res.data || [];
+    renderStats(allLogs);
+    renderTable(allLogs);
+  }
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    if (!q) return renderTable(allLogs);
+    const filtered = allLogs.filter(l =>
+      (l.action || '').toLowerCase().includes(q) ||
+      (l.userId || '').toLowerCase().includes(q) ||
+      (l.id || '').toLowerCase().includes(q)
+    );
+    renderTable(filtered);
+  });
+
+  document.getElementById('refreshBtn').onclick = () => {
+    loadLogs();
+    AdminAPI.toast('Data diperbarui', 'success');
+  };
+
+  await loadLogs();
+})();
+</script>
+</body>
+</html>
