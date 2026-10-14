@@ -1120,15 +1120,15 @@ private fun MiningRoomTab(
             }
         }
 
-        // 6 Slots in Rack Room — Grid 2x3 (M36 + M37: locked by unlock)
+        // 6 Slots in Rack Room — Grid 3x2 Landscape (M36 + M37: locked by unlock)
         val occupiedMap = placedMiners.associateBy { it.placedSlotIndex }
-        items(3) { rowIndex ->
+        items(2) { rowIndex ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                for (colIndex in 0 until 2) {
-                    val slotIndex = rowIndex * 2 + colIndex
+                for (colIndex in 0 until 3) {
+                    val slotIndex = rowIndex * 3 + colIndex
                     val isLocked = slotIndex >= unlockedSlots
                     Box(modifier = Modifier.weight(1f)) {
                         if (isLocked) {
@@ -1219,43 +1219,87 @@ private fun LockedSlotCard(
         else -> 500
     }
 
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1F2E)),
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(1f)
+            .height(140.dp)
+            .clip(RoundedCornerShape(14.dp))
             .clickable { onClick() }
     ) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(
+                    Brush.linearGradient(
+                        listOf(
+                            Color(0xFF1A1F2E),
+                            Color(0xFF0F172A)
+                        )
+                    )
+                )
+                .border(
+                    width = 1.5.dp,
+                    color = Color(0xFF334155),
+                    shape = RoundedCornerShape(14.dp)
+                )
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
+                .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("🔒", fontSize = 32.sp)
-            Spacer(modifier = Modifier.height(6.dp))
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF334155).copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("🔒", fontSize = 20.sp)
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Text(
-                text = LanguageManager.translate("slot_locked", currentLanguage, "Terkunci"),
-                fontSize = 10.sp,
+                text = LanguageManager.translate("slot_locked", currentLanguage, "TERKUNCI"),
+                fontSize = 9.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF94A3B8)
+                color = Color(0xFF94A3B8),
+                letterSpacing = 1.sp
             )
-            Spacer(modifier = Modifier.height(4.dp))
+
+            Spacer(modifier = Modifier.height(6.dp))
+
             Surface(
                 color = RetroGold,
-                shape = RoundedCornerShape(6.dp)
+                shape = RoundedCornerShape(8.dp)
             ) {
-                RtpAmount(
-                    amount = "${GlobalPointsManager.formatRtp(price)} RTP",
-                    fontSize = 10.sp,
-                    iconSize = 12.dp,
-                    fontWeight = FontWeight.Black,
-                    color = Color.Black,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-                )
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("💎", fontSize = 10.sp)
+                    Spacer(modifier = Modifier.width(3.dp))
+                    Text(
+                        "${GlobalPointsManager.formatRtp(price)}",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.Black
+                    )
+                }
             }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                "Tap untuk buka",
+                fontSize = 8.sp,
+                color = Color(0xFF64748B),
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
@@ -1270,220 +1314,147 @@ private fun RackSlotItemCard(
 ) {
     val isOccupied = miner != null
 
+    // Tier color coding
+    val tierColor = when (miner?.tier?.uppercase()) {
+        "COMMON" -> Color(0xFF94A3B8)
+        "RARE" -> Color(0xFF3B82F6)
+        "EPIC" -> Color(0xFFA855F7)
+        "LEGENDARY" -> Color(0xFFFBBF24)
+        "MYTHIC" -> Color(0xFFEF4444)
+        else -> Color(0xFF6B7280)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(92.dp)
+            .height(150.dp)
             .clip(RoundedCornerShape(14.dp))
+            .clickable { if (isOccupied) onUnplace() else onAssign() }
     ) {
-        // ==== BACKGROUND + BORDER ====
-        if (isOccupied) {
-            // Terisi: gradient emerald gelap + border gold
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(
-                        Brush.linearGradient(
-                            listOf(
-                                Color(0xFF0A2E1F),
-                                Color(0xFF0F172A),
-                                Color(0xFF020617)
-                            )
+        // ==== BACKGROUND ====
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(
+                    Brush.linearGradient(
+                        if (isOccupied) listOf(
+                            tierColor.copy(alpha = 0.15f),
+                            Color(0xFF0F172A),
+                            Color(0xFF020617)
+                        ) else listOf(
+                            Color(0xFF0F172A),
+                            Color(0xFF020617)
                         )
                     )
-                    .border(
-                        width = 1.5.dp,
-                        color = RetroGold.copy(alpha = 0.7f),
-                        shape = RoundedCornerShape(14.dp)
-                    )
-            )
-        } else {
-            // Kosong: gradient navy + border emerald dashed
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(
-                        Brush.linearGradient(
-                            listOf(
-                                Color(0xFF0F172A),
-                                Color(0xFF020617)
-                            )
-                        )
-                    )
-                    .border(
-                        width = 1.dp,
-                        color = EmeraldPrimary.copy(alpha = 0.4f),
-                        shape = RoundedCornerShape(14.dp)
-                    )
-            )
-        }
+                )
+                .border(
+                    width = if (isOccupied) 1.5.dp else 1.dp,
+                    color = if (isOccupied) tierColor.copy(alpha = 0.7f) else EmeraldPrimary.copy(alpha = 0.4f),
+                    shape = RoundedCornerShape(14.dp)
+                )
+        )
 
-        // ==== CONTENT ====
         if (isOccupied) {
-            Row(
+            // ==== OCCUPIED: Portrait layout ====
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 10.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // ==== ICON MINER ====
+                // Icon + status dot
                 Box(
                     modifier = Modifier
-                        .size(56.dp)
+                        .size(52.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(Color(0xFF0F0805))
-                        .border(
-                            width = 1.5.dp,
-                            color = RetroGold.copy(alpha = 0.6f),
-                            shape = RoundedCornerShape(12.dp)
-                        ),
+                        .border(1.5.dp, tierColor.copy(alpha = 0.6f), RoundedCornerShape(12.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.micro_chip),
-                        contentDescription = miner!!.name,
-                        modifier = Modifier.size(34.dp)
-                    )
-                    // LED indicator
+                    Text(miner!!.iconEmoji, fontSize = 26.sp)
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .padding(4.dp)
+                            .padding(3.dp)
                             .size(7.dp)
                             .clip(CircleShape)
-                            .background(RetroGold.copy(alpha = pulseAlpha))
+                            .background(tierColor.copy(alpha = pulseAlpha))
                     )
                 }
 
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(Modifier.height(6.dp))
 
-                // ==== INFO ====
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.Center
+                Text(
+                    miner.name,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(Modifier.height(4.dp))
+
+                Surface(
+                    color = tierColor.copy(alpha = 0.2f),
+                    shape = RoundedCornerShape(6.dp)
                 ) {
-                    // Baris 1: Nama + tier
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = miner.name,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            color = RetroGold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f, fill = false)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        // Tier badge
-                        Surface(
-                            color = when (miner.tier.uppercase()) {
-                                "COMMON" -> Color(0xFF64748B).copy(alpha = 0.3f)
-                                "RARE" -> Color(0xFF3B82F6).copy(alpha = 0.3f)
-                                "EPIC" -> Color(0xFFA855F7).copy(alpha = 0.3f)
-                                "LEGENDARY" -> Color(0xFFF59E0B).copy(alpha = 0.3f)
-                                "MYTHIC" -> Color(0xFFEF4444).copy(alpha = 0.3f)
-                                else -> Color(0xFF64748B).copy(alpha = 0.3f)
-                            },
-                            shape = RoundedCornerShape(4.dp)
-                        ) {
-                            Text(
-                                text = miner.tier.take(4).uppercase(),
-                                fontSize = 7.sp,
-                                fontWeight = FontWeight.Black,
-                                color = when (miner.tier.uppercase()) {
-                                    "COMMON" -> Color(0xFF94A3B8)
-                                    "RARE" -> Color(0xFF60A5FA)
-                                    "EPIC" -> Color(0xFFC084FC)
-                                    "LEGENDARY" -> Color(0xFFFBBF24)
-                                    "MYTHIC" -> Color(0xFFF87171)
-                                    else -> Color(0xFF94A3B8)
-                                },
-                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    // Baris 2: Power + Rate
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = "⚡${miner.powerGhs} GH/s",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = RetroAmber
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "💰+${String.format(Locale.US, "%.4f", miner.pointsPerMinute)}/m",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = EmeraldLight
-                        )
-                    }
+                    Text(
+                        miner.tier,
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = tierColor,
+                        letterSpacing = 0.5.sp,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                    )
                 }
 
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(Modifier.weight(1f))
 
-                // ==== TOMBOL REMOVE (KECIL) ====
-                Box(
-                    modifier = Modifier
-                        .size(26.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFEF4444).copy(alpha = 0.15f))
-                        .border(1.dp, Color(0xFFEF4444).copy(alpha = 0.5f), CircleShape)
-                        .clickable { onUnplace() },
-                    contentAlignment = Alignment.Center
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Remove",
-                        tint = Color(0xFFEF4444),
-                        modifier = Modifier.size(14.dp)
-                    )
+                    Column {
+                        Text("\u26A1", fontSize = 9.sp)
+                        Text(
+                            "${miner.powerGhs.toInt()}",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text("\uD83D\uDCB0", fontSize = 9.sp)
+                        Text(
+                            String.format("%.2f", miner.pointsPerMinute * 1440),
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = RetroGold
+                        )
+                    }
                 }
             }
         } else {
-            // ==== EMPTY SLOT ====
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable { onAssign() }
-                    .padding(horizontal = 10.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+            // ==== EMPTY: Tap untuk tambah ====
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                // Icon +
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(EmeraldPrimary.copy(alpha = 0.15f))
-                        .border(1.dp, EmeraldPrimary.copy(alpha = 0.4f), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = null,
-                        tint = EmeraldPrimary,
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Slot ${slotIndex + 1}",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFFCBD5E1)
-                    )
-                    Text(
-                        text = "Tap untuk isi",
-                        fontSize = 10.sp,
-                        color = EmeraldPrimary.copy(alpha = 0.7f)
-                    )
-                }
+                Text("\u2795", fontSize = 28.sp, color = EmeraldPrimary.copy(alpha = 0.6f))
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    "Tambah",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = EmeraldPrimary.copy(alpha = 0.7f)
+                )
+                Text(
+                    "Miner",
+                    fontSize = 9.sp,
+                    color = Color(0xFF64748B)
+                )
             }
         }
     }
