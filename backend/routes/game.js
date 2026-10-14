@@ -136,6 +136,39 @@ global.__resetGameConfigCache = () => {
     console.log('[CONFIG] Cache reset');
 };
 
+// ============================================================
+// THERMAL CONFIG — configurable via admin panel
+// ============================================================
+const DEFAULT_THERMAL_CONFIG = {
+    pauseTemp: 60,
+    resumeTemp: 55,
+    alertTemp: 45,
+    criticalTemp: 50,
+    chargingBoost: 1.2,
+    minBatteryForMining: 5,
+    alertCooldownMs: 10 * 60 * 1000,   // 10 menit
+};
+
+async function getThermalConfig() {
+    try {
+        // Baca dari app_config/game_config (shared dengan admin PUT /game-config)
+        const gameConfig = await getGameConfig();
+        const config = gameConfig || {};
+        return {
+            pauseTemp: Number(config.pauseTemp) || DEFAULT_THERMAL_CONFIG.pauseTemp,
+            resumeTemp: Number(config.resumeTemp) || DEFAULT_THERMAL_CONFIG.resumeTemp,
+            alertTemp: Number(config.alertTemp) || DEFAULT_THERMAL_CONFIG.alertTemp,
+            criticalTemp: Number(config.criticalTemp) || DEFAULT_THERMAL_CONFIG.criticalTemp,
+            chargingBoost: Number(config.chargingBoost) || DEFAULT_THERMAL_CONFIG.chargingBoost,
+            minBatteryForMining: Number(config.minBatteryForMining) || DEFAULT_THERMAL_CONFIG.minBatteryForMining,
+            alertCooldownMs: Number(config.alertCooldownMs) || DEFAULT_THERMAL_CONFIG.alertCooldownMs,
+        };
+    } catch (e) {
+        console.error('[THERMAL-CONFIG] Error:', e.message);
+        return { ...DEFAULT_THERMAL_CONFIG };
+    }
+}
+
 function calculateFinalRate(baseRate, room, placedMiners) {
     // 1. Bonus permanen dari miner yang placed
     let permanentBonusPct = 0;
@@ -1627,16 +1660,19 @@ router.post('/miners/unlock', verifyFirebaseToken, checkFraud, async (req, res) 
  *
  * Return: 0.0 - 1.2
  */
-function calculateHashrateFactor(temp, level, isCharging) {
-    // 1. Temperature factor
+function calculateHashrateFactor(temp, level, isCharging, config = DEFAULT_THERMAL_CONFIG) {
+    const pauseTemp = config.pauseTemp || 60;
+    const chargingBoost = config.chargingBoost || 1.2;
+
+    // 1. Temperature factor (relative to pauseTemp)
     let tempFactor;
-    if (temp >= 60) tempFactor = 0.00;       // pause
-    else if (temp >= 55) tempFactor = 0.15;
-    else if (temp >= 50) tempFactor = 0.30;
-    else if (temp >= 45) tempFactor = 0.50;
-    else if (temp >= 40) tempFactor = 0.70;
-    else if (temp >= 35) tempFactor = 0.85;
-    else if (temp >= 30) tempFactor = 0.95;
+    if (temp >= pauseTemp) tempFactor = 0.00;
+    else if (temp >= pauseTemp - 5) tempFactor = 0.15;
+    else if (temp >= pauseTemp - 10) tempFactor = 0.30;
+    else if (temp >= pauseTemp - 15) tempFactor = 0.50;
+    else if (temp >= pauseTemp - 20) tempFactor = 0.70;
+    else if (temp >= pauseTemp - 25) tempFactor = 0.85;
+    else if (temp >= pauseTemp - 30) tempFactor = 0.95;
     else tempFactor = 1.00;
 
     // 2. Battery level factor
@@ -1649,12 +1685,12 @@ function calculateHashrateFactor(temp, level, isCharging) {
     else batteryFactor = 0.3;
 
     // 3. Charging bonus
-    let chargingBonus = 1.0;
-    if (isCharging && temp < 40 && temp > 0) {
-        chargingBonus = 1.2;
+    let chargingBonusVal = 1.0;
+    if (isCharging && temp < (pauseTemp - 20) && temp > 0) {
+        chargingBonusVal = chargingBoost;
     }
 
-    const finalFactor = tempFactor * batteryFactor * chargingBonus;
+    const finalFactor = tempFactor * batteryFactor * chargingBonusVal;
     return Math.round(finalFactor * 100) / 100;
 }
 
@@ -1664,16 +1700,28 @@ function calculateHashrateFactor(temp, level, isCharging) {
  */
 async function shouldPauseMining(uid) {
     try {
-        const stateDoc = await db.collection('game_states').doc(uid).get();
+        const [stateDoc, config] = await Promise.all([
+            db.collection('game_states').doc(uid).get(),
+            getThermalConfig()
+        ]);
         const state = stateDoc.data() || {};
         const temp = state.thermal?.phone_temp || 0;
+        const level = state.thermal?.battery_level || 100;
+        const isCharging = state.thermal?.is_charging || false;
         const currentlyPaused = state.miningPaused === true;
 
-        if (currentlyPaused && temp > 0 && temp < 55) {
-            return { pause: false, resume: true, temp };
+        // Cek battery critical (auto-pause kalau < minBatteryForMining dan tidak charging)
+        const batteryCritical = level < config.minBatteryForMining && !isCharging;
+
+        // Hysteresis: pause @ pauseTemp, resume @ resumeTemp
+        if (currentlyPaused && temp > 0 && temp < config.resumeTemp && !batteryCritical) {
+            return { pause: false, resume: true, temp, reason: 'temp_normal' };
         }
-        if (temp >= 60) {
-            return { pause: true, temp };
+        if (temp >= config.pauseTemp) {
+            return { pause: true, temp, reason: 'temp_critical' };
+        }
+        if (batteryCritical) {
+            return { pause: true, temp, reason: 'battery_critical' };
         }
         return { pause: currentlyPaused, temp };
     } catch (e) {
@@ -1722,7 +1770,10 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
         // POWER-AWARE HASHRATE — multi-factor
         // (temp + battery level + charging state)
         // ============================================================
-        let hashrateFactor = calculateHashrateFactor(temp, level, !!is_charging);
+        // Baca config thermal (dari Firestore) — sekali per request
+        const thermalConfig = await getThermalConfig();
+
+        let hashrateFactor = calculateHashrateFactor(temp, level, !!is_charging, thermalConfig);
 
         // ============================================================
         // AUTO-PAUSE HYSTERESIS: pause @ 60°C, resume @ 55°C
@@ -1736,7 +1787,7 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
         const state = stateDoc.data() || {};
         const wasPaused = state.miningPaused === true;
 
-        if (temp >= 60) {
+        if (temp >= thermalConfig.pauseTemp) {
             if (!wasPaused) {
                 await db.collection('game_states').doc(uid).set({
                     miningPaused: true,
@@ -1749,7 +1800,7 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
                     await db.collection('notifications').add({
                         userId: uid,
                         title: '⛔ Mining Dijeda — HP Terlalu Panas',
-                        message: `Suhu HP ${temp.toFixed(1)}°C. Mining dijeda otomatis sampai dingin (< 55°C).`,
+                        message: `Suhu HP ${temp.toFixed(1)}°C. Mining dijeda otomatis sampai dingin (< ${thermalConfig.resumeTemp}°C).`,
                         type: 'THERMAL_PAUSE',
                         severity: 'CRITICAL',
                         timestamp: Date.now(),
@@ -1780,7 +1831,7 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
 
             miningPaused = true;
             hashrateFactor = 0;
-        } else if (temp > 0 && temp < 55) {
+        } else if (temp > 0 && temp < thermalConfig.resumeTemp) {
             // OPTIMIZATION: pakai `wasPaused` dari atas — tidak get lagi
             if (wasPaused) {
                 await db.collection('game_states').doc(uid).set({
@@ -1813,15 +1864,15 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
         // Rate limit: max 1 notif per 10 menit
         // ============================================================
         let alertSent = false;
-        if (temp >= 45) {
+        if (temp >= thermalConfig.alertTemp) {
             try {
                 const userDoc = await db.collection('users').doc(uid).get();
                 const userData = userDoc.data() || {};
                 const lastAlertAt = userData.lastThermalAlertAt || 0;
                 const now = Date.now();
 
-                if (now - lastAlertAt > 10 * 60 * 1000) {
-                    const isCritical = temp >= 50;
+                if (now - lastAlertAt > thermalConfig.alertCooldownMs) {
+                    const isCritical = temp >= thermalConfig.criticalTemp;
 
                     // Buat notifikasi in-app
                     await db.collection('notifications').add({
