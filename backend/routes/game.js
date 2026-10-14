@@ -512,6 +512,20 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
         const { uid } = req.firebaseUser;
         anomaly.trackActivity(uid, 'CLAIM');
 
+        // ============================================================
+        // CHECK: Mining pause karena suhu tinggi?
+        // ============================================================
+        const pauseCheck = await shouldPauseMining(uid);
+        if (pauseCheck.pause) {
+            return res.status(423).json({
+                success: false,
+                code: 'MINING_PAUSED',
+                paused: true,
+                temp: pauseCheck.temp,
+                message: `HP terlalu panas (${pauseCheck.temp.toFixed(1)}°C). Mining dijeda sampai dingin (< 55°C).`
+            });
+        }
+
         const roomRef = db.collection('game_rooms').doc(uid);
         const roomDoc = await roomRef.get();
         const room = roomDoc.exists ? roomDoc.data() : {};
@@ -1600,6 +1614,74 @@ router.post('/miners/unlock', verifyFirebaseToken, checkFraud, async (req, res) 
     }
 });
 
+
+// ============================================================
+// POWER-AWARE HASHRATE + HYSTERESIS PAUSE
+// ============================================================
+
+/**
+ * Hitung hashrate factor berdasarkan multi-factor:
+ * - Suhu baterai (trigger utama)
+ * - Battery level (hemat daya kalau low)
+ * - Charging state (boost 20% kalau charging + suhu normal)
+ *
+ * Return: 0.0 - 1.2
+ */
+function calculateHashrateFactor(temp, level, isCharging) {
+    // 1. Temperature factor
+    let tempFactor;
+    if (temp >= 60) tempFactor = 0.00;       // pause
+    else if (temp >= 55) tempFactor = 0.15;
+    else if (temp >= 50) tempFactor = 0.30;
+    else if (temp >= 45) tempFactor = 0.50;
+    else if (temp >= 40) tempFactor = 0.70;
+    else if (temp >= 35) tempFactor = 0.85;
+    else if (temp >= 30) tempFactor = 0.95;
+    else tempFactor = 1.00;
+
+    // 2. Battery level factor
+    let batteryFactor;
+    if (isCharging) batteryFactor = 1.0;
+    else if (level >= 80) batteryFactor = 1.0;
+    else if (level >= 50) batteryFactor = 0.9;
+    else if (level >= 30) batteryFactor = 0.7;
+    else if (level >= 15) batteryFactor = 0.5;
+    else batteryFactor = 0.3;
+
+    // 3. Charging bonus
+    let chargingBonus = 1.0;
+    if (isCharging && temp < 40 && temp > 0) {
+        chargingBonus = 1.2;
+    }
+
+    const finalFactor = tempFactor * batteryFactor * chargingBonus;
+    return Math.round(finalFactor * 100) / 100;
+}
+
+/**
+ * Cek apakah mining harus di-pause.
+ * Hysteresis: pause @ 60°C, resume @ 55°C.
+ */
+async function shouldPauseMining(uid) {
+    try {
+        const stateDoc = await db.collection('game_states').doc(uid).get();
+        const state = stateDoc.data() || {};
+        const temp = state.thermal?.phone_temp || 0;
+        const currentlyPaused = state.miningPaused === true;
+
+        if (currentlyPaused && temp > 0 && temp < 55) {
+            return { pause: false, resume: true, temp };
+        }
+        if (temp >= 60) {
+            return { pause: true, temp };
+        }
+        return { pause: currentlyPaused, temp };
+    } catch (e) {
+        console.error('[shouldPauseMining] Error:', e.message);
+        return { pause: false, temp: 0 };
+    }
+}
+
 // ============================================================
 // THERMAL MONITORING (battery temp dari HP user)
 // ============================================================
@@ -1636,13 +1718,96 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
             createdAt: now
         });
 
-        // Anti-fraud: suhu tinggi + hashrate tinggi = suspicious
-        const hashrateFactor =
-            temp >= 50 ? 0.30 :
-            temp >= 45 ? 0.50 :
-            temp >= 40 ? 0.70 :
-            temp >= 35 ? 0.85 :
-            temp >= 30 ? 0.95 : 1.00;
+        // ============================================================
+        // POWER-AWARE HASHRATE — multi-factor
+        // (temp + battery level + charging state)
+        // ============================================================
+        let hashrateFactor = calculateHashrateFactor(temp, level, !!is_charging);
+
+        // ============================================================
+        // AUTO-PAUSE HYSTERESIS: pause @ 60°C, resume @ 55°C
+        // ============================================================
+        let miningPaused = false;
+        let pauseChanged = false;
+
+        if (temp >= 60) {
+            const stateDoc = await db.collection('game_states').doc(uid).get();
+            const state = stateDoc.data() || {};
+            const wasPaused = state.miningPaused === true;
+
+            if (!wasPaused) {
+                await db.collection('game_states').doc(uid).set({
+                    miningPaused: true,
+                    miningPausedAt: Date.now(),
+                    miningPausedReason: `Suhu ${temp.toFixed(1)}°C`,
+                    miningPausedTemp: temp
+                }, { merge: true });
+
+                try {
+                    await db.collection('notifications').add({
+                        userId: uid,
+                        title: '⛔ Mining Dijeda — HP Terlalu Panas',
+                        message: `Suhu HP ${temp.toFixed(1)}°C. Mining dijeda otomatis sampai dingin (< 55°C).`,
+                        type: 'THERMAL_PAUSE',
+                        severity: 'CRITICAL',
+                        timestamp: Date.now(),
+                        createdAt: new Date().toISOString(),
+                        read: false
+                    });
+
+                    const userDoc = await db.collection('users').doc(uid).get();
+                    const userData = userDoc.data() || {};
+                    if (userData.fcmToken) {
+                        try {
+                            const fcmService = require('../services/fcm');
+                            await fcmService.sendBatchPush(
+                                [userData.fcmToken],
+                                '⛔ Mining Dijeda — HP Panas',
+                                `Suhu ${temp.toFixed(1)}°C. Mining otomatis dijeda sampai dingin.`,
+                                { type: 'THERMAL_PAUSE', severity: 'CRITICAL' }
+                            );
+                        } catch (e) {}
+                    }
+                } catch (e) {
+                    console.error('[THERMAL-PAUSE] Notif error:', e.message);
+                }
+
+                pauseChanged = true;
+                console.log('[THERMAL-PAUSE] Mining paused for', uid, 'temp:', temp);
+            }
+
+            miningPaused = true;
+            hashrateFactor = 0;
+        } else if (temp > 0 && temp < 55) {
+            const stateDoc = await db.collection('game_states').doc(uid).get();
+            const state = stateDoc.data() || {};
+            const wasPaused = state.miningPaused === true;
+
+            if (wasPaused) {
+                await db.collection('game_states').doc(uid).set({
+                    miningPaused: false,
+                    miningResumedAt: Date.now()
+                }, { merge: true });
+
+                try {
+                    await db.collection('notifications').add({
+                        userId: uid,
+                        title: '✅ Mining Dilanjutkan',
+                        message: `Suhu HP sudah turun (${temp.toFixed(1)}°C). Mining berjalan kembali.`,
+                        type: 'THERMAL_RESUME',
+                        severity: 'INFO',
+                        timestamp: Date.now(),
+                        createdAt: new Date().toISOString(),
+                        read: false
+                    });
+                } catch (e) {}
+
+                pauseChanged = true;
+                console.log('[THERMAL-RESUME] Mining resumed for', uid, 'temp:', temp);
+            }
+
+            miningPaused = false;
+        }
 
         // ============================================================
         // ALERT: Kirim notifikasi kalau suhu kritis (>= 45°C)
@@ -1710,6 +1875,8 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
                 is_charging: !!is_charging
             },
             hashrate_factor: hashrateFactor,
+            mining_paused: miningPaused,
+            pause_changed: pauseChanged,
             alert_sent: alertSent,
             timestamp: Date.now()
         });
