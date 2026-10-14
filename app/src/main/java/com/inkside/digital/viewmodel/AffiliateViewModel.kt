@@ -1549,6 +1549,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     private val _miningPaused = MutableStateFlow(false)
     val miningPaused: StateFlow<Boolean> = _miningPaused.asStateFlow()
 
+    private val _pauseReason = MutableStateFlow("")
+    val pauseReason: StateFlow<String> = _pauseReason.asStateFlow()
+
     // Alert dialog "HP terlalu panas, mining dijeda"
     val showThermalPauseAlert = androidx.compose.runtime.mutableStateOf(false)
 
@@ -1679,9 +1682,10 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 result.getOrNull()?.let { json ->
                     // Parse mining_paused + hashrate_factor dari backend
                     _miningPaused.value = json.optBoolean("mining_paused", false)
+                    _pauseReason.value = json.optString("pause_reason", "")
                     val factor = json.optDouble("hashrate_factor", 1.0)
                     _hashrateFactor.value = factor.toFloat()
-                    android.util.Log.d("Thermal", "Sync OK: paused=${_miningPaused.value}, factor=$factor")
+                    android.util.Log.d("Thermal", "Sync OK: paused=${_miningPaused.value}, reason=${_pauseReason.value}, factor=$factor")
                 } ?: run {
                     android.util.Log.w("Thermal", "Sync failed: ${result.exceptionOrNull()?.message}")
                 }
