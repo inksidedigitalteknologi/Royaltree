@@ -12,6 +12,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.inkside.digital.MainActivity
 import com.inkside.digital.R
+import com.inkside.digital.data.network.ApiClient
 
 class RoyaltreeFcmService : FirebaseMessagingService() {
 
@@ -33,6 +34,19 @@ class RoyaltreeFcmService : FirebaseMessagingService() {
 
         val data = remoteMessage.data
         val type = data["type"] ?: "GENERAL"
+        val configType = data["configType"] ?: ""
+
+        // ============================================================
+        // SILENT PUSH: CONFIG_REFRESH — tidak tampil notif UI
+        // Trigger re-fetch config di ViewModel
+        // ============================================================
+        if (type == "CONFIG_REFRESH") {
+            Log.d(TAG, "🔄 Config refresh: $configType")
+            ApiClient.triggerConfigRefresh(configType)
+            return  // Tidak tampil notif
+        }
+
+        // Notif biasa (thermal, banned, broadcast, dll)
         val title = remoteMessage.notification?.title
             ?: data["title"]
             ?: "Royaltree"

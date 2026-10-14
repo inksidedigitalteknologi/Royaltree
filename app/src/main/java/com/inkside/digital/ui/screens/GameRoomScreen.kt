@@ -173,6 +173,7 @@ fun GameRoomScreen(
     androidx.compose.runtime.LaunchedEffect(Unit) {
         viewModel.startThermalMonitoring()
         viewModel.fetchUserRegion()
+        viewModel.startConfigRefreshObserver()   // ← Observe FCM config refresh
     }
 
     DisposableEffect(Unit) {
