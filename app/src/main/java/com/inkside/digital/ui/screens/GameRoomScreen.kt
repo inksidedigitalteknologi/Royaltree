@@ -1037,7 +1037,6 @@ private fun MiningRoomTab(
                         }
                     }
                 }
-            }
 
         // ==== Banner AdMob ====
         item {
@@ -1156,8 +1155,9 @@ private fun MiningRoomTab(
                 }
             }
         }
-        }
+}
 
+}
 @Composable
 private fun LockedSlotCard(
     slotIndex: Int,
