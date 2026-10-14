@@ -11,6 +11,10 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 
+// Validation
+const { validate } = require('../middleware/validate');
+const { adminLoginSchema } = require('../schemas');
+
 const db = admin.firestore();
 
 // ============================================================
@@ -1028,7 +1032,7 @@ router.put('/rates', checkAdmin, async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', validate(adminLoginSchema), async (req, res) => {
     try {
         const { password, apiKey } = req.body;
         const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'royaltree_admin_2026';

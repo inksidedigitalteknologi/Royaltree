@@ -9,6 +9,10 @@ const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 const { checkFraud, adCooldown } = require('../middleware/antiFraud');
 const anomaly = require('../services/anomaly');
 
+// Validation
+const { validate } = require('../middleware/validate');
+const { adRewardSchema } = require('../schemas');
+
 const db = admin.firestore();
 
 // Reward per video (bisa diubah admin)
@@ -105,7 +109,7 @@ router.get('/status', verifyFirebaseToken, async (req, res) => {
 // Client kirim setelah user selesai nonton
 // Body: { vendor, transactionId, customData? }
 // ============================================================
-router.post('/reward', verifyFirebaseToken, checkFraud, async (req, res) => {
+router.post('/reward', verifyFirebaseToken, validate(adRewardSchema), checkFraud, async (req, res) => {
     try {
         const { uid } = req.firebaseUser;
         anomaly.trackActivity(uid, 'AD_WATCH');

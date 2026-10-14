@@ -9,6 +9,10 @@ const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 const { checkFraud } = require('../middleware/antiFraud');
 const { createNotification } = require('../utils/notifications');
 
+// Validation
+const { validate } = require('../middleware/validate');
+const { locationSchema, placeMinerSchema, purchaseMinerSchema, thermalSchema } = require('../schemas');
+
 const db = admin.firestore();
 
 // ============================================================
@@ -713,7 +717,7 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
 // Beli miner item (potong points)
 // Body: { minerId, tier, name, pricePoints, powerGhs, pointsPerMinute, iconEmoji }
 // ============================================================
-router.post('/mining/buy', verifyFirebaseToken, checkFraud, async (req, res) => {
+router.post('/mining/buy', verifyFirebaseToken, validate(purchaseMinerSchema), checkFraud, async (req, res) => {
     try {
         const { uid } = req.firebaseUser;
         const { minerId, catalogId } = req.body;
@@ -933,7 +937,7 @@ router.get('/mining/rate-info', verifyFirebaseToken, async (req, res) => {
 // Pasang miner di slot
 // Body: { minerId, slotIndex }
 // ============================================================
-router.post('/mining/place', verifyFirebaseToken, async (req, res) => {
+router.post('/mining/place', verifyFirebaseToken, validate(placeMinerSchema), async (req, res) => {
     try {
         const { uid } = req.firebaseUser;
         const { minerId, slotIndex } = req.body;
@@ -1780,7 +1784,7 @@ async function shouldPauseMining(uid) {
 // ============================================================
 // THERMAL MONITORING (battery temp dari HP user)
 // ============================================================
-router.post('/thermal', verifyFirebaseToken, async (req, res) => {
+router.post('/thermal', verifyFirebaseToken, validate(thermalSchema), async (req, res) => {
     try {
         const uid = req.user.uid;
         const { phone_temp, battery_level, is_charging } = req.body || {};
@@ -2011,7 +2015,7 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
 // ============================================================
 // LOCATION (region detection dari GPS user)
 // ============================================================
-router.post('/location', verifyFirebaseToken, async (req, res) => {
+router.post('/location', verifyFirebaseToken, validate(locationSchema), async (req, res) => {
     try {
         const uid = req.user.uid;
         const { region, latitude, longitude } = req.body || {};
