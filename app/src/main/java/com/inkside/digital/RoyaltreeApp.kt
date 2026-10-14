@@ -49,7 +49,8 @@ class RoyaltreeApp : Application() {
             ApiClient.init(this)
             Log.d(TAG, "✅ ApiClient initialized")
 
-            // Analytics — pastikan collection enabled (release only)
+            // Analytics — init helper + enabled (release only)
+            AnalyticsHelper.init(this)
             val analytics = com.google.firebase.analytics.FirebaseAnalytics.getInstance(this)
             analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG)
             Log.d(TAG, "✅ Analytics: ${if (BuildConfig.DEBUG) "OFF (debug)" else "ON (release)"}")
