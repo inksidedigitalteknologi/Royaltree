@@ -12,7 +12,23 @@ const db = admin.firestore();
 
 // Reward per video (bisa diubah admin)
 const DEFAULT_REWARD_POINTS = 50;   // legacy fallback
-const MAX_ADS_PER_DAY = 10;
+const DEFAULT_MAX_ADS_PER_DAY = 20; // fallback kalau config Firestore kosong
+
+/**
+ * Baca maxAdsPerDay dari Firestore (system/ad_config).
+ * Admin bisa ubah kapan saja via admin panel → tanpa deploy ulang.
+ */
+async function getMaxAdsPerDay() {
+    try {
+        const doc = await db.collection('system').doc('ad_config').get();
+        const config = doc.exists ? doc.data() : {};
+        const val = parseInt(config.maxAdsPerDay);
+        return Number.isFinite(val) && val > 0 ? val : DEFAULT_MAX_ADS_PER_DAY;
+    } catch (e) {
+        console.error('[ADS/CONFIG] Error baca maxAdsPerDay:', e.message);
+        return DEFAULT_MAX_ADS_PER_DAY;
+    }
+}
 
 // ==== Reward random 2-5 RTP per iklan ====
 function getRandomReward() {
@@ -63,14 +79,15 @@ router.get('/status', verifyFirebaseToken, async (req, res) => {
             ? (userData.todayAdsWatched || 0)
             : 0;
 
-        const remaining = Math.max(0, MAX_ADS_PER_DAY - todayAdsWatched);
+        const maxAdsPerDay = await getMaxAdsPerDay();
+        const remaining = Math.max(0, maxAdsPerDay - todayAdsWatched);
         const canWatch = remaining > 0;
 
         return res.json({
             success: true,
             data: {
                 todayAdsWatched: todayAdsWatched,
-                maxAdsPerDay: MAX_ADS_PER_DAY,
+                maxAdsPerDay: maxAdsPerDay,
                 remaining: remaining,
                 canWatch: canWatch,
                 reason: canWatch ? 'ok' : 'limit',
@@ -105,17 +122,19 @@ router.post('/reward', verifyFirebaseToken, checkFraud, async (req, res) => {
         const userDoc = await userRef.get();
         const userData = userDoc.exists ? userDoc.data() : {};
 
-        // Cek batas harian
+        // Cek batas harian (baca dari config)
         const lastAdDate = userData.lastAdDate || '';
         const todayAdsWatched = lastAdDate === today
             ? (userData.todayAdsWatched || 0)
             : 0;
 
-        if (todayAdsWatched >= MAX_ADS_PER_DAY) {
-            console.error('[ADS/REWARD] 400: batas harian. todayAdsWatched=', todayAdsWatched, 'MAX=', MAX_ADS_PER_DAY);
+        const maxAdsPerDay = await getMaxAdsPerDay();
+
+        if (todayAdsWatched >= maxAdsPerDay) {
+            console.error('[ADS/REWARD] 400: batas harian. todayAdsWatched=', todayAdsWatched, 'MAX=', maxAdsPerDay);
             return res.status(400).json({
                 success: false,
-                message: 'Batas tonton video hari ini sudah tercapai.'
+                message: `Batas tonton video hari ini sudah tercapai (${maxAdsPerDay} video).`
             });
         }
 
