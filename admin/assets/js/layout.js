@@ -14,7 +14,8 @@
     { href: 'missions.html',    icon: 'flag',              label: 'Missions' },
     { href: 'campaigns.html',   icon: 'megaphone',         label: 'Campaigns' },
     { href: 'chat.html',        icon: 'chat-dots',         label: 'Chat' },
-    { href: 'broadcast.html',   icon: 'send',              label: 'Broadcast', badge: 'NEW' },
+    { href: 'broadcast.html',   icon: 'send',              label: 'Broadcast' },
+    { href: 'audit-logs.html',  icon: 'journal-text',      label: 'Audit Logs' },
     { href: 'config.html',      icon: 'gear',              label: 'Config' }
   ];
 
