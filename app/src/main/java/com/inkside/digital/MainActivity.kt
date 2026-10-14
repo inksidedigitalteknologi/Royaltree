@@ -38,6 +38,8 @@ import com.inkside.digital.data.repository.PeerContact
 import com.inkside.digital.data.repository.TransferResult
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.ui.components.AdBlockedDialog
+import com.inkside.digital.ui.components.BannedDialog
+import com.inkside.digital.data.network.ApiClient
 import com.inkside.digital.ui.components.AdRewardModal
 import com.inkside.digital.ui.components.AdminReviewModal
 import com.inkside.digital.ui.components.AppBottomNavigationBar
@@ -464,6 +466,21 @@ fun MainAffiliateApp(
                 if (detected) {
                     android.util.Log.w("MainActivity", "⚠️ AdGuard detected - trigger dialog")
                     adBlockedReason = "NO_FILL"
+                }
+            }
+    }
+
+    // ============ Observe Banned User State ============
+    // Bila ApiClient detect 403 USER_BANNED, trigger BannedDialog.
+    var bannedInfo by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf(ApiClient.bannedState)
+    }
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        androidx.compose.runtime.snapshotFlow { ApiClient.bannedState }
+            .collect { info: ApiClient.BannedInfo ->
+                if (info.banned) {
+                    android.util.Log.w("MainActivity", "🚫 User banned: ${info.reason}")
+                    bannedInfo = info
                 }
             }
     }
@@ -1226,6 +1243,19 @@ fun MainAffiliateAppContent(
             reason = adBlockedReason,
             onRetry = { onAdBlockedRetry() },
             onDismiss = { onAdBlockedDismiss() }
+        )
+    }
+
+    // === Banned User Dialog ===
+    if (bannedInfo.banned) {
+        BannedDialog(
+            bannedInfo = bannedInfo,
+            onLogout = {
+                android.util.Log.d("MainActivity", "🚫 User logout due to banned")
+                com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
+                ApiClient.resetBanned()
+                onLogout()
+            }
         )
     }
 
