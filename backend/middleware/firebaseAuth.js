@@ -4,6 +4,11 @@
 const { admin, db } = require('../config/firebase');
 
 async function verifyFirebaseToken(req, res, next) {
+    // Skip kalau sudah di-verify oleh verifyAuthAndBanCheck (server.js level)
+    if (req.firebaseUser && req.firebaseUser.uid) {
+        return next();
+    }
+
     const authHeader = req.headers['authorization'];
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
