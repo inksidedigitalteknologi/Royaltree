@@ -1786,7 +1786,7 @@ async function shouldPauseMining(uid) {
 // ============================================================
 router.post('/thermal', verifyFirebaseToken, validate(thermalSchema), async (req, res) => {
     try {
-        const uid = req.user.uid;
+        const uid = req.firebaseUser.uid;
         const { phone_temp, battery_level, is_charging } = req.body || {};
 
         // Validasi
@@ -2017,7 +2017,7 @@ router.post('/thermal', verifyFirebaseToken, validate(thermalSchema), async (req
 // ============================================================
 router.post('/location', verifyFirebaseToken, validate(locationSchema), async (req, res) => {
     try {
-        const uid = req.user.uid;
+        const uid = req.firebaseUser.uid;
         const { region, latitude, longitude } = req.body || {};
 
         const lat = Number(latitude);
