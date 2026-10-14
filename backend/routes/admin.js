@@ -570,11 +570,20 @@ router.post('/notifications/broadcast', checkAdmin, async (req, res) => {
 // ============================================================
 router.post('/system/maintenance', checkAdmin, async (req, res) => {
     try {
-        const { enabled } = req.body;
-        await db.collection('system').doc('config').set({
+        const { enabled, message } = req.body;
+        const updates = {
             maintenanceMode: !!enabled,
             updatedAt: new Date().toISOString()
-        }, { merge: true });
+        };
+        if (message !== undefined) updates.maintenanceMessage = String(message);
+
+        await db.collection('system').doc('config').set(updates, { merge: true });
+
+        // Broadcast config refresh
+        broadcastConfigRefresh('maintenance').catch(e =>
+            console.error('[MAINTENANCE] Broadcast error:', e.message)
+        );
+
         res.json({ success: true, message: `Maintenance mode ${enabled ? 'ON' : 'OFF'}` });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });

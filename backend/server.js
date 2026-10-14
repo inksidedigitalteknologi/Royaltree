@@ -83,15 +83,33 @@ function authenticateToken(req, res, next) {
 const { createNotification } = require('./utils/notifications');
 
 // 1. Health Check
-app.get('/api/v1/health', (req, res) => {
-    res.json({
-        success: true,
-        status: "ONLINE",
-        message: "Royaltree Portal API Server berjalan dengan normal.",
-        timestamp: Date.now(),
-        serverTime: new Date().toISOString(),
-        database: "Firestore"
-    });
+app.get('/api/v1/health', async (req, res) => {
+    try {
+        const doc = await db.collection('system').doc('config').get();
+        const config = doc.exists ? doc.data() : {};
+        const isMaintenance = config.maintenanceMode === true;
+        res.json({
+            success: true,
+            status: isMaintenance ? "MAINTENANCE" : "ONLINE",
+            message: isMaintenance
+                ? (config.maintenanceMessage || 'Sedang dalam perbaikan')
+                : "Royaltree Portal API Server berjalan dengan normal.",
+            maintenance: isMaintenance,
+            maintenanceMessage: config.maintenanceMessage || '',
+            announcement: config.announcement || '',
+            serverVersion: config.serverVersion || '1.4.0',
+            timestamp: Date.now(),
+            serverTime: new Date().toISOString(),
+            database: "Firestore"
+        });
+    } catch (e) {
+        res.json({
+            success: true,
+            status: "ONLINE",
+            maintenance: false,
+            timestamp: Date.now()
+        });
+    }
 });
 
 // 2. Remote Configuration

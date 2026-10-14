@@ -39,6 +39,7 @@ import com.inkside.digital.data.repository.TransferResult
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.ui.components.AdBlockedDialog
 import com.inkside.digital.ui.components.BannedDialog
+import com.inkside.digital.ui.components.MaintenanceBanner
 import com.inkside.digital.data.network.ApiClient
 import com.inkside.digital.ui.components.AdRewardModal
 import com.inkside.digital.ui.components.AdminReviewModal
@@ -470,6 +471,11 @@ fun MainAffiliateApp(
             }
     }
 
+    // ============ Start Maintenance Check ============
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.startMaintenanceCheck()
+    }
+
     // ============ Observe Banned User State ============
     // Bila ApiClient detect 403 USER_BANNED, trigger BannedDialog.
     var bannedInfo by androidx.compose.runtime.remember {
@@ -806,6 +812,10 @@ fun MainAffiliateAppContent(
         }
     }
 
+    // Baca maintenance state
+    val maintenanceMode by viewModel.maintenanceMode.collectAsState()
+    val maintenanceMessage by viewModel.maintenanceMessage.collectAsState()
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = true,   // ← FIX: enable swipe untuk tutup drawer
@@ -827,15 +837,21 @@ fun MainAffiliateAppContent(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            AppTopBar(
-                user = user,
-                unreadNotifs = unreadNotifs,
-                currentLanguage = currentLanguage,
-                onOpenDrawer = { coroutineScope.launch { drawerState.open() } },
-                onOpenLanguage = { showLanguageModal = true },
-                onOpenInbox = { onNavigate(AppScreen.INBOX) },
-                onOpenNotifs = { onNavigate(AppScreen.NOTIFICATIONS) }
-            )
+            androidx.compose.foundation.layout.Column {
+                // Maintenance banner di atas topbar
+                if (maintenanceMode) {
+                    MaintenanceBanner(message = maintenanceMessage)
+                }
+                AppTopBar(
+                    user = user,
+                    unreadNotifs = unreadNotifs,
+                    currentLanguage = currentLanguage,
+                    onOpenDrawer = { coroutineScope.launch { drawerState.open() } },
+                    onOpenLanguage = { showLanguageModal = true },
+                    onOpenInbox = { onNavigate(AppScreen.INBOX) },
+                    onOpenNotifs = { onNavigate(AppScreen.NOTIFICATIONS) }
+                )
+            }
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { data ->
