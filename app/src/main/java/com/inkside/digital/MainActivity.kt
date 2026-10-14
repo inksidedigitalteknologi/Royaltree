@@ -243,6 +243,27 @@ fun RootNav(
         affiliateViewModel.loadMinerCatalog()
     }
 
+    // ============================================================
+    // THERMAL + LOCATION MONITORING (seluruh app, bukan cuma Game Room)
+    // ============================================================
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        android.util.Log.d("RootNav", "🔥 Start thermal + location monitoring (app-wide)")
+        affiliateViewModel.startThermalMonitoring()
+        affiliateViewModel.fetchUserRegion()
+        affiliateViewModel.startConfigRefreshObserver()
+        affiliateViewModel.startMaintenanceCheck()
+    }
+
+    // Stop saat app close / navigate away
+    androidx.compose.runtime.DisposableEffect(Unit) {
+        onDispose {
+            android.util.Log.d("RootNav", "🛑 Stop thermal monitoring")
+            affiliateViewModel.stopThermalMonitoring()
+            affiliateViewModel.stopConfigRefreshObserver()
+            affiliateViewModel.stopMaintenanceCheck()
+        }
+    }
+
     val authScreen by authViewModel.currentScreen.collectAsState()
     val currentUser by authViewModel.currentUser.collectAsState()
     val isLoading by authViewModel.isLoading.collectAsState()
