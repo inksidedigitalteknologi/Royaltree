@@ -101,6 +101,7 @@ import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.components.BannerAdView
 import com.inkside.digital.ui.components.MiningClaimDialog
+import com.inkside.digital.ui.components.ThermalStatusCard
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.EmeraldPrimary
 import com.inkside.digital.ui.theme.GoldVip
@@ -167,7 +168,20 @@ fun GameRoomScreen(
         viewModel.loadGameStateThenRefreshMiner()
     }
 
+    // ============ THERMAL + LOCATION MONITORING ============
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.startThermalMonitoring()
+        viewModel.fetchUserRegion()
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stopThermalMonitoring()
+        }
+    }
+
     GameRoomScreenContent(
+        viewModel = viewModel,
         user = user,
         minerItems = minerItems,
         placedMiners = placedMiners,
@@ -193,6 +207,7 @@ fun GameRoomScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameRoomScreenContent(
+    viewModel: AffiliateViewModel,
     user: UserEntity?,
     minerItems: List<GameMinerItemEntity>,
     placedMiners: List<GameMinerItemEntity>,
@@ -310,6 +325,10 @@ fun GameRoomScreenContent(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            // ============ THERMAL STATUS CARD ============
+            ThermalStatusCard(viewModel)
+            Spacer(modifier = Modifier.height(8.dp))
+
             // Tabs: Ruang Rak (Virtual Room), Toko Item (Shop), Mini-Game (Arcade)
             val tabs = listOf("🖥️ Ruang Rak Mining", "🛒 Toko Item", "🎮 Mini-Game Arcade")
             ScrollableTabRow(
