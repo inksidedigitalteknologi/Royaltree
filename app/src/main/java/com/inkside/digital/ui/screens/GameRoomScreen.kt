@@ -170,17 +170,8 @@ fun GameRoomScreen(
     }
 
     // ============ THERMAL + LOCATION MONITORING ============
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        viewModel.startThermalMonitoring()
-        viewModel.fetchUserRegion()
-        viewModel.startConfigRefreshObserver()   // ← Observe FCM config refresh
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            viewModel.stopThermalMonitoring()
-        }
-    }
+    // Note: monitoring sekarang di MainActivity RootNav (app-wide)
+    // Tidak perlu trigger di sini — sudah di-handle global
 
     GameRoomScreenContent(
         viewModel = viewModel,
