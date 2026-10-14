@@ -16,6 +16,10 @@ const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 const { checkFraud } = require('../middleware/antiFraud');
 const { createNotification } = require('../utils/notifications');
 
+// Validation
+const { validate } = require('../middleware/validate');
+const { buyTicketSchema } = require('../schemas');
+
 const db = admin.firestore();
 
 // ============================================================
@@ -157,7 +161,7 @@ router.get('/current', verifyFirebaseToken, async (req, res) => {
 // POST /buy — Beli kupon
 // Body: { quantity: 1|5|10|20|50 }
 // ============================================================
-router.post('/buy', verifyFirebaseToken, checkFraud, async (req, res) => {
+router.post('/buy', verifyFirebaseToken, validate(buyTicketSchema), checkFraud, async (req, res) => {
   try {
     const { uid } = req.firebaseUser;
     const { quantity } = req.body;

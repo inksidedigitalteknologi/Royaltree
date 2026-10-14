@@ -8,6 +8,10 @@ const { google } = require('googleapis');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 const { creditAffiliateCommission } = require('../services/affiliate');
 
+// Validation
+const { validate } = require('../middleware/validate');
+const { purchaseSchema } = require('../schemas');
+
 // ============================================================
 // KATALOG TIER (lifetime) — 5 TIER
 // ============================================================
@@ -106,7 +110,7 @@ async function acknowledgeWithGooglePlay(purchaseToken, productId, packageName) 
     }
 }
 
-router.post('/verify', verifyFirebaseToken, async (req, res) => {
+router.post('/verify', verifyFirebaseToken, validate(purchaseSchema), async (req, res) => {
     try {
         const { uid, email } = req.firebaseUser;
         const { purchaseToken, productId, packageName } = req.body;

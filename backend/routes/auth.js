@@ -6,12 +6,16 @@ const router = express.Router();
 const { admin, db } = require('../config/firebase');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 
+// Validation
+const { validate } = require('../middleware/validate');
+const { loginSchema } = require('../schemas');
+
 // -------------------------------------------------------------
 // POST /api/v1/auth/sync
 // Dipanggil setelah user login/register via Firebase Auth
 // Body: { name?, phone?, city?, referralCode? }
 // -------------------------------------------------------------
-router.post('/sync', verifyFirebaseToken, async (req, res) => {
+router.post('/sync', verifyFirebaseToken, validate(loginSchema), async (req, res) => {
     try {
         const { uid, email, name: firebaseName } = req.firebaseUser;
         const { name, phone, city, referralCode } = req.body;

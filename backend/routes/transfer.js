@@ -12,6 +12,10 @@ const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 const { checkFraud } = require('../middleware/antiFraud');
 const { createNotification } = require('../utils/notifications');
 
+// Validation
+const { validate } = require('../middleware/validate');
+const { transferSchema } = require('../schemas');
+
 const db = admin.firestore();
 
 // ============================================================
@@ -114,7 +118,7 @@ router.get('/search-user', verifyFirebaseToken, async (req, res) => {
 // POST /send — Kirim RTP
 // Body: { recipientId, amount, note? }
 // ============================================================
-router.post('/send', verifyFirebaseToken, checkFraud, async (req, res) => {
+router.post('/send', verifyFirebaseToken, validate(transferSchema), checkFraud, async (req, res) => {
     try {
         const { uid } = req.firebaseUser;
         const { recipientId, amount, note } = req.body;

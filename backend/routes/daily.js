@@ -8,6 +8,10 @@ const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 const { checkFraud } = require('../middleware/antiFraud');
 const { createNotification } = require('../utils/notifications');
 
+// Validation
+const { validate } = require('../middleware/validate');
+const { checkInSchema } = require('../schemas');
+
 const db = admin.firestore();
 
 // Default config (kalau di Firestore belum ada)
@@ -143,7 +147,7 @@ router.get('/status', verifyFirebaseToken, async (req, res) => {
 // ============================================================
 // POST /api/v1/daily/check-in
 // ============================================================
-router.post('/check-in', verifyFirebaseToken, checkFraud, async (req, res) => {
+router.post('/check-in', verifyFirebaseToken, validate(checkInSchema), checkFraud, async (req, res) => {
     try {
         const { uid } = req.firebaseUser;
         const config = await getConfig();

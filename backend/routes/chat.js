@@ -9,6 +9,10 @@ const admin = require('firebase-admin');
 const db = admin.firestore();
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 
+// Validation
+const { validate } = require('../middleware/validate');
+const { chatSchema } = require('../schemas');
+
 const router = express.Router();
 
 const MAX_MESSAGES = 50;
@@ -59,7 +63,7 @@ router.get('/messages', verifyFirebaseToken, async (req, res) => {
 // POST /api/v1/chat/send
 // Body: { message: string }
 // ============================================================
-router.post('/send', verifyFirebaseToken, async (req, res) => {
+router.post('/send', verifyFirebaseToken, validate(chatSchema), async (req, res) => {
     try {
         const { uid } = req.firebaseUser;
         const { message } = req.body;
