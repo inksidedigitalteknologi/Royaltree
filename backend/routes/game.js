@@ -1726,15 +1726,17 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
 
         // ============================================================
         // AUTO-PAUSE HYSTERESIS: pause @ 60°C, resume @ 55°C
+        // OPTIMIZATION: baca game_states SEKALI saja (bukan 2x)
         // ============================================================
         let miningPaused = false;
         let pauseChanged = false;
 
-        if (temp >= 60) {
-            const stateDoc = await db.collection('game_states').doc(uid).get();
-            const state = stateDoc.data() || {};
-            const wasPaused = state.miningPaused === true;
+        // Baca state sekali (baik untuk pause maupun resume logic)
+        const stateDoc = await db.collection('game_states').doc(uid).get();
+        const state = stateDoc.data() || {};
+        const wasPaused = state.miningPaused === true;
 
+        if (temp >= 60) {
             if (!wasPaused) {
                 await db.collection('game_states').doc(uid).set({
                     miningPaused: true,
@@ -1779,10 +1781,7 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
             miningPaused = true;
             hashrateFactor = 0;
         } else if (temp > 0 && temp < 55) {
-            const stateDoc = await db.collection('game_states').doc(uid).get();
-            const state = stateDoc.data() || {};
-            const wasPaused = state.miningPaused === true;
-
+            // OPTIMIZATION: pakai `wasPaused` dari atas — tidak get lagi
             if (wasPaused) {
                 await db.collection('game_states').doc(uid).set({
                     miningPaused: false,

@@ -2,6 +2,9 @@
 // Endpoint admin: atur config daily reward & ad vendors
 
 const express = require('express');
+
+// Debug flag untuk log checkAdmin (set DEBUG_ADMIN=1 di env untuk enable)
+const DEBUG_ADMIN_LOG = process.env.DEBUG_ADMIN === '1';
 const anomaly = require('../services/anomaly');
 const router = express.Router();
 const admin = require('firebase-admin');
@@ -25,24 +28,24 @@ async function checkAdmin(req, res, next) {
         const adminToken = req.headers['x-admin-token'];
         
         // DEBUG LOG
-        console.log(`[checkAdmin] token prefix=${adminToken ? adminToken.substring(0, 12) : 'NULL'}, mapSize=${global.__adminTokens ? global.__adminTokens.size : 'NO_MAP'}`);
+        if (DEBUG_ADMIN_LOG) console.log(`[checkAdmin] token prefix=${adminToken ? adminToken.substring(0, 12) : 'NULL'}, mapSize=${global.__adminTokens ? global.__adminTokens.size : 'NO_MAP'}`);
         if (global.__adminTokens) {
             const keys = [...global.__adminTokens.keys()].map(k => k.substring(0, 12));
-            console.log(`[checkAdmin] keys in map: ${JSON.stringify(keys)}`);
+            if (DEBUG_ADMIN_LOG) console.log(`[checkAdmin] keys in map: ${JSON.stringify(keys)}`);
         }
         
         if (adminToken && global.__adminTokens && global.__adminTokens.has(adminToken)) {
             const tokenData = global.__adminTokens.get(adminToken);
             if (tokenData.expiresAt > Date.now()) {
-                console.log(`[checkAdmin] ✅ token match`);
+                if (DEBUG_ADMIN_LOG) console.log(`[checkAdmin] ✅ token match`);
                 req.adminUser = { source: 'web', token: adminToken };
                 return next();
             } else {
-                console.log(`[checkAdmin] ⚠️ token expired`);
+                if (DEBUG_ADMIN_LOG) console.log(`[checkAdmin] ⚠️ token expired`);
                 global.__adminTokens.delete(adminToken);
             }
         } else {
-            console.log(`[checkAdmin] ❌ token NOT in map`);
+            if (DEBUG_ADMIN_LOG) console.log(`[checkAdmin] ❌ token NOT in map`);
         }
 
         // Opsyen 2: Firebase ID token
