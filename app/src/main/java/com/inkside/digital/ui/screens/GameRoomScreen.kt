@@ -90,6 +90,7 @@ import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.ui.theme.PurpleSecondary
 import com.inkside.digital.viewmodel.AffiliateViewModel
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 import java.util.Locale
 import kotlin.random.Random
 import com.inkside.digital.util.HashrateFormatter
@@ -235,7 +236,7 @@ fun GameRoomScreenContent(
             // ✅ CHECK: Kalau miner tak aktif, RTP = 0 (freeze)
             if (minerActiveUntil <= now) {
                 liveUnclaimedPoints = 0.0
-                delay(1000L)
+                delay(1000.milliseconds)
                 continue
             }
             
@@ -243,7 +244,7 @@ fun GameRoomScreenContent(
             val elapsedMinutes = ((now - lastClaim) / 60000.0).coerceAtLeast(0.0)
             val generated = elapsedMinutes * generationRatePerMin
             liveUnclaimedPoints = (roomState?.unclaimedMiningPoints ?: 0.0) + generated
-            delay(1000L)
+            delay(1000.milliseconds)
         }
     }
 
@@ -1298,7 +1299,7 @@ private fun RackSlotItemCard(
                         .border(1.5.dp, tierColor.copy(alpha = 0.6f), RoundedCornerShape(12.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(miner!!.iconEmoji, fontSize = 26.sp)
+                    Text(miner.iconEmoji, fontSize = 26.sp)
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
@@ -1752,7 +1753,7 @@ private fun MiniGameArcadeTab(
             secondsRemaining = 15
             comboCount = 0
             while (secondsRemaining > 0 && isPlaying) {
-                delay(1000L)
+                delay(1000.milliseconds)
                 secondsRemaining--
             }
             if (isPlaying) {
