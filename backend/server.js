@@ -24,6 +24,9 @@ const affiliateRoutes = require('./routes/affiliate');
 const sweepstakesRoutes = require('./routes/sweepstakes');
 const transferRoutes = require('./routes/transfer');
 const chatRoutes = require('./routes/chat');
+
+// Rate limiting
+const { globalLimiter, authLimiter, sensitiveLimiter, miningLimiter, adsLimiter, chatLimiter, adminLoginLimiter } = require('./middleware/rateLimit');
 const sweepstakesJob = require('./jobs/sweepstakesJob');
 const { releasePendingCommission } = require('./services/affiliate');
 const { verifyFirebaseToken, verifyAuthAndBanCheck } = require('./middleware/firebaseAuth');
@@ -38,18 +41,23 @@ app.use(express.json());
 // ROUTES
 // ============================================================
 // Auth & Admin: TIDAK cek banned (biar user banned bisa login & lihat status)
+app.use('/api', globalLimiter);
+
+app.use('/api/v1/auth/login', authLimiter);
+app.use('/api/v1/auth/register', authLimiter);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/admin/login', adminLoginLimiter);
 app.use('/api/v1/admin', adminRoutes);
 
 // Route sensitif: cek banned (block aksi user banned)
 app.use('/api/v1/daily', verifyAuthAndBanCheck, dailyRoutes);
-app.use('/api/v1/ads', verifyAuthAndBanCheck, adsRoutes);
-app.use('/api/v1/game', verifyAuthAndBanCheck, gameRoutes);
-app.use('/api/v1/purchase', verifyAuthAndBanCheck, purchaseRoutes);
+app.use('/api/v1/ads', adsLimiter, verifyAuthAndBanCheck, adsRoutes);
+app.use('/api/v1/game', miningLimiter, verifyAuthAndBanCheck, gameRoutes);
+app.use('/api/v1/purchase', sensitiveLimiter, verifyAuthAndBanCheck, purchaseRoutes);
 app.use('/api/v1/affiliate', verifyAuthAndBanCheck, affiliateRoutes);
-app.use('/api/v1/sweepstakes', verifyAuthAndBanCheck, sweepstakesRoutes);
-app.use('/api/v1/transfer', verifyAuthAndBanCheck, transferRoutes);
-app.use('/api/v1/chat', verifyAuthAndBanCheck, chatRoutes);
+app.use('/api/v1/sweepstakes', sensitiveLimiter, verifyAuthAndBanCheck, sweepstakesRoutes);
+app.use('/api/v1/transfer', sensitiveLimiter, verifyAuthAndBanCheck, transferRoutes);
+app.use('/api/v1/chat', chatLimiter, verifyAuthAndBanCheck, chatRoutes);
 
 // Serve admin panel
 // Serve admin panel (relative path — portable)
