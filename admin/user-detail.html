@@ -111,14 +111,53 @@
             <div class="col-md-6"><strong>UID:</strong> <code class="small">${AdminAPI.escapeHtml(d.uid)}</code></div>
             <div class="col-md-6"><strong>Name:</strong> ${AdminAPI.escapeHtml(user.name || '-')}</div>
             <div class="col-md-6"><strong>Email:</strong> ${AdminAPI.escapeHtml(user.email || '-')}</div>
+            <div class="col-md-6"><strong>Phone:</strong> ${AdminAPI.escapeHtml(user.phone || '-')}</div>
             <div class="col-md-6"><strong>Tier:</strong> <span class="badge bg-warning text-dark">${AdminAPI.escapeHtml(user.tier || 'FREE')}</span></div>
+            <div class="col-md-6"><strong>Referral Code:</strong> <code>${AdminAPI.escapeHtml(user.referralCode || '-')}</code></div>
+            <div class="col-md-6"><strong>City/Region:</strong> ${AdminAPI.escapeHtml(user.city || user.region || '-')}</div>
+            <div class="col-md-6"><strong>Language:</strong> ${AdminAPI.escapeHtml(user.language || 'id')}</div>
+
+            <div class="col-12"><hr class="my-1"></div>
+
             <div class="col-md-6"><strong>Balance:</strong> ${AdminAPI.fmtNumber(user.balance || 0)}</div>
             <div class="col-md-6"><strong>Points:</strong> ${AdminAPI.fmtNumber((user.points || 0).toFixed(2))}</div>
+            <div class="col-md-6"><strong>Miner Tokens:</strong> ${AdminAPI.fmtNumber(user.minerTokens || 0)}</div>
+            <div class="col-md-6"><strong>Total Miners Owned:</strong> ${AdminAPI.fmtNumber(d.totalMiners || 0)}</div>
+            <div class="col-md-6"><strong>Referral Count:</strong> ${AdminAPI.fmtNumber(d.referralCount || 0)}</div>
+            <div class="col-md-6"><strong>Mining Logs:</strong> ${AdminAPI.fmtNumber(d.totalMiningLogs || 0)}</div>
+
+            <div class="col-12"><hr class="my-1"></div>
+
+            <div class="col-md-6"><strong>Today Steps:</strong> ${AdminAPI.fmtNumber(user.todaySteps || 0)}</div>
+            <div class="col-md-6"><strong>Today Ads:</strong> ${user.todayAdsWatched || 0}</div>
+            <div class="col-md-6"><strong>Check-in Streak:</strong> ${user.checkInStreak || 0} hari</div>
+            <div class="col-md-6"><strong>Month Check-ins:</strong> ${user.monthCheckInCount || 0}</div>
+
+            <div class="col-12"><hr class="my-1"></div>
+
+            <div class="col-md-6"><strong>Last Login:</strong> ${AdminAPI.fmtDate(user.lastLoginAt)}</div>
+            <div class="col-md-6"><strong>Last Login IP:</strong> <code class="small">${AdminAPI.escapeHtml(user.lastLoginIp || '-')}</code></div>
+            <div class="col-md-6"><strong>Created:</strong> ${AdminAPI.fmtDate(user.createdAt)}</div>
+            <div class="col-md-6"><strong>Updated:</strong> ${AdminAPI.fmtDate(user.updatedAt)}</div>
+
+            <div class="col-md-6"><strong>FCM Token:</strong> ${d.hasFcmToken ? '<span class="badge bg-success">✅ Active</span>' : '<span class="badge bg-secondary">❌ None</span>'}</div>
+            <div class="col-md-6"><strong>Mining:</strong> ${d.miningPaused ? '<span class="badge bg-warning text-dark">⏸ Paused</span>' : '<span class="badge bg-success">▶ Active</span>'}</div>
+
             ${user.banned ? `
               <div class="col-12">
                 <div class="alert alert-danger mb-0">
                   <strong>Ban Reason:</strong> ${AdminAPI.escapeHtml(user.bannedReason || '-')}<br>
-                  <strong>Banned At:</strong> ${AdminAPI.fmtDate(user.bannedAt)}
+                  <strong>Banned At:</strong> ${AdminAPI.fmtDate(user.bannedAt)}<br>
+                  <strong>Banned By:</strong> ${AdminAPI.escapeHtml(user.bannedBy || '-')}
+                </div>
+              </div>
+            ` : ''}
+
+            ${user.unbannedAt ? `
+              <div class="col-12">
+                <div class="alert alert-success mb-0">
+                  <strong>Unbanned At:</strong> ${AdminAPI.fmtDate(user.unbannedAt)}<br>
+                  <strong>Unbanned By:</strong> ${AdminAPI.escapeHtml(user.unbannedBy || '-')}
                 </div>
               </div>
             ` : ''}
@@ -160,6 +199,67 @@
             </button>` : ''}
         </div>
       </div>
+
+      ${d.thermal ? `
+        <div class="card stat-card mb-4">
+          <div class="card-body">
+            <h6 class="fw-bold mb-3"><i class="bi bi-thermometer-half me-2 text-danger"></i>Thermal Status (Last Report)</h6>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <div class="text-center">
+                  <div class="display-6 fw-bold text-${d.thermal.phone_temp >= 45 ? 'danger' : (d.thermal.phone_temp >= 35 ? 'warning' : 'success')}">
+                    ${(d.thermal.phone_temp || 0).toFixed(1)}°C
+                  </div>
+                  <div class="small text-muted">Temperature</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="text-center">
+                  <div class="display-6 fw-bold text-${(d.thermal.battery_level || 0) < 15 ? 'danger' : ((d.thermal.battery_level || 0) < 30 ? 'warning' : 'success')}">
+                    ${d.thermal.battery_level || 0}%
+                  </div>
+                  <div class="small text-muted">Battery Level</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="text-center">
+                  <div class="display-6 fw-bold">
+                    ${d.thermal.is_charging ? '⚡' : '🔋'}
+                  </div>
+                  <div class="small text-muted">${d.thermal.is_charging ? 'Charging' : 'Not Charging'}</div>
+                </div>
+              </div>
+              ${d.thermal.updatedAt ? `
+                <div class="col-12">
+                  <div class="small text-muted text-center">
+                    <i class="bi bi-clock me-1"></i>Last update: ${AdminAPI.fmtDate(d.thermal.updatedAt)}
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      ` : ''}
+
+      ${d.location ? `
+        <div class="card stat-card mb-4">
+          <div class="card-body">
+            <h6 class="fw-bold mb-3"><i class="bi bi-geo-alt me-2 text-info"></i>Location (Last Report)</h6>
+            <div class="row g-3">
+              <div class="col-md-4"><strong>Region:</strong> ${AdminAPI.escapeHtml(d.location.region || 'Unknown')}</div>
+              <div class="col-md-4"><strong>Latitude:</strong> <code class="small">${d.location.latitude || 0}</code></div>
+              <div class="col-md-4"><strong>Longitude:</strong> <code class="small">${d.location.longitude || 0}</code></div>
+              ${d.location.updatedAt ? `
+                <div class="col-12">
+                  <div class="small text-muted">
+                    <i class="bi bi-clock me-1"></i>Last update: ${AdminAPI.fmtDate(d.location.updatedAt)}
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      ` : ''}
 
       <div class="card stat-card">
         <div class="card-header bg-white">
