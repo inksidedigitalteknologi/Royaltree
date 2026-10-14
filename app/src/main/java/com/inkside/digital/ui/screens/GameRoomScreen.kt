@@ -39,7 +39,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -97,7 +96,6 @@ import com.inkside.digital.util.GlobalPointsManager
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 // ==== Retro Pixel Palette ====
 private val RetroGold = Color(0xFFFFD700)
 private val RetroAmber = Color(0xFFF59E0B)
@@ -180,7 +178,6 @@ fun GameRoomScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameRoomScreenContent(
     viewModel: AffiliateViewModel,
@@ -1545,16 +1542,6 @@ private fun ShopMinerCard(
     val rarityColor = tierColor(item.tier)
     val canAfford = userPoints >= item.tokenCost
 
-    // M50: Auto-switch frame ikut tier miner
-    val frameRes = when (item.tier.uppercase()) {
-        "COMMON" -> R.drawable.card_frame_common
-        "RARE" -> R.drawable.card_frame_rare
-        "EPIC" -> R.drawable.card_frame_epic
-        "LEGENDARY" -> R.drawable.card_frame_legendary
-        "MYTHIC" -> R.drawable.card_frame_mythic
-        else -> R.drawable.card_frame_common
-    }
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -1689,7 +1676,7 @@ private fun ShopMinerCard(
                         Text("💰", fontSize = 14.sp)
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "${item.tokenCost}",
+                            text = item.tokenCost.toString(),
                             fontWeight = FontWeight.Black,
                             fontSize = 16.sp,
                             color = RetroGold
