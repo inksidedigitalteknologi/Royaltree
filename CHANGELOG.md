@@ -1,81 +1,112 @@
-# Changelog — Royaltree
+# Changelog
 
-Format: `V{major}.{minor}` — increment minor untuk setiap update.
-Formula versionCode: `major * 100 + minor`
+Semua perubahan penting proyek Royaltree akan didokumentasikan di file ini.
 
-## V1.04
-- **Critical:** Fix miner hilang bila install ulang (migrate game_miners → users.minersOwned)
-- **Critical:** Fix beli miner sama 2× overwrite (instance ID unik)
-- **Critical:** Fix butang "Aktifkan Miner" tak berfungsi (AdMob test ID match)
-- Feature: Miner Token (tokenCost) sebagai currency beli miner
-- Feature: Dual-write ke users.minersOwned + game_miners (backward compat)
-- Feature: Unlimited miner support (beli miner sama banyak kali)
-- Feature: Auto-place ke slot kosong pertama (buyAndPlaceGameMinerItem)
-- UI: Pop-up Beli Miner frame custom (gradient emerald/gold) + tombol "Beli & Pasang"
-- UI: Notifikasi i18n 6 bahasa (notif_item_placed_*) + tombol Hapus
-- UI: Fix label "Poin" → "RTP" konsisten
-- Room DB: v3 → v4 (GameMinerItemEntity: pricePoints → tokenCost + catalogId, UserEntity: minerTokens)
-- Backend: /mining/buy guna tokenCost + instance ID + dual-write
-- Backend: /state baca dari users.minersOwned + fallback
-- Backend: /mining/place + /mining/unplace + /miners/catalog + /miners/unlock dual-write
-- Migration: scripts/backup-miners.js + migrate-miners-to-user.js + verify-migration.js
-- Fix: Int/Double mismatch pasca migration points Int → Double (23 lokasi)
+Format: [Keep a Changelog](https://keepachangelog.com/id/1.0.0/)
+Versioning: [Semantic Versioning](https://semver.org/lang/id/)
 
-**Commits:** `1a8388f` → `877b870` → `d46854e` → `249afe6` → V1.04
+---
 
-## V1.03
-- Fix: Migration proper 2 → 3 (UserEntity.points Int → Double)
-- Fix: Sidebar RTP decimal support
-- Fix: Frame Balance Hero vertical (glow tak terpotong)
-- Fix: Avatar Drawer frame tier dynamic (ProfileAvatarWithFrame)
-- Fix: Language toggle tap target lebih besar (Surface onClick + height 44dp)
-- Polish: Card transparan Login + Register (alpha 0.05 + border 1dp)
-- Polish: Daun jatuh global + Compose BOM 2025.10.00
-- Fix: Import fillMaxSize (AppDrawer)
+## [1.11.0] - 2026-10-14
 
-**Commits:** `aae1fb8` → `a3fa538` → V1.03
+### ✨ Added — Thermal & Power Management
+- **Battery temperature monitoring**: `BatteryTempHelper.kt` (read suhu, level, charging)
+- **Location region detection**: `LocationHelper.kt` (FusedLocationProviderClient)
+- **ThermalStatusCard**: card UI di Game Room dengan emoji + warna + hashrate progress
+- **Power-aware hashrate**: multi-factor (temp × battery × charging)
+  - Charging boost 1.2× (configurable) saat suhu normal
+  - Battery level factor (0.3× kalau < 15%)
+  - Temperature factor (pause @ 60°C)
+- **Auto-pause hysteresis**: pause @ 60°C, resume @ 55°C
+- **Battery critical pause**: auto-pause saat battery < 5% (configurable)
+- **Notif thermal**: in-app + FCM
+  - ⚠️ HP Panas (> 45°C)
+  - 🚨 HP Sangat Panas (> 50°C)
+  - ⛔ Mining Dijeda (> 60°C)
+  - 🔋 Baterai Kritis (< 5%)
+  - ✅ Mining Dilanjutkan (resume)
+- **Admin config thermal** (`config.html` tab Game):
+  - `thermalPauseTemp` (60)
+  - `thermalResumeTemp` (55)
+  - `thermalAlertTemp` (45)
+  - `thermalCriticalTemp` (50)
+  - `chargingBoost` (1.2)
+  - `minBatteryForMining` (5)
 
-## V1.02
-- Fix: RTP naik walau miner tak aktif (Fasa A)
-- Fix: Header "170 Poin" → "170 RTP"
-- Fix: Kolom RTP guna user.points + tambah UNCLAIMED
-- Fix: Duplicate "MINER TIDAK AKTIF" hilang
-- Fix: Unplace miner auto-pasang semula
-- Fix: IllegalFormatConversion crash (header RTP)
-- Fix: Build error userPoints parameter (MiningRoomTab + HeroBanner)
-- Polish: Visual consistency (Fasa C) — Snackbar/header/Profile emerald
-- Polish: Daun jatuh visible (18 daun, size besar)
-- Polish: Daun jatuh global (wrap MainAffiliateApp)
-- Polish: Avatar frame Drawer (emerald/gold)
-- Polish: RetroStatBox maxLines + format %.4f
+### ✨ Added — Admin Panel Refactor
+- **12 halaman admin** (Bootstrap 5 modular, dari monolith 2562 baris):
+  - `login.html` — auth dengan password + API key
+  - `index.html` — dashboard (7 stat cards + 2 panel)
+  - `users.html` — list + modal detail + ban/unban
+  - `withdrawals.html` — approve/reject + 4 status filter
+  - `anomalies.html` — fraud detection + flagged users
+  - `chat.html` — monitor chat + moderasi + auto-refresh
+  - `mining.html` — pool fund health + blocks history
+  - `broadcast.html` — notif massal + live preview
+  - `config.html` — daily/ads/game/thermal config
+  - `missions.html` — read-only list
+  - `campaigns.html` — read-only list
+  - `audit-logs.html` — log aktivitas
+- **Shared assets**:
+  - `api.js` (~270 baris, 50+ endpoints)
+  - `layout.js` (sidebar + navbar reusable)
+  - `admin.css` (138 baris)
 
-**Commits:** `5c4fb12` → `d09f410` → V1.02
+### ✨ Added — Config Configurable via Admin
+- **`maxAdsPerDay`**: dari hardcoded 10 → configurable (default 20)
+- **6 thermal fields**: pause/resume/alert/critical/boost/battery
 
-## V1.01
-- i18n: tambah 19 key login_* + register_* (6 bahasa)
-- Language toggle: fix Onboarding + Login + Register
-- Login Screen: redesign elegan (daun jatuh emerald/gold)
-- Register Screen: redesign konsisten dengan Login
-- Login + Register: fix double shadow
-- AnimatedBackground: daun jatuh lebih visible (18 daun, size besar)
-- Profile: frame polish (card_frame_stats + AffiliateBalanceCard Card simple)
-- Mining: fix kontradiksi "MINING AKTIF" + "MINER TIDAK AKTIF"
-- Mining: fix "Rak Terisi" dynamic guna unlockedSlots
-- Mining: auto-load miner catalog masa first launch (retry + observe user)
-- Mining: fix unplace miner auto-pasang semula
-- Boost cleanup: buang boost 2× dari semua layer (5 files)
-- Room DB: version 1 → 2 (minerActiveUntil + minerActivatedAt)
+### ✨ Added — Bottom Nav Refactor
+- **5 items** (dari 6, hapus `GAME_MINING`)
+- Icon unik: Game → 🎮 (SportsEsports), Misi → 🚩 (Flag)
+- `navigationBarsPadding()` untuk gesture bar
+- Floating RTP coin di tengah (collapsed state)
 
-**Commits:** `a47b616` → `b64819c` → V1.01
+### ✨ Added — Anomaly Detection
+- **Backend service** (`services/anomaly.js`):
+  - Threshold: RTP/hour, blocks/hour, shares/min, claims/day, ads/day, IPs/day, accounts/device
+  - Score-based flagging (FLAG_THRESHOLD=50, BAN_THRESHOLD=100)
+- **Admin endpoints**:
+  - `GET /admin/anomalies`
+  - `GET /admin/anomalies/stats`
+  - `GET /admin/anomalies/flagged-users`
+  - `POST /admin/anomalies/:id/status`
 
-## V1.00 — Baseline
-- Persistence: History + Notifications (Room DB sync)
-- UI: Home Balance FramedCard + Login emerald + Status bar dark
-- Mining: Auto-claim 60s + Boost 2× multiplier
-- Widget: Auto-sync SEMUA transaksi (observe user StateFlow)
-- Feature: Miner auto-aktif 6 jam (wajib tonton iklan)
-- Fix: Build error (Flow imports, NotificationEntity signature)
-- Fix: NPE crash (init order + defer load call)
-- Fix: Room DB version 1 → 2 (schema bump)
+### ⚡ Changed — Performance
+- **`/thermal` endpoint**: read `game_states` ONCE (dari 2× get) → 50% fewer Firestore reads
+- **Chat auto-refresh**: stop kalau tab hidden (visibilitychange) → ~50% fewer requests
+- **Proguard enabled**: `isMinifyEnabled=true` + `isShrinkResources=true` → APK ~30% smaller
+- **Log spam removed**: `DEBUG_ADMIN=0` di `.env` → clean production log
 
-**Commit:** `8baac1e` → `V1.00`
+### 🐛 Fixed
+- `admin.html` redirect ke `login.html` / `index.html` (legacy monolith → modular)
+- Anti-flash auth check di semua halaman
+- Relative static path (`path.join`) di `server.js`
+- Duplicate Firestore read di `/thermal`
+
+### 🔧 Technical
+- **Android**: minSdk 24, targetSdk 36, compileSdk 36
+- **Backend**: Express 5.2.1, Firebase Admin 13.10.0
+- **Admin**: Bootstrap 5.3.3 (CDN)
+- **Dependencies**: +play-services-location 21.3.0
+- **Permissions**: 11 izin (INTERNET, LOCATION, CAMERA, FOREGROUND_SERVICE, dll)
+
+---
+
+## [1.10.0] - Sebelumnya
+
+- Base release: step counter, daily check-in, mining tycoon, mini-game, withdrawal, affiliate, referral
+- Firebase Auth + Firestore
+- AdMob rewarded video
+- FCM push notif
+- Sweepstakes, transfer, global chat
+
+---
+
+### 📝 Legend
+- ✨ Added — fitur baru
+- ⚡ Changed — perubahan yang ada
+- 🐛 Fixed — bug fix
+- 🔧 Technical — internal/technical changes
+- 🗑️ Removed — dihapus
+- 🔒 Security — security-related
