@@ -243,8 +243,35 @@
 
   await loadMessages();
 
-  // Auto-refresh tiap 30 detik
-  setInterval(loadMessages, 30000);
+  // Auto-refresh tiap 30 detik — hanya saat tab aktif
+  let refreshInterval = null;
+
+  function startAutoRefresh() {
+    if (refreshInterval) return;
+    refreshInterval = setInterval(loadMessages, 30000);
+  }
+
+  function stopAutoRefresh() {
+    if (refreshInterval) {
+      clearInterval(refreshInterval);
+      refreshInterval = null;
+    }
+  }
+
+  // Handle tab visibility
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      stopAutoRefresh();
+    } else {
+      loadMessages();   // refresh sekali saat tab kembali aktif
+      startAutoRefresh();
+    }
+  });
+
+  // Start kalau tab aktif
+  if (!document.hidden) {
+    startAutoRefresh();
+  }
 })();
 </script>
 </body>
