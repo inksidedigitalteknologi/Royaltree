@@ -1516,8 +1516,7 @@ private fun ItemShopTab(
             ShopMinerCard(
                 item = item,
                 userPoints = userPoints,
-                onBuy = { onBuyItem(item) },
-                onUnlock = { onUnlockMiner(item.id) }
+                onBuy = { onBuyItem(item) }
             )
         }
     }
@@ -1527,8 +1526,7 @@ private fun ItemShopTab(
 private fun ShopMinerCard(
     item: GameMinerItemEntity,
     userPoints: Double = 0.0,
-    onBuy: () -> Unit,
-    onUnlock: () -> Unit = {}
+    onBuy: () -> Unit
 ) {
     val rarityColor = tierColor(item.tier)
     val canAfford = userPoints >= item.tokenCost
