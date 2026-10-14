@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import com.inkside.digital.sensor.BatteryTempHelper
+import com.inkside.digital.util.AnalyticsHelper
 import com.inkside.digital.sensor.LocationHelper
 
 enum class AppScreen {
@@ -904,6 +905,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
      * supaya UI langsung sinkron.
      */
     fun onAdRewardEarned(points: Int) {
+
+        // Analytics
+        try {
+            AnalyticsHelper.logAdReward("admob", points)
+        } catch (e: Exception) {}
         viewModelScope.launch {
             try {
                 showAdRewardModal.value = false
