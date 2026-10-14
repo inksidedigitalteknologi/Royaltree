@@ -1644,6 +1644,64 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
             temp >= 35 ? 0.85 :
             temp >= 30 ? 0.95 : 1.00;
 
+        // ============================================================
+        // ALERT: Kirim notifikasi kalau suhu kritis (>= 45°C)
+        // Rate limit: max 1 notif per 10 menit
+        // ============================================================
+        let alertSent = false;
+        if (temp >= 45) {
+            try {
+                const userDoc = await db.collection('users').doc(uid).get();
+                const userData = userDoc.data() || {};
+                const lastAlertAt = userData.lastThermalAlertAt || 0;
+                const now = Date.now();
+
+                if (now - lastAlertAt > 10 * 60 * 1000) {
+                    const isCritical = temp >= 50;
+
+                    // Buat notifikasi in-app
+                    await db.collection('notifications').add({
+                        userId: uid,
+                        title: isCritical ? '🚨 HP Sangat Panas!' : '⚠️ HP Panas',
+                        message: isCritical
+                            ? `Suhu HP Anda ${temp.toFixed(1)}°C. Mining diperlambat ke ${(hashrateFactor * 100).toFixed(0)}%. Istirahatkan HP atau cabut charger.`
+                            : `Suhu HP Anda ${temp.toFixed(1)}°C. Mining speed dikurangi ke ${(hashrateFactor * 100).toFixed(0)}%. Jangan pakai HP berat sambil mining.`,
+                        type: 'THERMAL_ALERT',
+                        severity: isCritical ? 'CRITICAL' : 'HIGH',
+                        timestamp: now,
+                        createdAt: new Date().toISOString(),
+                        read: false
+                    });
+
+                    // Kirim FCM push kalau ada token
+                    if (userData.fcmToken) {
+                        try {
+                            const fcmService = require('../services/fcm');
+                            await fcmService.sendBatchPush(
+                                [userData.fcmToken],
+                                isCritical ? '🚨 HP Sangat Panas!' : '⚠️ HP Panas',
+                                `Suhu ${temp.toFixed(1)}°C — mining speed ${(hashrateFactor * 100).toFixed(0)}%`,
+                                { type: 'THERMAL_ALERT', severity: isCritical ? 'CRITICAL' : 'HIGH' }
+                            );
+                            console.log('[THERMAL-ALERT] FCM sent to', uid, 'temp:', temp);
+                        } catch (fcmErr) {
+                            console.error('[THERMAL-ALERT] FCM error:', fcmErr.message);
+                        }
+                    }
+
+                    // Update lastThermalAlertAt
+                    await db.collection('users').doc(uid).set({
+                        lastThermalAlertAt: now
+                    }, { merge: true });
+
+                    alertSent = true;
+                    console.log('[THERMAL-ALERT] Sent to', uid, 'temp:', temp, 'hashrate:', hashrateFactor);
+                }
+            } catch (alertErr) {
+                console.error('[THERMAL-ALERT] Error:', alertErr.message);
+            }
+        }
+
         res.json({
             success: true,
             thermal: {
@@ -1652,6 +1710,7 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
                 is_charging: !!is_charging
             },
             hashrate_factor: hashrateFactor,
+            alert_sent: alertSent,
             timestamp: Date.now()
         });
 
