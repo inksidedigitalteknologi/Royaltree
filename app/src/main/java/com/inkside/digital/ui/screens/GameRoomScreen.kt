@@ -653,18 +653,24 @@ fun GameRoomScreenContent(
     // THERMAL PAUSE ALERT — HP terlalu panas, mining dijeda
     // ============================================================
     if (viewModel.showThermalPauseAlert.value) {
+        val pauseReason by viewModel.pauseReason.collectAsState()
+        val isBattery = pauseReason == "battery_critical"
+
         AlertDialog(
             onDismissRequest = { viewModel.showThermalPauseAlert.value = false },
-            icon = { Text("⛔", fontSize = 40.sp) },
+            icon = { Text(if (isBattery) "🔋" else "⛔", fontSize = 40.sp) },
             title = {
                 Text(
-                    text = "Mining Dijeda",
+                    text = if (isBattery) "Baterai Kritis" else "Mining Dijeda",
                     fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Text(
-                    text = "HP terlalu panas. Mining dijeda otomatis sampai suhu turun (< 55°C).\n\nDinginkan HP atau cabut charger untuk lanjut mining."
+                    text = if (isBattery)
+                        "Baterai HP kritis. Mining dijeda sampai HP dicharge.\n\nCharge HP untuk lanjut mining."
+                    else
+                        "HP terlalu panas. Mining dijeda otomatis sampai suhu turun (< 55°C).\n\nDinginkan HP atau cabut charger untuk lanjut mining."
                 )
             },
             confirmButton = {

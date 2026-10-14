@@ -45,6 +45,7 @@ fun ThermalStatusCard(viewModel: AffiliateViewModel) {
     val charging by viewModel.isCharging.collectAsState()
     val region by viewModel.userRegion.collectAsState()
     val miningPaused by viewModel.miningPaused.collectAsState()
+    val pauseReason by viewModel.pauseReason.collectAsState()
     val hashrateFactor by viewModel.hashrateFactor.collectAsState()
 
     // Jangan tampilkan kalau belum ada data suhu
@@ -177,13 +178,21 @@ fun ThermalStatusCard(viewModel: AffiliateViewModel) {
                         Spacer(Modifier.width(8.dp))
                         Column(Modifier.weight(1f)) {
                             Text(
-                                "MINING PAUSED",
+                                when (pauseReason) {
+                                    "battery_critical" -> "🔋 BATERAI KRITIS"
+                                    "temp_critical" -> "⛔ HP TERLALU PANAS"
+                                    else -> "⛔ MINING DIJEDA"
+                                },
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 13.sp
                             )
                             Text(
-                                "Dinginkan HP sampai < 55°C untuk lanjut",
+                                when (pauseReason) {
+                                    "battery_critical" -> "Charge HP untuk lanjut mining"
+                                    "temp_critical" -> "Dinginkan HP sampai < 55°C"
+                                    else -> "Tunggu sampai aman"
+                                },
                                 color = Color.White.copy(alpha = 0.85f),
                                 fontSize = 10.sp
                             )

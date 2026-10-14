@@ -344,6 +344,25 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
         const { uid } = req.firebaseUser;
         const { transactionId, vendor } = req.body;
 
+        // ============================================================
+        // CHECK: Mining pause karena suhu / battery?
+        // ============================================================
+        const pauseCheck = await shouldPauseMining(uid);
+        if (pauseCheck.pause) {
+            const cfg = await getThermalConfig();
+            const isBattery = pauseCheck.reason === 'battery_critical';
+            return res.status(423).json({
+                success: false,
+                code: 'MINING_PAUSED',
+                paused: true,
+                reason: pauseCheck.reason || 'temp_critical',
+                temp: pauseCheck.temp,
+                message: isBattery
+                    ? `Baterai kritis. Mining dijeda sampai HP dicharge (min ${cfg.minBatteryForMining}%).`
+                    : `HP terlalu panas (${pauseCheck.temp.toFixed(1)}°C). Mining dijeda sampai dingin (< ${cfg.resumeTemp}°C).`
+            });
+        }
+
         // Validasi transactionId (anti-replay)
         if (!transactionId || !vendor) {
             return res.status(400).json({
@@ -550,12 +569,17 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
         // ============================================================
         const pauseCheck = await shouldPauseMining(uid);
         if (pauseCheck.pause) {
+            const cfg = await getThermalConfig();
+            const isBattery = pauseCheck.reason === 'battery_critical';
             return res.status(423).json({
                 success: false,
                 code: 'MINING_PAUSED',
                 paused: true,
+                reason: pauseCheck.reason || 'temp_critical',
                 temp: pauseCheck.temp,
-                message: `HP terlalu panas (${pauseCheck.temp.toFixed(1)}°C). Mining dijeda sampai dingin (< 55°C).`
+                message: isBattery
+                    ? `Baterai kritis. Mining dijeda sampai HP dicharge (min ${cfg.minBatteryForMining}%).`
+                    : `HP terlalu panas (${pauseCheck.temp.toFixed(1)}°C). Mining dijeda sampai dingin (< ${cfg.resumeTemp}°C).`
             });
         }
 
@@ -1787,21 +1811,42 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
         const state = stateDoc.data() || {};
         const wasPaused = state.miningPaused === true;
 
-        if (temp >= thermalConfig.pauseTemp) {
+        // ============================================================
+        // Cek 2 kondisi: temp critical ATAU battery critical
+        // ============================================================
+        const batteryCritical = level < thermalConfig.minBatteryForMining && !is_charging;
+        const tempCritical = temp >= thermalConfig.pauseTemp;
+
+        if (tempCritical || batteryCritical) {
+            const pauseReason = batteryCritical ? 'battery_critical' : 'temp_critical';
+
             if (!wasPaused) {
                 await db.collection('game_states').doc(uid).set({
                     miningPaused: true,
                     miningPausedAt: Date.now(),
-                    miningPausedReason: `Suhu ${temp.toFixed(1)}°C`,
-                    miningPausedTemp: temp
+                    miningPausedReason: batteryCritical
+                        ? `Baterai ${level}%`
+                        : `Suhu ${temp.toFixed(1)}°C`,
+                    miningPausedTemp: temp,
+                    miningPausedBattery: level,
+                    miningPausedReasonType: pauseReason
                 }, { merge: true });
+
+                // Notif & FCM — pesan beda untuk battery vs temp
+                const notifTitle = batteryCritical
+                    ? '🔋 Baterai Kritis!'
+                    : '⛔ Mining Dijeda — HP Terlalu Panas';
+                const notifMessage = batteryCritical
+                    ? `Baterai ${level}% (min ${thermalConfig.minBatteryForMining}%). Mining dijeda. Charge HP untuk lanjut.`
+                    : `Suhu HP ${temp.toFixed(1)}°C. Mining dijeda otomatis sampai dingin (< ${thermalConfig.resumeTemp}°C).`;
+                const notifType = batteryCritical ? 'BATTERY_CRITICAL' : 'THERMAL_PAUSE';
 
                 try {
                     await db.collection('notifications').add({
                         userId: uid,
-                        title: '⛔ Mining Dijeda — HP Terlalu Panas',
-                        message: `Suhu HP ${temp.toFixed(1)}°C. Mining dijeda otomatis sampai dingin (< ${thermalConfig.resumeTemp}°C).`,
-                        type: 'THERMAL_PAUSE',
+                        title: notifTitle,
+                        message: notifMessage,
+                        type: notifType,
                         severity: 'CRITICAL',
                         timestamp: Date.now(),
                         createdAt: new Date().toISOString(),
@@ -1815,9 +1860,9 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
                             const fcmService = require('../services/fcm');
                             await fcmService.sendBatchPush(
                                 [userData.fcmToken],
-                                '⛔ Mining Dijeda — HP Panas',
-                                `Suhu ${temp.toFixed(1)}°C. Mining otomatis dijeda sampai dingin.`,
-                                { type: 'THERMAL_PAUSE', severity: 'CRITICAL' }
+                                notifTitle,
+                                notifMessage,
+                                { type: notifType, severity: 'CRITICAL' }
                             );
                         } catch (e) {}
                     }
@@ -1926,6 +1971,9 @@ router.post('/thermal', verifyFirebaseToken, async (req, res) => {
             },
             hashrate_factor: hashrateFactor,
             mining_paused: miningPaused,
+            pause_reason: miningPaused
+                ? ((level < thermalConfig.minBatteryForMining && !is_charging) ? 'battery_critical' : 'temp_critical')
+                : null,
             pause_changed: pauseChanged,
             alert_sent: alertSent,
             timestamp: Date.now()
