@@ -199,6 +199,14 @@ router.get('/game-config', checkAdmin, async (req, res) => {
                 
                 // Bonus
                 minigameBonusCap: config.minigameBonusCap || 20,
+
+                // Thermal config
+                thermalPauseTemp: config.thermalPauseTemp || 60,
+                thermalResumeTemp: config.thermalResumeTemp || 55,
+                thermalAlertTemp: config.thermalAlertTemp || 45,
+                thermalCriticalTemp: config.thermalCriticalTemp || 50,
+                chargingBoost: config.chargingBoost || 1.2,
+                minBatteryForMining: config.minBatteryForMining || 5,
                 
                 updatedAt: config.updatedAt,
                 updatedBy: config.updatedBy
@@ -243,7 +251,10 @@ router.put('/game-config', checkAdmin, async (req, res) => {
         const validKeys = [
             'miningRatePerGhs', 'minClaimRtp', 'claimCooldownMs',
             'adClaimLimitPerDay', 'minigameLimitPerDay', 'minigameCooldownMs',
-            'minigameBonusCap'
+            'minigameBonusCap',
+            // Thermal config (baru)
+            'thermalPauseTemp', 'thermalResumeTemp', 'thermalAlertTemp',
+            'thermalCriticalTemp', 'chargingBoost', 'minBatteryForMining'
         ];
         
         validKeys.forEach(k => {
