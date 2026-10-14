@@ -65,6 +65,24 @@ object ApiClient {
 
     fun resetBanned() { _bannedState.value = BannedInfo() }
 
+    // ============ Config Refresh Event (dari FCM) ============
+    data class ConfigRefreshEvent(
+        val configType: String,
+        val timestamp: Long
+    )
+
+    private val _configRefreshEvent = androidx.compose.runtime.mutableStateOf<ConfigRefreshEvent?>(null)
+    val configRefreshEvent: ConfigRefreshEvent? get() = _configRefreshEvent.value
+
+    fun triggerConfigRefresh(configType: String) {
+        _configRefreshEvent.value = ConfigRefreshEvent(configType, System.currentTimeMillis())
+        android.util.Log.d("ApiClient", "Config refresh triggered: $configType")
+    }
+
+    fun consumeConfigRefresh() {
+        _configRefreshEvent.value = null
+    }
+
     /**
      * Cek apakah error body mengandung USER_BANNED, lalu set state.
      * Return true jika banned terdeteksi.

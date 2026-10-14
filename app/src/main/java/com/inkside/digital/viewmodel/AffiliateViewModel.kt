@@ -1643,6 +1643,36 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     // ============ THERMAL MONITORING ============
+    // ============ Observe Config Refresh (dari FCM) ============
+    private var configRefreshObserverJob: kotlinx.coroutines.Job? = null
+
+    fun startConfigRefreshObserver() {
+        configRefreshObserverJob?.cancel()
+        configRefreshObserverJob = viewModelScope.launch {
+            while (true) {
+                val event = com.inkside.digital.data.network.ApiClient.configRefreshEvent
+                if (event != null) {
+                    android.util.Log.d("ViewModel", "Config refresh: ${event.configType}")
+                    
+                    when (event.configType) {
+                        "game" -> loadGameState()
+                        "ads" -> { /* ads config di-fetch next request */ }
+                        "daily" -> { /* daily config next request */ }
+                        "thermal" -> { /* thermal sync 30s */ }
+                    }
+                    
+                    com.inkside.digital.data.network.ApiClient.consumeConfigRefresh()
+                }
+                kotlinx.coroutines.delay(500L)
+            }
+        }
+    }
+
+    fun stopConfigRefreshObserver() {
+        configRefreshObserverJob?.cancel()
+        configRefreshObserverJob = null
+    }
+
     fun startThermalMonitoring() {
         thermalMonitorJob?.cancel()
         thermalMonitorJob = viewModelScope.launch {

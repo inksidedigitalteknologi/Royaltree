@@ -6,6 +6,7 @@ const express = require('express');
 // Debug flag untuk log checkAdmin (set DEBUG_ADMIN=1 di env untuk enable)
 const DEBUG_ADMIN_LOG = process.env.DEBUG_ADMIN === '1';
 const anomaly = require('../services/anomaly');
+const { broadcastConfigRefresh } = require('../services/configRefresh');
 const router = express.Router();
 const admin = require('firebase-admin');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
@@ -105,6 +106,11 @@ router.put('/daily-config', checkAdmin, async (req, res) => {
             updatedBy: req.adminUser?.uid || 'admin_web'
         }, { merge: true });
 
+        // Broadcast config refresh ke semua user (silent push)
+        broadcastConfigRefresh('daily').catch(e =>
+            console.error('[DAILY-CONFIG] Broadcast error:', e.message)
+        );
+
         return res.json({
             success: true,
             message: 'Config berhasil disimpan.'
@@ -139,6 +145,11 @@ router.put('/ad-config', checkAdmin, async (req, res) => {
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
             updatedBy: req.adminUser?.uid || 'admin_web'
         }, { merge: true });
+
+        // Broadcast config refresh
+        broadcastConfigRefresh('ads').catch(e =>
+            console.error('[AD-CONFIG] Broadcast error:', e.message)
+        );
 
         return res.json({
             success: true,
@@ -282,6 +293,11 @@ router.put('/game-config', checkAdmin, async (req, res) => {
             global.__resetGameConfigCache();
         }
         
+        // Broadcast config refresh ke semua user (silent push)
+        broadcastConfigRefresh('game').catch(e =>
+            console.error('[GAME-CONFIG] Broadcast error:', e.message)
+        );
+
         return res.json({ success: true, message: 'Config disimpan' });
     } catch (error) {
         console.error('Update game config error:', error);
