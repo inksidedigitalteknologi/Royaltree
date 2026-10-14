@@ -1160,7 +1160,6 @@ private fun MiningRoomTab(
                 }
             }
         }
-    }
         }
 
 @Composable
