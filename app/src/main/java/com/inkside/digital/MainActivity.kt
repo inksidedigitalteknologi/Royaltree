@@ -101,6 +101,7 @@ import com.inkside.digital.ui.screens.LoadingScreen
 import com.inkside.digital.ui.screens.auth.VerifyEmailScreen
 import com.inkside.digital.viewmodel.AffiliateViewModel
 import com.inkside.digital.viewmodel.AppScreen
+import com.inkside.digital.util.AnalyticsHelper
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
 import com.inkside.digital.ui.screens.GameRoomScreen
@@ -424,6 +425,25 @@ fun MainAffiliateApp(
 
     // Preload ad + refresh state saat HomeScreen dibuka
     androidx.compose.runtime.LaunchedEffect(currentScreen) {
+        // Analytics — log screen view
+        try {
+            val screenName = when (currentScreen) {
+                AppScreen.HOME -> "home"
+                AppScreen.GAME_ROOM -> "game_room"
+                AppScreen.WITHDRAW -> "withdraw"
+                AppScreen.HISTORY -> "history"
+                AppScreen.INBOX -> "inbox"
+                AppScreen.NOTIFICATIONS -> "notifications"
+                AppScreen.PROFILE -> "profile"
+                AppScreen.MISSIONS -> "missions"
+                AppScreen.CHAT -> "chat"
+                else -> currentScreen.name.lowercase()
+            }
+            AnalyticsHelper.logScreen(screenName, "MainActivity")
+        } catch (e: Exception) {
+            android.util.Log.w("Analytics", "logScreen error: ${e.message}")
+        }
+
         if (currentScreen == AppScreen.HOME) {
             viewModel.preloadAdForHome()
         }

@@ -6,6 +6,7 @@ import android.util.Log
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.inkside.digital.data.network.ApiClient
+import com.inkside.digital.util.AnalyticsHelper
 
 /**
  * RoyaltreeApp — Application class.
@@ -47,6 +48,11 @@ class RoyaltreeApp : Application() {
             // 3. ApiClient
             ApiClient.init(this)
             Log.d(TAG, "✅ ApiClient initialized")
+
+            // Analytics — pastikan collection enabled (release only)
+            val analytics = com.google.firebase.analytics.FirebaseAnalytics.getInstance(this)
+            analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG)
+            Log.d(TAG, "✅ Analytics: ${if (BuildConfig.DEBUG) "OFF (debug)" else "ON (release)"}")
 
         } catch (e: Exception) {
             Log.e(TAG, "❌ Init error: ${e.message}", e)
