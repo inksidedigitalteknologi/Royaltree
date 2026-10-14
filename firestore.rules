@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================================
+    // ROYALTREE FIRESTORE SECURITY RULES
+    // ============================================================
+    // Pendekatan: Block all client access.
+    // Semua operasi data dilakukan oleh backend (Node.js + Admin SDK).
+    // Aplikasi Android & Admin Panel mengakses lewat backend API.
+    // ============================================================
+
+    match /users/{userId} { allow read, write: if false; }
+    match /withdrawals/{withdrawalId} { allow read, write: if false; }
+    match /campaigns/{docId} { allow read, write: if false; }
+    match /missions/{docId} { allow read, write: if false; }
+    match /notifications/{docId} { allow read, write: if false; }
+    match /transactions/{docId} { allow read, write: if false; }
+    match /point_transactions/{docId} { allow read, write: if false; }
+    match /step_logs/{docId} { allow read, write: if false; }
+    match /activity_logs/{docId} { allow read, write: if false; }
+    match /game_logs/{docId} { allow read, write: if false; }
+    match /security_logs/{docId} { allow read, write: if false; }
+    match /postback_logs/{docId} { allow read, write: if false; }
+    match /system/{docId} { allow read, write: if false; }
+
+    // DEFAULT
+    match /{document=**} { allow read, write: if false; }
+  }
+}
