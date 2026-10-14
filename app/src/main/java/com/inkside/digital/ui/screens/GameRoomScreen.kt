@@ -1,8 +1,6 @@
 package com.inkside.digital.ui.screens
 
 import com.inkside.digital.R
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -13,7 +11,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,27 +23,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bolt
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Dns
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.ShoppingBag
-import androidx.compose.material.icons.filled.Speed
-import androidx.compose.material.icons.filled.SportsEsports
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -56,7 +42,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -74,12 +59,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -92,7 +76,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.inkside.digital.ui.components.FramedCard
 import com.inkside.digital.data.model.GameMinerItemEntity
 import com.inkside.digital.data.model.GameRoomStateEntity
 import com.inkside.digital.data.model.UserEntity
@@ -100,7 +83,6 @@ import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.components.BannerAdView
-import com.inkside.digital.ui.components.MiningClaimDialog
 import com.inkside.digital.ui.components.ThermalStatusCard
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.EmeraldPrimary
@@ -114,19 +96,12 @@ import com.inkside.digital.util.HashrateFormatter
 import com.inkside.digital.util.GlobalPointsManager
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
-import com.inkside.digital.ui.components.RtpAmount
-import androidx.compose.ui.draw.scale
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.HorizontalDivider
 
 @OptIn(ExperimentalMaterial3Api::class)
 // ==== Retro Pixel Palette ====
-private val RetroBgDark = Color(0xFF1A1008)
 private val RetroGold = Color(0xFFFFD700)
 private val RetroAmber = Color(0xFFF59E0B)
-private val RetroBrown = Color(0xFF78350F)
 private val RetroCard = Color(0xFF2A1810)
-private val RetroBorder = Color(0xFFD97706)
 
 @Composable
 fun GameRoomScreen(
