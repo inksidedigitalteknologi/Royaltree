@@ -86,7 +86,23 @@
 
   window.AdminLayout = {
     init(pageTitle) {
+      // 1. Cek token ada
       if (!AdminAPI.Auth.requireLogin()) return;
+
+      // 2. Cek token valid via request ringan ke backend
+      //    Kalau 401/403 → handler di api.js auto-redirect
+      AdminAPI.getStats().then(res => {
+        if (res && res.httpCode === 403) {
+          // Fallback kalau handler api.js tidak redirect
+          console.warn('[AdminLayout] 403 — redirect login');
+          localStorage.clear();
+          window.location.replace('login.html?expired=1');
+        }
+      }).catch(err => {
+        console.warn('[AdminLayout] init check error:', err);
+      });
+
+      // 3. Render UI
       renderSidebar();
       renderNavbar(pageTitle);
     }

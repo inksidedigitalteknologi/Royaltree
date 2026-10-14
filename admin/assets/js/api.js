@@ -64,13 +64,19 @@
         data = { success: false, message: text || 'Invalid JSON response' };
       }
 
-      // Auto-logout kalau 401
-      if (resp.status === 401) {
+      // Auto-logout kalau 401 ATAU 403 (unauthorized / forbidden)
+      if (resp.status === 401 || resp.status === 403) {
         Auth.clear();
+        // Clear semua related storage
+        try {
+          localStorage.removeItem('royaltree_admin_apikey');
+        } catch (e) {}
+
+        // Redirect ke login dengan flag expired
         if (!window.location.pathname.endsWith('login.html')) {
-          window.location.href = 'login.html?expired=1';
+          window.location.replace('login.html?expired=1');
         }
-        return { success: false, message: 'Session expired', httpCode: 401 };
+        return { success: false, message: 'Session expired', httpCode: resp.status };
       }
 
       if (!resp.ok) {
