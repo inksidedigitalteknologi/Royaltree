@@ -4,7 +4,9 @@
     "dotenv": "^18.0.1",
     "express": "^5.2.1",
     "firebase-admin": "^13.10.0",
-    "googleapis": "^178.0.0"
+    "googleapis": "^178.0.0",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "name": "royaltree-backend",
   "version": "1.11.0",

@@ -11,6 +11,7 @@
 
 require('dotenv').config();
 const express = require('express');
+const logger = require('./utils/logger');
 const cors = require('cors');
 const { admin, db } = require('./config/firebase');
 const authRoutes = require('./routes/auth');
@@ -58,7 +59,7 @@ app.use('/admin', express.static(path.join(__dirname, '../admin')));
 // Kunci Otentikasi Admin Portal
 const API_SECRET_KEY = process.env.ROYALTREE_API_KEY;
 if (!API_SECRET_KEY) {
-    console.error("❌ FATAL: ROYALTREE_API_KEY tidak di-set di .env");
+    logger.error("❌ FATAL: ROYALTREE_API_KEY tidak di-set di .env");
     process.exit(1);
 }
 
@@ -279,7 +280,7 @@ app.get('/api/v1/missions', async (req, res) => {
 app.get('/api/v1/postback', async (req, res) => {
     try {
         const { user_id, reward_points, tx_id, secret } = req.query;
-        console.log(`[POSTBACK WEBHOOK] User ${user_id} mendapat ${reward_points} poin. TxId: ${tx_id}`);
+        logger.info(`[POSTBACK WEBHOOK] User ${user_id} mendapat ${reward_points} poin. TxId: ${tx_id}`);
 
         if (user_id && reward_points) {
             const userRef = db.collection('users').doc(user_id);
@@ -299,7 +300,7 @@ app.get('/api/v1/postback', async (req, res) => {
 
         res.send("OK");
     } catch (err) {
-        console.error('Postback error:', err);
+        logger.error('Postback error:', err);
         res.send("OK");
     }
 });
@@ -453,7 +454,7 @@ app.post('/api/v1/missions/:id/complete', authenticateToken, async (req, res) =>
             message: 'Misi berhasil diselesaikan! Klaim hadiah untuk dapat poin.'
         });
     } catch (error) {
-        console.error('Complete mission error:', error);
+        logger.error('Complete mission error:', error);
         return res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -507,7 +508,7 @@ app.post('/api/v1/missions/:id/claim', authenticateToken, async (req, res) => {
             reward: reward
         });
     } catch (error) {
-        console.error('Claim mission error:', error);
+        logger.error('Claim mission error:', error);
         return res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -1106,10 +1107,10 @@ setInterval(async () => {
     try {
         const result = await releasePendingCommission();
         if (result.released > 0) {
-            console.log(`[CRON] Released ${result.released} pending commissions`);
+            logger.info(`[CRON] Released ${result.released} pending commissions`);
         }
     } catch (error) {
-        console.error('[CRON] releasePendingCommission error:', error.message);
+        logger.error('[CRON] releasePendingCommission error:', error.message);
     }
 }, 5 * 60 * 1000); // 5 menit
 
@@ -1117,18 +1118,18 @@ setInterval(async () => {
 setTimeout(async () => {
     try {
         await releasePendingCommission();
-        console.log('[CRON] Initial release check done');
+        logger.info('[CRON] Initial release check done');
     } catch (error) {
-        console.error('[CRON] Initial release error:', error.message);
+        logger.error('[CRON] Initial release error:', error.message);
     }
 }, 10 * 1000); // 10 detik setelah start
 
 // Load anomaly flags dari Firestore (persist across restart)
-anomaly.loadUserFlags().catch(e => console.error('[STARTUP] loadUserFlags:', e.message));
+anomaly.loadUserFlags().catch(e => logger.error('[STARTUP] loadUserFlags:', e.message));
 
 // Auto-save anomaly flags setiap 5 menit
 setInterval(() => {
-    anomaly.saveAllFlags().catch(e => console.error('[CRON] saveAllFlags:', e.message));
+    anomaly.saveAllFlags().catch(e => logger.error('[CRON] saveAllFlags:', e.message));
 }, 5 * 60 * 1000);
 
 // ============================================================
@@ -1191,7 +1192,7 @@ setInterval(async () => {
                         );
                         fcmSent = fcmTokens.length;
                     } catch (e) {
-                        console.error('[SCHEDULED] FCM error:', e.message);
+                        logger.error('[SCHEDULED] FCM error:', e.message);
                     }
                 }
 
@@ -1202,24 +1203,64 @@ setInterval(async () => {
                     fcmSent
                 });
 
-                console.log(`[SCHEDULED] Sent "${data.title}" to ${count} users (${fcmSent} FCM)`);
+                logger.info(`[SCHEDULED] Sent "${data.title}" to ${count} users (${fcmSent} FCM)`);
             } catch (e) {
-                console.error('[SCHEDULED] Send error:', e.message);
+                logger.error('[SCHEDULED] Send error:', e.message);
                 await doc.ref.update({ status: 'FAILED', error: e.message, sentAt: Date.now() });
             }
         }
     } catch (err) {
-        console.error('[SCHEDULED-CRON] Error:', err.message);
+        logger.error('[SCHEDULED-CRON] Error:', err.message);
     }
 }, 60 * 1000);
 
+// ============================================================
+// GLOBAL ERROR HANDLERS
+// ============================================================
+process.on('uncaughtException', (err) => {
+    logger.error('UNCAUGHT EXCEPTION', {
+        error: err.message,
+        stack: err.stack,
+        type: 'uncaughtException'
+    });
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    logger.error('UNHANDLED REJECTION', {
+        reason: String(reason),
+        stack: reason?.stack || '',
+        type: 'unhandledRejection'
+    });
+});
+
+// Express error middleware (WAJIB di paling akhir sebelum listen)
+app.use((err, req, res, next) => {
+    logger.error('Express error', {
+        error: err.message,
+        stack: err.stack,
+        path: req.path,
+        method: req.method,
+        ip: req.ip,
+        userId: req.firebaseUser?.uid || 'anonymous'
+    });
+    if (res.headersSent) {
+        return next(err);
+    }
+    res.status(500).json({
+        success: false,
+        message: process.env.NODE_ENV === 'production'
+            ? 'Internal server error'
+            : err.message
+    });
+});
+
 app.listen(PORT, () => {
-    console.log(`====================================================`);
-    console.log(` Royaltree Portal API Server aktif di port ${PORT}`);
-    console.log(` Database: Firestore`);
-    console.log(` Endpoint: http://localhost:${PORT}/api/v1`);
-    console.log(` Health:   http://localhost:${PORT}/api/v1/health`);
-    console.log(`====================================================`);
+    logger.info(`====================================================`);
+    logger.info(` Royaltree Portal API Server aktif di port ${PORT}`);
+    logger.info(` Database: Firestore`);
+    logger.info(` Endpoint: http://localhost:${PORT}/api/v1`);
+    logger.info(` Health:   http://localhost:${PORT}/api/v1/health`);
+    logger.info(`====================================================`);
 
     // Start sweepstakes auto-draw job (cek setiap 1 jam)
     sweepstakesJob.start();
