@@ -306,6 +306,86 @@ router.put('/game-config', checkAdmin, async (req, res) => {
 });
 
 // ============================================================
+// THERMAL STATS — Aggregate thermal_logs
+// GET /api/v1/admin/thermal-stats?days=7
+// ============================================================
+router.get('/thermal-stats', checkAdmin, async (req, res) => {
+    try {
+        const days = Math.min(parseInt(req.query.days) || 7, 30);
+        const since = Date.now() - (days * 24 * 60 * 60 * 1000);
+        
+        const snapshot = await db.collection('thermal_logs')
+            .orderBy('createdAt', 'desc')
+            .limit(2000)
+            .get();
+        
+        const logs = [];
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.createdAt && data.createdAt._seconds) {
+                const ts = data.createdAt._seconds * 1000;
+                if (ts >= since) {
+                    logs.push({ ...data, _ts: ts });
+                }
+            }
+        });
+        
+        const dailyAvg = {};
+        let totalTemp = 0, maxTemp = 0, minTemp = 100;
+        const distribution = { cold: 0, normal: 0, warm: 0, hot: 0, critical: 0 };
+        let pauseCount = 0;
+        
+        logs.forEach(log => {
+            const t = Number(log.phone_temp) || 0;
+            const day = new Date(log._ts).toISOString().split('T')[0];
+            
+            if (!dailyAvg[day]) dailyAvg[day] = { sum: 0, count: 0, max: 0 };
+            dailyAvg[day].sum += t;
+            dailyAvg[day].count++;
+            dailyAvg[day].max = Math.max(dailyAvg[day].max, t);
+            
+            totalTemp += t;
+            maxTemp = Math.max(maxTemp, t);
+            minTemp = Math.min(minTemp, t);
+            
+            if (t < 30) distribution.cold++;
+            else if (t < 40) distribution.normal++;
+            else if (t < 45) distribution.warm++;
+            else if (t < 55) distribution.hot++;
+            else distribution.critical++;
+            
+            if (t >= 60) pauseCount++;
+        });
+        
+        const daily = Object.entries(dailyAvg).map(([date, d]) => ({
+            date,
+            avgTemp: parseFloat((d.sum / d.count).toFixed(1)),
+            maxTemp: parseFloat(d.max.toFixed(1)),
+            count: d.count
+        })).sort((a, b) => a.date.localeCompare(b.date));
+        
+        return res.json({
+            success: true,
+            data: {
+                daily,
+                distribution,
+                summary: {
+                    totalLogs: logs.length,
+                    avgTemp: logs.length ? parseFloat((totalTemp / logs.length).toFixed(1)) : 0,
+                    maxTemp: parseFloat(maxTemp.toFixed(1)),
+                    minTemp: minTemp === 100 ? 0 : parseFloat(minTemp.toFixed(1)),
+                    pauseEvents: pauseCount,
+                    days
+                }
+            }
+        });
+    } catch (err) {
+        console.error('[ADMIN/THERMAL-STATS] Error:', err);
+        return res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// ============================================================
 // USER MANAGEMENT
 // ============================================================
 router.get('/users', checkAdmin, async (req, res) => {
@@ -882,6 +962,64 @@ router.get('/anomalies/flagged-users', checkAdmin, async (req, res) => {
         return res.json({ success: true, users, count: users.length });
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// ANOMALY — Detail per user (score + flags + history)
+// GET /api/v1/admin/anomalies/user/:uid
+// ============================================================
+router.get('/anomalies/user/:uid', checkAdmin, async (req, res) => {
+    try {
+        const { uid } = req.params;
+        
+        // 1. Flag data dari memory
+        const flag = anomaly.getUserFlag(uid);
+        
+        // 2. History anomalies dari list
+        const userAnomalies = anomaly.getAnomalies(100, { uid });
+        
+        // 3. User data dari Firestore
+        const userDoc = await db.collection('users').doc(uid).get();
+        const userData = userDoc.exists ? userDoc.data() : {};
+        
+        return res.json({
+            success: true,
+            data: {
+                uid,
+                score: flag.score || 0,
+                flags: flag.flags || [],
+                lastUpdate: flag.lastUpdate || 0,
+                autoBanCandidate: (flag.score || 0) >= (anomaly.CONFIG?.BAN_THRESHOLD || 100),
+                flagged: (flag.score || 0) >= (anomaly.CONFIG?.FLAG_THRESHOLD || 50),
+                user: {
+                    name: userData.name || '',
+                    email: userData.email || '',
+                    tier: userData.tier || 'FREE',
+                    banned: userData.banned === true,
+                    bannedReason: userData.bannedReason || '',
+                    bannedAt: userData.bannedAt || '',
+                    balance: userData.balance || 0,
+                    points: userData.points || 0,
+                    createdAt: userData.createdAt || null
+                },
+                history: userAnomalies.map(a => ({
+                    id: a.id,
+                    type: a.type,
+                    severity: a.severity,
+                    message: a.message,
+                    timestamp: a.timestamp,
+                    status: a.status
+                })),
+                config: {
+                    flagThreshold: anomaly.CONFIG?.FLAG_THRESHOLD || 50,
+                    banThreshold: anomaly.CONFIG?.BAN_THRESHOLD || 100
+                }
+            }
+        });
+    } catch (err) {
+        console.error('[ADMIN/ANOMALY-USER] Error:', err);
+        return res.status(500).json({ success: false, message: err.message });
     }
 });
 

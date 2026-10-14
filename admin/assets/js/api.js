@@ -130,6 +130,8 @@
     },
     getAnomalyStats: () => request('/anomalies/stats'),
     getFlaggedUsers: () => request('/anomalies/flagged-users'),
+    getUserDetail: (uid) => request(`/anomalies/user/${uid}`),
+    getThermalStats: (days = 7) => request(`/thermal-stats?days=${days}`),
     updateAnomalyStatus: (id, status) =>
       request(`/anomalies/${id}/status`, { method: 'POST', body: { status } }),
 

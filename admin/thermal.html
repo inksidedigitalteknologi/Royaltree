@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thermal Analytics — Royaltree Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/admin.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    (function() {
+      if (!localStorage.getItem('royaltree_admin_token')) {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+<div class="d-flex">
+  <div id="admin-sidebar"></div>
+  <div class="flex-grow-1" style="min-width:0;">
+    <div id="admin-navbar"></div>
+
+    <main class="admin-content">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+          <h4 class="mb-1 fw-bold">Thermal Analytics</h4>
+          <p class="text-muted mb-0 small">Statistik suhu baterai user</p>
+        </div>
+        <div class="d-flex gap-2">
+          <select class="form-select form-select-sm" id="daysSelect" style="width:auto;">
+            <option value="7" selected>7 hari</option>
+            <option value="14">14 hari</option>
+            <option value="30">30 hari</option>
+          </select>
+          <button class="btn btn-sm btn-outline-secondary" id="refreshBtn">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4" id="summaryCards">
+        <div class="col-12 text-center py-4">
+          <div class="spinner-border text-primary"></div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-lg-8">
+          <div class="card stat-card">
+            <div class="card-header bg-white">
+              <h6 class="fw-bold mb-0">
+                <i class="bi bi-graph-up me-2 text-primary"></i>Rata-rata Suhu Harian
+              </h6>
+            </div>
+            <div class="card-body">
+              <canvas id="tempChart" height="100"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card stat-card h-100">
+            <div class="card-header bg-white">
+              <h6 class="fw-bold mb-0">
+                <i class="bi bi-pie-chart me-2 text-info"></i>Distribusi Suhu
+              </h6>
+            </div>
+            <div class="card-body">
+              <canvas id="distChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card stat-card">
+        <div class="card-header bg-white">
+          <h6 class="fw-bold mb-0">
+            <i class="bi bi-table me-2"></i>Data Harian
+          </h6>
+        </div>
+        <div class="card-body p-0" id="dailyTable">
+          <div class="text-center py-5">
+            <div class="spinner-border text-primary"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/layout.js"></script>
+<script>
+(function () {
+  AdminLayout.init('Thermal Analytics');
+
+  let tempChart = null;
+  let distChart = null;
+
+  async function loadStats() {
+    const days = document.getElementById('daysSelect').value;
+    const summaryEl = document.getElementById('summaryCards');
+    const tableEl = document.getElementById('dailyTable');
+
+    summaryEl.innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border"></div></div>';
+    tableEl.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
+
+    const res = await AdminAPI.getThermalStats(days);
+    if (!res.success) {
+      summaryEl.innerHTML = `<div class="col-12"><div class="alert alert-danger">${AdminAPI.escapeHtml(res.message || 'Error')}</div></div>`;
+      tableEl.innerHTML = '';
+      return;
+    }
+
+    const { summary, daily, distribution } = res.data;
+
+    summaryEl.innerHTML = `
+      <div class="col-6 col-md-3">
+        <div class="card stat-card">
+          <div class="card-body">
+            <div class="stat-icon bg-primary-subtle text-primary mb-2"><i class="bi bi-thermometer-half"></i></div>
+            <div class="stat-value">${summary.avgTemp}°C</div>
+            <div class="stat-label">Rata-rata Suhu</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card stat-card">
+          <div class="card-body">
+            <div class="stat-icon bg-danger-subtle text-danger mb-2"><i class="bi bi-fire"></i></div>
+            <div class="stat-value">${summary.maxTemp}°C</div>
+            <div class="stat-label">Max Suhu</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card stat-card">
+          <div class="card-body">
+            <div class="stat-icon bg-info-subtle text-info mb-2"><i class="bi bi-snow"></i></div>
+            <div class="stat-value">${summary.minTemp}°C</div>
+            <div class="stat-label">Min Suhu</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card stat-card">
+          <div class="card-body">
+            <div class="stat-icon bg-warning-subtle text-warning mb-2"><i class="bi bi-pause-circle"></i></div>
+            <div class="stat-value">${AdminAPI.fmtNumber(summary.pauseEvents)}</div>
+            <div class="stat-label">Pause Events (&gt;60°C)</div>
+          </div>
+        </div>
+      </div>`;
+
+    const ctx = document.getElementById('tempChart').getContext('2d');
+    if (tempChart) tempChart.destroy();
+    tempChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: daily.map(d => d.date),
+        datasets: [{
+          label: 'Avg Temp (°C)',
+          data: daily.map(d => d.avgTemp),
+          borderColor: '#10B981',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          tension: 0.3,
+          fill: true,
+          pointRadius: 4,
+          pointBackgroundColor: '#10B981'
+        }, {
+          label: 'Max Temp (°C)',
+          data: daily.map(d => d.maxTemp),
+          borderColor: '#EF4444',
+          borderDash: [5, 5],
+          tension: 0.3,
+          fill: false,
+          pointRadius: 3,
+          pointBackgroundColor: '#EF4444'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+          y: {
+            beginAtZero: false,
+            suggestedMin: 25,
+            suggestedMax: 70,
+            ticks: { callback: v => v + '°C' }
+          }
+        }
+      }
+    });
+
+    const distCtx = document.getElementById('distChart').getContext('2d');
+    if (distChart) distChart.destroy();
+    distChart = new Chart(distCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Cold (<30°C)', 'Normal (30-40)', 'Warm (40-45)', 'Hot (45-55)', 'Critical (≥55)'],
+        datasets: [{
+          data: [distribution.cold, distribution.normal, distribution.warm, distribution.hot, distribution.critical],
+          backgroundColor: ['#3B82F6', '#10B981', '#FBBF24', '#F97316', '#EF4444']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } }
+      }
+    });
+
+    if (daily.length === 0) {
+      tableEl.innerHTML = `
+        <div class="text-center py-5">
+          <i class="bi bi-graph-down text-muted" style="font-size:3rem;"></i>
+          <h5 class="mt-3 mb-1">Tidak Ada Data</h5>
+          <p class="text-muted small mb-0">Belum ada thermal log dari user</p>
+        </div>`;
+      return;
+    }
+
+    tableEl.innerHTML = `
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th class="text-end">Avg Temp</th>
+              <th class="text-end">Max Temp</th>
+              <th class="text-end">Log Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${daily.map(d => `
+              <tr>
+                <td><strong>${d.date}</strong></td>
+                <td class="text-end text-success">${d.avgTemp}°C</td>
+                <td class="text-end text-danger">${d.maxTemp}°C</td>
+                <td class="text-end">${AdminAPI.fmtNumber(d.count)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  document.getElementById('refreshBtn').onclick = () => {
+    loadStats();
+    AdminAPI.toast('Data diperbarui', 'success');
+  };
+
+  document.getElementById('daysSelect').onchange = loadStats;
+
+  loadStats();
+})();
+</script>
+</body>
+</html>
