@@ -37,3 +37,7 @@ backend/node_modules/
 admin/*.backup
 local.properties
 .env
+
+# Winston logs
+logs/
+backend/logs/

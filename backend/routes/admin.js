@@ -516,72 +516,154 @@ router.get('/users/:uid', checkAdmin, async (req, res) => {
         if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan' });
 
         const userData = doc.data();
+        const now = Date.now();
 
         // ============================================================
-        // COMPUTED FIELDS
+        // PARALLEL FETCH
         // ============================================================
-        let referralCount = 0;
-        let totalMiners = 0;
-        let thermal = null;
-        let location = null;
-        let miningPaused = false;
-        let totalMiningLogs = 0;
+        const [
+            refSnap,
+            stateDoc,
+            roomDoc,
+            refUserDoc,
+            txCountSnap,
+            wdCountSnap,
+            auditSnap,
+            banCountSnap,
+            flagDoc,
+            historySnap
+        ] = await Promise.all([
+            db.collection('users').where('referredBy', '==', uid).count().get().catch(() => null),
+            db.collection('game_states').doc(uid).get().catch(() => null),
+            db.collection('game_rooms').doc(uid).get().catch(() => null),
+            userData.referredBy
+                ? db.collection('users').doc(userData.referredBy).get().catch(() => null)
+                : Promise.resolve(null),
+            db.collection('transactions').where('userId', '==', uid).count().get().catch(() => null),
+            db.collection('withdrawals').where('userId', '==', uid).count().get().catch(() => null),
+            db.collection('audit_logs').where('userId', '==', uid).orderBy('timestamp', 'desc').limit(10).get().catch(() => null),
+            db.collection('audit_logs').where('userId', '==', uid).where('action', '==', 'USER_BANNED').count().get().catch(() => null),
+            db.collection('user_flags').doc(uid).get().catch(() => null),
+            db.collection('anomaly_history').where('uid', '==', uid).orderBy('timestamp', 'desc').limit(20).get().catch(() => null)
+        ]);
 
-        try {
-            // 1. Referral count (user yang referredBy == uid)
-            const refSnap = await db.collection('users')
-                .where('referredBy', '==', uid)
-                .count()
-                .get();
-            referralCount = refSnap.data().count;
-        } catch (e) {
-            console.error('[USER-DETAIL] referralCount error:', e.message);
+        // ============================================================
+        // COMPUTE
+        // ============================================================
+        const referralCount = refSnap?.data()?.count || 0;
+        const totalMiners = Object.keys(userData.minersOwned || {}).length;
+
+        let thermal = null, location = null, miningPaused = false;
+        if (stateDoc?.exists) {
+            const s = stateDoc.data();
+            thermal = s.thermal || null;
+            location = s.location || null;
+            miningPaused = s.miningPaused === true;
         }
 
-        try {
-            // 2. Total miners owned
-            const minersOwned = userData.minersOwned || {};
-            totalMiners = Object.keys(minersOwned).length;
-        } catch (e) {}
-
-        try {
-            // 3. Game state (thermal + location)
-            const stateDoc = await db.collection('game_states').doc(uid).get();
-            if (stateDoc.exists) {
-                const state = stateDoc.data();
-                thermal = state.thermal || null;
-                location = state.location || null;
-                miningPaused = state.miningPaused === true;
-            }
-        } catch (e) {
-            console.error('[USER-DETAIL] game_states error:', e.message);
+        let gameRoom = null;
+        if (roomDoc?.exists) {
+            const r = roomDoc.data();
+            gameRoom = {
+                ratePerMin: r.ratePerMin || 0,
+                unclaimedMiningPoints: r.unclaimedMiningPoints || 0,
+                minerActiveUntil: r.minerActiveUntil || 0,
+                lastClaimTimestamp: r.lastClaimTimestamp || 0,
+                lastMiningUpdateTimestamp: r.lastMiningUpdateTimestamp || 0,
+                placedMinersCount: r.placedMinersCount || 0,
+                isMinerActive: (r.minerActiveUntil || 0) > now
+            };
         }
 
-        try {
-            // 4. Total mining logs
-            const logsSnap = await db.collection('thermal_logs')
-                .where('uid', '==', uid)
-                .count()
-                .get();
-            totalMiningLogs = logsSnap.data().count;
-        } catch (e) {}
+        let referredByUser = null;
+        if (refUserDoc?.exists) {
+            const ru = refUserDoc.data();
+            referredByUser = {
+                uid: userData.referredBy,
+                name: ru.name || ru.displayName || '-',
+                email: ru.email || '-',
+                referralCode: ru.referralCode || '-'
+            };
+        }
 
+        // Anomaly flag + history
+        let flagData = { score: 0, flags: [], lastUpdate: null };
+        if (flagDoc?.exists) {
+            const f = flagDoc.data();
+            flagData = {
+                score: f.score || 0,
+                flags: f.flags || [],
+                lastUpdate: f.lastUpdate || f.updatedAt || null
+            };
+        }
+        const history = historySnap?.docs?.map(d => ({ id: d.id, ...d.data() })) || [];
+
+        // Account age
+        const createdMs = userData.createdAt ? new Date(userData.createdAt).getTime() : 0;
+        const lastLoginMs = userData.lastLoginAt ? new Date(userData.lastLoginAt).getTime() : 0;
+        const daysSinceRegister = createdMs ? Math.floor((now - createdMs) / 86400000) : null;
+        const daysSinceLastLogin = lastLoginMs ? Math.floor((now - lastLoginMs) / 86400000) : null;
+
+        const referralUrl = userData.referralCode
+            ? `https://royaltree.id/r/${userData.referralCode}`
+            : null;
+
+        const config = {
+            flagThreshold: parseInt(process.env.FLAG_THRESHOLD) || 50,
+            banThreshold: parseInt(process.env.BAN_THRESHOLD) || 100
+        };
+
+        // ============================================================
+        // RESPONSE
+        // ============================================================
         return res.json({
             success: true,
             data: {
-                id: doc.id,
+                user: {
+                    ...userData,
+                    banned: userData.banned === true
+                },
                 uid: uid,
-                ...userData,
-                // Computed fields
+
+                // Anomaly
+                score: flagData.score,
+                flags: flagData.flags,
+                flagged: flagData.score >= config.flagThreshold,
+                autoBanCandidate: flagData.score >= config.banThreshold,
+                history: history,
+                config: config,
+
+                // Computed
                 referralCount,
                 totalMiners,
                 thermal,
                 location,
                 miningPaused,
-                totalMiningLogs,
+                totalMiningLogs: history.length,
                 hasFcmToken: !!(userData.fcmToken && userData.fcmToken.length > 20),
-                language: userData.language || 'id',
-                banned: userData.banned === true
+
+                // NEW
+                gameRoom,
+                referredByUser,
+                referralUrl,
+                referralEarnings: userData.referralEarnings || 0,
+                is2FAEnabled: userData.is2FAEnabled === true,
+                emailVerified: userData.emailVerified === true,
+                daysSinceRegister,
+                daysSinceLastLogin,
+                totalRTPEarned: userData.totalRTPEarned || 0,
+                totalAdsWatched: userData.totalAdsWatched || userData.todayAdsWatched || 0,
+                transactionCount: txCountSnap?.data()?.count || 0,
+                withdrawCount: wdCountSnap?.data()?.count || 0,
+                chatCount: userData.chatCount || 0,
+                missionsCompleted: userData.missionsCompleted || 0,
+                banHistoryCount: banCountSnap?.data()?.count || 0,
+                auditTrail: auditSnap?.docs?.map(d => ({ id: d.id, ...d.data() })) || [],
+                deviceModel: userData.deviceModel || null,
+                androidVersion: userData.androidVersion || null,
+                appVersion: userData.appVersion || null,
+                firstInstall: userData.firstInstall || null,
+                anomaly: flagData
             }
         });
     } catch (err) {

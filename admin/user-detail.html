@@ -261,6 +261,124 @@
         </div>
       ` : ''}
 
+        ${d.gameRoom ? `
+          <div class="card stat-card mb-4">
+            <div class="card-body">
+              <h6 class="fw-bold mb-3"><i class="bi bi-hdd-stack me-2 text-warning"></i>Mining Detail</h6>
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <div class="text-center">
+                    <div class="display-6 fw-bold text-warning">${(d.gameRoom.ratePerMin || 0).toFixed(4)}</div>
+                    <div class="small text-muted">RTP / menit</div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="text-center">
+                    <div class="display-6 fw-bold text-success">${(d.gameRoom.unclaimedMiningPoints || 0).toFixed(2)}</div>
+                    <div class="small text-muted">Unclaimed</div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="text-center">
+                    <div class="display-6 fw-bold">${d.gameRoom.placedMinersCount || 0}</div>
+                    <div class="small text-muted">Active Miners</div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="text-center">
+                    <div class="display-6 fw-bold">${d.gameRoom.isMinerActive ? '▶' : '⏸'}</div>
+                    <div class="small text-muted">${d.gameRoom.isMinerActive ? 'Active' : 'Inactive'}</div>
+                  </div>
+                </div>
+                <div class="col-md-6"><strong>Last Claim:</strong> ${AdminAPI.fmtDate(d.gameRoom.lastClaimTimestamp)}</div>
+                <div class="col-md-6"><strong>Miner Active Until:</strong> ${d.gameRoom.minerActiveUntil ? AdminAPI.fmtDate(d.gameRoom.minerActiveUntil) : '-'}</div>
+              </div>
+            </div>
+          </div>
+        ` : ''}
+
+        ${(d.referredByUser || d.referralUrl) ? `
+          <div class="card stat-card mb-4">
+            <div class="card-body">
+              <h6 class="fw-bold mb-3"><i class="bi bi-people me-2 text-primary"></i>Referral Info</h6>
+              <div class="row g-3">
+                ${d.referredByUser ? `
+                  <div class="col-md-6"><strong>Referred By:</strong> ${AdminAPI.escapeHtml(d.referredByUser.name)} <code class="small">(${AdminAPI.escapeHtml(d.referredByUser.uid.slice(0, 12))}...)</code></div>
+                  <div class="col-md-6"><strong>Referrer Email:</strong> ${AdminAPI.escapeHtml(d.referredByUser.email)}</div>
+                ` : '<div class="col-md-6"><strong>Referred By:</strong> - (user join organik)</div>'}
+                <div class="col-md-6"><strong>Referral Count:</strong> ${AdminAPI.fmtNumber(d.referralCount || 0)}</div>
+                <div class="col-md-6"><strong>Referral Earnings:</strong> ${AdminAPI.fmtNumber(d.referralEarnings || 0)} RTP</div>
+                ${d.referralUrl ? `<div class="col-12"><strong>Referral URL:</strong> <a href="${d.referralUrl}" target="_blank">${d.referralUrl}</a></div>` : ''}
+              </div>
+            </div>
+          </div>
+        ` : ''}
+
+        <div class="card stat-card mb-4">
+          <div class="card-body">
+            <h6 class="fw-bold mb-3"><i class="bi bi-shield-lock me-2 text-success"></i>Security & Account Age</h6>
+            <div class="row g-3">
+              <div class="col-md-3"><strong>2FA:</strong> ${d.is2FAEnabled ? '<span class="badge bg-success">Enabled</span>' : '<span class="badge bg-secondary">Disabled</span>'}</div>
+              <div class="col-md-3"><strong>Email Verified:</strong> ${d.emailVerified ? '<span class="badge bg-success">✅</span>' : '<span class="badge bg-warning text-dark">❌</span>'}</div>
+              <div class="col-md-3"><strong>Last Login IP:</strong> <code class="small">${AdminAPI.escapeHtml(user.lastLoginIp || '-')}</code></div>
+              <div class="col-md-3"><strong>Days Since Register:</strong> ${d.daysSinceRegister ?? '-'} hari</div>
+              <div class="col-md-3"><strong>Days Since Last Login:</strong> ${d.daysSinceLastLogin ?? '-'} hari</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card stat-card mb-4">
+          <div class="card-body">
+            <h6 class="fw-bold mb-3"><i class="bi bi-graph-up me-2 text-info"></i>Analytics & Activity</h6>
+            <div class="row g-3">
+              <div class="col-md-3"><strong>Total RTP Earned:</strong> ${AdminAPI.fmtNumber(d.totalRTPEarned || 0)}</div>
+              <div class="col-md-3"><strong>Total Ads Watched:</strong> ${AdminAPI.fmtNumber(d.totalAdsWatched || 0)}</div>
+              <div class="col-md-3"><strong>Transactions:</strong> ${AdminAPI.fmtNumber(d.transactionCount || 0)}</div>
+              <div class="col-md-3"><strong>Withdrawals:</strong> ${AdminAPI.fmtNumber(d.withdrawCount || 0)}</div>
+              <div class="col-md-3"><strong>Chat Messages:</strong> ${AdminAPI.fmtNumber(d.chatCount || 0)}</div>
+              <div class="col-md-3"><strong>Missions Completed:</strong> ${AdminAPI.fmtNumber(d.missionsCompleted || 0)}</div>
+              <div class="col-md-3"><strong>Ban History:</strong> ${AdminAPI.fmtNumber(d.banHistoryCount || 0)}x</div>
+            </div>
+          </div>
+        </div>
+
+        ${(d.deviceModel || d.androidVersion || d.appVersion) ? `
+          <div class="card stat-card mb-4">
+            <div class="card-body">
+              <h6 class="fw-bold mb-3"><i class="bi bi-phone me-2"></i>Device Info</h6>
+              <div class="row g-3">
+                <div class="col-md-3"><strong>Device:</strong> ${AdminAPI.escapeHtml(d.deviceModel || '-')}</div>
+                <div class="col-md-3"><strong>Android:</strong> ${AdminAPI.escapeHtml(d.androidVersion || '-')}</div>
+                <div class="col-md-3"><strong>App Version:</strong> ${AdminAPI.escapeHtml(d.appVersion || '-')}</div>
+                <div class="col-md-3"><strong>First Install:</strong> ${AdminAPI.fmtDate(d.firstInstall)}</div>
+              </div>
+            </div>
+          </div>
+        ` : ''}
+
+        ${(d.auditTrail || []).length > 0 ? `
+          <div class="card stat-card mb-4">
+            <div class="card-header bg-white">
+              <h6 class="fw-bold mb-0"><i class="bi bi-journal-text me-2"></i>Audit Trail <span class="badge bg-secondary ms-2">${(d.auditTrail || []).length}</span></h6>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-sm table-hover mb-0 align-middle">
+                  <thead><tr><th>Action</th><th>Detail</th><th>Waktu</th></tr></thead>
+                  <tbody>
+                    ${(d.auditTrail || []).slice(0, 10).map(a => `
+                      <tr>
+                        <td><strong class="small">${AdminAPI.escapeHtml(a.action || '-')}</strong></td>
+                        <td class="small text-muted">${AdminAPI.escapeHtml(a.message || a.detail || '-')}</td>
+                        <td class="small text-muted">${AdminAPI.fmtDate(a.timestamp)}</td>
+                      </tr>`).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        ` : ''}
+
       <div class="card stat-card">
         <div class="card-header bg-white">
           <h6 class="fw-bold mb-0"><i class="bi bi-clock-history me-2"></i>Anomaly History <span class="badge bg-secondary ms-2">${(d.history || []).length}</span></h6>
