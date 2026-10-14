@@ -110,6 +110,7 @@ import com.inkside.digital.viewmodel.AffiliateViewModel
 import kotlinx.coroutines.delay
 import java.util.Locale
 import kotlin.random.Random
+import com.inkside.digital.util.HashrateFormatter
 import com.inkside.digital.util.GlobalPointsManager
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
@@ -487,7 +488,7 @@ fun GameRoomScreenContent(
                             verticalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             BuyStatRow("Harga", "${item.tokenCost} RTP", GoldVip)
-                            BuyStatRow("Mining Power", "+${item.powerGhs} GH/s", EmeraldLight)
+                            BuyStatRow("Mining Power", "+${HashrateFormatter.format(item.powerGhs)}", EmeraldLight)
                             BuyStatRow("Rate RTP", "+${String.format(Locale.US, "%.4f", item.pointsPerMinute)}/mnt", EmeraldLight)
                             BuyStatRow("Saldo Anda", "${user?.points ?: 0} RTP", Color.White)
                         }
@@ -609,7 +610,7 @@ fun GameRoomScreenContent(
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(miner.name, fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                                        Text("+${miner.powerGhs} GH/s • +${String.format(Locale.US, "%.4f", miner.pointsPerMinute)} RTP/mnt", fontSize = 10.sp, color = EmeraldLight)
+                                        Text("+${HashrateFormatter.format(miner.powerGhs)} • +${String.format(Locale.US, "%.4f", miner.pointsPerMinute)} RTP/mnt", fontSize = 10.sp, color = EmeraldLight)
                                     }
                                     Button(
                                         onClick = {
@@ -859,7 +860,7 @@ private fun MiningRoomTab(
                             RetroStatBox(
                                 emoji = "🔥",
                                 label = LanguageManager.translate("game_mining_power", currentLanguage, "POWER"),
-                                value = "${String.format("%.0f", totalPowerGhs)} GH/s",
+                                value = HashrateFormatter.format(totalPowerGhs),
                                 color = RetroAmber,
                                 modifier = Modifier.weight(1f)
                             )
@@ -1185,7 +1186,7 @@ private fun MiningRoomTab(
                                 fontSize = 13.sp
                             )
                             Text(
-                                text = "Mainkan Mini-Game Arcade Coin Rush (+80 GH/s Power Boost & Poin langsung)!",
+                                text = "Mainkan Mini-Game Arcade Coin Rush (+${HashrateFormatter.format(80.0)} Power Boost & Poin langsung)!",
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -1418,7 +1419,7 @@ private fun RackSlotItemCard(
                     Column {
                         Text("\u26A1", fontSize = 9.sp)
                         Text(
-                            "${miner.powerGhs.toInt()}",
+                            HashrateFormatter.formatShort(miner.powerGhs),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
@@ -1712,7 +1713,7 @@ private fun ShopMinerCard(
                         Text("⚡", fontSize = 11.sp)
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "+${item.powerGhs} GH/s",
+                            text = "+${HashrateFormatter.format(item.powerGhs)}",
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = RetroAmber
@@ -1916,7 +1917,7 @@ private fun MiniGameArcadeTab(
                         }
 
                         Text(
-                            text = "Mainkan game 15 detik! Ketuk koin & permata secepat mungkin untuk mendapatkan +20 s/d 60 Poin instan dan +80 GH/s Power Boost selama 2 jam.",
+                            text = "Mainkan game 15 detik! Ketuk koin & permata secepat mungkin untuk mendapatkan +20 s/d 60 Poin instan dan +${HashrateFormatter.format(80.0)} Power Boost selama 2 jam.",
                             fontSize = 11.sp,
                             color = Color(0xFFE0E7FF)
                         )

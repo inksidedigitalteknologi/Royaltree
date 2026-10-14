@@ -1,5 +1,6 @@
 package com.inkside.digital.ui.screens
 
+import com.inkside.digital.util.HashrateFormatter
 import com.inkside.digital.util.GlobalPointsManager
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextOverflow
@@ -630,7 +631,7 @@ private fun MiningStatsCard(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 MiniStatBox(LanguageManager.translate("profile_slot", currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), "${powerGhs.toInt()} GH/s", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), HashrateFormatter.format(powerGhs), EmeraldLight, Modifier.weight(1f))
                 MiniStatBox("RTP", "${GlobalPointsManager.formatRtp(userPoints)}", GoldVip, Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(6.dp))
@@ -642,7 +643,7 @@ private fun MiningStatsCard(
             ) {
                 MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${GlobalPointsManager.formatRtp((roomState?.ratePerMin ?: (powerGhs * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+${String.format(Locale.US, "%.0f", roomState?.tempPowerBonusGhs ?: 0.0)} GH/s", GoldVip, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+${HashrateFormatter.format(roomState?.tempPowerBonusGhs ?: 0.0)}", GoldVip, Modifier.weight(1f))
             }
         }
     }

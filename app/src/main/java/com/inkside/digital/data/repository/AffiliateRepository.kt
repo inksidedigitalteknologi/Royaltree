@@ -12,6 +12,7 @@ import com.inkside.digital.data.model.TransactionEntity
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.data.model.UserLocationLogEntity
 import com.inkside.digital.data.model.WithdrawalEntity
+import com.inkside.digital.util.HashrateFormatter
 import com.inkside.digital.util.GlobalPointsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -1263,7 +1264,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 id = "tx_buy_" + UUID.randomUUID().toString().take(8),
                 type = "POINT_REWARD",
                 title = "Beli Item Penambang: ${item.name}",
-                description = "Pembelian item penambang daya ${item.powerGhs} GH/s seharga ${item.tokenCost} Token",
+                description = "Pembelian item penambang daya ${HashrateFormatter.format(item.powerGhs)} seharga ${item.tokenCost} Token",
                 amount = item.tokenCost.toDouble(),
                 currency = "POIN",
                 isCredit = false,
@@ -1309,7 +1310,7 @@ class AffiliateRepository(private val dao: AppDao) {
         }
 
         val successMsg = if (firstEmptySlot != null) {
-            "Sukses beli ${item.name}! Langsung terpasang di Rak Slot ${firstEmptySlot + 1} (+${item.powerGhs} GH/s) 🎉"
+            "Sukses beli ${item.name}! Langsung terpasang di Rak Slot ${firstEmptySlot + 1} (+${HashrateFormatter.format(item.powerGhs)})"
         } else {
             "Sukses beli ${item.name}! Rak penuh, item disimpan di inventaris."
         }
@@ -1359,7 +1360,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 id = "tx_game_reward_" + UUID.randomUUID().toString().take(8),
                 type = "POINT_REWARD",
                 title = "Reward Mini-Game Royaltree 🎯",
-                description = "Skor $score: +$bonusPoints Poin & Boost Mining Power +$boostGhs GH/s (2 Jam)",
+                description = "Skor $score: +$bonusPoints Poin & Boost Mining Power +${HashrateFormatter.format(boostGhs)} (2 Jam)",
                 amount = bonusPoints.toDouble(),
                 currency = "POIN",
                 isCredit = true,
