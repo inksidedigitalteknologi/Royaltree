@@ -132,6 +132,14 @@
     getFlaggedUsers: () => request('/anomalies/flagged-users'),
     getUserDetail: (uid) => request(`/anomalies/user/${uid}`),
     getThermalStats: (days = 7) => request(`/thermal-stats?days=${days}`),
+    getAnalytics: (days = 30) => request(`/analytics?days=${days}`),
+
+    // Scheduled notifications
+    scheduleNotification: (body) =>
+      request('/notifications/schedule', { method: 'POST', body }),
+    getScheduledNotifications: () => request('/notifications/scheduled'),
+    cancelScheduledNotification: (id) =>
+      request(`/notifications/scheduled/${id}`, { method: 'DELETE' }),
     updateAnomalyStatus: (id, status) =>
       request(`/anomalies/${id}/status`, { method: 'POST', body: { status } }),
 

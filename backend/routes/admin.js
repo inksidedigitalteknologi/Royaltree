@@ -306,6 +306,117 @@ router.put('/game-config', checkAdmin, async (req, res) => {
 });
 
 // ============================================================
+// ANALYTICS — User growth + DAU + Mining activity
+// GET /api/v1/admin/analytics?days=30
+// ============================================================
+router.get('/analytics', checkAdmin, async (req, res) => {
+    try {
+        const days = Math.min(parseInt(req.query.days) || 30, 90);
+        const since = Date.now() - (days * 24 * 60 * 60 * 1000);
+
+        // 1. User growth (new users per day)
+        const usersSnap = await db.collection('users').get();
+        const userGrowth = {};
+        let totalUsers = 0;
+        const dau = {};
+
+        usersSnap.forEach(doc => {
+            const data = doc.data();
+            totalUsers++;
+
+            // New users per day
+            const created = data.createdAt;
+            if (created && created._seconds) {
+                const ts = created._seconds * 1000;
+                const day = new Date(ts).toISOString().split('T')[0];
+                userGrowth[day] = (userGrowth[day] || 0) + 1;
+            }
+
+            // DAU from lastLoginAt
+            const lastLogin = data.lastLoginAt;
+            if (lastLogin && lastLogin._seconds) {
+                const ts = lastLogin._seconds * 1000;
+                if (ts >= since) {
+                    const day = new Date(ts).toISOString().split('T')[0];
+                    if (!dau[day]) dau[day] = new Set();
+                    dau[day].add(doc.id);
+                }
+            }
+        });
+
+        // 2. Mining activity dari thermal_logs
+        const thermalSnap = await db.collection('thermal_logs')
+            .orderBy('createdAt', 'desc')
+            .limit(2000)
+            .get();
+
+        const mining = {};
+        let totalLogs = 0;
+
+        thermalSnap.forEach(doc => {
+            const data = doc.data();
+            const ts = data.createdAt?._seconds * 1000;
+            if (ts && ts >= since) {
+                const day = new Date(ts).toISOString().split('T')[0];
+                if (!mining[day]) mining[day] = { count: 0, sumTemp: 0, activeUsers: new Set() };
+                mining[day].count++;
+                mining[day].sumTemp += (data.phone_temp || 0);
+                if (data.uid) mining[day].activeUsers.add(data.uid);
+                totalLogs++;
+            }
+        });
+
+        // 3. Format output
+        const dailyGrowth = Object.entries(userGrowth)
+            .filter(([d]) => new Date(d).getTime() >= since)
+            .map(([date, count]) => ({ date, newUsers: count }))
+            .sort((a, b) => a.date.localeCompare(b.date));
+
+        const dailyDau = Object.entries(dau)
+            .map(([date, set]) => ({ date, users: set.size }))
+            .sort((a, b) => a.date.localeCompare(b.date));
+
+        const dailyMining = Object.entries(mining)
+            .map(([date, m]) => ({
+                date,
+                count: m.count,
+                avgTemp: m.count ? parseFloat((m.sumTemp / m.count).toFixed(1)) : 0,
+                activeUsers: m.activeUsers.size
+            }))
+            .sort((a, b) => a.date.localeCompare(b.date));
+
+        // 4. Summary
+        const avgDau = dailyDau.length
+            ? parseFloat((dailyDau.reduce((s, d) => s + d.users, 0) / dailyDau.length).toFixed(1))
+            : 0;
+        const avgNewUsers = dailyGrowth.length
+            ? parseFloat((dailyGrowth.reduce((s, d) => s + d.newUsers, 0) / dailyGrowth.length).toFixed(1))
+            : 0;
+        const totalNewUsers = dailyGrowth.reduce((s, d) => s + d.newUsers, 0);
+
+        return res.json({
+            success: true,
+            data: {
+                summary: {
+                    totalUsers,
+                    avgDau,
+                    avgNewUsers,
+                    totalNewUsers,
+                    totalMiningLogs: totalLogs,
+                    days
+                },
+                userGrowth: dailyGrowth,
+                dau: dailyDau,
+                mining: dailyMining
+            }
+        });
+    } catch (err) {
+        console.error('[ADMIN/ANALYTICS] Error:', err);
+        return res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// ============================================================
 // THERMAL STATS — Aggregate thermal_logs
 // GET /api/v1/admin/thermal-stats?days=7
 // ============================================================
@@ -642,6 +753,87 @@ router.post('/notifications/broadcast', checkAdmin, async (req, res) => {
     } catch (err) {
         console.error('[BROADCAST] Error:', err);
         res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// ============================================================
+// SCHEDULED NOTIFICATIONS
+// ============================================================
+
+router.post('/notifications/schedule', checkAdmin, async (req, res) => {
+    try {
+        const { title, message, type, targetUid, scheduledAt } = req.body;
+
+        if (!title || !message) {
+            return res.status(400).json({ success: false, message: 'Title & message wajib' });
+        }
+        if (!scheduledAt || scheduledAt <= Date.now()) {
+            return res.status(400).json({ success: false, message: 'Scheduled time harus di masa depan' });
+        }
+
+        const docRef = await db.collection('scheduled_notifications').add({
+            title: String(title).slice(0, 100),
+            message: String(message).slice(0, 500),
+            type: type || 'BROADCAST',
+            targetUid: targetUid || '',
+            scheduledAt: Number(scheduledAt),
+            status: 'PENDING',
+            createdAt: Date.now(),
+            sentAt: 0,
+            sentCount: 0,
+            createdBy: req.adminUser?.uid || 'admin_web'
+        });
+
+        return res.json({
+            success: true,
+            id: docRef.id,
+            message: 'Notifikasi terjadwal dibuat'
+        });
+    } catch (err) {
+        console.error('[SCHEDULE/CREATE] Error:', err);
+        return res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+router.get('/notifications/scheduled', checkAdmin, async (req, res) => {
+    try {
+        const snapshot = await db.collection('scheduled_notifications')
+            .orderBy('scheduledAt', 'desc')
+            .limit(100)
+            .get();
+
+        const list = [];
+        snapshot.forEach(doc => {
+            list.push({ id: doc.id, ...doc.data() });
+        });
+
+        return res.json({ success: true, data: list, count: list.length });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+router.delete('/notifications/scheduled/:id', checkAdmin, async (req, res) => {
+    try {
+        const docRef = db.collection('scheduled_notifications').doc(req.params.id);
+        const doc = await docRef.get();
+
+        if (!doc.exists) {
+            return res.status(404).json({ success: false, message: 'Notifikasi tidak ditemukan' });
+        }
+        if (doc.data().status !== 'PENDING') {
+            return res.status(400).json({ success: false, message: 'Hanya PENDING yang bisa dibatalkan' });
+        }
+
+        await docRef.update({
+            status: 'CANCELLED',
+            cancelledAt: Date.now(),
+            cancelledBy: req.adminUser?.uid || 'admin_web'
+        });
+
+        return res.json({ success: true, message: 'Notifikasi dibatalkan' });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message });
     }
 });
 

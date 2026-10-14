@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analytics — Royaltree Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/admin.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    (function() {
+      if (!localStorage.getItem('royaltree_admin_token')) {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+<div class="d-flex">
+  <div id="admin-sidebar"></div>
+  <div class="flex-grow-1" style="min-width:0;">
+    <div id="admin-navbar"></div>
+
+    <main class="admin-content">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+          <h4 class="mb-1 fw-bold">Analytics</h4>
+          <p class="text-muted mb-0 small">User growth, DAU, dan mining activity</p>
+        </div>
+        <div class="d-flex gap-2">
+          <select class="form-select form-select-sm" id="daysSelect" style="width:auto;">
+            <option value="7">7 hari</option>
+            <option value="30" selected>30 hari</option>
+            <option value="90">90 hari</option>
+          </select>
+          <button class="btn btn-sm btn-outline-secondary" id="refreshBtn">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4" id="summaryCards">
+        <div class="col-12 text-center py-4">
+          <div class="spinner-border text-primary"></div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-lg-6">
+          <div class="card stat-card h-100">
+            <div class="card-header bg-white">
+              <h6 class="fw-bold mb-0">
+                <i class="bi bi-person-plus me-2 text-success"></i>User Growth (New Users/Day)
+              </h6>
+            </div>
+            <div class="card-body">
+              <canvas id="growthChart" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card stat-card h-100">
+            <div class="card-header bg-white">
+              <h6 class="fw-bold mb-0">
+                <i class="bi bi-people me-2 text-primary"></i>Daily Active Users (DAU)
+              </h6>
+            </div>
+            <div class="card-body">
+              <canvas id="dauChart" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <div class="card stat-card">
+            <div class="card-header bg-white">
+              <h6 class="fw-bold mb-0">
+                <i class="bi bi-bar-chart me-2 text-warning"></i>Mining Activity
+              </h6>
+            </div>
+            <div class="card-body">
+              <canvas id="miningChart" height="100"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card stat-card">
+        <div class="card-header bg-white">
+          <h6 class="fw-bold mb-0">
+            <i class="bi bi-table me-2"></i>Data Harian
+          </h6>
+        </div>
+        <div class="card-body p-0" id="dailyTable">
+          <div class="text-center py-5">
+            <div class="spinner-border text-primary"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/layout.js"></script>
+<script>
+(function () {
+  AdminLayout.init('Analytics');
+
+  let growthChart = null, dauChart = null, miningChart = null;
+
+  async function loadAnalytics() {
+    const days = document.getElementById('daysSelect').value;
+    const summaryEl = document.getElementById('summaryCards');
+    const tableEl = document.getElementById('dailyTable');
+
+    summaryEl.innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border"></div></div>';
+    tableEl.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
+
+    const res = await AdminAPI.getAnalytics(days);
+    if (!res.success) {
+      summaryEl.innerHTML = `<div class="col-12"><div class="alert alert-danger">${AdminAPI.escapeHtml(res.message || 'Error')}</div></div>`;
+      tableEl.innerHTML = '';
+      return;
+    }
+
+    const { summary, userGrowth, dau, mining } = res.data;
+
+    summaryEl.innerHTML = `
+      <div class="col-6 col-md-3">
+        <div class="card stat-card">
+          <div class="card-body">
+            <div class="stat-icon bg-primary-subtle text-primary mb-2"><i class="bi bi-people"></i></div>
+            <div class="stat-value">${AdminAPI.fmtNumber(summary.totalUsers)}</div>
+            <div class="stat-label">Total Users</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card stat-card">
+          <div class="card-body">
+            <div class="stat-icon bg-success-subtle text-success mb-2"><i class="bi bi-activity"></i></div>
+            <div class="stat-value">${summary.avgDau}</div>
+            <div class="stat-label">Avg DAU</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card stat-card">
+          <div class="card-body">
+            <div class="stat-icon bg-warning-subtle text-warning mb-2"><i class="bi bi-person-plus"></i></div>
+            <div class="stat-value">${summary.avgNewUsers}</div>
+            <div class="stat-label">Avg New/Day</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card stat-card">
+          <div class="card-body">
+            <div class="stat-icon bg-info-subtle text-info mb-2"><i class="bi bi-calendar-check"></i></div>
+            <div class="stat-value">${AdminAPI.fmtNumber(summary.totalNewUsers)}</div>
+            <div class="stat-label">New Users (${summary.days}d)</div>
+          </div>
+        </div>
+      </div>`;
+
+    const gCtx = document.getElementById('growthChart').getContext('2d');
+    if (growthChart) growthChart.destroy();
+    growthChart = new Chart(gCtx, {
+      type: 'bar',
+      data: {
+        labels: userGrowth.map(d => d.date),
+        datasets: [{
+          label: 'New Users',
+          data: userGrowth.map(d => d.newUsers),
+          backgroundColor: 'rgba(16, 185, 129, 0.7)',
+          borderColor: '#10B981',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+      }
+    });
+
+    const dCtx = document.getElementById('dauChart').getContext('2d');
+    if (dauChart) dauChart.destroy();
+    dauChart = new Chart(dCtx, {
+      type: 'line',
+      data: {
+        labels: dau.map(d => d.date),
+        datasets: [{
+          label: 'Active Users',
+          data: dau.map(d => d.users),
+          borderColor: '#3B82F6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          tension: 0.3, fill: true, pointRadius: 4, pointBackgroundColor: '#3B82F6'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+      }
+    });
+
+    const mCtx = document.getElementById('miningChart').getContext('2d');
+    if (miningChart) miningChart.destroy();
+    miningChart = new Chart(mCtx, {
+      type: 'line',
+      data: {
+        labels: mining.map(d => d.date),
+        datasets: [{
+          label: 'Mining Logs',
+          data: mining.map(d => d.count),
+          borderColor: '#FBBF24',
+          backgroundColor: 'rgba(251, 191, 36, 0.1)',
+          tension: 0.3, fill: true, yAxisID: 'y'
+        }, {
+          label: 'Avg Temp (°C)',
+          data: mining.map(d => d.avgTemp),
+          borderColor: '#EF4444',
+          borderDash: [5, 5],
+          tension: 0.3, fill: false, yAxisID: 'y1'
+        }]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { position: 'top' } },
+        scales: {
+          y: { type: 'linear', position: 'left', beginAtZero: true, title: { display: true, text: 'Logs' } },
+          y1: { type: 'linear', position: 'right', beginAtZero: false, suggestedMin: 25, suggestedMax: 70, grid: { drawOnChartArea: false }, title: { display: true, text: '°C' } }
+        }
+      }
+    });
+
+    const dates = new Set([...mining.map(m => m.date), ...userGrowth.map(g => g.date), ...dau.map(d => d.date)]);
+    const sortedDates = Array.from(dates).sort();
+    const growthMap = Object.fromEntries(userGrowth.map(d => [d.date, d.newUsers]));
+    const dauMap = Object.fromEntries(dau.map(d => [d.date, d.users]));
+    const miningMap = Object.fromEntries(mining.map(d => [d.date, d]));
+
+    if (sortedDates.length === 0) {
+      tableEl.innerHTML = `
+        <div class="text-center py-5">
+          <i class="bi bi-graph-down text-muted" style="font-size:3rem;"></i>
+          <h5 class="mt-3 mb-1">Tidak Ada Data</h5>
+          <p class="text-muted small mb-0">Belum ada aktivitas tercatat</p>
+        </div>`;
+      return;
+    }
+
+    tableEl.innerHTML = `
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th class="text-end">New Users</th>
+              <th class="text-end">DAU</th>
+              <th class="text-end">Mining Logs</th>
+              <th class="text-end">Avg Temp</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sortedDates.map(d => `
+              <tr>
+                <td><strong>${d}</strong></td>
+                <td class="text-end text-success">${growthMap[d] || 0}</td>
+                <td class="text-end text-primary">${dauMap[d] || 0}</td>
+                <td class="text-end text-warning">${miningMap[d]?.count || 0}</td>
+                <td class="text-end text-danger">${miningMap[d]?.avgTemp ? miningMap[d].avgTemp + '°C' : '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  document.getElementById('refreshBtn').onclick = () => {
+    loadAnalytics();
+    AdminAPI.toast('Data diperbarui', 'success');
+  };
+
+  document.getElementById('daysSelect').onchange = loadAnalytics;
+
+  loadAnalytics();
+})();
+</script>
+</body>
+</html>

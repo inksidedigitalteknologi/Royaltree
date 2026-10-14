@@ -1131,6 +1131,88 @@ setInterval(() => {
     anomaly.saveAllFlags().catch(e => console.error('[CRON] saveAllFlags:', e.message));
 }, 5 * 60 * 1000);
 
+// ============================================================
+// CRON: Scheduled Notifications — cek setiap 60 detik
+// ============================================================
+setInterval(async () => {
+    try {
+        const now = Date.now();
+        const snapshot = await db.collection('scheduled_notifications')
+            .where('status', '==', 'PENDING')
+            .where('scheduledAt', '<=', now)
+            .limit(10)
+            .get();
+
+        if (snapshot.empty) return;
+
+        for (const doc of snapshot.docs) {
+            const data = doc.data();
+            try {
+                let usersSnapshot;
+                if (data.targetUid) {
+                    const singleDoc = await db.collection('users').doc(data.targetUid).get();
+                    if (!singleDoc.exists) {
+                        await doc.ref.update({ status: 'FAILED', error: 'User tidak ditemukan', sentAt: Date.now() });
+                        continue;
+                    }
+                    usersSnapshot = { forEach: (cb) => cb(singleDoc), size: 1 };
+                } else {
+                    usersSnapshot = await db.collection('users').get();
+                }
+
+                const batch = db.batch();
+                let count = 0;
+                const fcmTokens = [];
+
+                usersSnapshot.forEach(userDoc => {
+                    const userData = userDoc.data();
+                    const notifRef = db.collection('notifications').doc();
+                    batch.set(notifRef, {
+                        userId: userDoc.id,
+                        title: data.title,
+                        message: data.message,
+                        type: data.type || 'BROADCAST',
+                        timestamp: Date.now(),
+                        createdAt: new Date().toISOString(),
+                        read: false,
+                        scheduled: true
+                    });
+                    if (userData.fcmToken) fcmTokens.push(userData.fcmToken);
+                    count++;
+                });
+                await batch.commit();
+
+                let fcmSent = 0;
+                if (fcmTokens.length > 0) {
+                    try {
+                        const fcmService = require('./services/fcm');
+                        await fcmService.sendBatchPush(
+                            fcmTokens, data.title, data.message, { type: data.type || 'BROADCAST' }
+                        );
+                        fcmSent = fcmTokens.length;
+                    } catch (e) {
+                        console.error('[SCHEDULED] FCM error:', e.message);
+                    }
+                }
+
+                await doc.ref.update({
+                    status: 'SENT',
+                    sentAt: Date.now(),
+                    sentCount: count,
+                    fcmSent
+                });
+
+                console.log(`[SCHEDULED] Sent "${data.title}" to ${count} users (${fcmSent} FCM)`);
+            } catch (e) {
+                console.error('[SCHEDULED] Send error:', e.message);
+                await doc.ref.update({ status: 'FAILED', error: e.message, sentAt: Date.now() });
+            }
+        }
+    } catch (err) {
+        console.error('[SCHEDULED-CRON] Error:', err.message);
+    }
+}, 60 * 1000);
+
 app.listen(PORT, () => {
     console.log(`====================================================`);
     console.log(` Royaltree Portal API Server aktif di port ${PORT}`);

@@ -7,6 +7,7 @@
 
   const MENU = [
     { href: 'index.html',       icon: 'speedometer2',      label: 'Dashboard' },
+    { href: 'analytics.html',   icon: 'graph-up-arrow',    label: 'Analytics', badge: 'NEW' },
     { href: 'users.html',       icon: 'people',            label: 'Users' },
     { href: 'withdrawals.html', icon: 'cash-stack',        label: 'Withdrawals' },
     { href: 'anomalies.html',   icon: 'shield-exclamation',label: 'Anomalies' },
@@ -17,6 +18,7 @@
     { href: 'campaigns.html',   icon: 'megaphone',         label: 'Campaigns' },
     { href: 'chat.html',        icon: 'chat-dots',         label: 'Chat' },
     { href: 'broadcast.html',   icon: 'send',              label: 'Broadcast' },
+    { href: 'schedule.html',    icon: 'clock-history',     label: 'Scheduled Notif' },
     { href: 'audit-logs.html',  icon: 'journal-text',      label: 'Audit Logs' },
     { href: 'config.html',      icon: 'gear',              label: 'Config' }
   ];
