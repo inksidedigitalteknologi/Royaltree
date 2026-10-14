@@ -7,24 +7,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Surface
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,8 +26,8 @@ import com.inkside.digital.sensor.BatteryTempHelper
 import com.inkside.digital.viewmodel.AffiliateViewModel
 
 /**
- * ThermalStatusCard — tampilkan suhu baterai + region + charging status.
- * Update real-time dari BatteryTempHelper + LocationHelper.
+ * ThermalStatusCard — compact card: thermal + battery + hashrate
+ * Update real-time dari BatteryTempHelper.
  */
 @Composable
 fun ThermalStatusCard(viewModel: AffiliateViewModel) {
@@ -44,160 +35,131 @@ fun ThermalStatusCard(viewModel: AffiliateViewModel) {
     val status by viewModel.tempStatus.collectAsState()
     val level by viewModel.batteryLevel.collectAsState()
     val charging by viewModel.isCharging.collectAsState()
-    val region by viewModel.userRegion.collectAsState()
     val miningPaused by viewModel.miningPaused.collectAsState()
     val pauseReason by viewModel.pauseReason.collectAsState()
     val hashrateFactor by viewModel.hashrateFactor.collectAsState()
 
-    // Jangan tampilkan kalau belum ada data suhu
     if (temp == 0f) return
 
-    val bgColor = when (status) {
-        BatteryTempHelper.TempStatus.COLD -> Color(0xFFE3F2FD)
-        BatteryTempHelper.TempStatus.NORMAL -> Color(0xFFE8F5E9)
-        BatteryTempHelper.TempStatus.WARM -> Color(0xFFFFF9C4)
-        BatteryTempHelper.TempStatus.HOT -> Color(0xFFFFE0B2)
-        BatteryTempHelper.TempStatus.VERY_HOT -> Color(0xFFFFCDD2)
-        BatteryTempHelper.TempStatus.CRITICAL -> Color(0xFFEF9A9A)
-        BatteryTempHelper.TempStatus.THROTTLE -> Color(0xFFB71C1C)
+    val (bgColor, accentColor) = when (status) {
+        BatteryTempHelper.TempStatus.COLD -> Color(0xFF0F172A) to Color(0xFF60A5FA)
+        BatteryTempHelper.TempStatus.NORMAL -> Color(0xFF0F172A) to Color(0xFF34D399)
+        BatteryTempHelper.TempStatus.WARM -> Color(0xFF0F172A) to Color(0xFFFBBF24)
+        BatteryTempHelper.TempStatus.HOT -> Color(0xFF0F172A) to Color(0xFFFB923C)
+        BatteryTempHelper.TempStatus.VERY_HOT -> Color(0xFF0F172A) to Color(0xFFF87171)
+        BatteryTempHelper.TempStatus.CRITICAL -> Color(0xFF0F172A) to Color(0xFFEF4444)
+        BatteryTempHelper.TempStatus.THROTTLE -> Color(0xFF450A0A) to Color(0xFFFFFFFF)
     }
 
-    val textColor = if (status == BatteryTempHelper.TempStatus.THROTTLE) {
-        Color.White
-    } else {
-        Color(0xFF1F2937)
-    }
-
-    // Animasi blink saat status CRITICAL/THROTTLE
-    val isCritical = status == BatteryTempHelper.TempStatus.CRITICAL ||
-                     status == BatteryTempHelper.TempStatus.THROTTLE
-    val infiniteTransition = rememberInfiniteTransition(label = "thermal_blink")
-    val alpha by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = if (isCritical) 0.5f else 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(800, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "thermal_alpha"
-    )
-
-    Card(
+    Surface(
+        color = bgColor,
+        shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .alpha(alpha),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = bgColor)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Row 1: Icon + suhu + battery + charging
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(status.emoji, fontSize = 26.sp)
-                Spacer(Modifier.width(10.dp))
-                Column(Modifier.weight(1f)) {
-                    Text(
-                        "${String.format("%.1f", temp)}°C",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        color = textColor
-                    )
-                    Text(
-                        status.label,
-                        fontSize = 12.sp,
-                        color = textColor.copy(alpha = 0.8f)
-                    )
-                }
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(
-                        "🔋 $level%",
-                        fontSize = 12.sp,
-                        color = textColor,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    if (charging) {
-                        Text(
-                            "⚡ Charging",
-                            fontSize = 10.sp,
-                            color = textColor.copy(alpha = 0.8f)
-                        )
-                    }
-                    Text(
-                        "📍 $region",
-                        fontSize = 10.sp,
-                        color = textColor.copy(alpha = 0.8f)
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(8.dp))
-
-            LinearProgressIndicator(
-                progress = { hashrateFactor },
                 modifier = Modifier.fillMaxWidth(),
-                color = if (miningPaused) {
-                    Color(0xFFB71C1C)
-                } else if (status == BatteryTempHelper.TempStatus.THROTTLE) {
-                    Color.White
-                } else {
-                    Color(0xFF16A34A)
-                }
-            )
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(status.emoji, fontSize = 22.sp)
+                Spacer(Modifier.width(10.dp))
 
+                Text(
+                    "${String.format("%.1f", temp)}°C",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = accentColor
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    status.label,
+                    fontSize = 11.sp,
+                    color = Color.White.copy(alpha = 0.7f)
+                )
+
+                Spacer(Modifier.weight(1f))
+
+                Text(
+                    "🔋 $level%",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+                if (charging) {
+                    Spacer(Modifier.width(6.dp))
+                    Text("⚡", fontSize = 13.sp)
+                }
+            }
+
+            // Row 2: Hashrate bar
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Hashrate: ${(hashrateFactor * 100).toInt()}%",
-                    fontSize = 11.sp,
-                    color = textColor
-                )
-                Text(
-                    if (miningPaused) "Mining dijeda" else "Mining speed adjustment",
+                    "Hashrate",
                     fontSize = 10.sp,
-                    color = textColor.copy(alpha = 0.6f)
+                    color = Color.White.copy(alpha = 0.5f)
+                )
+                Spacer(Modifier.width(8.dp))
+                // Custom progress bar
+                Surface(
+                    color = Color.White.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(4.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(6.dp)
+                ) {
+                    Surface(
+                        color = when {
+                            miningPaused -> Color(0xFFEF4444)
+                            status == BatteryTempHelper.TempStatus.THROTTLE -> Color.White
+                            else -> accentColor
+                        },
+                        shape = RoundedCornerShape(4.dp),
+                        modifier = Modifier
+                            .fillMaxWidth(hashrateFactor.coerceIn(0f, 1f))
+                            .height(6.dp)
+                    ) {}
+                }
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    "${(hashrateFactor * 100).toInt()}%",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = accentColor
                 )
             }
 
-            // ============ BANNER PAUSED ============
+            // Paused banner
             if (miningPaused) {
-                Spacer(Modifier.height(8.dp))
                 Surface(
-                    color = Color(0xFFB71C1C),
+                    color = Color(0xFF7F1D1D),
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
-                        modifier = Modifier.padding(10.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("⛔", fontSize = 20.sp)
+                        Text("⛔", fontSize = 14.sp)
                         Spacer(Modifier.width(8.dp))
-                        Column(Modifier.weight(1f)) {
-                            Text(
-                                when (pauseReason) {
-                                    "battery_critical" -> "🔋 BATERAI KRITIS"
-                                    "temp_critical" -> "⛔ HP TERLALU PANAS"
-                                    else -> "⛔ MINING DIJEDA"
-                                },
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 13.sp
-                            )
-                            Text(
-                                when (pauseReason) {
-                                    "battery_critical" -> "Charge HP untuk lanjut mining"
-                                    "temp_critical" -> "Dinginkan HP sampai < 55°C"
-                                    else -> "Tunggu sampai aman"
-                                },
-                                color = Color.White.copy(alpha = 0.85f),
-                                fontSize = 10.sp
-                            )
-                        }
+                        Text(
+                            when (pauseReason) {
+                                "battery_critical" -> "Baterai kritis — charge HP"
+                                "temp_critical" -> "HP terlalu panas — dinginkan"
+                                else -> "Mining dijeda"
+                            },
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
                     }
                 }
             }
