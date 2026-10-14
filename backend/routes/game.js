@@ -169,7 +169,7 @@ async function getThermalConfig() {
     }
 }
 
-function calculateFinalRate(baseRate, room, placedMiners) {
+function calculateFinalRate(baseRate, room, placedMiners, anomalyScore = 0) {
     // 1. Bonus permanen dari miner yang placed
     let permanentBonusPct = 0;
     (placedMiners || []).forEach(m => {
@@ -180,23 +180,32 @@ function calculateFinalRate(baseRate, room, placedMiners) {
     let miniGameBonusPct = 0;
     if (room.miniGameBonusExpiry && room.miniGameBonusExpiry > Date.now()) {
         miniGameBonusPct = room.miniGameBonusPct || 0;
-        // Safety: cap di MINI_GAME_BONUS_CAP_PCT
         if (miniGameBonusPct > MINI_GAME_BONUS_CAP_PCT) {
             miniGameBonusPct = MINI_GAME_BONUS_CAP_PCT;
         }
     }
 
     const totalBonusPct = permanentBonusPct + miniGameBonusPct;
-    const finalRate = baseRate * (1 + totalBonusPct / 100);
 
-    
-        return {
-            finalRate: finalRate,
-            baseRate: baseRate,
-            permanentBonusPct: permanentBonusPct || 0,
-            miniGameBonusPct: miniGameBonusPct || 0,
-            totalBonusPct: totalBonusPct || 0
-        };
+    // ============================================================
+    // 3. ANTI-FRAUD FACTOR (dari anomaly score)
+    // ============================================================
+    let anomalyFactor = 1.0;
+    if (anomalyScore >= 100) anomalyFactor = 0.25;
+    else if (anomalyScore >= 75) anomalyFactor = 0.50;
+    else if (anomalyScore >= 50) anomalyFactor = 0.75;
+
+    const finalRate = baseRate * (1 + totalBonusPct / 100) * anomalyFactor;
+
+    return {
+        finalRate: finalRate,
+        baseRate: baseRate,
+        permanentBonusPct: permanentBonusPct || 0,
+        miniGameBonusPct: miniGameBonusPct || 0,
+        totalBonusPct: totalBonusPct || 0,
+        anomalyFactor: anomalyFactor,
+        anomalyScore: anomalyScore
+    };
 }
 
 // ============================================================
@@ -261,7 +270,8 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
         const placedMiners = miners.filter(m => m.isPlacedInRoom === true);
         // M43: Guna calculateFinalRate untuk masukkan bonus dalam display
         const baseRateForState = placedMiners.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
-        const rateInfoForState = calculateFinalRate(baseRateForState, room, placedMiners);
+        const userFlag1 = anomaly.getUserFlag(uid);
+        const rateInfoForState = calculateFinalRate(baseRateForState, room, placedMiners, userFlag1.score || 0);
         const ratePerMin = rateInfoForState.finalRate;
         
         const lastUpdate = room.lastMiningUpdateTimestamp 
@@ -414,7 +424,8 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
         
         // M43: Guna calculateFinalRate untuk masukkan bonus permanen + minigame
         const baseRateFresh = placedMinersArr.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
-        const rateCalcFresh = calculateFinalRate(baseRateFresh, room, placedMinersArr);
+        const userFlag2 = anomaly.getUserFlag(uid);
+        const rateCalcFresh = calculateFinalRate(baseRateFresh, room, placedMinersArr, userFlag2.score || 0);
         const ratePerMinFresh = rateCalcFresh.finalRate;
         const lastUpdateFresh = room.lastMiningUpdateTimestamp 
             || room.lastClaimTimestamp 
@@ -605,7 +616,8 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
         
         // M43: Guna calculateFinalRate untuk masukkan bonus permanen + minigame
         const baseRate = placedMiners.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
-        const rateCalc = calculateFinalRate(baseRate, room, placedMiners);
+        const userFlag3 = anomaly.getUserFlag(uid);
+        const rateCalc = calculateFinalRate(baseRate, room, placedMiners, userFlag3.score || 0);
         const ratePerMin = rateCalc.finalRate;
         const lastUpdate = room.lastMiningUpdateTimestamp 
             || room.lastClaimTimestamp 
@@ -666,6 +678,16 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
             points: claimAmount,
             timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
+
+        // ============================================================
+        // ANOMALY TRACKING: RTP_GAIN + BLOCK
+        // ============================================================
+        try {
+            anomaly.trackActivity(uid, 'RTP_GAIN', claimAmount);
+            anomaly.trackActivity(uid, 'BLOCK', Math.max(1, Math.floor(claimAmount)));
+        } catch (e) {
+            console.error('[ANOMALY-TRACK] Error:', e.message);
+        }
 
         // Notifikasi
         await createNotification(
@@ -892,7 +914,8 @@ router.get('/mining/rate-info', verifyFirebaseToken, async (req, res) => {
         });
 
         const baseRate = placedMiners.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
-        const rateInfo = calculateFinalRate(baseRate, room, placedMiners);
+        const userFlag4 = anomaly.getUserFlag(uid);
+        const rateInfo = calculateFinalRate(baseRate, room, placedMiners, userFlag4.score || 0);
 
         return res.json({
             success: true,

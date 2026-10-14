@@ -7,6 +7,7 @@ const admin = require('firebase-admin');
 const crypto = require('crypto');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 const { checkFraud, adCooldown } = require('../middleware/antiFraud');
+const anomaly = require('../services/anomaly');
 
 const db = admin.firestore();
 
@@ -107,6 +108,7 @@ router.get('/status', verifyFirebaseToken, async (req, res) => {
 router.post('/reward', verifyFirebaseToken, checkFraud, async (req, res) => {
     try {
         const { uid } = req.firebaseUser;
+        anomaly.trackActivity(uid, 'AD_WATCH');
         const { vendor, transactionId } = req.body;
 
         if (!vendor || !transactionId) {
