@@ -1734,10 +1734,35 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 _isCharging.value = charging
                 _tempStatus.value = BatteryTempHelper.getTempStatus(temp)
 
-                // Kirim ke backend setiap 30 detik (atau saat suhu berubah drastis)
+                // ============================================================
+                // A. LOCAL — Hitung hashrate factor + auto-pause (TIDAK kirim backend)
+                // ============================================================
+                val factor = calculateLocalHashrateFactor(temp, level, charging)
+                _hashrateFactor.value = factor
+
+                val (shouldPause, pauseReason) = calculatePauseState(temp, level)
+                _miningPaused.value = shouldPause
+                _pauseReason.value = pauseReason
+
+                // ============================================================
+                // B. SYNC ke BACKEND — 1 jam atau event penting
+                // ============================================================
                 val now = System.currentTimeMillis()
-                if (now - lastThermalSync > 30000) {
+                val timeSinceSync = now - lastThermalSync
+                val tempChanged = kotlin.math.abs(temp - lastTempSync) > 5f
+                val chargingChanged = charging != lastChargingSync
+                val batteryCritical = level < 15 && lastLevelSync >= 15
+
+                val shouldSync = timeSinceSync > 3600000L  // 1 jam
+                    || tempChanged
+                    || chargingChanged
+                    || batteryCritical
+
+                if (shouldSync) {
                     lastThermalSync = now
+                    lastTempSync = temp
+                    lastChargingSync = charging
+                    lastLevelSync = level
                     syncThermalToBackend(temp, level, charging)
                 }
             }
@@ -1751,6 +1776,52 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private var lastThermalSync = 0L
+    private var lastTempSync = 0f
+    private var lastChargingSync = false
+    private var lastLevelSync = 100
+
+    /**
+     * Hitung hashrate factor LOCAL — tidak butuh backend.
+     * Multi-factor: thermal penalty + battery penalty + charging boost.
+     */
+    private fun calculateLocalHashrateFactor(temp: Float, level: Int, charging: Boolean): Float {
+        var factor = 1.0f
+
+        // Thermal penalty
+        factor *= when {
+            temp < 35f -> 1.0f
+            temp < 45f -> 0.9f
+            temp < 55f -> 0.7f
+            temp < 60f -> 0.5f
+            else -> 0.25f
+        }
+
+        // Battery penalty
+        factor *= when {
+            level >= 50 -> 1.0f
+            level >= 30 -> 0.9f
+            level >= 15 -> 0.75f
+            level >= 5 -> 0.5f
+            else -> 0f
+        }
+
+        // Charging boost
+        if (charging) factor *= 1.2f
+
+        return factor.coerceIn(0f, 1.5f)
+    }
+
+    /**
+     * Hitung auto-pause state LOCAL.
+     * Pause kalau suhu >= 60°C atau battery < 5%.
+     */
+    private fun calculatePauseState(temp: Float, level: Int): Pair<Boolean, String> {
+        return when {
+            level < 5 -> true to "battery_critical"
+            temp >= 60f -> true to "temp_critical"
+            else -> false to ""
+        }
+    }
 
     private fun syncThermalToBackend(temp: Float, level: Int, charging: Boolean) {
         viewModelScope.launch {
@@ -1761,13 +1832,10 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     put("is_charging", charging)
                 }
                 val result = ApiClient.updateThermal(body)
-                result.getOrNull()?.let { json ->
-                    // Parse mining_paused + hashrate_factor dari backend
-                    _miningPaused.value = json.optBoolean("mining_paused", false)
-                    _pauseReason.value = json.optString("pause_reason", "")
-                    val factor = json.optDouble("hashrate_factor", 1.0)
-                    _hashrateFactor.value = factor.toFloat()
-                    android.util.Log.d("Thermal", "Sync OK: paused=${_miningPaused.value}, reason=${_pauseReason.value}, factor=$factor")
+                result.getOrNull()?.let {
+                    // Sync sukses — record ke backend untuk analytics
+                    // Hashrate factor + pause state DIHITUNG LOCAL, tidak dari backend
+                    android.util.Log.d("Thermal", "Sync OK: temp=$temp, level=$level, charging=$charging")
                 } ?: run {
                     android.util.Log.w("Thermal", "Sync failed: ${result.exceptionOrNull()?.message}")
                 }
