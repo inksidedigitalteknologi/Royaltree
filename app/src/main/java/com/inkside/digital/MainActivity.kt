@@ -1247,9 +1247,12 @@ fun MainAffiliateAppContent(
     }
 
     // === Banned User Dialog ===
-    if (bannedInfo.banned) {
+    // Baca langsung dari ApiClient.bannedState (global observable)
+    // Tidak pakai bannedInfo state karena scope beda (outer vs inner function)
+    val currentBanned = ApiClient.bannedState
+    if (currentBanned.banned) {
         BannedDialog(
-            bannedInfo = bannedInfo,
+            bannedInfo = currentBanned,
             onLogout = {
                 android.util.Log.d("MainActivity", "🚫 User logout due to banned")
                 com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
