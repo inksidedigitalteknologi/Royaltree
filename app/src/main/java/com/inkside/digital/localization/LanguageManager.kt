@@ -1087,14 +1087,6 @@ object LanguageManager {
             AppLanguage.ARABIC to "حاول مرة أخرى",
             AppLanguage.JAPANESE to "再試行"
         ),
-        "common_cancel" to mapOf(
-            AppLanguage.INDONESIAN to "Batal",
-            AppLanguage.ENGLISH to "Cancel",
-            AppLanguage.SPANISH to "Cancelar",
-            AppLanguage.CHINESE to "取消",
-            AppLanguage.ARABIC to "إلغاء",
-            AppLanguage.JAPANESE to "キャンセル"
-        ),
         "common_yes" to mapOf(
             AppLanguage.INDONESIAN to "Ya",
             AppLanguage.ENGLISH to "Yes",
@@ -1118,14 +1110,6 @@ object LanguageManager {
             AppLanguage.CHINESE to "保存",
             AppLanguage.ARABIC to "حفظ",
             AppLanguage.JAPANESE to "保存"
-        ),
-        "common_close" to mapOf(
-            AppLanguage.INDONESIAN to "Tutup",
-            AppLanguage.ENGLISH to "Close",
-            AppLanguage.SPANISH to "Cerrar",
-            AppLanguage.CHINESE to "关闭",
-            AppLanguage.ARABIC to "إغلاق",
-            AppLanguage.JAPANESE to "閉じる"
         ),
 
         // ============ DAILY CHECK-IN ============
@@ -1254,22 +1238,6 @@ object LanguageManager {
             AppLanguage.CHINESE to "帮助",
             AppLanguage.ARABIC to "مساعدة",
             AppLanguage.JAPANESE to "ヘルプ"
-        ),
-        "faq_subtitle" to mapOf(
-            AppLanguage.INDONESIAN to "Pertanyaan umum & dukungan",
-            AppLanguage.ENGLISH to "Common questions & support",
-            AppLanguage.SPANISH to "Preguntas frecuentes",
-            AppLanguage.CHINESE to "常见问题与支持",
-            AppLanguage.ARABIC to "الأسئلة الشائعة والدعم",
-            AppLanguage.JAPANESE to "よくある質問とサポート"
-        ),
-        "faq_contact_support" to mapOf(
-            AppLanguage.INDONESIAN to "Hubungi Support",
-            AppLanguage.ENGLISH to "Contact Support",
-            AppLanguage.SPANISH to "Contactar Soporte",
-            AppLanguage.CHINESE to "联系支持",
-            AppLanguage.ARABIC to "اتصل بالدعم",
-            AppLanguage.JAPANESE to "サポートに連絡"
         ),
 
         "notif_title" to mapOf(
