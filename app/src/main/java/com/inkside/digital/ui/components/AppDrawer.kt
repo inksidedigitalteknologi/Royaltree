@@ -66,6 +66,7 @@ import com.inkside.digital.ui.screens.ProfileAvatarWithFrame
 import com.inkside.digital.util.GlobalPointsManager
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.EmojiEvents
 
 @Composable
 fun AppDrawer(
@@ -186,6 +187,12 @@ fun AppDrawer(
                 label = LanguageManager.translate("settings_title", currentLanguage, "Pengaturan"),
                 selected = currentScreen == AppScreen.SETTINGS,
                 onClick = { onNavigate(AppScreen.SETTINGS); onCloseDrawer() }
+            )
+            DrawerItem(
+                icon = Icons.Default.EmojiEvents,
+                label = LanguageManager.translate("achievement_title", currentLanguage, "Achievement"),
+                selected = currentScreen == AppScreen.ACHIEVEMENT,
+                onClick = { onNavigate(AppScreen.ACHIEVEMENT); onCloseDrawer() }
             )
             DrawerItem(
                 icon = Icons.AutoMirrored.Filled.HelpOutline,

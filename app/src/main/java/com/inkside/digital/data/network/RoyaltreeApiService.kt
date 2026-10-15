@@ -283,6 +283,15 @@ interface RoyaltreeApiService {
 
     @POST("chat/send")
     suspend fun sendChatMessage(@Body body: RequestBody): ResponseBody
+
+    // ============================================================
+    // ACHIEVEMENT
+    // ============================================================
+    @GET("achievements/my")
+    suspend fun getMyAchievements(): ResponseBody
+
+    @POST("achievements/claim/{id}")
+    suspend fun claimAchievement(@retrofit2.http.Path("id") id: String): ResponseBody
 }
 
 

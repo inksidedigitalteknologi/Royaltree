@@ -68,6 +68,7 @@ import com.inkside.digital.ui.components.AppDrawer
 import com.inkside.digital.ui.screens.ReferralScreen
 import com.inkside.digital.ui.screens.SettingsScreen
 import com.inkside.digital.ui.screens.FaqScreen
+import com.inkside.digital.ui.screens.AchievementScreen
 import kotlinx.coroutines.launch
 import com.inkside.digital.ui.screens.AdminScreen
 import com.inkside.digital.ui.screens.InboxScreen
@@ -1066,6 +1067,14 @@ fun MainAffiliateAppContent(
 
                 AppScreen.FAQ -> {
                     FaqScreen(currentLanguage = currentLanguage)
+                }
+
+                AppScreen.ACHIEVEMENT -> {
+                    AchievementScreen(
+                        viewModel = affiliateViewModel,
+                        currentLanguage = currentLanguage,
+                        onBack = { onNavigate(AppScreen.PROFILE) }
+                    )
                 }
 
                 AppScreen.DAILY_CHECK_IN -> {
