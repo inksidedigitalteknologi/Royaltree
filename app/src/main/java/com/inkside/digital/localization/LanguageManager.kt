@@ -3388,6 +3388,145 @@ object LanguageManager {
             AppLanguage.JAPANESE to "今すぐ購入"
         ),
 
+
+        // ========== CAMPAIGNS SCREEN ==========
+        "campaigns_create_link_btn" to mapOf(
+            AppLanguage.INDONESIAN to "Buat Link",
+            AppLanguage.ENGLISH to "Create Link",
+            AppLanguage.SPANISH to "Crear Enlace",
+            AppLanguage.CHINESE to "创建链接",
+            AppLanguage.ARABIC to "إنشاء رابط",
+            AppLanguage.JAPANESE to "リンク作成"
+        ),
+        "campaigns_tab_catalog" to mapOf(
+            AppLanguage.INDONESIAN to "Katalog Kampanye (",
+            AppLanguage.ENGLISH to "Campaign Catalog (",
+            AppLanguage.SPANISH to "Catálogo de Campañas (",
+            AppLanguage.CHINESE to "活动目录（",
+            AppLanguage.ARABIC to "كتالوج الحملات (",
+            AppLanguage.JAPANESE to "キャンペーンカタログ ("
+        ),
+        "campaigns_tab_my_links" to mapOf(
+            AppLanguage.INDONESIAN to "Link Aktif Saya (",
+            AppLanguage.ENGLISH to "My Active Links (",
+            AppLanguage.SPANISH to "Mis Enlaces Activos (",
+            AppLanguage.CHINESE to "我的活跃链接（",
+            AppLanguage.ARABIC to "روابطي النشطة (",
+            AppLanguage.JAPANESE to "自分の有効リンク ("
+        ),
+        "campaigns_empty_title" to mapOf(
+            AppLanguage.INDONESIAN to "Belum Ada Tautan Promosi",
+            AppLanguage.ENGLISH to "No Promotion Links Yet",
+            AppLanguage.SPANISH to "Aún No Hay Enlaces de Promoción",
+            AppLanguage.CHINESE to "尚无推广链接",
+            AppLanguage.ARABIC to "لا توجد روابط ترويج بعد",
+            AppLanguage.JAPANESE to "プロモーションリンクはまだありません"
+        ),
+        "campaigns_empty_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Pilih kampanye di atas untuk mulai membuat tautan promosi pertama Anda.",
+            AppLanguage.ENGLISH to "Pick a campaign above to create your first promotion link.",
+            AppLanguage.SPANISH to "Elige una campaña arriba para crear tu primer enlace de promoción.",
+            AppLanguage.CHINESE to "在上方选择一个活动来创建您的第一个推广链接。",
+            AppLanguage.ARABIC to "اختر حملة أعلاه لإنشاء أول رابط ترويج لك.",
+            AppLanguage.JAPANESE to "上のキャンペーンを選んで最初のプロモーションリンクを作成しましょう。"
+        ),
+        "campaigns_create_now_btn" to mapOf(
+            AppLanguage.INDONESIAN to "Buat Tautan Sekarang",
+            AppLanguage.ENGLISH to "Create Link Now",
+            AppLanguage.SPANISH to "Crear Enlace Ahora",
+            AppLanguage.CHINESE to "立即创建链接",
+            AppLanguage.ARABIC to "إنشاء رابط الآن",
+            AppLanguage.JAPANESE to "今すぐリンクを作成"
+        ),
+        "campaigns_clip_label" to mapOf(
+            AppLanguage.INDONESIAN to "Link",
+            AppLanguage.ENGLISH to "Link",
+            AppLanguage.SPANISH to "Enlace",
+            AppLanguage.CHINESE to "链接",
+            AppLanguage.ARABIC to "رابط",
+            AppLanguage.JAPANESE to "リンク"
+        ),
+        "campaigns_high_ticket" to mapOf(
+            AppLanguage.INDONESIAN to "HIGH TICKET",
+            AppLanguage.ENGLISH to "HIGH TICKET",
+            AppLanguage.SPANISH to "ALTO VALOR",
+            AppLanguage.CHINESE to "高价值",
+            AppLanguage.ARABIC to "قيمة عالية",
+            AppLanguage.JAPANESE to "ハイチケット"
+        ),
+        "campaigns_commission_amount" to mapOf(
+            AppLanguage.INDONESIAN to "Besaran Komisi:",
+            AppLanguage.ENGLISH to "Commission Amount:",
+            AppLanguage.SPANISH to "Monto de Comisión:",
+            AppLanguage.CHINESE to "佣金金额：",
+            AppLanguage.ARABIC to "مبلغ العمولة:",
+            AppLanguage.JAPANESE to "コミッション額:"
+        ),
+        "campaigns_global_conversion" to mapOf(
+            AppLanguage.INDONESIAN to "Konversi Global:",
+            AppLanguage.ENGLISH to "Global Conversions:",
+            AppLanguage.SPANISH to "Conversiones Globales:",
+            AppLanguage.CHINESE to "全球转化：",
+            AppLanguage.ARABIC to "التحويلات العالمية:",
+            AppLanguage.JAPANESE to "グローバルコンバージョン:"
+        ),
+        "campaigns_transactions_suffix" to mapOf(
+            AppLanguage.INDONESIAN to " Transaksi",
+            AppLanguage.ENGLISH to " Transactions",
+            AppLanguage.SPANISH to " Transacciones",
+            AppLanguage.CHINESE to " 交易",
+            AppLanguage.ARABIC to " معاملة",
+            AppLanguage.JAPANESE to " 取引"
+        ),
+        "campaigns_create_tracking_btn" to mapOf(
+            AppLanguage.INDONESIAN to "Buat Link Tracking",
+            AppLanguage.ENGLISH to "Create Tracking Link",
+            AppLanguage.SPANISH to "Crear Enlace de Seguimiento",
+            AppLanguage.CHINESE to "创建跟踪链接",
+            AppLanguage.ARABIC to "إنشاء رابط التتبع",
+            AppLanguage.JAPANESE to "トラッキングリンクを作成"
+        ),
+        "campaigns_stat_clicks" to mapOf(
+            AppLanguage.INDONESIAN to "Klik",
+            AppLanguage.ENGLISH to "Clicks",
+            AppLanguage.SPANISH to "Clics",
+            AppLanguage.CHINESE to "点击",
+            AppLanguage.ARABIC to "نقرات",
+            AppLanguage.JAPANESE to "クリック"
+        ),
+        "campaigns_stat_conversions" to mapOf(
+            AppLanguage.INDONESIAN to "Konversi",
+            AppLanguage.ENGLISH to "Conversions",
+            AppLanguage.SPANISH to "Conversiones",
+            AppLanguage.CHINESE to "转化",
+            AppLanguage.ARABIC to "تحويلات",
+            AppLanguage.JAPANESE to "コンバージョン"
+        ),
+        "campaigns_stat_cr" to mapOf(
+            AppLanguage.INDONESIAN to "CR %",
+            AppLanguage.ENGLISH to "CR %",
+            AppLanguage.SPANISH to "CR %",
+            AppLanguage.CHINESE to "转化率 %",
+            AppLanguage.ARABIC to "CR %",
+            AppLanguage.JAPANESE to "CR %"
+        ),
+        "campaigns_stat_epc" to mapOf(
+            AppLanguage.INDONESIAN to "EPC",
+            AppLanguage.ENGLISH to "EPC",
+            AppLanguage.SPANISH to "EPC",
+            AppLanguage.CHINESE to "EPC",
+            AppLanguage.ARABIC to "EPC",
+            AppLanguage.JAPANESE to "EPC"
+        ),
+        "campaigns_test_conversion" to mapOf(
+            AppLanguage.INDONESIAN to "Uji Konversi",
+            AppLanguage.ENGLISH to "Test Conversion",
+            AppLanguage.SPANISH to "Probar Conversión",
+            AppLanguage.CHINESE to "测试转化",
+            AppLanguage.ARABIC to "اختبار التحويل",
+            AppLanguage.JAPANESE to "コンバージョンをテスト"
+        ),
+
     )
 
     fun getString(key: String, language: AppLanguage): String {
