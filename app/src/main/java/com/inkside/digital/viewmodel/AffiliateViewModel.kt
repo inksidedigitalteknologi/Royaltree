@@ -66,7 +66,8 @@ enum class AppScreen {
     SWEEPSTAKES,
     TRANSFER,
     WHITEPAPER,
-    GLOBAL_CHAT
+    GLOBAL_CHAT,
+    ACHIEVEMENT
 }
 
 // ==== Ad Button State ====
@@ -1536,6 +1537,91 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
      * Claim mining dengan iklan. transactionId dari AdMob callback.
      */
     // ============ THERMAL STATE ============
+    // ============ ACHIEVEMENT ============
+    private val _achievements = MutableStateFlow<List<com.inkside.digital.data.model.AchievementEntity>>(emptyList())
+    val achievements: StateFlow<List<com.inkside.digital.data.model.AchievementEntity>> = _achievements.asStateFlow()
+
+    private val _achievementStats = MutableStateFlow(com.inkside.digital.data.model.AchievementStats())
+    val achievementStats: StateFlow<com.inkside.digital.data.model.AchievementStats> = _achievementStats.asStateFlow()
+
+    private val _achievementLoading = MutableStateFlow(false)
+    val achievementLoading: StateFlow<Boolean> = _achievementLoading.asStateFlow()
+
+    fun loadAchievements() {
+        viewModelScope.launch {
+            _achievementLoading.value = true
+            try {
+                val result = com.inkside.digital.data.network.ApiClient.getMyAchievements()
+                result.getOrNull()?.let { json ->
+                    val dataArr = json.optJSONArray("data")
+                    if (dataArr != null) {
+                        val list = mutableListOf<com.inkside.digital.data.model.AchievementEntity>()
+                        for (i in 0 until dataArr.length()) {
+                            val obj = dataArr.getJSONObject(i)
+                            val rewardObj = obj.optJSONObject("reward")
+                            list.add(
+                                com.inkside.digital.data.model.AchievementEntity(
+                                    id = obj.optString("id", ""),
+                                    name = obj.optString("name", ""),
+                                    description = obj.optString("description", ""),
+                                    category = obj.optString("category", ""),
+                                    tier = obj.optString("tier", "BRONZE"),
+                                    icon = obj.optString("icon", "🏆"),
+                                    progress = obj.optInt("progress", 0),
+                                    target = obj.optInt("target", 1),
+                                    unlocked = obj.optBoolean("unlocked", false),
+                                    claimed = obj.optBoolean("claimed", false),
+                                    reward = rewardObj?.let { r ->
+                                        com.inkside.digital.data.model.AchievementReward(
+                                            rtp = r.optDouble("rtp", 0.0),
+                                            badge = r.optString("badge").takeIf { it.isNotBlank() && it != "null" },
+                                            frame = r.optString("frame").takeIf { it.isNotBlank() && it != "null" }
+                                        )
+                                    }
+                                )
+                            )
+                        }
+                        _achievements.value = list
+                    }
+
+                    val statsObj = json.optJSONObject("stats")
+                    if (statsObj != null) {
+                        _achievementStats.value = com.inkside.digital.data.model.AchievementStats(
+                            total = statsObj.optInt("total", 0),
+                            unlocked = statsObj.optInt("unlocked", 0),
+                            claimed = statsObj.optInt("claimed", 0),
+                            claimable = statsObj.optInt("claimable", 0)
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("Achievement", "load error: ${e.message}", e)
+            } finally {
+                _achievementLoading.value = false
+            }
+        }
+    }
+
+    fun claimAchievement(id: String, onResult: (Boolean, String) -> Unit = { _, _ -> }) {
+        viewModelScope.launch {
+            try {
+                val result = com.inkside.digital.data.network.ApiClient.claimAchievement(id)
+                result.getOrNull()?.let { json ->
+                    if (json.optBoolean("success", false)) {
+                        loadAchievements()
+                        onResult(true, json.optString("message", "Reward berhasil diklaim"))
+                    } else {
+                        onResult(false, json.optString("message", "Gagal klaim"))
+                    }
+                } ?: run {
+                    onResult(false, "Koneksi gagal")
+                }
+            } catch (e: Exception) {
+                onResult(false, "Error: ${e.message}")
+            }
+        }
+    }
+
     private val _batteryTemp = MutableStateFlow(0f)
     val batteryTemp: StateFlow<Float> = _batteryTemp.asStateFlow()
 

@@ -435,6 +435,31 @@ object ApiClient {
         }
     }
 
+    // ============================================================
+    // ACHIEVEMENT
+    // ============================================================
+    suspend fun getMyAchievements(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val resp = apiService.getMyAchievements()
+            val json = JSONObject(resp.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            android.util.Log.e("ApiClient", "getMyAchievements error: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun claimAchievement(id: String): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val resp = apiService.claimAchievement(id)
+            val json = JSONObject(resp.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            android.util.Log.e("ApiClient", "claimAchievement error: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
     suspend fun rewardAd(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val requestBody = body.toString().toRequestBody(JSON_MEDIA)
