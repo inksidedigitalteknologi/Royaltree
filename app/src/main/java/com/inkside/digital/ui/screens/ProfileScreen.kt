@@ -2,6 +2,7 @@ package com.inkside.digital.ui.screens
 
 import com.inkside.digital.util.HashrateFormatter
 import com.inkside.digital.util.GlobalPointsManager
+import com.inkside.digital.data.preferences.AppThemePreferences
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material.icons.filled.Edit
@@ -110,8 +111,8 @@ fun ProfileScreen(
         // Header
         item {
             Column {
-                Text("👤 " + LanguageManager.translate("profile_title", currentLanguage, "Profil"), style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
-                Text(LanguageManager.translate("profile_subtitle", currentLanguage, "Kelola akun & informasi pribadi"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("👤 " + LanguageManager.translate("profile_title", AppThemePreferences.currentLanguage, "Profil"), style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
+                Text(LanguageManager.translate("profile_subtitle", AppThemePreferences.currentLanguage, "Kelola akun & informasi pribadi"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
@@ -189,7 +190,7 @@ fun ProfileScreen(
             ) {
                 Row(modifier = Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(LanguageManager.translate("profile_balance", currentLanguage, "Saldo"), fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("profile_balance", AppThemePreferences.currentLanguage, "Saldo"), fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             GlobalPointsManager.formatBalanceIdr(user?.balance ?: 0.0, currentLanguage.code),
                             fontSize = 14.sp, fontWeight = FontWeight.Black, color = EmeraldLight
@@ -221,7 +222,7 @@ fun ProfileScreen(
                         Icon(Icons.Default.Edit, null, tint = EmeraldLight, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            LanguageManager.translate("profile_edit", currentLanguage, "Edit Profil"),
+                            LanguageManager.translate("profile_edit", AppThemePreferences.currentLanguage, "Edit Profil"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
                         )
@@ -229,7 +230,7 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                     OutlinedTextField(
                         value = name, onValueChange = { name = it },
-                        label = { Text(LanguageManager.translate("profile_name", currentLanguage, "Nama Lengkap")) },
+                        label = { Text(LanguageManager.translate("profile_name", AppThemePreferences.currentLanguage, "Nama Lengkap")) },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier.fillMaxWidth()
@@ -237,7 +238,7 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = email, onValueChange = { email = it },
-                        label = { Text(LanguageManager.translate("profile_email_label", currentLanguage, "Email")) },
+                        label = { Text(LanguageManager.translate("profile_email_label", AppThemePreferences.currentLanguage, "Email")) },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier.fillMaxWidth()
@@ -245,7 +246,7 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = phone, onValueChange = { phone = it },
-                        label = { Text(LanguageManager.translate("profile_phone", currentLanguage, "Nomor HP")) },
+                        label = { Text(LanguageManager.translate("profile_phone", AppThemePreferences.currentLanguage, "Nomor HP")) },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier.fillMaxWidth()
@@ -258,7 +259,7 @@ fun ProfileScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            LanguageManager.translate("profile_save", currentLanguage, "Simpan Perubahan"),
+                            LanguageManager.translate("profile_save", AppThemePreferences.currentLanguage, "Simpan Perubahan"),
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -337,7 +338,7 @@ fun ProfileScreen(
                     Icon(Icons.Default.Language, null, tint = EmeraldLight)
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(LanguageManager.translate("profile_language", currentLanguage, "Bahasa"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("profile_language", AppThemePreferences.currentLanguage, "Bahasa"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         Text("${currentLanguage.flag} ${currentLanguage.displayName}", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
@@ -357,7 +358,7 @@ fun ProfileScreen(
                 ) {
                     Icon(Icons.AutoMirrored.Filled.ExitToApp, null, tint = MaterialTheme.colorScheme.error)
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text(LanguageManager.translate("profile_logout", currentLanguage, "Keluar"), fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.error)
+                    Text(LanguageManager.translate("profile_logout", AppThemePreferences.currentLanguage, "Keluar"), fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.error)
                 }
             }
         }
@@ -384,7 +385,7 @@ private fun QuickActionsRow(
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Text(
-                LanguageManager.translate("profile_quick_actions", currentLanguage, "⚡ Aksi Cepat"),
+                LanguageManager.translate("profile_quick_actions", AppThemePreferences.currentLanguage, "⚡ Aksi Cepat"),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -393,10 +394,10 @@ private fun QuickActionsRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                QuickActionButton("🎁", LanguageManager.translate("profile_action_checkin", currentLanguage, "Check-in"), EmeraldLight, onDailyCheckIn)
-                QuickActionButton("⛏️", LanguageManager.translate("profile_action_mining", currentLanguage, "Mining"), EmeraldLight, onMining)
-                QuickActionButton("🎰", LanguageManager.translate("profile_action_coinrush", currentLanguage, "Coin Rush"), GoldVip, onCoinRush)
-                QuickActionButton("🎯", LanguageManager.translate("profile_action_missions", currentLanguage, "Misi"), Color(0xFFEC4899), onMissions)
+                QuickActionButton("🎁", LanguageManager.translate("profile_action_checkin", AppThemePreferences.currentLanguage, "Check-in"), EmeraldLight, onDailyCheckIn)
+                QuickActionButton("⛏️", LanguageManager.translate("profile_action_mining", AppThemePreferences.currentLanguage, "Mining"), EmeraldLight, onMining)
+                QuickActionButton("🎰", LanguageManager.translate("profile_action_coinrush", AppThemePreferences.currentLanguage, "Coin Rush"), GoldVip, onCoinRush)
+                QuickActionButton("🎯", LanguageManager.translate("profile_action_missions", AppThemePreferences.currentLanguage, "Misi"), Color(0xFFEC4899), onMissions)
             }
         }
     }
@@ -440,11 +441,11 @@ private fun UpgradeTierCard(
     onClick: () -> Unit
 ) {
     val tierInfo = when (currentTier.uppercase()) {
-        "ROYAL" -> Triple("💎", LanguageManager.translate("tier_royal", currentLanguage, "Royal"), Color(0xFFB9F2FF))
-        "VIP" -> Triple("🥇", LanguageManager.translate("tier_vip", currentLanguage, "VIP"), GoldVip)
-        "PREMIUM" -> Triple("🥈", LanguageManager.translate("tier_premium", currentLanguage, "Premium"), Color(0xFFC0C0C0))
-        "STARTER" -> Triple("🥉", LanguageManager.translate("tier_starter", currentLanguage, "Pemula"), Color(0xFFCD7F32))
-        else -> Triple("🌱", LanguageManager.translate("tier_free", currentLanguage, "Gratis"), EmeraldLight)
+        "ROYAL" -> Triple("💎", LanguageManager.translate("tier_royal", AppThemePreferences.currentLanguage, "Royal"), Color(0xFFB9F2FF))
+        "VIP" -> Triple("🥇", LanguageManager.translate("tier_vip", AppThemePreferences.currentLanguage, "VIP"), GoldVip)
+        "PREMIUM" -> Triple("🥈", LanguageManager.translate("tier_premium", AppThemePreferences.currentLanguage, "Premium"), Color(0xFFC0C0C0))
+        "STARTER" -> Triple("🥉", LanguageManager.translate("tier_starter", AppThemePreferences.currentLanguage, "Pemula"), Color(0xFFCD7F32))
+        else -> Triple("🌱", LanguageManager.translate("tier_free", AppThemePreferences.currentLanguage, "Gratis"), EmeraldLight)
     }
 
     Card(
@@ -470,12 +471,12 @@ private fun UpgradeTierCard(
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    String.format(LanguageManager.translate("profile_tier_you", currentLanguage, "Tingkat Anda: %s"), tierInfo.second),
+                    String.format(LanguageManager.translate("profile_tier_you", AppThemePreferences.currentLanguage, "Tingkat Anda: %s"), tierInfo.second),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    if (currentTier == "ROYAL") LanguageManager.translate("profile_tier_max_msg", currentLanguage, "Tingkat tertinggi tercapai! 🎉") else LanguageManager.translate("profile_tier_desc", currentLanguage, "Upgrade untuk slot miner & komisi lebih besar"),
+                    if (currentTier == "ROYAL") LanguageManager.translate("profile_tier_max_msg", AppThemePreferences.currentLanguage, "Tingkat tertinggi tercapai! 🎉") else LanguageManager.translate("profile_tier_desc", AppThemePreferences.currentLanguage, "Upgrade untuk slot miner & komisi lebih besar"),
                     fontSize = 10.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -485,7 +486,7 @@ private fun UpgradeTierCard(
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Text(
-                    if (currentTier == "ROYAL") LanguageManager.translate("profile_tier_max", currentLanguage, "MAX") else LanguageManager.translate("profile_tier_upgrade", currentLanguage, "Upgrade"),
+                    if (currentTier == "ROYAL") LanguageManager.translate("profile_tier_max", AppThemePreferences.currentLanguage, "MAX") else LanguageManager.translate("profile_tier_upgrade", AppThemePreferences.currentLanguage, "Upgrade"),
                     color = Color.Black,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Black,
@@ -531,7 +532,7 @@ private fun ReferralStatsCard(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    LanguageManager.translate("profile_referral_friends", currentLanguage, "👥 Teman"),
+                    LanguageManager.translate("profile_referral_friends", AppThemePreferences.currentLanguage, "👥 Teman"),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -545,7 +546,7 @@ private fun ReferralStatsCard(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    LanguageManager.translate("profile_referral_invited", currentLanguage, "Diundang"),
+                    LanguageManager.translate("profile_referral_invited", AppThemePreferences.currentLanguage, "Diundang"),
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -563,7 +564,7 @@ private fun ReferralStatsCard(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    LanguageManager.translate("profile_commission", currentLanguage, "💰 Komisi"),
+                    LanguageManager.translate("profile_commission", AppThemePreferences.currentLanguage, "💰 Komisi"),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -577,7 +578,7 @@ private fun ReferralStatsCard(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    LanguageManager.translate("profile_total", currentLanguage, "Total"),
+                    LanguageManager.translate("profile_total", AppThemePreferences.currentLanguage, "Total"),
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -619,7 +620,7 @@ private fun MiningStatsCard(
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
             Text(
-                LanguageManager.translate("profile_mining_status", currentLanguage, "⛏️ Status Mining"),
+                LanguageManager.translate("profile_mining_status", AppThemePreferences.currentLanguage, "⛏️ Status Mining"),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -630,8 +631,8 @@ private fun MiningStatsCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                MiniStatBox(LanguageManager.translate("profile_slot", currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_power", currentLanguage, "Power"), HashrateFormatter.format(powerGhs), EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_slot", AppThemePreferences.currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_power", AppThemePreferences.currentLanguage, "Power"), HashrateFormatter.format(powerGhs), EmeraldLight, Modifier.weight(1f))
                 MiniStatBox("RTP", "${GlobalPointsManager.formatRtp(userPoints)}", GoldVip, Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(6.dp))
@@ -641,9 +642,9 @@ private fun MiningStatsCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                MiniStatBox(LanguageManager.translate("profile_rate_day", currentLanguage, "Rate/hari"), "${GlobalPointsManager.formatRtp((roomState?.ratePerMin ?: (powerGhs * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_unclaimed", currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_bonus", currentLanguage, "Bonus"), "+${HashrateFormatter.format(roomState?.tempPowerBonusGhs ?: 0.0)}", GoldVip, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_rate_day", AppThemePreferences.currentLanguage, "Rate/hari"), "${GlobalPointsManager.formatRtp((roomState?.ratePerMin ?: (powerGhs * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_unclaimed", AppThemePreferences.currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_bonus", AppThemePreferences.currentLanguage, "Bonus"), "+${HashrateFormatter.format(roomState?.tempPowerBonusGhs ?: 0.0)}", GoldVip, Modifier.weight(1f))
             }
         }
     }
@@ -690,7 +691,7 @@ fun ProfileAvatarWithFrame(
             if (!photoUrl.isNullOrBlank()) {
                 coil.compose.AsyncImage(
                     model = photoUrl,
-                    contentDescription = LanguageManager.translate("cd_profile_picture", currentLanguage, "Profile picture"),
+                    contentDescription = LanguageManager.translate("cd_profile_picture", AppThemePreferences.currentLanguage, "Profile picture"),
                     modifier = Modifier.fillMaxSize(),
                     contentScale = androidx.compose.ui.layout.ContentScale.Crop
                 )

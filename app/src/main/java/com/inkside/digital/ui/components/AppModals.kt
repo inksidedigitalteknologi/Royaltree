@@ -1,5 +1,6 @@
 package com.inkside.digital.ui.components
 
+import com.inkside.digital.data.preferences.AppThemePreferences
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -503,7 +504,7 @@ fun PaymentGatewaySimulatorModal(
                     } else {
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
-                            contentDescription = LanguageManager.translate("cd_success", currentLanguage, "Success"),
+                            contentDescription = LanguageManager.translate("cd_success", AppThemePreferences.currentLanguage, "Success"),
                             tint = EmeraldLight,
                             modifier = Modifier.size(32.dp)
                         )
@@ -539,19 +540,19 @@ fun PaymentGatewaySimulatorModal(
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(LanguageManager.translate("appmodal_withdraw_ref_id", currentLanguage, "Ref ID:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("appmodal_withdraw_ref_id", AppThemePreferences.currentLanguage, "Ref ID:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(withdrawal.txRef, fontSize = 11.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)
                         }
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(LanguageManager.translate("appmodal_withdraw_destination", currentLanguage, "Tujuan:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("appmodal_withdraw_destination", AppThemePreferences.currentLanguage, "Tujuan:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text("${withdrawal.providerName} (${withdrawal.accountDestination})", fontSize = 11.sp)
                         }
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(LanguageManager.translate("appmodal_withdraw_net", currentLanguage, "Nominal Net:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("appmodal_withdraw_net", AppThemePreferences.currentLanguage, "Nominal Net:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text("Rp ${String.format("%,.0f", withdrawal.netAmount)}", fontSize = 11.sp, fontWeight = FontWeight.Black, color = EmeraldLight)
                         }
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(LanguageManager.translate("appmodal_withdraw_hmac", currentLanguage, "HMAC Sig:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("appmodal_withdraw_hmac", AppThemePreferences.currentLanguage, "HMAC Sig:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(signature, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
                         }
                     }
@@ -938,7 +939,7 @@ private fun TierRow(
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(LanguageManager.translate("appmodal_upgrade_basic", currentLanguage, "Paket dasar"), fontSize = 11.sp)
+                        Text(LanguageManager.translate("appmodal_upgrade_basic", AppThemePreferences.currentLanguage, "Paket dasar"), fontSize = 11.sp)
                     }
                 }
                 else -> {
@@ -1017,7 +1018,7 @@ fun AdBlockedDialog(
                         ),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(LanguageManager.translate("common_close", currentLanguage, "Tutup"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("common_close", AppThemePreferences.currentLanguage, "Tutup"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                     Button(
                         onClick = {
@@ -1028,7 +1029,7 @@ fun AdBlockedDialog(
                         colors = ButtonDefaults.buttonColors(containerColor = GoldVip),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(LanguageManager.translate("appmodal_upgrade_retry", currentLanguage, "Cuba Lagi"), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                        Text(LanguageManager.translate("appmodal_upgrade_retry", AppThemePreferences.currentLanguage, "Cuba Lagi"), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                     }
                 }
             }
@@ -1595,9 +1596,9 @@ fun ListCouponModal(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(LanguageManager.translate("appmodal_listcoupon_title", currentLanguage, "Jual ke Pasar Sekunder"), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                    Text(LanguageManager.translate("appmodal_listcoupon_title", AppThemePreferences.currentLanguage, "Jual ke Pasar Sekunder"), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
                     IconButton(onClick = onDismiss) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"))
+                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", AppThemePreferences.currentLanguage, "Tutup"))
                     }
                 }
 
@@ -1612,7 +1613,7 @@ fun ListCouponModal(
                 OutlinedTextField(
                     value = priceText,
                     onValueChange = { priceText = it.filter { ch -> ch.isDigit() } },
-                    label = { Text(LanguageManager.translate("appmodal_listcoupon_price", currentLanguage, "Harga Jual di Pasar Sekunder (Rp)"), fontSize = 12.sp) },
+                    label = { Text(LanguageManager.translate("appmodal_listcoupon_price", AppThemePreferences.currentLanguage, "Harga Jual di Pasar Sekunder (Rp)"), fontSize = 12.sp) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -1625,7 +1626,7 @@ fun ListCouponModal(
                             onClick = { onConfirm(0.0, false) },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(LanguageManager.translate("appmodal_listcoupon_cancel", currentLanguage, "Batal Jual"))
+                            Text(LanguageManager.translate("appmodal_listcoupon_cancel", AppThemePreferences.currentLanguage, "Batal Jual"))
                         }
                     }
                     Button(
@@ -1673,10 +1674,10 @@ fun AdminReviewModal(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(imageVector = Icons.Default.Shield, contentDescription = null, tint = PurpleSecondary)
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(LanguageManager.translate("appmodal_adminreview_title", currentLanguage, "Verifikasi Admin Manual"), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text(LanguageManager.translate("appmodal_adminreview_title", AppThemePreferences.currentLanguage, "Verifikasi Admin Manual"), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     }
                     IconButton(onClick = onDismiss) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"))
+                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", AppThemePreferences.currentLanguage, "Tutup"))
                     }
                 }
 
@@ -1694,15 +1695,15 @@ fun AdminReviewModal(
                         Text("Rekening/Address: ${withdrawal.accountDestination}", fontSize = 12.sp, color = ElectricBlue)
                         Spacer(modifier = Modifier.height(6.dp))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(LanguageManager.translate("appmodal_adminreview_gross", currentLanguage, "Nominal Kotor:"), fontSize = 11.sp)
+                            Text(LanguageManager.translate("appmodal_adminreview_gross", AppThemePreferences.currentLanguage, "Nominal Kotor:"), fontSize = 11.sp)
                             Text("Rp ${String.format("%,.0f", withdrawal.amount)}", fontSize = 11.sp)
                         }
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(LanguageManager.translate("appmodal_adminreview_fee", currentLanguage, "Biaya:"), fontSize = 11.sp)
+                            Text(LanguageManager.translate("appmodal_adminreview_fee", AppThemePreferences.currentLanguage, "Biaya:"), fontSize = 11.sp)
                             Text("Rp ${String.format("%,.0f", withdrawal.fee)}", fontSize = 11.sp)
                         }
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(LanguageManager.translate("appmodal_adminreview_net", currentLanguage, "Bersih Dibayarkan:"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text(LanguageManager.translate("appmodal_adminreview_net", AppThemePreferences.currentLanguage, "Bersih Dibayarkan:"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             Text("Rp ${String.format("%,.0f", withdrawal.netAmount)}", fontSize = 13.sp, fontWeight = FontWeight.Black, color = EmeraldLight)
                         }
                     }
@@ -1713,7 +1714,7 @@ fun AdminReviewModal(
                 OutlinedTextField(
                     value = adminNote,
                     onValueChange = { adminNote = it },
-                    label = { Text(LanguageManager.translate("appmodal_adminreview_note", currentLanguage, "Catatan Validasi Admin"), fontSize = 12.sp) },
+                    label = { Text(LanguageManager.translate("appmodal_adminreview_note", AppThemePreferences.currentLanguage, "Catatan Validasi Admin"), fontSize = 12.sp) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -1725,14 +1726,14 @@ fun AdminReviewModal(
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444)),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(LanguageManager.translate("appmodal_adminreview_reject", currentLanguage, "Tolak & Revert"))
+                        Text(LanguageManager.translate("appmodal_adminreview_reject", AppThemePreferences.currentLanguage, "Tolak & Revert"))
                     }
                     Button(
                         onClick = { onProcess(true, adminNote) },
                         colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(LanguageManager.translate("appmodal_adminreview_approve", currentLanguage, "Setujui & Bayar"))
+                        Text(LanguageManager.translate("appmodal_adminreview_approve", AppThemePreferences.currentLanguage, "Setujui & Bayar"))
                     }
                 }
             }
@@ -2546,7 +2547,7 @@ fun DailyCheckInModal(
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 17.sp)
                     )
                     IconButton(onClick = onDismiss) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"))
+                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", AppThemePreferences.currentLanguage, "Tutup"))
                     }
                 }
 

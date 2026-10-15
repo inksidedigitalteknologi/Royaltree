@@ -648,8 +648,8 @@ fun AdminLocationTrackingSection(
                     Icon(imageVector = Icons.Default.Map, contentDescription = null, tint = ElectricBlue)
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
-                        Text(LanguageManager.translate("admin_heatmap_title", currentLanguage, "Analisis Densitas Wilayah (Provider)"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        Text(LanguageManager.translate("admin_heatmap_desc", currentLanguage, "Pelacakan otomatis kepadatan pengguna platform secara realtime"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("admin_heatmap_title", AppThemePreferences.currentLanguage, "Analisis Densitas Wilayah (Provider)"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("admin_heatmap_desc", AppThemePreferences.currentLanguage, "Pelacakan otomatis kepadatan pengguna platform secara realtime"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
 
@@ -666,11 +666,11 @@ fun AdminLocationTrackingSection(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text("🔥", fontSize = 14.sp)
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text(LanguageManager.translate("admin_area_crowded", currentLanguage, "WILAYAH RAMAI"), fontSize = 9.sp, fontWeight = FontWeight.Black, color = Color(0xFF2E7D32))
+                                Text(LanguageManager.translate("admin_area_crowded", AppThemePreferences.currentLanguage, "WILAYAH RAMAI"), fontSize = 9.sp, fontWeight = FontWeight.Black, color = Color(0xFF2E7D32))
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(crowdedCity?.key ?: "Jakarta", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Color(0xFF1B5E20))
-                            Text("${crowdedCity?.value?.size ?: 0} " + LanguageManager.translate("admin_active_users", currentLanguage, "Pengguna Aktif"), fontSize = 10.sp, color = Color(0xFF388E3C))
+                            Text("${crowdedCity?.value?.size ?: 0} " + LanguageManager.translate("admin_active_users", AppThemePreferences.currentLanguage, "Pengguna Aktif"), fontSize = 10.sp, color = Color(0xFF388E3C))
                         }
                     }
 
@@ -684,11 +684,11 @@ fun AdminLocationTrackingSection(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text("❄️", fontSize = 14.sp)
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text(LanguageManager.translate("admin_area_quiet", currentLanguage, "WILAYAH SEPI"), fontSize = 9.sp, fontWeight = FontWeight.Black, color = Color(0xFFE65100))
+                                Text(LanguageManager.translate("admin_area_quiet", AppThemePreferences.currentLanguage, "WILAYAH SEPI"), fontSize = 9.sp, fontWeight = FontWeight.Black, color = Color(0xFFE65100))
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(quietCity?.key ?: "Pontianak", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Color(0xFFBF360C))
-                            Text("${quietCity?.value?.size ?: 0} " + LanguageManager.translate("admin_users_expansion", currentLanguage, "Pengguna (Peluang Ekspansi)"), fontSize = 10.sp, color = Color(0xFFF57C00))
+                            Text("${quietCity?.value?.size ?: 0} " + LanguageManager.translate("admin_users_expansion", AppThemePreferences.currentLanguage, "Pengguna (Peluang Ekspansi)"), fontSize = 10.sp, color = Color(0xFFF57C00))
                         }
                     }
                 }
@@ -710,10 +710,10 @@ fun AdminLocationTrackingSection(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(imageVector = Icons.Default.MyLocation, contentDescription = null, tint = EmeraldLight)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(LanguageManager.translate("admin_heatmap_map_title", currentLanguage, "Peta Persebaran & Heatmap"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("admin_heatmap_map_title", AppThemePreferences.currentLanguage, "Peta Persebaran & Heatmap"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
 
-                    Text(LanguageManager.translate("admin_total_tracked", currentLanguage, "Total") + " $totalPins " + LanguageManager.translate("admin_tracked_points", currentLanguage, "Titik Terlacak"), fontSize = 11.sp, fontWeight = FontWeight.Bold, color = ElectricBlue)
+                    Text(LanguageManager.translate("admin_total_tracked", AppThemePreferences.currentLanguage, "Total") + " $totalPins " + LanguageManager.translate("admin_tracked_points", AppThemePreferences.currentLanguage, "Titik Terlacak"), fontSize = 11.sp, fontWeight = FontWeight.Bold, color = ElectricBlue)
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -791,7 +791,7 @@ fun AdminLocationTrackingSection(
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(LanguageManager.translate("admin_radar_indonesia", currentLanguage, "📍 Radar Pinpoint Indonesia"), fontSize = 10.sp, color = Color(0xFF94A3B8), fontWeight = FontWeight.Bold)
+                            Text(LanguageManager.translate("admin_radar_indonesia", AppThemePreferences.currentLanguage, "📍 Radar Pinpoint Indonesia"), fontSize = 10.sp, color = Color(0xFF94A3B8), fontWeight = FontWeight.Bold)
                             Text("🔴 Ramai: Jabodetabek, Jabar, Jatim", fontSize = 9.sp, color = EmeraldLight)
                         }
 
@@ -802,8 +802,8 @@ fun AdminLocationTrackingSection(
                                 .padding(horizontal = 8.dp, vertical = 4.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("🟢 " + LanguageManager.translate("admin_legend_free", currentLanguage, "User Free") + "  👑 " + LanguageManager.translate("admin_legend_vip", currentLanguage, "VIP User"), fontSize = 9.sp, color = Color.White)
-                            Text(LanguageManager.translate("admin_quiet_zone_opportunity", currentLanguage, "Zona Sepi: Peluang Promo Tambahan"), fontSize = 9.sp, color = Color(0xFFFFB74D))
+                            Text("🟢 " + LanguageManager.translate("admin_legend_free", AppThemePreferences.currentLanguage, "User Free") + "  👑 " + LanguageManager.translate("admin_legend_vip", AppThemePreferences.currentLanguage, "VIP User"), fontSize = 9.sp, color = Color.White)
+                            Text(LanguageManager.translate("admin_quiet_zone_opportunity", AppThemePreferences.currentLanguage, "Zona Sepi: Peluang Promo Tambahan"), fontSize = 9.sp, color = Color(0xFFFFB74D))
                         }
                     }
                 }
@@ -1046,8 +1046,8 @@ fun AdminPortalEndpointSection(
                         Icon(imageVector = Icons.Default.Lan, contentDescription = null, tint = ElectricBlue)
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            Text(LanguageManager.translate("admin_endpoint_title", currentLanguage, "Koneksi Portal Server Anda"), fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                            Text(LanguageManager.translate("admin_endpoint_desc", currentLanguage, "Hubungkan aplikasi Royaltree ke sistem portal pusat Anda"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("admin_endpoint_title", AppThemePreferences.currentLanguage, "Koneksi Portal Server Anda"), fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            Text(LanguageManager.translate("admin_endpoint_desc", AppThemePreferences.currentLanguage, "Hubungkan aplikasi Royaltree ke sistem portal pusat Anda"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
 
@@ -1075,7 +1075,7 @@ fun AdminPortalEndpointSection(
                 OutlinedTextField(
                     value = portalUrl,
                     onValueChange = onUrlChange,
-                    label = { Text(LanguageManager.translate("admin_endpoint_base_url", currentLanguage, "Base URL Portal Server API"), fontSize = 11.sp) },
+                    label = { Text(LanguageManager.translate("admin_endpoint_base_url", AppThemePreferences.currentLanguage, "Base URL Portal Server API"), fontSize = 11.sp) },
                     placeholder = { Text("Contoh: https://portal-anda.com/api/v1/ atau http://10.0.2.2:3000/api/v1/") },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1089,7 +1089,7 @@ fun AdminPortalEndpointSection(
                 OutlinedTextField(
                     value = portalApiKey,
                     onValueChange = onApiKeyChange,
-                    label = { Text(LanguageManager.translate("admin_endpoint_api_key", currentLanguage, "API Secret Key (Bearer Token)"), fontSize = 11.sp) },
+                    label = { Text(LanguageManager.translate("admin_endpoint_api_key", AppThemePreferences.currentLanguage, "API Secret Key (Bearer Token)"), fontSize = 11.sp) },
                     placeholder = { Text("Contoh: <API_KEY>") },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1123,13 +1123,13 @@ fun AdminPortalEndpointSection(
                             Icon(imageVector = Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(16.dp))
                         }
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(LanguageManager.translate("admin_endpoint_test", currentLanguage, "Uji Koneksi"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("admin_endpoint_test", AppThemePreferences.currentLanguage, "Uji Koneksi"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
 
                     Button(
                         onClick = {
                             onSaveConfig()
-                            Toast.makeText(context, LanguageManager.translate("toast_admin_portal_saved", currentLanguage, "URL & Key Portal disimpan!"), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, LanguageManager.translate("toast_admin_portal_saved", AppThemePreferences.currentLanguage, "URL & Key Portal disimpan!"), Toast.LENGTH_SHORT).show()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = PurpleSecondary),
                         shape = RoundedCornerShape(10.dp),
@@ -1139,7 +1139,7 @@ fun AdminPortalEndpointSection(
                     ) {
                         Icon(imageVector = Icons.Default.Save, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(LanguageManager.translate("admin_endpoint_save_url", currentLanguage, "Simpan URL"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("admin_endpoint_save_url", AppThemePreferences.currentLanguage, "Simpan URL"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
                 }
 
@@ -1157,11 +1157,11 @@ fun AdminPortalEndpointSection(
                     if (isSyncing) {
                         CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.White, strokeWidth = 2.dp)
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(LanguageManager.translate("admin_endpoint_syncing", currentLanguage, "Sedang Sinkronisasi..."), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                        Text(LanguageManager.translate("admin_endpoint_syncing", AppThemePreferences.currentLanguage, "Sedang Sinkronisasi..."), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     } else {
                         Icon(imageVector = Icons.Default.CloudSync, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(LanguageManager.translate("admin_endpoint_full_sync", currentLanguage, "Sinkronisasi Penuh Sekarang (Data User & Poin)"), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                        Text(LanguageManager.translate("admin_endpoint_full_sync", AppThemePreferences.currentLanguage, "Sinkronisasi Penuh Sekarang (Data User & Poin)"), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     }
                 }
             }
@@ -1178,8 +1178,8 @@ fun AdminPortalEndpointSection(
                     Icon(imageVector = Icons.Default.Code, contentDescription = null, tint = PurpleSecondary)
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
-                        Text(LanguageManager.translate("admin_endpoint_catalog_title", currentLanguage, "Katalog REST API Endpoints"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        Text(LanguageManager.translate("admin_endpoint_catalog_desc", currentLanguage, "Spesifikasi lengkap untuk ditaruh di portal/server backend Anda"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("admin_endpoint_catalog_title", AppThemePreferences.currentLanguage, "Katalog REST API Endpoints"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("admin_endpoint_catalog_desc", AppThemePreferences.currentLanguage, "Spesifikasi lengkap untuk ditaruh di portal/server backend Anda"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
 

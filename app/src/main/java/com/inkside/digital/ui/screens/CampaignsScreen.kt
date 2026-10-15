@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import com.inkside.digital.data.preferences.AppThemePreferences
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -122,7 +123,7 @@ fun CampaignsScreen(
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(LanguageManager.translate("campaigns_create_link_btn", currentLanguage, "Buat Link"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Text(LanguageManager.translate("campaigns_create_link_btn", AppThemePreferences.currentLanguage, "Buat Link"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
             }
         }
 
@@ -143,12 +144,12 @@ fun CampaignsScreen(
             Tab(
                 selected = selectedTab == 0,
                 onClick = { selectedTab = 0 },
-                text = { Text(LanguageManager.translate("campaigns_tab_catalog", currentLanguage, "Katalog Kampanye (") + "${campaigns.size})", fontSize = 12.sp, fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal) }
+                text = { Text(LanguageManager.translate("campaigns_tab_catalog", AppThemePreferences.currentLanguage, "Katalog Kampanye (") + "${campaigns.size})", fontSize = 12.sp, fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal) }
             )
             Tab(
                 selected = selectedTab == 1,
                 onClick = { selectedTab = 1 },
-                text = { Text(LanguageManager.translate("campaigns_tab_my_links", currentLanguage, "Link Aktif Saya (") + "${links.size})", fontSize = 12.sp, fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal) }
+                text = { Text(LanguageManager.translate("campaigns_tab_my_links", AppThemePreferences.currentLanguage, "Link Aktif Saya (") + "${links.size})", fontSize = 12.sp, fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal) }
             )
         }
 
@@ -189,11 +190,11 @@ fun CampaignsScreen(
                             ) {
                                 Icon(imageVector = Icons.Default.Link, contentDescription = null, tint = ElectricBlue, modifier = Modifier.size(44.dp))
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(LanguageManager.translate("campaigns_empty_title", currentLanguage, "Belum Ada Tautan Promosi"), fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                                Text(LanguageManager.translate("campaigns_empty_desc", currentLanguage, "Pilih kampanye di atas untuk mulai membuat tautan promosi pertama Anda."), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("campaigns_empty_title", AppThemePreferences.currentLanguage, "Belum Ada Tautan Promosi"), fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                                Text(LanguageManager.translate("campaigns_empty_desc", AppThemePreferences.currentLanguage, "Pilih kampanye di atas untuk mulai membuat tautan promosi pertama Anda."), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Spacer(modifier = Modifier.height(12.dp))
                                 Button(onClick = onOpenNewLinkModal) {
-                                    Text(LanguageManager.translate("campaigns_create_now_btn", currentLanguage, "Buat Tautan Sekarang"))
+                                    Text(LanguageManager.translate("campaigns_create_now_btn", AppThemePreferences.currentLanguage, "Buat Tautan Sekarang"))
                                 }
                             }
                         }
@@ -205,9 +206,9 @@ fun CampaignsScreen(
                             currentLanguage = currentLanguage,
                             onCopy = {
                                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                val clip = ClipData.newPlainText(LanguageManager.translate("campaigns_clip_label", currentLanguage, "Link"), link.shortUrl)
+                                val clip = ClipData.newPlainText(LanguageManager.translate("campaigns_clip_label", AppThemePreferences.currentLanguage, "Link"), link.shortUrl)
                                 clipboard.setPrimaryClip(clip)
-                                Toast.makeText(context, LanguageManager.translate("toast_promo_link_copied", currentLanguage, "Tautan promosi disalin!"), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, LanguageManager.translate("toast_promo_link_copied", AppThemePreferences.currentLanguage, "Tautan promosi disalin!"), Toast.LENGTH_SHORT).show()
                             },
                             onShare = {
                                 val sendIntent = Intent().apply {
@@ -258,7 +259,7 @@ fun CampaignCard(
                                     .background(GoldVip.copy(alpha = 0.2f))
                                     .padding(horizontal = 6.dp, vertical = 2.dp)
                             ) {
-                                Text(LanguageManager.translate("campaigns_high_ticket", currentLanguage, "HIGH TICKET"), fontSize = 9.sp, fontWeight = FontWeight.Bold, color = GoldVip)
+                                Text(LanguageManager.translate("campaigns_high_ticket", AppThemePreferences.currentLanguage, "HIGH TICKET"), fontSize = 9.sp, fontWeight = FontWeight.Bold, color = GoldVip)
                             }
                         }
                     }
@@ -300,7 +301,7 @@ fun CampaignCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text(LanguageManager.translate("campaigns_commission_amount", currentLanguage, "Besaran Komisi:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("campaigns_commission_amount", AppThemePreferences.currentLanguage, "Besaran Komisi:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             text = campaign.commissionDisplay,
                             fontWeight = FontWeight.Black,
@@ -310,8 +311,8 @@ fun CampaignCard(
                     }
 
                     Column(horizontalAlignment = Alignment.End) {
-                        Text(LanguageManager.translate("campaigns_global_conversion", currentLanguage, "Konversi Global:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("${campaign.conversionsCount}" + LanguageManager.translate("campaigns_transactions_suffix", currentLanguage, " Transaksi"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("campaigns_global_conversion", AppThemePreferences.currentLanguage, "Konversi Global:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("${campaign.conversionsCount}" + LanguageManager.translate("campaigns_transactions_suffix", AppThemePreferences.currentLanguage, " Transaksi"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -330,7 +331,7 @@ fun CampaignCard(
                 ) {
                     Icon(imageVector = Icons.Default.Link, contentDescription = null, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(LanguageManager.translate("campaigns_create_tracking_btn", currentLanguage, "Buat Link Tracking"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("campaigns_create_tracking_btn", AppThemePreferences.currentLanguage, "Buat Link Tracking"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -380,10 +381,10 @@ fun ActiveLinkCard(
 
                 Row {
                     IconButton(onClick = onCopy, modifier = Modifier.size(34.dp)) {
-                        Icon(imageVector = Icons.Default.ContentCopy, contentDescription = LanguageManager.translate("cd_copy", currentLanguage, "Salin"), tint = EmeraldLight, modifier = Modifier.size(17.dp))
+                        Icon(imageVector = Icons.Default.ContentCopy, contentDescription = LanguageManager.translate("cd_copy", AppThemePreferences.currentLanguage, "Salin"), tint = EmeraldLight, modifier = Modifier.size(17.dp))
                     }
                     IconButton(onClick = onShare, modifier = Modifier.size(34.dp)) {
-                        Icon(imageVector = Icons.Default.Share, contentDescription = LanguageManager.translate("cd_share", currentLanguage, "Bagikan"), tint = ElectricBlue, modifier = Modifier.size(17.dp))
+                        Icon(imageVector = Icons.Default.Share, contentDescription = LanguageManager.translate("cd_share", AppThemePreferences.currentLanguage, "Bagikan"), tint = ElectricBlue, modifier = Modifier.size(17.dp))
                     }
                 }
             }
@@ -403,19 +404,19 @@ fun ActiveLinkCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(LanguageManager.translate("campaigns_stat_clicks", currentLanguage, "Klik"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("campaigns_stat_clicks", AppThemePreferences.currentLanguage, "Klik"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(link.clicks.toString(), fontWeight = FontWeight.Bold, fontSize = 13.sp)
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(LanguageManager.translate("campaigns_stat_conversions", currentLanguage, "Konversi"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("campaigns_stat_conversions", AppThemePreferences.currentLanguage, "Konversi"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(link.conversions.toString(), fontWeight = FontWeight.Bold, fontSize = 13.sp)
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(LanguageManager.translate("campaigns_stat_cr", currentLanguage, "CR %"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("campaigns_stat_cr", AppThemePreferences.currentLanguage, "CR %"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(String.format("%.1f%%", cr), fontWeight = FontWeight.Bold, fontSize = 13.sp, color = EmeraldLight)
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(LanguageManager.translate("campaigns_stat_epc", currentLanguage, "EPC"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("campaigns_stat_epc", AppThemePreferences.currentLanguage, "EPC"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(GlobalPointsManager.formatBalanceIdr(epc, currentLanguage.code), fontWeight = FontWeight.Bold, fontSize = 13.sp)
                     }
                 }
@@ -443,7 +444,7 @@ fun ActiveLinkCard(
                 ) {
                     Icon(imageVector = Icons.Default.Bolt, contentDescription = null, tint = Color.Black, modifier = Modifier.size(13.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(LanguageManager.translate("campaigns_test_conversion", currentLanguage, "Uji Konversi"), color = Color.Black, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("campaigns_test_conversion", AppThemePreferences.currentLanguage, "Uji Konversi"), color = Color.Black, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }

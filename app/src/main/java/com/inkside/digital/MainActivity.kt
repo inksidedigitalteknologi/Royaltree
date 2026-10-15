@@ -406,6 +406,7 @@ fun RootNav(
                 defaultName = currentUser?.displayName ?: "",
                 isLoading = isLoading,
                 errorMessage = errorMessage,
+                currentLanguage = currentLanguage,
                 onSave = { name, phone, city, referralCode ->
                     authViewModel.saveProfileSetup(name, phone, city, referralCode)
                 },

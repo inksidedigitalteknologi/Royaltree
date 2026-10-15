@@ -4938,20 +4938,20 @@ object LanguageManager {
             AppLanguage.JAPANESE to "cURLコマンドをクリップボードにコピーしました！"
         ),
         "toast_admin_code_copied" to mapOf(
-            AppLanguage.INDONESIAN to "Kode $fileName disalin ke clipboard!",
-            AppLanguage.ENGLISH to "Code $fileName copied to clipboard!",
-            AppLanguage.SPANISH to "¡Código $fileName copiado al portapapeles!",
-            AppLanguage.CHINESE to "代码 $fileName 已复制到剪贴板！",
-            AppLanguage.ARABIC to "تم نسخ رمز $fileName إلى الحافظة!",
-            AppLanguage.JAPANESE to "コード $fileName をクリップボードにコピーしました！"
+            AppLanguage.INDONESIAN to "Kode \$fileName disalin ke clipboard!",
+            AppLanguage.ENGLISH to "Code \$fileName copied to clipboard!",
+            AppLanguage.SPANISH to "¡Código \$fileName copiado al portapapeles!",
+            AppLanguage.CHINESE to "代码 \$fileName 已复制到剪贴板！",
+            AppLanguage.ARABIC to "تم نسخ رمز \$fileName إلى الحافظة!",
+            AppLanguage.JAPANESE to "コード \$fileName をクリップボードにコピーしました！"
         ),
         "toast_admin_code_ready" to mapOf(
-            AppLanguage.INDONESIAN to "Kode $fileName disalin! Siap ditaruh di hosting Anda.",
-            AppLanguage.ENGLISH to "Code $fileName copied! Ready to deploy on your hosting.",
-            AppLanguage.SPANISH to "¡Código $fileName copiado! Listo para implementar en su hosting.",
-            AppLanguage.CHINESE to "代码 $fileName 已复制！准备部署到您的托管。",
-            AppLanguage.ARABIC to "تم نسخ رمز $fileName! جاهز للنشر على الاستضافة.",
-            AppLanguage.JAPANESE to "コード $fileName をコピーしました！ホスティングにデプロイする準備ができました。"
+            AppLanguage.INDONESIAN to "Kode \$fileName disalin! Siap ditaruh di hosting Anda.",
+            AppLanguage.ENGLISH to "Code \$fileName copied! Ready to deploy on your hosting.",
+            AppLanguage.SPANISH to "¡Código \$fileName copiado! Listo para implementar en su hosting.",
+            AppLanguage.CHINESE to "代码 \$fileName 已复制！准备部署到您的托管。",
+            AppLanguage.ARABIC to "تم نسخ رمز \$fileName! جاهز للنشر على الاستضافة.",
+            AppLanguage.JAPANESE to "コード \$fileName をコピーしました！ホスティングにデプロイする準備ができました。"
         ),
 
 
@@ -5211,12 +5211,12 @@ object LanguageManager {
             AppLanguage.JAPANESE to "未テスト"
         ),
         "vm_portal_connecting" to mapOf(
-            AppLanguage.INDONESIAN to "Menghubungkan ke $url...",
-            AppLanguage.ENGLISH to "Connecting to $url...",
-            AppLanguage.SPANISH to "Conectando a $url...",
-            AppLanguage.CHINESE to "正在连接到 $url...",
-            AppLanguage.ARABIC to "جاري الاتصال بـ $url...",
-            AppLanguage.JAPANESE to "$url に接続中..."
+            AppLanguage.INDONESIAN to "Menghubungkan ke \$url...",
+            AppLanguage.ENGLISH to "Connecting to \$url...",
+            AppLanguage.SPANISH to "Conectando a \$url...",
+            AppLanguage.CHINESE to "正在连接到 \$url...",
+            AppLanguage.ARABIC to "جاري الاتصال بـ \$url...",
+            AppLanguage.JAPANESE to "\$url に接続中..."
         ),
         "vm_portal_connected_detail" to mapOf(
             AppLanguage.INDONESIAN to "Tersambung (HTTP 200 OK) - ${res.message}",
