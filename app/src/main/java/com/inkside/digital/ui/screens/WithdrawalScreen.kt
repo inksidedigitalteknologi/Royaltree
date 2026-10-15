@@ -53,6 +53,7 @@ import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.util.GlobalPointsManager
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 
 @Composable
 fun WithdrawalScreen(
@@ -92,8 +93,8 @@ fun WithdrawalScreen(
         // Header
         item {
             Column {
-                Text("💰 Penarikan", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
-                Text("Tarik saldo ke rekening atau e-wallet kamu", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(LanguageManager.translate("withdrawal_title", currentLanguage, "💰 Penarikan"), style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp))
+                Text(LanguageManager.translate("withdrawal_subtitle", currentLanguage, "Tarik saldo ke rekening atau e-wallet kamu"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
@@ -111,7 +112,7 @@ fun WithdrawalScreen(
                     Icon(Icons.Default.MonetizationOn, null, tint = EmeraldLight, modifier = Modifier.size(28.dp))
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
-                        Text("Saldo Tersedia", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("withdrawal_available_balance", currentLanguage, "Saldo Tersedia"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             GlobalPointsManager.formatBalanceIdr(balance, currentLanguage.code),
                             fontSize = 22.sp,
@@ -131,14 +132,14 @@ fun WithdrawalScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("📝 Form Penarikan", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(LanguageManager.translate("withdrawal_form_title", currentLanguage, "📝 Form Penarikan"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(12.dp))
 
                     // Jumlah
                     OutlinedTextField(
                         value = amount,
                         onValueChange = { amount = it.filter { c -> c.isDigit() } },
-                        label = { Text("Jumlah (min Rp " + String.format("%,.0f", minAmount).replace(",", ".") + ")") },
+                        label = { Text(LanguageManager.translate("withdrawal_amount_label", currentLanguage, "Jumlah (min Rp ") + String.format("%,.0f", minAmount).replace(",", ".") + ")") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
@@ -152,7 +153,7 @@ fun WithdrawalScreen(
                         OutlinedTextField(
                             value = if (channelType == "E_WALLET") "E-Wallet" else "Bank Transfer",
                             onValueChange = {},
-                            label = { Text("Channel") },
+                            label = { Text(LanguageManager.translate("withdrawal_channel", currentLanguage, "Channel")) },
                             readOnly = true,
                             trailingIcon = {
                                 Icon(Icons.Default.ArrowDropDown, null, modifier = Modifier.size(24.dp))
@@ -173,7 +174,7 @@ fun WithdrawalScreen(
                             onDismissRequest = { showChannelDropdown = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("E-Wallet (min Rp 50.000)") },
+                                text = { Text(LanguageManager.translate("withdrawal_ewallet_min", currentLanguage, "E-Wallet (min Rp 50.000)")) },
                                 onClick = {
                                     channelType = "E_WALLET"
                                     providerName = "GoPay"
@@ -181,7 +182,7 @@ fun WithdrawalScreen(
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Bank Transfer (min Rp 100.000)") },
+                                text = { Text(LanguageManager.translate("withdrawal_bank_min", currentLanguage, "Bank Transfer (min Rp 100.000)")) },
                                 onClick = {
                                     channelType = "BANK"
                                     providerName = "BCA"
@@ -198,7 +199,7 @@ fun WithdrawalScreen(
                         OutlinedTextField(
                             value = providerName,
                             onValueChange = {},
-                            label = { Text("Provider") },
+                            label = { Text(LanguageManager.translate("withdrawal_provider", currentLanguage, "Provider")) },
                             readOnly = true,
                             trailingIcon = {
                                 Icon(Icons.Default.ArrowDropDown, null, modifier = Modifier.size(24.dp))
@@ -236,7 +237,7 @@ fun WithdrawalScreen(
                     OutlinedTextField(
                         value = accountDestination,
                         onValueChange = { accountDestination = it },
-                        label = { Text("Nomor Rekening / HP") },
+                        label = { Text(LanguageManager.translate("withdrawal_account_number", currentLanguage, "Nomor Rekening / HP")) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
@@ -249,7 +250,7 @@ fun WithdrawalScreen(
                     OutlinedTextField(
                         value = accountHolderName,
                         onValueChange = { accountHolderName = it },
-                        label = { Text("Nama Pemilik Rekening") },
+                        label = { Text(LanguageManager.translate("withdrawal_account_holder", currentLanguage, "Nama Pemilik Rekening")) },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier.fillMaxWidth()
@@ -267,7 +268,7 @@ fun WithdrawalScreen(
                         ),
                         modifier = Modifier.fillMaxWidth().height(50.dp)
                     ) {
-                        Text("💸 AJUKAN PENARIKAN", fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("withdrawal_submit", currentLanguage, "💸 AJUKAN PENARIKAN"), fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -275,7 +276,7 @@ fun WithdrawalScreen(
 
         // Riwayat
         item {
-            Text("📜 Riwayat Penarikan", fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 8.dp))
+            Text(LanguageManager.translate("withdrawal_history", currentLanguage, "📜 Riwayat Penarikan"), fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 8.dp))
         }
 
         if (withdrawals.isEmpty()) {
@@ -339,16 +340,16 @@ fun WithdrawalScreen(
     if (showConfirmDialog) {
         AlertDialog(
             onDismissRequest = { showConfirmDialog = false },
-            title = { Text("Konfirmasi Penarikan") },
+            title = { Text(LanguageManager.translate("withdrawal_confirm_title", currentLanguage, "Konfirmasi Penarikan")) },
             text = {
                 Column {
-                    Text("Pastikan data sudah benar:", fontSize = 12.sp)
+                    Text(LanguageManager.translate("withdrawal_confirm_check", currentLanguage, "Pastikan data sudah benar:"), fontSize = 12.sp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Jumlah: Rp " + String.format("%,.0f", amountValue).replace(",", "."), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    Text("Channel: " + (if (channelType == "E_WALLET") "E-Wallet" else "Bank"), fontSize = 12.sp)
-                    Text("Provider: $providerName", fontSize = 12.sp)
-                    Text("No. Rekening: $accountDestination", fontSize = 12.sp)
-                    Text("Nama Pemilik: $accountHolderName", fontSize = 12.sp)
+                    Text(LanguageManager.translate("withdrawal_confirm_amount", currentLanguage, "Jumlah: Rp ") + String.format("%,.0f", amountValue).replace(",", "."), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("withdrawal_confirm_channel", currentLanguage, "Channel: ") + (if (channelType == "E_WALLET") "E-Wallet" else "Bank"), fontSize = 12.sp)
+                    Text(LanguageManager.translate("withdrawal_confirm_provider", currentLanguage, "Provider: ") + providerName, fontSize = 12.sp)
+                    Text(LanguageManager.translate("withdrawal_confirm_account", currentLanguage, "No. Rekening: ") + accountDestination, fontSize = 12.sp)
+                    Text(LanguageManager.translate("withdrawal_confirm_holder", currentLanguage, "Nama Pemilik: ") + accountHolderName, fontSize = 12.sp)
                     Spacer(modifier = Modifier.height(12.dp))
                     Box(
                         modifier = Modifier.fillMaxWidth()
@@ -372,12 +373,12 @@ fun WithdrawalScreen(
                     accountDestination = ""
                     accountHolderName = ""
                 }) {
-                    Text("Ya, Ajukan", color = EmeraldLight, fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("withdrawal_confirm_yes", currentLanguage, "Ya, Ajukan"), color = EmeraldLight, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showConfirmDialog = false }) {
-                    Text("Batal")
+                    Text(LanguageManager.translate("common_cancel", currentLanguage, "Batal"))
                 }
             }
         )

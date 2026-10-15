@@ -2787,6 +2787,177 @@ object LanguageManager {
             AppLanguage.ARABIC to "المرجع:",
             AppLanguage.JAPANESE to "参照:"
         ),
+
+        // ========== WITHDRAWAL SCREEN ==========
+        "withdrawal_title" to mapOf(
+            AppLanguage.INDONESIAN to "💰 Penarikan",
+            AppLanguage.ENGLISH to "💰 Withdrawal",
+            AppLanguage.SPANISH to "💰 Retiro",
+            AppLanguage.CHINESE to "💰 提款",
+            AppLanguage.ARABIC to "💰 السحب",
+            AppLanguage.JAPANESE to "💰 引き出し"
+        ),
+        "withdrawal_subtitle" to mapOf(
+            AppLanguage.INDONESIAN to "Tarik saldo ke rekening atau e-wallet kamu",
+            AppLanguage.ENGLISH to "Withdraw balance to your bank account or e-wallet",
+            AppLanguage.SPANISH to "Retira el saldo a tu cuenta bancaria o billetera electrónica",
+            AppLanguage.CHINESE to "将余额提现到银行账户或电子钱包",
+            AppLanguage.ARABIC to "اسحب الرصيد إلى حسابك البنكي أو المحفظة الإلكترونية",
+            AppLanguage.JAPANESE to "残高を銀行口座またはEウォレットに引き出します"
+        ),
+        "withdrawal_available_balance" to mapOf(
+            AppLanguage.INDONESIAN to "Saldo Tersedia",
+            AppLanguage.ENGLISH to "Available Balance",
+            AppLanguage.SPANISH to "Saldo Disponible",
+            AppLanguage.CHINESE to "可用余额",
+            AppLanguage.ARABIC to "الرصيد المتاح",
+            AppLanguage.JAPANESE to "利用可能残高"
+        ),
+        "withdrawal_form_title" to mapOf(
+            AppLanguage.INDONESIAN to "📝 Form Penarikan",
+            AppLanguage.ENGLISH to "📝 Withdrawal Form",
+            AppLanguage.SPANISH to "📝 Formulario de Retiro",
+            AppLanguage.CHINESE to "📝 提款表格",
+            AppLanguage.ARABIC to "📝 نموذج السحب",
+            AppLanguage.JAPANESE to "📝 引き出しフォーム"
+        ),
+        "withdrawal_amount_label" to mapOf(
+            AppLanguage.INDONESIAN to "Jumlah (min Rp ",
+            AppLanguage.ENGLISH to "Amount (min Rp ",
+            AppLanguage.SPANISH to "Cantidad (mín Rp ",
+            AppLanguage.CHINESE to "金额（最低 Rp ",
+            AppLanguage.ARABIC to "المبلغ (الحد الأدنى Rp ",
+            AppLanguage.JAPANESE to "金額（最低 Rp "
+        ),
+        "withdrawal_channel" to mapOf(
+            AppLanguage.INDONESIAN to "Channel",
+            AppLanguage.ENGLISH to "Channel",
+            AppLanguage.SPANISH to "Canal",
+            AppLanguage.CHINESE to "渠道",
+            AppLanguage.ARABIC to "القناة",
+            AppLanguage.JAPANESE to "チャネル"
+        ),
+        "withdrawal_ewallet_min" to mapOf(
+            AppLanguage.INDONESIAN to "E-Wallet (min Rp 50.000)",
+            AppLanguage.ENGLISH to "E-Wallet (min Rp 50,000)",
+            AppLanguage.SPANISH to "E-Wallet (mín Rp 50.000)",
+            AppLanguage.CHINESE to "电子钱包（最低 Rp 50,000）",
+            AppLanguage.ARABIC to "المحفظة الإلكترونية (الحد الأدنى Rp 50,000)",
+            AppLanguage.JAPANESE to "Eウォレット（最低 Rp 50,000）"
+        ),
+        "withdrawal_bank_min" to mapOf(
+            AppLanguage.INDONESIAN to "Bank Transfer (min Rp 100.000)",
+            AppLanguage.ENGLISH to "Bank Transfer (min Rp 100,000)",
+            AppLanguage.SPANISH to "Transferencia Bancaria (mín Rp 100.000)",
+            AppLanguage.CHINESE to "银行转账（最低 Rp 100,000）",
+            AppLanguage.ARABIC to "التحويل البنكي (الحد الأدنى Rp 100,000)",
+            AppLanguage.JAPANESE to "銀行振込（最低 Rp 100,000）"
+        ),
+        "withdrawal_provider" to mapOf(
+            AppLanguage.INDONESIAN to "Provider",
+            AppLanguage.ENGLISH to "Provider",
+            AppLanguage.SPANISH to "Proveedor",
+            AppLanguage.CHINESE to "提供商",
+            AppLanguage.ARABIC to "المزود",
+            AppLanguage.JAPANESE to "プロバイダー"
+        ),
+        "withdrawal_account_number" to mapOf(
+            AppLanguage.INDONESIAN to "Nomor Rekening / HP",
+            AppLanguage.ENGLISH to "Account / Phone Number",
+            AppLanguage.SPANISH to "Número de Cuenta / Teléfono",
+            AppLanguage.CHINESE to "账号 / 手机号",
+            AppLanguage.ARABIC to "رقم الحساب / الهاتف",
+            AppLanguage.JAPANESE to "口座番号 / 電話番号"
+        ),
+        "withdrawal_account_holder" to mapOf(
+            AppLanguage.INDONESIAN to "Nama Pemilik Rekening",
+            AppLanguage.ENGLISH to "Account Holder Name",
+            AppLanguage.SPANISH to "Nombre del Titular",
+            AppLanguage.CHINESE to "账户持有人姓名",
+            AppLanguage.ARABIC to "اسم صاحب الحساب",
+            AppLanguage.JAPANESE to "口座名義人"
+        ),
+        "withdrawal_submit" to mapOf(
+            AppLanguage.INDONESIAN to "💸 AJUKAN PENARIKAN",
+            AppLanguage.ENGLISH to "💸 SUBMIT WITHDRAWAL",
+            AppLanguage.SPANISH to "💸 SOLICITAR RETIRO",
+            AppLanguage.CHINESE to "💸 提交提款",
+            AppLanguage.ARABIC to "💸 إرسال طلب السحب",
+            AppLanguage.JAPANESE to "💸 引き出しを申請"
+        ),
+        "withdrawal_history" to mapOf(
+            AppLanguage.INDONESIAN to "📜 Riwayat Penarikan",
+            AppLanguage.ENGLISH to "📜 Withdrawal History",
+            AppLanguage.SPANISH to "📜 Historial de Retiros",
+            AppLanguage.CHINESE to "📜 提款历史",
+            AppLanguage.ARABIC to "📜 سجل السحب",
+            AppLanguage.JAPANESE to "📜 引き出し履歴"
+        ),
+        "withdrawal_confirm_title" to mapOf(
+            AppLanguage.INDONESIAN to "Konfirmasi Penarikan",
+            AppLanguage.ENGLISH to "Withdrawal Confirmation",
+            AppLanguage.SPANISH to "Confirmación de Retiro",
+            AppLanguage.CHINESE to "确认提款",
+            AppLanguage.ARABIC to "تأكيد السحب",
+            AppLanguage.JAPANESE to "引き出しの確認"
+        ),
+        "withdrawal_confirm_check" to mapOf(
+            AppLanguage.INDONESIAN to "Pastikan data sudah benar:",
+            AppLanguage.ENGLISH to "Please verify the data:",
+            AppLanguage.SPANISH to "Verifica los datos:",
+            AppLanguage.CHINESE to "请确认数据正确：",
+            AppLanguage.ARABIC to "الرجاء التحقق من البيانات:",
+            AppLanguage.JAPANESE to "データを確認してください:"
+        ),
+        "withdrawal_confirm_amount" to mapOf(
+            AppLanguage.INDONESIAN to "Jumlah: Rp ",
+            AppLanguage.ENGLISH to "Amount: Rp ",
+            AppLanguage.SPANISH to "Cantidad: Rp ",
+            AppLanguage.CHINESE to "金额：Rp ",
+            AppLanguage.ARABIC to "المبلغ: Rp ",
+            AppLanguage.JAPANESE to "金額：Rp "
+        ),
+        "withdrawal_confirm_channel" to mapOf(
+            AppLanguage.INDONESIAN to "Channel: ",
+            AppLanguage.ENGLISH to "Channel: ",
+            AppLanguage.SPANISH to "Canal: ",
+            AppLanguage.CHINESE to "渠道：",
+            AppLanguage.ARABIC to "القناة: ",
+            AppLanguage.JAPANESE to "チャネル："
+        ),
+        "withdrawal_confirm_provider" to mapOf(
+            AppLanguage.INDONESIAN to "Provider: ",
+            AppLanguage.ENGLISH to "Provider: ",
+            AppLanguage.SPANISH to "Proveedor: ",
+            AppLanguage.CHINESE to "提供商：",
+            AppLanguage.ARABIC to "المزود: ",
+            AppLanguage.JAPANESE to "プロバイダー："
+        ),
+        "withdrawal_confirm_account" to mapOf(
+            AppLanguage.INDONESIAN to "No. Rekening: ",
+            AppLanguage.ENGLISH to "Account No.: ",
+            AppLanguage.SPANISH to "No. de Cuenta: ",
+            AppLanguage.CHINESE to "账号：",
+            AppLanguage.ARABIC to "رقم الحساب: ",
+            AppLanguage.JAPANESE to "口座番号："
+        ),
+        "withdrawal_confirm_holder" to mapOf(
+            AppLanguage.INDONESIAN to "Nama Pemilik: ",
+            AppLanguage.ENGLISH to "Holder Name: ",
+            AppLanguage.SPANISH to "Titular: ",
+            AppLanguage.CHINESE to "持有人姓名：",
+            AppLanguage.ARABIC to "اسم صاحب الحساب: ",
+            AppLanguage.JAPANESE to "名義人："
+        ),
+        "withdrawal_confirm_yes" to mapOf(
+            AppLanguage.INDONESIAN to "Ya, Ajukan",
+            AppLanguage.ENGLISH to "Yes, Submit",
+            AppLanguage.SPANISH to "Sí, Enviar",
+            AppLanguage.CHINESE to "是，提交",
+            AppLanguage.ARABIC to "نعم، إرسال",
+            AppLanguage.JAPANESE to "はい、申請"
+        ),
+
     )
 
     fun getString(key: String, language: AppLanguage): String {
