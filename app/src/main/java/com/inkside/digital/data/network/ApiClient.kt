@@ -436,6 +436,20 @@ object ApiClient {
     }
 
     // ============================================================
+    // PURCHASE / IAP
+    // ============================================================
+    suspend fun getPurchaseTiersPublic(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val resp = apiService.getPurchaseTiersPublic()
+            val json = JSONObject(resp.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            android.util.Log.e("ApiClient", "getPurchaseTiersPublic error: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
+    // ============================================================
     // ACHIEVEMENT
     // ============================================================
     suspend fun getMyAchievements(): Result<JSONObject> = withContext(Dispatchers.IO) {
