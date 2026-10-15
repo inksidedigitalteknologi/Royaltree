@@ -101,13 +101,13 @@ fun HomeScreen(
                     Text(
                         text = LanguageManager.translate("home_welcome", currentLanguage, "Selamat Datang"),
                         fontSize = 13.sp,
-                        color = androidx.compose.ui.graphics.Color.White // TEST
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = user?.name ?: "User",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = androidx.compose.ui.graphics.Color.White // TEST
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
@@ -170,7 +170,7 @@ fun HomeScreen(
                         Text(
                             text = LanguageManager.translate("total_commission", currentLanguage, "Saldo Tersedia"),
                             fontSize = 10.sp,
-                            color = androidx.compose.ui.graphics.Color.White // TEST
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(3.dp))
                         Text(
@@ -373,7 +373,7 @@ fun HomeScreen(
                         Text(
                             text = subtitle,
                             fontSize = 11.sp,
-                            color = androidx.compose.ui.graphics.Color.White // TEST
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                     if (adButtonState == AdButtonState.NO_AD) {
@@ -466,7 +466,7 @@ private fun StatCard(
                     text = label,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Medium,
-                    color = androidx.compose.ui.graphics.Color.White // TEST,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center
                 )
             }
@@ -505,7 +505,7 @@ private fun QuickActionButton(
                 text = label,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = androidx.compose.ui.graphics.Color.White // TEST
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
