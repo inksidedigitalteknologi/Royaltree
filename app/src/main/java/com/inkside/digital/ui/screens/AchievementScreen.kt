@@ -47,6 +47,7 @@ import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.viewmodel.AffiliateViewModel
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun AchievementScreen(
     viewModel: AffiliateViewModel,
