@@ -147,7 +147,7 @@ fun CoinRushScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = LanguageManager.translate("cd_back", currentLanguage, "Back"), tint = Color.White)
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     Text(LanguageManager.translate("game_hub_coinrush", currentLanguage, "Coin Rush"), color = Color.White, fontWeight = FontWeight.Black, fontSize = 18.sp)
@@ -361,7 +361,7 @@ private fun CoinSprite(
         // Coin icon
         Image(
             painter = painterResource(id = R.drawable.rtp_coin),
-            contentDescription = "RTP",
+            contentDescription = LanguageManager.translate("cd_rtp", currentLanguage, "RTP"),
             modifier = Modifier
                 .size(44.dp)
                 .clip(CircleShape)

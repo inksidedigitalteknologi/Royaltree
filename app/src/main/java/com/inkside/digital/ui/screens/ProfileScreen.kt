@@ -690,7 +690,7 @@ fun ProfileAvatarWithFrame(
             if (!photoUrl.isNullOrBlank()) {
                 coil.compose.AsyncImage(
                     model = photoUrl,
-                    contentDescription = "Profile picture",
+                    contentDescription = LanguageManager.translate("cd_profile_picture", currentLanguage, "Profile picture"),
                     modifier = Modifier.fillMaxSize(),
                     contentScale = androidx.compose.ui.layout.ContentScale.Crop
                 )

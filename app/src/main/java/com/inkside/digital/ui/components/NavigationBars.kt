@@ -165,7 +165,7 @@ fun AppTopBar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Menu,
-                        contentDescription = "Menu",
+                        contentDescription = LanguageManager.translate("cd_menu", currentLanguage, "Menu"),
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
@@ -175,7 +175,7 @@ fun AppTopBar(
                 // M52: Logo Royaltree — coin RTP
                 Image(
                     painter = androidx.compose.ui.res.painterResource(com.inkside.digital.R.drawable.rtp_coin),
-                    contentDescription = "Royaltree Logo",
+                    contentDescription = LanguageManager.translate("cd_royaltree_logo", currentLanguage, "Royaltree Logo"),
                     modifier = Modifier
                         .size(36.dp)
                         .clip(RoundedCornerShape(9.dp))
@@ -243,7 +243,7 @@ fun AppTopBar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Email,
-                        contentDescription = "Inbox",
+                        contentDescription = LanguageManager.translate("cd_inbox", currentLanguage, "Inbox"),
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(20.dp)
                     )
@@ -270,7 +270,7 @@ fun AppTopBar(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Notifications,
-                            contentDescription = "Notifications",
+                            contentDescription = LanguageManager.translate("cd_notifications", currentLanguage, "Notifications"),
                             tint = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.size(20.dp)
                         )
@@ -458,7 +458,7 @@ fun AppBottomNavigationBar(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Filled.CardGiftcard,
-                        contentDescription = "Daily Check-In",
+                        contentDescription = LanguageManager.translate("cd_daily_check_in", currentLanguage, "Daily Check-In"),
                         tint = Color.Black,
                         modifier = Modifier.size(26.dp)
                     )

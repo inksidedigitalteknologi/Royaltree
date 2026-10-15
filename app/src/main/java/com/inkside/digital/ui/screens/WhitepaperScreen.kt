@@ -144,7 +144,7 @@ fun WhitepaperScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = LanguageManager.translate("cd_back", currentLanguage, "Back"),
                             tint = TextPrimary
                         )
                     }

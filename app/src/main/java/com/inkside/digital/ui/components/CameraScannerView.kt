@@ -9,6 +9,8 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -70,6 +72,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 @Composable
 fun CameraScannerView(
     modifier: Modifier = Modifier,
+    currentLanguage: AppLanguage,
     onQrDetected: (qrRawData: String) -> Unit
 ) {
     val context = LocalContext.current
@@ -156,7 +159,7 @@ fun CameraScannerView(
                 ) {
                     Icon(
                         imageVector = if (isFlashOn) Icons.Filled.FlashOn else Icons.Filled.FlashOff,
-                        contentDescription = "Flashlight",
+                        contentDescription = LanguageManager.translate("cd_flashlight", currentLanguage, "Flashlight"),
                         tint = if (isFlashOn) Color(0xFFFFD700) else Color.White
                     )
                 }

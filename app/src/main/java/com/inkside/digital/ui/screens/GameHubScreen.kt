@@ -89,7 +89,7 @@ fun GameHubScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = LanguageManager.translate("cd_back", currentLanguage, "Back"),
                             tint = Color.White
                         )
                     }

@@ -109,7 +109,7 @@ fun InvestmentCouponScreen(
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.banner_invest_coupon),
-                            contentDescription = "Investasi Kupon",
+                            contentDescription = LanguageManager.translate("cd_investment_coupon", currentLanguage, "Investasi Kupon"),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxWidth()
                         )

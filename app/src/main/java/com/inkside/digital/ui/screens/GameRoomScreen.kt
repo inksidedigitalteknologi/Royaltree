@@ -297,7 +297,7 @@ fun GameRoomScreenContent(
                         onClick = onBack,
                         modifier = Modifier.testTag("game_room_back_button")
                     ) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali")
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = LanguageManager.translate("cd_back", currentLanguage, "Kembali"))
                     }
                 },
                 // Chip kuning RTP dah dibuang — sebab ada di stats row bawah
@@ -512,7 +512,7 @@ fun GameRoomScreenContent(
                             IconButton(onClick = { selectedItemToBuy = null }) {
                                 Icon(
                                     imageVector = androidx.compose.material.icons.Icons.Default.Close,
-                                    contentDescription = "Close",
+                                    contentDescription = LanguageManager.translate("cd_close_en", currentLanguage, "Close"),
                                     tint = Color(0xFF94A3B8)
                                 )
                             }
@@ -939,7 +939,7 @@ private fun RetroStatBox(
             if (useRtpIcon) {
                 Image(
                     painter = painterResource(R.drawable.rtp_coin),
-                    contentDescription = "RTP",
+                    contentDescription = LanguageManager.translate("cd_rtp", currentLanguage, "RTP"),
                     modifier = Modifier.size(16.dp)
                 )
             } else {
@@ -1211,7 +1211,7 @@ private fun MiningRoomTab(
                                             }
                                             Icon(
                                                 imageVector = Icons.Filled.Bolt,
-                                                contentDescription = "Active",
+                                                contentDescription = LanguageManager.translate("cd_active", currentLanguage, "Active"),
                                                 tint = GoldVip,
                                                 modifier = Modifier.size(32.dp)
                                             )

@@ -1,5 +1,7 @@
 package com.inkside.digital.ui.components
 
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -43,7 +45,7 @@ fun RtpAmount(
     ) {
         Image(
             painter = painterResource(R.drawable.rtp_coin),
-            contentDescription = "RTP",
+            contentDescription = LanguageManager.translate("cd_rtp", currentLanguage, "RTP"),
             modifier = Modifier.size(iconSize)
         )
         Text(

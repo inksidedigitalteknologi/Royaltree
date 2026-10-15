@@ -4986,6 +4986,252 @@ object LanguageManager {
             AppLanguage.JAPANESE to "コード $fileName をコピーしました！ホスティングにデプロイする準備ができました。"
         ),
 
+
+        // ========== CONTENT DESCRIPTIONS ==========
+        "cd_toggle" to mapOf(
+            AppLanguage.INDONESIAN to "Toggle",
+            AppLanguage.ENGLISH to "Toggle",
+            AppLanguage.SPANISH to "Alternar",
+            AppLanguage.CHINESE to "切换",
+            AppLanguage.ARABIC to "تبديل",
+            AppLanguage.JAPANESE to "切替"
+        ),
+        "cd_toggle_password" to mapOf(
+            AppLanguage.INDONESIAN to "Toggle password",
+            AppLanguage.ENGLISH to "Toggle password",
+            AppLanguage.SPANISH to "Alternar contraseña",
+            AppLanguage.CHINESE to "切换密码",
+            AppLanguage.ARABIC to "تبديل كلمة المرور",
+            AppLanguage.JAPANESE to "パスワードを切替"
+        ),
+        "cd_back" to mapOf(
+            AppLanguage.INDONESIAN to "Kembali",
+            AppLanguage.ENGLISH to "Back",
+            AppLanguage.SPANISH to "Atrás",
+            AppLanguage.CHINESE to "返回",
+            AppLanguage.ARABIC to "رجوع",
+            AppLanguage.JAPANESE to "戻る"
+        ),
+        "cd_send" to mapOf(
+            AppLanguage.INDONESIAN to "Kirim",
+            AppLanguage.ENGLISH to "Send",
+            AppLanguage.SPANISH to "Enviar",
+            AppLanguage.CHINESE to "发送",
+            AppLanguage.ARABIC to "إرسال",
+            AppLanguage.JAPANESE to "送信"
+        ),
+        "cd_copy" to mapOf(
+            AppLanguage.INDONESIAN to "Salin",
+            AppLanguage.ENGLISH to "Copy",
+            AppLanguage.SPANISH to "Copiar",
+            AppLanguage.CHINESE to "复制",
+            AppLanguage.ARABIC to "نسخ",
+            AppLanguage.JAPANESE to "コピー"
+        ),
+        "cd_share" to mapOf(
+            AppLanguage.INDONESIAN to "Bagikan",
+            AppLanguage.ENGLISH to "Share",
+            AppLanguage.SPANISH to "Compartir",
+            AppLanguage.CHINESE to "分享",
+            AppLanguage.ARABIC to "مشاركة",
+            AppLanguage.JAPANESE to "共有"
+        ),
+        "cd_copy_script" to mapOf(
+            AppLanguage.INDONESIAN to "Salin Script",
+            AppLanguage.ENGLISH to "Copy Script",
+            AppLanguage.SPANISH to "Copiar Script",
+            AppLanguage.CHINESE to "复制脚本",
+            AppLanguage.ARABIC to "نسخ النص",
+            AppLanguage.JAPANESE to "スクリプトをコピー"
+        ),
+        "cd_profile_picture" to mapOf(
+            AppLanguage.INDONESIAN to "Foto Profil",
+            AppLanguage.ENGLISH to "Profile Picture",
+            AppLanguage.SPANISH to "Foto de Perfil",
+            AppLanguage.CHINESE to "个人资料图片",
+            AppLanguage.ARABIC to "صورة الملف الشخصي",
+            AppLanguage.JAPANESE to "プロフィール写真"
+        ),
+        "cd_investment_coupon" to mapOf(
+            AppLanguage.INDONESIAN to "Investasi Kupon",
+            AppLanguage.ENGLISH to "Investment Coupon",
+            AppLanguage.SPANISH to "Cupón de Inversión",
+            AppLanguage.CHINESE to "投资优惠券",
+            AppLanguage.ARABIC to "قسيمة استثمار",
+            AppLanguage.JAPANESE to "投資クーポン"
+        ),
+        "cd_rtp" to mapOf(
+            AppLanguage.INDONESIAN to "RTP",
+            AppLanguage.ENGLISH to "RTP",
+            AppLanguage.SPANISH to "RTP",
+            AppLanguage.CHINESE to "RTP",
+            AppLanguage.ARABIC to "RTP",
+            AppLanguage.JAPANESE to "RTP"
+        ),
+
+
+        // ========== CONTENT DESCRIPTIONS (SISA) ==========
+        "cd_close" to mapOf(
+            AppLanguage.INDONESIAN to "Tutup",
+            AppLanguage.ENGLISH to "Close",
+            AppLanguage.SPANISH to "Cerrar",
+            AppLanguage.CHINESE to "关闭",
+            AppLanguage.ARABIC to "إغلاق",
+            AppLanguage.JAPANESE to "閉じる"
+        ),
+        "cd_close_en" to mapOf(
+            AppLanguage.INDONESIAN to "Tutup",
+            AppLanguage.ENGLISH to "Close",
+            AppLanguage.SPANISH to "Cerrar",
+            AppLanguage.CHINESE to "关闭",
+            AppLanguage.ARABIC to "إغلاق",
+            AppLanguage.JAPANESE to "閉じる"
+        ),
+        "cd_cancel" to mapOf(
+            AppLanguage.INDONESIAN to "Batal",
+            AppLanguage.ENGLISH to "Cancel",
+            AppLanguage.SPANISH to "Cancelar",
+            AppLanguage.CHINESE to "取消",
+            AppLanguage.ARABIC to "إلغاء",
+            AppLanguage.JAPANESE to "キャンセル"
+        ),
+        "cd_delete" to mapOf(
+            AppLanguage.INDONESIAN to "Hapus",
+            AppLanguage.ENGLISH to "Delete",
+            AppLanguage.SPANISH to "Eliminar",
+            AppLanguage.CHINESE to "删除",
+            AppLanguage.ARABIC to "حذف",
+            AppLanguage.JAPANESE to "削除"
+        ),
+        "cd_menu" to mapOf(
+            AppLanguage.INDONESIAN to "Menu",
+            AppLanguage.ENGLISH to "Menu",
+            AppLanguage.SPANISH to "Menú",
+            AppLanguage.CHINESE to "菜单",
+            AppLanguage.ARABIC to "القائمة",
+            AppLanguage.JAPANESE to "メニュー"
+        ),
+        "cd_royaltree_logo" to mapOf(
+            AppLanguage.INDONESIAN to "Logo Royaltree",
+            AppLanguage.ENGLISH to "Royaltree Logo",
+            AppLanguage.SPANISH to "Logo de Royaltree",
+            AppLanguage.CHINESE to "Royaltree 徽标",
+            AppLanguage.ARABIC to "شعار Royaltree",
+            AppLanguage.JAPANESE to "Royaltreeロゴ"
+        ),
+        "cd_inbox" to mapOf(
+            AppLanguage.INDONESIAN to "Kotak Masuk",
+            AppLanguage.ENGLISH to "Inbox",
+            AppLanguage.SPANISH to "Bandeja de Entrada",
+            AppLanguage.CHINESE to "收件箱",
+            AppLanguage.ARABIC to "صندوق الوارد",
+            AppLanguage.JAPANESE to "受信トレイ"
+        ),
+        "cd_notifications" to mapOf(
+            AppLanguage.INDONESIAN to "Notifikasi",
+            AppLanguage.ENGLISH to "Notifications",
+            AppLanguage.SPANISH to "Notificaciones",
+            AppLanguage.CHINESE to "通知",
+            AppLanguage.ARABIC to "الإشعارات",
+            AppLanguage.JAPANESE to "通知"
+        ),
+        "cd_daily_check_in" to mapOf(
+            AppLanguage.INDONESIAN to "Check-In Harian",
+            AppLanguage.ENGLISH to "Daily Check-In",
+            AppLanguage.SPANISH to "Check-In Diario",
+            AppLanguage.CHINESE to "每日签到",
+            AppLanguage.ARABIC to "تسجيل الوصول اليومي",
+            AppLanguage.JAPANESE to "毎日チェックイン"
+        ),
+        "cd_success" to mapOf(
+            AppLanguage.INDONESIAN to "Berhasil",
+            AppLanguage.ENGLISH to "Success",
+            AppLanguage.SPANISH to "Éxito",
+            AppLanguage.CHINESE to "成功",
+            AppLanguage.ARABIC to "نجاح",
+            AppLanguage.JAPANESE to "成功"
+        ),
+        "cd_active" to mapOf(
+            AppLanguage.INDONESIAN to "Aktif",
+            AppLanguage.ENGLISH to "Active",
+            AppLanguage.SPANISH to "Activo",
+            AppLanguage.CHINESE to "活跃",
+            AppLanguage.ARABIC to "نشط",
+            AppLanguage.JAPANESE to "アクティブ"
+        ),
+        "cd_like" to mapOf(
+            AppLanguage.INDONESIAN to "Suka",
+            AppLanguage.ENGLISH to "Like",
+            AppLanguage.SPANISH to "Me Gusta",
+            AppLanguage.CHINESE to "喜欢",
+            AppLanguage.ARABIC to "إعجاب",
+            AppLanguage.JAPANESE to "いいね"
+        ),
+        "cd_flashlight" to mapOf(
+            AppLanguage.INDONESIAN to "Senter",
+            AppLanguage.ENGLISH to "Flashlight",
+            AppLanguage.SPANISH to "Linterna",
+            AppLanguage.CHINESE to "手电筒",
+            AppLanguage.ARABIC to "مصباح",
+            AppLanguage.JAPANESE to "懐中電灯"
+        ),
+        "cd_upgrade_tier" to mapOf(
+            AppLanguage.INDONESIAN to "Tingkatkan Tier",
+            AppLanguage.ENGLISH to "Upgrade Tier",
+            AppLanguage.SPANISH to "Mejorar Nivel",
+            AppLanguage.CHINESE to "升级等级",
+            AppLanguage.ARABIC to "ترقية المستوى",
+            AppLanguage.JAPANESE to "ティアアップグレード"
+        ),
+        "cd_eligibility_info" to mapOf(
+            AppLanguage.INDONESIAN to "Informasi Kelayakan",
+            AppLanguage.ENGLISH to "Eligibility Info",
+            AppLanguage.SPANISH to "Información de Elegibilidad",
+            AppLanguage.CHINESE to "资格信息",
+            AppLanguage.ARABIC to "معلومات الأهلية",
+            AppLanguage.JAPANESE to "適格性情報"
+        ),
+        "cd_mute" to mapOf(
+            AppLanguage.INDONESIAN to "Bisukan",
+            AppLanguage.ENGLISH to "Mute",
+            AppLanguage.SPANISH to "Silenciar",
+            AppLanguage.CHINESE to "静音",
+            AppLanguage.ARABIC to "كتم",
+            AppLanguage.JAPANESE to "ミュート"
+        ),
+        "cd_pause" to mapOf(
+            AppLanguage.INDONESIAN to "Jeda",
+            AppLanguage.ENGLISH to "Pause",
+            AppLanguage.SPANISH to "Pausar",
+            AppLanguage.CHINESE to "暂停",
+            AppLanguage.ARABIC to "إيقاف مؤقت",
+            AppLanguage.JAPANESE to "一時停止"
+        ),
+        "cd_favorite" to mapOf(
+            AppLanguage.INDONESIAN to "Favorit",
+            AppLanguage.ENGLISH to "Favorite",
+            AppLanguage.SPANISH to "Favorito",
+            AppLanguage.CHINESE to "收藏",
+            AppLanguage.ARABIC to "مفضلة",
+            AppLanguage.JAPANESE to "お気に入り"
+        ),
+        "cd_security_pin" to mapOf(
+            AppLanguage.INDONESIAN to "PIN Keamanan",
+            AppLanguage.ENGLISH to "Security PIN",
+            AppLanguage.SPANISH to "PIN de Seguridad",
+            AppLanguage.CHINESE to "安全 PIN",
+            AppLanguage.ARABIC to "رمز PIN الأمني",
+            AppLanguage.JAPANESE to "セキュリティPIN"
+        ),
+        "cd_biometric" to mapOf(
+            AppLanguage.INDONESIAN to "Biometrik",
+            AppLanguage.ENGLISH to "Biometric",
+            AppLanguage.SPANISH to "Biométrico",
+            AppLanguage.CHINESE to "生物识别",
+            AppLanguage.ARABIC to "بيومتري",
+            AppLanguage.JAPANESE to "生体認証"
+        ),
+
     )
 
     fun getString(key: String, language: AppLanguage): String {

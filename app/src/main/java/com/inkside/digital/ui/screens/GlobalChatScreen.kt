@@ -119,7 +119,7 @@ fun GlobalChatScreen(
             IconButton(onClick = onBack) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = LanguageManager.translate("cd_back", currentLanguage, "Back"),
                     tint = TextPrimary
                 )
             }
@@ -267,7 +267,7 @@ fun GlobalChatScreen(
                 } else {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = "Send",
+                        contentDescription = LanguageManager.translate("cd_send", currentLanguage, "Send"),
                         tint = if (inputText.isNotBlank()) Color.Black else TextMuted,
                         modifier = Modifier.size(20.dp)
                     )

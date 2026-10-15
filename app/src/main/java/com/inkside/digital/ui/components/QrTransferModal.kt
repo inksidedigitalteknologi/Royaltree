@@ -211,7 +211,7 @@ fun QrTransferModal(
                         }
                     }
                     IconButton(onClick = onDismiss) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Tutup")
+                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"))
                     }
                 }
 
@@ -393,7 +393,7 @@ fun QrTransferModal(
                                             ) {
                                                 Icon(
                                                     imageVector = if (peer.isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
-                                                    contentDescription = "Favorit",
+                                                    contentDescription = LanguageManager.translate("cd_favorite", currentLanguage, "Favorit"),
                                                     tint = if (peer.isFavorite) GoldVip else MaterialTheme.colorScheme.outline,
                                                     modifier = Modifier.size(16.dp)
                                                 )
@@ -1034,7 +1034,7 @@ fun ScannerViewFinder(
         ) {
             Text(LanguageManager.translate("qr_scan_camera_title", currentLanguage, "Pindai Kamera QR Penerima"), fontWeight = FontWeight.Bold, fontSize = 13.sp)
             IconButton(onClick = onCancel) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = "Batal")
+                Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_cancel", currentLanguage, "Batal"))
             }
         }
 
@@ -1048,6 +1048,7 @@ fun ScannerViewFinder(
         ) {
             CameraScannerView(
                 modifier = Modifier.fillMaxSize(),
+                currentLanguage = currentLanguage,
                 onQrDetected = onScanDetected
             )
         }
@@ -1393,7 +1394,7 @@ fun SecurityPinModal(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Lock,
-                        contentDescription = "Security PIN",
+                        contentDescription = LanguageManager.translate("cd_security_pin", currentLanguage, "Security PIN"),
                         tint = EmeraldPrimary,
                         modifier = Modifier.size(28.dp)
                     )
@@ -1546,7 +1547,7 @@ fun SecurityPinModal(
                                             "BIO" -> {
                                                 Icon(
                                                     imageVector = Icons.Default.Fingerprint,
-                                                    contentDescription = "Biometrik",
+                                                    contentDescription = LanguageManager.translate("cd_biometric", currentLanguage, "Biometrik"),
                                                     tint = EmeraldPrimary,
                                                     modifier = Modifier.size(24.dp)
                                                 )
@@ -1554,7 +1555,7 @@ fun SecurityPinModal(
                                             "DEL" -> {
                                                 Icon(
                                                     imageVector = Icons.AutoMirrored.Filled.Backspace,
-                                                    contentDescription = "Hapus",
+                                                    contentDescription = LanguageManager.translate("cd_delete", currentLanguage, "Hapus"),
                                                     modifier = Modifier.size(20.dp)
                                                 )
                                             }

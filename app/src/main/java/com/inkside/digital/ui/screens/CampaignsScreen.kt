@@ -380,10 +380,10 @@ fun ActiveLinkCard(
 
                 Row {
                     IconButton(onClick = onCopy, modifier = Modifier.size(34.dp)) {
-                        Icon(imageVector = Icons.Default.ContentCopy, contentDescription = "Salin", tint = EmeraldLight, modifier = Modifier.size(17.dp))
+                        Icon(imageVector = Icons.Default.ContentCopy, contentDescription = LanguageManager.translate("cd_copy", currentLanguage, "Salin"), tint = EmeraldLight, modifier = Modifier.size(17.dp))
                     }
                     IconButton(onClick = onShare, modifier = Modifier.size(34.dp)) {
-                        Icon(imageVector = Icons.Default.Share, contentDescription = "Bagikan", tint = ElectricBlue, modifier = Modifier.size(17.dp))
+                        Icon(imageVector = Icons.Default.Share, contentDescription = LanguageManager.translate("cd_share", currentLanguage, "Bagikan"), tint = ElectricBlue, modifier = Modifier.size(17.dp))
                     }
                 }
             }

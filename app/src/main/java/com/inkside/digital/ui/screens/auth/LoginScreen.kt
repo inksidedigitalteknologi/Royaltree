@@ -260,7 +260,7 @@ fun LoginScreen(
                                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                                         Icon(
                                             imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                            contentDescription = "Toggle password",
+                                            contentDescription = LanguageManager.translate("cd_toggle_password", currentLanguage, "Toggle password"),
                                             tint = Color.White.copy(alpha = 0.8f)
                                         )
                                     }
