@@ -1301,7 +1301,7 @@ fun AdminPortalEndpointSection(
                                         },
                                         modifier = Modifier.size(24.dp)
                                     ) {
-                                        Icon(imageVector = Icons.Default.ContentCopy, contentDescription = "Salin", modifier = Modifier.size(14.dp))
+                                        Icon(imageVector = Icons.Default.ContentCopy, contentDescription = LanguageManager.translate("cd_copy", currentLanguage, "Salin"), modifier = Modifier.size(14.dp))
                                     }
                                 }
 
@@ -1461,7 +1461,7 @@ if (strpos(${'$'}uri, '/users/sync') !== false) {
                         },
                         modifier = Modifier.size(28.dp)
                     ) {
-                        Icon(imageVector = Icons.Default.ContentCopy, contentDescription = "Salin Script", modifier = Modifier.size(16.dp))
+                        Icon(imageVector = Icons.Default.ContentCopy, contentDescription = LanguageManager.translate("cd_copy_script", currentLanguage, "Salin Script"), modifier = Modifier.size(16.dp))
                     }
                 }
 

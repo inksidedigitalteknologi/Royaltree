@@ -147,7 +147,7 @@ fun MissionsScreen(
                         onClick = onBack,
                         modifier = Modifier.testTag("missions_back_button")
                     ) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali")
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = LanguageManager.translate("cd_back", currentLanguage, "Kembali"))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -673,7 +673,7 @@ fun InteractiveMissionDialog(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Favorite,
-                                        contentDescription = "Like",
+                                        contentDescription = LanguageManager.translate("cd_like", currentLanguage, "Like"),
                                         tint = if (hasLiked) Color(0xFFEF4444) else Color.Gray,
                                         modifier = Modifier.size(34.dp)
                                     )

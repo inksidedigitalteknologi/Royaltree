@@ -175,7 +175,7 @@ fun WithdrawDialog(
                         )
                     }
                     IconButton(onClick = onDismiss) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Tutup")
+                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"))
                     }
                 }
 
@@ -503,7 +503,7 @@ fun PaymentGatewaySimulatorModal(
                     } else {
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Success",
+                            contentDescription = LanguageManager.translate("cd_success", currentLanguage, "Success"),
                             tint = EmeraldLight,
                             modifier = Modifier.size(32.dp)
                         )
@@ -607,7 +607,7 @@ fun NewLinkModal(
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
                     IconButton(onClick = onDismiss) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Tutup")
+                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"))
                     }
                 }
 
@@ -769,7 +769,7 @@ fun UpgradeVipModal(
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.banner_premium_upgrade),
-                        contentDescription = "Upgrade Tier",
+                        contentDescription = LanguageManager.translate("cd_upgrade_tier", currentLanguage, "Upgrade Tier"),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -779,7 +779,7 @@ fun UpgradeVipModal(
                             .align(Alignment.TopEnd)
                             .padding(8.dp)
                     ) {
-                        Icon(Icons.Default.Close, contentDescription = "Tutup", tint = Color.White)
+                        Icon(Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"), tint = Color.White)
                     }
                 }
 
@@ -1208,7 +1208,7 @@ fun RedeemPointsModal(
                 ) {
                     Text(LanguageManager.translate("appmodal_redeem_title", currentLanguage, "Tukar RTP (Royaltree Point) Global"), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 17.sp))
                     IconButton(onClick = onDismiss) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Tutup")
+                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"))
                     }
                 }
 
@@ -1474,7 +1474,7 @@ fun BuyCouponModal(
                 ) {
                     Text(LanguageManager.translate("appmodal_coupon_buy_title", currentLanguage, "Beli Kupon Investasi"), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
                     IconButton(onClick = onDismiss) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Tutup")
+                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"))
                     }
                 }
 
@@ -1597,7 +1597,7 @@ fun ListCouponModal(
                 ) {
                     Text(LanguageManager.translate("appmodal_listcoupon_title", currentLanguage, "Jual ke Pasar Sekunder"), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
                     IconButton(onClick = onDismiss) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Tutup")
+                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"))
                     }
                 }
 
@@ -1676,7 +1676,7 @@ fun AdminReviewModal(
                         Text(LanguageManager.translate("appmodal_adminreview_title", currentLanguage, "Verifikasi Admin Manual"), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     }
                     IconButton(onClick = onDismiss) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Tutup")
+                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"))
                     }
                 }
 
@@ -2024,7 +2024,7 @@ fun AdRewardModal(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Info,
-                                contentDescription = "Informasi Kelayakan",
+                                contentDescription = LanguageManager.translate("cd_eligibility_info", currentLanguage, "Informasi Kelayakan"),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(15.dp)
                             )
@@ -2051,7 +2051,7 @@ fun AdRewardModal(
                                 onClick = onDismiss,
                                 modifier = Modifier.size(26.dp)
                             ) {
-                                Icon(imageVector = Icons.Default.Close, contentDescription = "Tutup", modifier = Modifier.size(18.dp))
+                                Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"), modifier = Modifier.size(18.dp))
                             }
                         }
                     }
@@ -2159,7 +2159,7 @@ fun AdRewardModal(
                                     ) {
                                         Icon(
                                             imageVector = if (isMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
-                                            contentDescription = "Mute",
+                                            contentDescription = LanguageManager.translate("cd_mute", currentLanguage, "Mute"),
                                             tint = Color.White,
                                             modifier = Modifier.padding(5.dp).size(14.dp)
                                         )
@@ -2171,7 +2171,7 @@ fun AdRewardModal(
                                     ) {
                                         Icon(
                                             imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                                            contentDescription = "Pause",
+                                            contentDescription = LanguageManager.translate("cd_pause", currentLanguage, "Pause"),
                                             tint = Color.White,
                                             modifier = Modifier.padding(5.dp).size(14.dp)
                                         )
@@ -2467,7 +2467,7 @@ fun LanguageModal(
                 ) {
                     Text(LanguageManager.translate("appmodal_language_title", currentLanguage, "Pilih Bahasa Internasional"), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
                     IconButton(onClick = onDismiss) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Tutup")
+                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"))
                     }
                 }
 
@@ -2546,7 +2546,7 @@ fun DailyCheckInModal(
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 17.sp)
                     )
                     IconButton(onClick = onDismiss) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Tutup")
+                        Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"))
                     }
                 }
 

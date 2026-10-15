@@ -186,7 +186,7 @@ fun RevolverBottomNav(
                             painter = androidx.compose.ui.res.painterResource(
                                 id = com.inkside.digital.R.drawable.rtp_coin
                             ),
-                            contentDescription = "RTP",
+                            contentDescription = LanguageManager.translate("cd_rtp", currentLanguage, "RTP"),
                             modifier = Modifier.size(34.dp)
                         )
                     }
@@ -275,7 +275,7 @@ fun RevolverBottomNav(
                                         painter = androidx.compose.ui.res.painterResource(
                                             id = com.inkside.digital.R.drawable.rtp_coin
                                         ),
-                                        contentDescription = "RTP",
+                                        contentDescription = LanguageManager.translate("cd_rtp", currentLanguage, "RTP"),
                                         modifier = Modifier.size(28.dp)
                                     )
                                 }
