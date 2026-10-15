@@ -142,9 +142,31 @@ router.post('/verify', verifyFirebaseToken, validate(purchaseSchema), async (req
             });
         }
 
-        const verification = await verifyWithGooglePlay(
-            purchaseToken, productId, packageName
-        );
+        // ============================================================
+        // MOCK MODE — untuk testing tanpa Google Play
+        // ============================================================
+        let verification;
+        if (purchaseToken.startsWith('mock_')) {
+            if (process.env.ALLOW_MOCK_PURCHASE !== 'true') {
+                console.warn('[PURCHASE] Mock token ditolak (ALLOW_MOCK_PURCHASE != true)');
+                return res.status(400).json({
+                    success: false,
+                    message: 'Mock purchase tidak diizinkan di production'
+                });
+            }
+            console.log('[PURCHASE] 🧪 MOCK verification for', productId);
+            verification = {
+                valid: true,
+                data: {
+                    mock: true,
+                    purchaseTime: Date.now().toString()
+                }
+            };
+        } else {
+            verification = await verifyWithGooglePlay(
+                purchaseToken, productId, packageName
+            );
+        }
 
         if (!verification.valid) {
             return res.status(400).json({
