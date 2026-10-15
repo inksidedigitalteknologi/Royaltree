@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 const admin = require('firebase-admin');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
+const { checkAchievements } = require('../services/achievements');
 
 const db = admin.firestore();
 
@@ -122,11 +123,16 @@ router.post('/withdraw', verifyFirebaseToken, async (req, res) => {
             adminNotes: ''
         });
 
-        // Kurangkan balance available (hold sementara)
+        // Kurangkan balance available (hold sementara) + counter achievement
         await userRef.update({
             affiliateBalanceAvailable: admin.firestore.FieldValue.increment(-amount),
-            affiliateBalance: admin.firestore.FieldValue.increment(-amount)
+            affiliateBalance: admin.firestore.FieldValue.increment(-amount),
+            withdrawCount: admin.firestore.FieldValue.increment(1),
+            totalWithdrawAmount: admin.firestore.FieldValue.increment(parseFloat(amount))
         });
+
+        // Check achievement async
+        checkAchievements(uid).catch(e => console.error('[ACH]', e.message));
 
         return res.json({
             success: true,

@@ -11,6 +11,7 @@ const { createNotification } = require('../utils/notifications');
 // Validation
 const { validate } = require('../middleware/validate');
 const { checkInSchema } = require('../schemas');
+const { checkAchievements } = require('../services/achievements');
 
 const db = admin.firestore();
 
@@ -201,6 +202,9 @@ router.post('/check-in', verifyFirebaseToken, validate(checkInSchema), checkFrau
             points: admin.firestore.FieldValue.increment(points),
             monthCheckInCount: admin.firestore.FieldValue.increment(1)
         });
+
+        // Check achievement async
+        checkAchievements(uid).catch(e => console.error('[ACH]', e.message));
 
         // Audit log
         await db.collection('audit_logs').add({
