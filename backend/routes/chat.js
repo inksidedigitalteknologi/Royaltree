@@ -12,6 +12,7 @@ const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 // Validation
 const { validate } = require('../middleware/validate');
 const { chatSchema } = require('../schemas');
+const { checkAchievements } = require('../services/achievements');
 
 const router = express.Router();
 
@@ -102,6 +103,16 @@ router.post('/send', verifyFirebaseToken, validate(chatSchema), async (req, res)
             });
         }
         lastMessageTime.set(uid, now);
+
+        // Update chat counter untuk achievement
+        try {
+            await db.collection('users').doc(uid).update({
+                chatMessageCount: admin.firestore.FieldValue.increment(1)
+            });
+            checkAchievements(uid).catch(e => console.error('[ACH]', e.message));
+        } catch (e) {
+            console.error('[ACH] chat counter error:', e.message);
+        }
 
         // Ambil user data untuk nama
         const userDoc = await db.collection('users').doc(uid).get();

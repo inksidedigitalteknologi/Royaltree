@@ -24,6 +24,7 @@ const affiliateRoutes = require('./routes/affiliate');
 const sweepstakesRoutes = require('./routes/sweepstakes');
 const transferRoutes = require('./routes/transfer');
 const chatRoutes = require('./routes/chat');
+const achievementsRoutes = require('./routes/achievements');
 
 // Rate limiting
 const { globalLimiter, authLimiter, sensitiveLimiter, miningLimiter, adsLimiter, chatLimiter, adminLoginLimiter } = require('./middleware/rateLimit');
@@ -56,6 +57,7 @@ app.use('/api/v1/game', miningLimiter, verifyAuthAndBanCheck, gameRoutes);
 app.use('/api/v1/purchase', sensitiveLimiter, verifyAuthAndBanCheck, purchaseRoutes);
 app.use('/api/v1/affiliate', verifyAuthAndBanCheck, affiliateRoutes);
 app.use('/api/v1/sweepstakes', sensitiveLimiter, verifyAuthAndBanCheck, sweepstakesRoutes);
+app.use('/api/v1/achievements', verifyAuthAndBanCheck, achievementsRoutes);
 app.use('/api/v1/transfer', sensitiveLimiter, verifyAuthAndBanCheck, transferRoutes);
 app.use('/api/v1/chat', chatLimiter, verifyAuthAndBanCheck, chatRoutes);
 

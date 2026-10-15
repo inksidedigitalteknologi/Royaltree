@@ -1410,4 +1410,108 @@ router.post('/users/:uid/clear-flag', checkAdmin, async (req, res) => {
     }
 });
 
+// ============================================================
+// ACHIEVEMENT MANAGEMENT
+// ============================================================
+
+// GET /api/v1/admin/achievements — list all
+router.get('/achievements', checkAdmin, async (req, res) => {
+    try {
+        const snap = await db.collection('achievements').get();
+        const data = snap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => (a.order || 0) - (b.order || 0));
+        res.json({ success: true, total: data.length, data });
+    } catch (err) {
+        console.error('[ADMIN/ACHIEVEMENTS] list error:', err.message);
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// GET /api/v1/admin/achievements/:id — detail
+router.get('/achievements/:id', checkAdmin, async (req, res) => {
+    try {
+        const doc = await db.collection('achievements').doc(req.params.id).get();
+        if (!doc.exists) return res.status(404).json({ success: false, message: 'Tidak ditemukan' });
+        res.json({ success: true, data: { id: doc.id, ...doc.data() } });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// POST /api/v1/admin/achievements — create
+router.post('/achievements', checkAdmin, async (req, res) => {
+    try {
+        const body = req.body || {};
+        if (!body.id || !body.name) {
+            return res.status(400).json({ success: false, message: 'id & name wajib' });
+        }
+        const ref = db.collection('achievements').doc(body.id);
+        const existing = await ref.get();
+        if (existing.exists) {
+            return res.status(400).json({ success: false, message: 'ID sudah ada' });
+        }
+        await ref.set({
+            ...body,
+            active: body.active !== false,
+            order: body.order || 999,
+            createdAt: new Date().toISOString()
+        });
+        res.json({ success: true, message: 'Achievement dibuat' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// PUT /api/v1/admin/achievements/:id — update
+router.put('/achievements/:id', checkAdmin, async (req, res) => {
+    try {
+        const ref = db.collection('achievements').doc(req.params.id);
+        const doc = await ref.get();
+        if (!doc.exists) return res.status(404).json({ success: false, message: 'Tidak ditemukan' });
+        await ref.set({ ...req.body, updatedAt: new Date().toISOString() }, { merge: true });
+        res.json({ success: true, message: 'Achievement diupdate' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// DELETE /api/v1/admin/achievements/:id — soft delete
+router.delete('/achievements/:id', checkAdmin, async (req, res) => {
+    try {
+        const ref = db.collection('achievements').doc(req.params.id);
+        const doc = await ref.get();
+        if (!doc.exists) return res.status(404).json({ success: false, message: 'Tidak ditemukan' });
+        await ref.update({ active: false, deletedAt: new Date().toISOString() });
+        res.json({ success: true, message: 'Achievement dihapus (soft delete)' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// POST /api/v1/admin/achievements/seed — seed catalog default
+router.post('/achievements/seed', checkAdmin, async (req, res) => {
+    try {
+        const { seedAchievements } = require('../services/achievements');
+        const count = await seedAchievements();
+        res.json({ success: true, message: `Seed ${count} achievements`, count });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// GET /api/v1/admin/user-achievements/:uid — list user achievement
+router.get('/user-achievements/:uid', checkAdmin, async (req, res) => {
+    try {
+        const uid = req.params.uid;
+        const snap = await db.collection('user_achievements')
+            .where('uid', '==', uid)
+            .get();
+        const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        res.json({ success: true, total: data.length, data });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 module.exports = router;

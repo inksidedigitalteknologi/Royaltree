@@ -12,6 +12,7 @@ const { createNotification } = require('../utils/notifications');
 // Validation
 const { validate } = require('../middleware/validate');
 const { locationSchema, placeMinerSchema, purchaseMinerSchema, thermalSchema } = require('../schemas');
+const { checkAchievements } = require('../services/achievements');
 
 const db = admin.firestore();
 
@@ -457,6 +458,18 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
         await db.collection('users').doc(uid).update({
             points: admin.firestore.FieldValue.increment(claimAmount)
         });
+
+        // Update counter untuk achievement
+        try {
+            await db.collection('users').doc(uid).update({
+                miningClaimCount: admin.firestore.FieldValue.increment(1),
+                totalRTPEarned: admin.firestore.FieldValue.increment(claimAmount)
+            });
+            // Check achievement async (tidak block response)
+            checkAchievements(uid).catch(e => console.error('[ACH]', e.message));
+        } catch (e) {
+            console.error('[ACH] counter update error:', e.message);
+        }
 
         // Reset room + set cooldown + increment ad claim count
         const updatedAdClaimsMap = {
@@ -1348,9 +1361,15 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
 
         const batch = db.batch();
 
-        // 1. Tambah points ke user
+        // 1. Tambah points ke user + counter achievement
+        // Cek apakah high score baru lebih tinggi
+        const currentHighScore = roomCheck.miniGameHighScore || 0;
+        const newHighScore = Math.max(currentHighScore, score);
+
         batch.update(userRef, {
-            points: admin.firestore.FieldValue.increment(bonusPoints)
+            points: admin.firestore.FieldValue.increment(bonusPoints),
+            minigamePlayCount: admin.firestore.FieldValue.increment(1),
+            minigameHighScore: newHighScore
         });
 
         // 2. Update room state (boost power + speed bonus + daily counter)
@@ -1377,6 +1396,9 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
         });
 
         await batch.commit();
+
+        // Check achievement async
+        checkAchievements(uid).catch(e => console.error('[ACH]', e.message));
 
         console.log(`[MINIGAME] User ${uid}: score=${score}, +${speedBonusDropped}% bonus, total=${newMiniBonus}%, today=${miniGameToday + 1}/${MINIGAME_DAILY_LIMIT}, expiry=${new Date(newExpiry).toISOString()}`);
 
