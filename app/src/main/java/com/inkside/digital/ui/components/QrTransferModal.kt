@@ -93,6 +93,7 @@ import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.data.repository.PeerContact
 import com.inkside.digital.data.repository.TransferResult
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.EmeraldPrimary
@@ -234,7 +235,7 @@ fun QrTransferModal(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Kirim RTP (Scan)", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Text(LanguageManager.translate("qr_send_scan", currentLanguage, "Kirim RTP (Scan)"), fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
                         }
                     )
@@ -248,7 +249,7 @@ fun QrTransferModal(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(imageVector = Icons.Default.QrCode, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Terima (QR Saya)", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Text(LanguageManager.translate("qr_receive_my_qr", currentLanguage, "Terima (QR Saya)"), fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
                         }
                     )
@@ -312,7 +313,7 @@ fun QrTransferModal(
                             ) {
                                 Icon(imageVector = Icons.Default.QrCodeScanner, contentDescription = null, modifier = Modifier.size(14.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Buka Scanner", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                Text(LanguageManager.translate("qr_open_scanner", currentLanguage, "Buka Scanner"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             }
                         }
 
@@ -340,7 +341,7 @@ fun QrTransferModal(
                         OutlinedTextField(
                             value = contactSearchQuery,
                             onValueChange = { contactSearchQuery = it },
-                            placeholder = { Text("Cari kontak, @username, atau kode referral...", fontSize = 11.sp) },
+                            placeholder = { Text(LanguageManager.translate("qr_search_placeholder", currentLanguage, "Cari kontak, @username, atau kode referral..."), fontSize = 11.sp) },
                             leadingIcon = {
                                 Icon(imageVector = Icons.Default.Search, contentDescription = null, modifier = Modifier.size(16.dp))
                             },
@@ -462,8 +463,8 @@ fun QrTransferModal(
                                     manualRecipientInput = it
                                     errorMessage = null
                                 },
-                                label = { Text("ID Pengguna, Kode Referral, atau Hasil Scan QR") },
-                                placeholder = { Text("Contoh: USR-8821 atau PRO8892") },
+                                label = { Text(LanguageManager.translate("qr_recipient_label", currentLanguage, "ID Pengguna, Kode Referral, atau Hasil Scan QR")) },
+                                placeholder = { Text(LanguageManager.translate("qr_recipient_hint", currentLanguage, "Contoh: USR-8821 atau PRO8892")) },
                                 modifier = Modifier.fillMaxWidth().testTag("input_manual_recipient"),
                                 singleLine = true,
                                 shape = RoundedCornerShape(12.dp)
@@ -499,7 +500,7 @@ fun QrTransferModal(
                                             color = EmeraldPrimary,
                                             shape = RoundedCornerShape(6.dp)
                                         ) {
-                                            Text("Terpilih", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Color.White, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
+                                            Text(LanguageManager.translate("qr_selected", currentLanguage, "Terpilih"), fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Color.White, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
                                         }
                                     }
                                 }
@@ -514,7 +515,7 @@ fun QrTransferModal(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("Jumlah Transfer (RTP):", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text(LanguageManager.translate("qr_amount_title", currentLanguage, "Jumlah Transfer (RTP):"), fontWeight = FontWeight.Bold, fontSize = 13.sp)
                             Text(
                                 "Saldo Anda: ${user?.points ?: 0} RTP",
                                 fontSize = 11.sp,
@@ -596,8 +597,8 @@ fun QrTransferModal(
                         OutlinedTextField(
                             value = transferNote,
                             onValueChange = { transferNote = it },
-                            label = { Text("Catatan Transfer (Opsional)") },
-                            placeholder = { Text("Contoh: Bagi reward campaign, bonus referral, dll.") },
+                            label = { Text(LanguageManager.translate("qr_note_label", currentLanguage, "Catatan Transfer (Opsional)")) },
+                            placeholder = { Text(LanguageManager.translate("qr_note_hint", currentLanguage, "Contoh: Bagi reward campaign, bonus referral, dll.")) },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
                             shape = RoundedCornerShape(12.dp)
@@ -625,7 +626,7 @@ fun QrTransferModal(
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(imageVector = Icons.Default.Info, contentDescription = null, tint = ElectricBlue, modifier = Modifier.size(16.dp))
                                         Spacer(modifier = Modifier.width(6.dp))
-                                        Text("Ketentuan & Biaya Admin Transfer", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                        Text(LanguageManager.translate("qr_fee_terms_title", currentLanguage, "Ketentuan & Biaya Admin Transfer"), fontWeight = FontWeight.Bold, fontSize = 12.sp)
                                     }
                                     Surface(
                                         color = ElectricBlue.copy(alpha = 0.15f),
@@ -649,7 +650,7 @@ fun QrTransferModal(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Text("Jumlah Ditransfer:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(LanguageManager.translate("qr_fee_sent", currentLanguage, "Jumlah Ditransfer:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     RtpAmount(amount = "${GlobalPointsManager.formatRtp(enteredAmount)} RTP", fontSize = 11.sp, iconSize = 12.dp, fontWeight = FontWeight.Bold)
                                 }
 
@@ -659,7 +660,7 @@ fun QrTransferModal(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Text("Potongan Biaya Admin (Fixed):", fontSize = 11.sp, color = Color(0xFFEF4444))
+                                    Text(LanguageManager.translate("qr_fee_admin", currentLanguage, "Potongan Biaya Admin (Fixed):"), fontSize = 11.sp, color = Color(0xFFEF4444))
                                     RtpAmount(amount = "-${GlobalPointsManager.formatRtp(adminFee)} RTP", fontSize = 11.sp, iconSize = 12.dp, fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))
                                 }
 
@@ -680,7 +681,7 @@ fun QrTransferModal(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Column {
-                                        Text("Bersih Diterima Penerima:", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                        Text(LanguageManager.translate("qr_fee_net_received", currentLanguage, "Bersih Diterima Penerima:"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                         Text("Setara: $${String.format(Locale.US, "%.2f", usdValue)} USD ≈ Rp ${String.format("%,.0f", idrValue)}", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                     RtpAmount(
@@ -858,8 +859,8 @@ fun QrTransferModal(
                                     requestedAmountText = it
                                 }
                             },
-                            label = { Text("Atur Nominal Tagihan / Split Bill (Opsional)") },
-                            placeholder = { Text("Contoh: 100") },
+                            label = { Text(LanguageManager.translate("qr_bill_amount_label", currentLanguage, "Atur Nominal Tagihan / Split Bill (Opsional)")) },
+                            placeholder = { Text(LanguageManager.translate("qr_bill_amount_hint", currentLanguage, "Contoh: 100")) },
                             modifier = Modifier.fillMaxWidth().testTag("input_request_qr_amount"),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             trailingIcon = { Text("RTP", fontSize = 11.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(end = 12.dp)) },
@@ -915,8 +916,8 @@ fun QrTransferModal(
                         OutlinedTextField(
                             value = requestNoteText,
                             onValueChange = { requestNoteText = it },
-                            label = { Text("Catatan Tagihan / Split Bill (Opsional)") },
-                            placeholder = { Text("Cth: Iuran makan siang, patungan proyek") },
+                            label = { Text(LanguageManager.translate("qr_bill_note_label", currentLanguage, "Catatan Tagihan / Split Bill (Opsional)")) },
+                            placeholder = { Text(LanguageManager.translate("qr_bill_note_hint", currentLanguage, "Cth: Iuran makan siang, patungan proyek")) },
                             modifier = Modifier.fillMaxWidth().testTag("input_request_note"),
                             shape = RoundedCornerShape(12.dp),
                             singleLine = true
@@ -961,7 +962,7 @@ fun QrTransferModal(
                             ) {
                                 Icon(imageVector = Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(15.dp))
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text("Salin QR", fontSize = 11.sp)
+                                Text(LanguageManager.translate("qr_copy_qr", currentLanguage, "Salin QR"), fontSize = 11.sp)
                             }
 
                             Button(
@@ -990,7 +991,7 @@ fun QrTransferModal(
                             ) {
                                 Icon(imageVector = Icons.Default.Share, contentDescription = null, modifier = Modifier.size(15.dp))
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text("Bagikan Tagihan", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                Text(LanguageManager.translate("qr_share_bill", currentLanguage, "Bagikan Tagihan"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -1031,7 +1032,7 @@ fun ScannerViewFinder(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Pindai Kamera QR Penerima", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+            Text(LanguageManager.translate("qr_scan_camera_title", currentLanguage, "Pindai Kamera QR Penerima"), fontWeight = FontWeight.Bold, fontSize = 13.sp)
             IconButton(onClick = onCancel) {
                 Icon(imageVector = Icons.Default.Close, contentDescription = "Batal")
             }
@@ -1184,7 +1185,7 @@ fun TransferReceiptDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("ID Transaksi:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_receipt_tx_id", currentLanguage, "ID Transaksi:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(receipt.transferId, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.height(6.dp))
@@ -1192,7 +1193,7 @@ fun TransferReceiptDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Waktu:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_receipt_time", currentLanguage, "Waktu:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(dateStr, fontSize = 11.sp, fontWeight = FontWeight.Medium)
                         }
                         Spacer(modifier = Modifier.height(6.dp))
@@ -1200,7 +1201,7 @@ fun TransferReceiptDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Penerima:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_receipt_recipient", currentLanguage, "Penerima:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text("${receipt.recipientName} (${receipt.recipientIdentifier})", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
 
@@ -1212,7 +1213,7 @@ fun TransferReceiptDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Jumlah Dikirim:", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_receipt_amount_sent", currentLanguage, "Jumlah Dikirim:"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text("${receipt.sentPoints} RTP", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
@@ -1220,7 +1221,7 @@ fun TransferReceiptDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Potongan Biaya Admin:", fontSize = 12.sp, color = Color(0xFFEF4444))
+                            Text(LanguageManager.translate("qr_receipt_admin_fee", currentLanguage, "Potongan Biaya Admin:"), fontSize = 12.sp, color = Color(0xFFEF4444))
                             Text("-${receipt.adminFee} RTP", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))
                         }
                         Text(
@@ -1237,7 +1238,7 @@ fun TransferReceiptDialog(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("Bersih Diterima Penerima:", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                            Text(LanguageManager.translate("qr_fee_net_received", currentLanguage, "Bersih Diterima Penerima:"), fontSize = 13.sp, fontWeight = FontWeight.Bold)
                             Text("${receipt.netPointsReceived} RTP", fontSize = 16.sp, fontWeight = FontWeight.ExtraBold, color = EmeraldLight)
                         }
                         Spacer(modifier = Modifier.height(6.dp))
@@ -1245,7 +1246,7 @@ fun TransferReceiptDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Sisa Saldo Anda:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_receipt_remaining_balance", currentLanguage, "Sisa Saldo Anda:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text("${receipt.senderPointsRemaining} RTP", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = GoldVip)
                         }
 
@@ -1264,7 +1265,7 @@ fun TransferReceiptDialog(
                                 Icon(imageVector = Icons.Default.Verified, contentDescription = null, tint = EmeraldPrimary, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Column {
-                                    Text("Validasi Kriptografis Terverifikasi", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = EmeraldPrimary)
+                                    Text(LanguageManager.translate("qr_receipt_crypto_verified", currentLanguage, "Validasi Kriptografis Terverifikasi"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = EmeraldPrimary)
                                     Text(
                                         text = "SHA-256: ${signature.take(20)}...",
                                         fontSize = 8.sp,
@@ -1310,7 +1311,7 @@ fun TransferReceiptDialog(
                     ) {
                         Icon(imageVector = Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(15.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Salin", fontSize = 11.sp)
+                        Text(LanguageManager.translate("qr_receipt_copy", currentLanguage, "Salin"), fontSize = 11.sp)
                     }
 
                     Button(
@@ -1329,7 +1330,7 @@ fun TransferReceiptDialog(
                     ) {
                         Icon(imageVector = Icons.Default.Share, contentDescription = null, modifier = Modifier.size(15.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Bagikan Struk", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("qr_receipt_share", currentLanguage, "Bagikan Struk"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
 
                     Button(
@@ -1338,7 +1339,7 @@ fun TransferReceiptDialog(
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.weight(1f).height(46.dp)
                     ) {
-                        Text("Selesai", fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                        Text(LanguageManager.translate("qr_receipt_finish", currentLanguage, "Selesai"), fontWeight = FontWeight.Bold, fontSize = 11.sp)
                     }
                 }
             }
@@ -1425,7 +1426,7 @@ fun SecurityPinModal(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Penerima:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_receipt_recipient", currentLanguage, "Penerima:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(recipientName, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
@@ -1433,7 +1434,7 @@ fun SecurityPinModal(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Nominal Transfer:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_pin_amount", currentLanguage, "Nominal Transfer:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             RtpAmount(amount = "${GlobalPointsManager.formatRtp(amount)} RTP", fontSize = 12.sp, iconSize = 14.dp, fontWeight = FontWeight.ExtraBold, color = EmeraldLight)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
@@ -1441,7 +1442,7 @@ fun SecurityPinModal(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Biaya Admin (Penerima):", fontSize = 10.sp, color = Color(0xFFEF4444))
+                            Text(LanguageManager.translate("qr_pin_admin_fee", currentLanguage, "Biaya Admin (Penerima):"), fontSize = 10.sp, color = Color(0xFFEF4444))
                             RtpAmount(amount = "-${GlobalPointsManager.formatRtp(adminFee)} RTP", fontSize = 10.sp, iconSize = 12.dp, color = Color(0xFFEF4444), fontWeight = FontWeight.Bold)
                         }
                     }
@@ -1588,7 +1589,7 @@ fun SecurityPinModal(
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth().height(42.dp)
                 ) {
-                    Text("Batal Transaksi", fontSize = 12.sp)
+                    Text(LanguageManager.translate("qr_pin_cancel", currentLanguage, "Batal Transaksi"), fontSize = 12.sp)
                 }
             }
         }
