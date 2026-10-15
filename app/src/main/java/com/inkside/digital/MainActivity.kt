@@ -1113,6 +1113,7 @@ fun MainAffiliateAppContent(
                 AppScreen.PURCHASE -> {
                     PurchaseScreen(
                         viewModel = viewModel,
+                        currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.PROFILE) }
                     )
                 }

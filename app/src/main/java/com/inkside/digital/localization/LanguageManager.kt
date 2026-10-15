@@ -3546,6 +3546,89 @@ object LanguageManager {
             AppLanguage.JAPANESE to "OK、了解しました"
         ),
 
+
+        // ========== BATCH SMALL FILES ==========
+        "sweepstakes_my_coupons" to mapOf(
+            AppLanguage.INDONESIAN to "Kupon Anda",
+            AppLanguage.ENGLISH to "Your Coupons",
+            AppLanguage.SPANISH to "Tus Cupones",
+            AppLanguage.CHINESE to "您的优惠券",
+            AppLanguage.ARABIC to "قسائمك",
+            AppLanguage.JAPANESE to "あなたのクーポン"
+        ),
+        "sweepstakes_no_winner" to mapOf(
+            AppLanguage.INDONESIAN to "Belum ada pemenang",
+            AppLanguage.ENGLISH to "No winners yet",
+            AppLanguage.SPANISH to "Aún no hay ganadores",
+            AppLanguage.CHINESE to "尚无中奖者",
+            AppLanguage.ARABIC to "لا يوجد فائزون بعد",
+            AppLanguage.JAPANESE to "まだ当選者はいません"
+        ),
+        "sweepstakes_buy_coupon" to mapOf(
+            AppLanguage.INDONESIAN to "Beli Kupon",
+            AppLanguage.ENGLISH to "Buy Coupon",
+            AppLanguage.SPANISH to "Comprar Cupón",
+            AppLanguage.CHINESE to "购买优惠券",
+            AppLanguage.ARABIC to "شراء قسيمة",
+            AppLanguage.JAPANESE to "クーポンを購入"
+        ),
+        "sweepstakes_buy_btn" to mapOf(
+            AppLanguage.INDONESIAN to "BELI",
+            AppLanguage.ENGLISH to "BUY",
+            AppLanguage.SPANISH to "COMPRAR",
+            AppLanguage.CHINESE to "购买",
+            AppLanguage.ARABIC to "شراء",
+            AppLanguage.JAPANESE to "購入"
+        ),
+        "transfersimple_min_amount" to mapOf(
+            AppLanguage.INDONESIAN to "Min. 20 RTP",
+            AppLanguage.ENGLISH to "Min. 20 RTP",
+            AppLanguage.SPANISH to "Mín. 20 RTP",
+            AppLanguage.CHINESE to "最低 20 RTP",
+            AppLanguage.ARABIC to "الحد الأدنى 20 RTP",
+            AppLanguage.JAPANESE to "最低 20 RTP"
+        ),
+        "transfersimple_success" to mapOf(
+            AppLanguage.INDONESIAN to "Transfer Berhasil!",
+            AppLanguage.ENGLISH to "Transfer Successful!",
+            AppLanguage.SPANISH to "¡Transferencia Exitosa!",
+            AppLanguage.CHINESE to "转账成功！",
+            AppLanguage.ARABIC to "تم التحويل بنجاح!",
+            AppLanguage.JAPANESE to "送金成功！"
+        ),
+        "referral_steps" to mapOf(
+            AppLanguage.INDONESIAN to "1. Bagikan kode referral ke teman\n2. Teman daftar pakai kode kamu\n3. Kamu dapat komisi 5%\n4. Komisi masuk otomatis ke saldo",
+            AppLanguage.ENGLISH to "1. Share referral code with friends\n2. Friends register with your code\n3. You get 5% commission\n4. Commission is automatically credited to balance",
+            AppLanguage.SPANISH to "1. Comparte el código de referido con amigos\n2. Amigos se registran con tu código\n3. Recibes 5% de comisión\n4. La comisión se acredita automáticamente",
+            AppLanguage.CHINESE to "1. 与朋友分享推荐码\n2. 朋友使用您的代码注册\n3. 您获得 5% 佣金\n4. 佣金自动计入余额",
+            AppLanguage.ARABIC to "1. شارك رمز الإحالة مع الأصدقاء\n2. يسجل الأصدقاء برمزك\n3. تحصل على عمولة 5%\n4. تُضاف العمولة تلقائيًا إلى الرصيد",
+            AppLanguage.JAPANESE to "1. 友達に紹介コードを共有\n2. 友達があなたのコードで登録\n3. 5% のコミッションを獲得\n4. コミッションは自動的に残高に加算"
+        ),
+        "analytics_geo_distribution" to mapOf(
+            AppLanguage.INDONESIAN to "Distribusi Geografis Pengunjung",
+            AppLanguage.ENGLISH to "Visitor Geographic Distribution",
+            AppLanguage.SPANISH to "Distribución Geográfica de Visitantes",
+            AppLanguage.CHINESE to "访客地理分布",
+            AppLanguage.ARABIC to "التوزيع الجغرافي للزوار",
+            AppLanguage.JAPANESE to "訪問者の地理的分布"
+        ),
+        "purchase_upgrade_tier" to mapOf(
+            AppLanguage.INDONESIAN to "👑 Upgrade Tier",
+            AppLanguage.ENGLISH to "👑 Upgrade Tier",
+            AppLanguage.SPANISH to "👑 Mejorar Nivel",
+            AppLanguage.CHINESE to "👑 升级等级",
+            AppLanguage.ARABIC to "👑 ترقية المستوى",
+            AppLanguage.JAPANESE to "👑 ティアアップグレード"
+        ),
+        "appoffers_downloading" to mapOf(
+            AppLanguage.INDONESIAN to "Mengunduh & Memverifikasi...",
+            AppLanguage.ENGLISH to "Downloading & Verifying...",
+            AppLanguage.SPANISH to "Descargando y Verificando...",
+            AppLanguage.CHINESE to "下载并验证中...",
+            AppLanguage.ARABIC to "جاري التحميل والتحقق...",
+            AppLanguage.JAPANESE to "ダウンロードと確認中..."
+        ),
+
     )
 
     fun getString(key: String, language: AppLanguage): String {

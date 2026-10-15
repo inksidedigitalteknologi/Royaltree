@@ -50,6 +50,7 @@ import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.ui.theme.PurpleSecondary
 import com.inkside.digital.util.GlobalPointsManager
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 
 @Composable
 fun AnalyticsScreen(
@@ -174,7 +175,7 @@ fun AnalyticsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Grafik Pertumbuhan Komisi", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("analytics_growth_chart", currentLanguage, "Grafik Pertumbuhan Komisi"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         Text("+Rp 3.490.000", fontWeight = FontWeight.Black, fontSize = 13.sp, color = EmeraldLight)
                     }
 
@@ -229,7 +230,7 @@ fun AnalyticsScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(imageVector = Icons.Default.Share, contentDescription = null, tint = ElectricBlue, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Sumber Lalu Lintas (Traffic Source)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("analytics_traffic_source", currentLanguage, "Sumber Lalu Lintas (Traffic Source)"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -277,7 +278,7 @@ fun AnalyticsScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(imageVector = Icons.Default.Public, contentDescription = null, tint = EmeraldLight, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Distribusi Geografis Pengunjung", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("analytics_geo_distribution", currentLanguage, "Distribusi Geografis Pengunjung"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))

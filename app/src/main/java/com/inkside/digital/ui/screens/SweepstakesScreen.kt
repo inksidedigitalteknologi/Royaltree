@@ -171,7 +171,7 @@ fun SweepstakesScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("🎟️ Kupon Anda", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+                            Text("🎟️ " + LanguageManager.translate("sweepstakes_my_coupons", currentLanguage, "Kupon Anda"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
                             Text("$userTickets / $maxTicketsPerUser", fontSize = 14.sp, fontWeight = FontWeight.Black, color = EmeraldLight)
                         }
                         Spacer(modifier = Modifier.height(8.dp))
@@ -238,7 +238,7 @@ fun SweepstakesScreen(
                         ) {
                             Text("📭", fontSize = 32.sp)
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text("Belum ada pemenang", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text(LanguageManager.translate("sweepstakes_no_winner", currentLanguage, "Belum ada pemenang"), fontWeight = FontWeight.Bold, fontSize = 13.sp)
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 "Periode pertama sedang berjalan",
@@ -400,7 +400,7 @@ fun BuyTicketModal(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text("🎟️ Beli Kupon", fontWeight = FontWeight.Bold)
+            Text("🎟️ " + LanguageManager.translate("sweepstakes_buy_coupon", currentLanguage, "Beli Kupon"), fontWeight = FontWeight.Bold)
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -441,7 +441,7 @@ fun BuyTicketModal(
 
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Total: ", fontWeight = FontWeight.Black, fontSize = 14.sp)
+                    Text(LanguageManager.translate("sweepstakes_total", currentLanguage, "Total: "), fontWeight = FontWeight.Black, fontSize = 14.sp)
                     RtpAmount(
                         amount = "${GlobalPointsManager.formatRtp(totalPrice)} RTP",
                         fontSize = 14.sp,
@@ -461,12 +461,12 @@ fun BuyTicketModal(
                 onClick = onConfirm,
                 colors = ButtonDefaults.buttonColors(containerColor = GoldVip, contentColor = Color.Black)
             ) {
-                Text("BELI", fontWeight = FontWeight.Bold)
+                Text(LanguageManager.translate("sweepstakes_buy_btn", currentLanguage, "BELI"), fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Batal")
+                Text(LanguageManager.translate("common_cancel", currentLanguage, "Batal"))
             }
         }
     )

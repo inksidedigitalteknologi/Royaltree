@@ -55,6 +55,7 @@ import com.inkside.digital.ui.components.SAMPLE_BANNER_ADS
 import com.inkside.digital.viewmodel.AffiliateViewModel
 import com.inkside.digital.util.GlobalPointsManager
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 
 @Composable
 fun AppOffersScreen(
@@ -366,7 +367,7 @@ fun AppOfferCard(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Mengunduh & Memverifikasi...", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("appoffers_downloading", currentLanguage, "Mengunduh & Memverifikasi..."), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text("${ad.downloadProgressPercent}%", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                         }
                         Spacer(modifier = Modifier.height(6.dp))
