@@ -5232,6 +5232,573 @@ object LanguageManager {
             AppLanguage.JAPANESE to "生体認証"
         ),
 
+
+        // ========== VIEWMODEL STRINGS ==========
+        "vm_portal_untested" to mapOf(
+            AppLanguage.INDONESIAN to "Belum diuji",
+            AppLanguage.ENGLISH to "Not tested yet",
+            AppLanguage.SPANISH to "Aún no probado",
+            AppLanguage.CHINESE to "尚未测试",
+            AppLanguage.ARABIC to "لم يتم اختباره بعد",
+            AppLanguage.JAPANESE to "未テスト"
+        ),
+        "vm_portal_connecting" to mapOf(
+            AppLanguage.INDONESIAN to "Menghubungkan ke $url...",
+            AppLanguage.ENGLISH to "Connecting to $url...",
+            AppLanguage.SPANISH to "Conectando a $url...",
+            AppLanguage.CHINESE to "正在连接到 $url...",
+            AppLanguage.ARABIC to "جاري الاتصال بـ $url...",
+            AppLanguage.JAPANESE to "$url に接続中..."
+        ),
+        "vm_portal_connected_detail" to mapOf(
+            AppLanguage.INDONESIAN to "Tersambung (HTTP 200 OK) - ${res.message}",
+            AppLanguage.ENGLISH to "Connected (HTTP 200 OK) - ${res.message}",
+            AppLanguage.SPANISH to "Conectado (HTTP 200 OK) - ${res.message}",
+            AppLanguage.CHINESE to "已连接（HTTP 200 OK）- ${res.message}",
+            AppLanguage.ARABIC to "متصل (HTTP 200 OK) - ${res.message}",
+            AppLanguage.JAPANESE to "接続済み (HTTP 200 OK) - ${res.message}"
+        ),
+        "vm_switch_account" to mapOf(
+            AppLanguage.INDONESIAN to "Beralih akun: %s",
+            AppLanguage.ENGLISH to "Switching account: %s",
+            AppLanguage.SPANISH to "Cambiando cuenta: %s",
+            AppLanguage.CHINESE to "切换账户：%s",
+            AppLanguage.ARABIC to "تبديل الحساب: %s",
+            AppLanguage.JAPANESE to "アカウント切替: %s"
+        ),
+        "vm_step_exchange_success" to mapOf(
+            AppLanguage.INDONESIAN to "Sukses menukar langkah! +%d Koin (Rp %s)",
+            AppLanguage.ENGLISH to "Steps exchange success! +%d Coins (Rp %s)",
+            AppLanguage.SPANISH to "¡Intercambio de pasos exitoso! +%d Monedas (Rp %s)",
+            AppLanguage.CHINESE to "步数兑换成功！+%d 币（Rp %s）",
+            AppLanguage.ARABIC to "تم تبادل الخطوات بنجاح! +%d عملة (Rp %s)",
+            AppLanguage.JAPANESE to "歩数交換成功！+%d コイン (Rp %s)"
+        ),
+        "vm_step_exchange_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal menukar langkah",
+            AppLanguage.ENGLISH to "Failed to exchange steps",
+            AppLanguage.SPANISH to "Error al intercambiar pasos",
+            AppLanguage.CHINESE to "步数兑换失败",
+            AppLanguage.ARABIC to "فشل تبادل الخطوات",
+            AppLanguage.JAPANESE to "歩数の交換に失敗しました"
+        ),
+        "vm_app_installed" to mapOf(
+            AppLanguage.INDONESIAN to "Aplikasi berhasil diunduh & dipasang! Klaim bonus sekarang.",
+            AppLanguage.ENGLISH to "App downloaded & installed successfully! Claim bonus now.",
+            AppLanguage.SPANISH to "¡Aplicación descargada e instalada! Reclama el bono ahora.",
+            AppLanguage.CHINESE to "应用已成功下载并安装！立即领取奖励。",
+            AppLanguage.ARABIC to "تم تنزيل التطبيق وتثبيته بنجاح! اطلب المكافأة الآن.",
+            AppLanguage.JAPANESE to "アプリのダウンロードとインストールに成功！今すぐボーナスを請求。"
+        ),
+        "vm_claim_success" to mapOf(
+            AppLanguage.INDONESIAN to "Klaim berhasil! +%d Koin (+Rp %s)",
+            AppLanguage.ENGLISH to "Claim successful! +%d Coins (+Rp %s)",
+            AppLanguage.SPANISH to "¡Reclamación exitosa! +%d Monedas (+Rp %s)",
+            AppLanguage.CHINESE to "领取成功！+%d 币（+Rp %s）",
+            AppLanguage.ARABIC to "تمت المطالبة بنجاح! +%d عملة (+Rp %s)",
+            AppLanguage.JAPANESE to "請求成功！+%d コイン (+Rp %s)"
+        ),
+        "vm_claim_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal klaim hadiah",
+            AppLanguage.ENGLISH to "Failed to claim reward",
+            AppLanguage.SPANISH to "Error al reclamar recompensa",
+            AppLanguage.CHINESE to "领取奖励失败",
+            AppLanguage.ARABIC to "فشل المطالبة بالمكافأة",
+            AppLanguage.JAPANESE to "報酬の請求に失敗しました"
+        ),
+        "vm_sponsor_bonus" to mapOf(
+            AppLanguage.INDONESIAN to "Bonus sponsor %s! +%d Koin didapatkan 🎉",
+            AppLanguage.ENGLISH to "Sponsor bonus %s! +%d Coins received 🎉",
+            AppLanguage.SPANISH to "¡Bono de patrocinador %s! +%d Monedas recibidas 🎉",
+            AppLanguage.CHINESE to "赞助奖励 %s！获得 +%d 币 🎉",
+            AppLanguage.ARABIC to "مكافأة الراعي %s! تم استلام +%d عملة 🎉",
+            AppLanguage.JAPANESE to "スポンサーボーナス %s！+%d コインを獲得 🎉"
+        ),
+        "vm_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal",
+            AppLanguage.ENGLISH to "Failed",
+            AppLanguage.SPANISH to "Fallido",
+            AppLanguage.CHINESE to "失败",
+            AppLanguage.ARABIC to "فشل",
+            AppLanguage.JAPANESE to "失敗"
+        ),
+        "vm_withdraw_approved" to mapOf(
+            AppLanguage.INDONESIAN to "Penarikan berhasil disetujui & dicairkan manual!",
+            AppLanguage.ENGLISH to "Withdrawal approved & manually disbursed!",
+            AppLanguage.SPANISH to "¡Retiro aprobado y desembolsado manualmente!",
+            AppLanguage.CHINESE to "提款已批准并手动支付！",
+            AppLanguage.ARABIC to "تمت الموافقة على السحب وصرفه يدويًا!",
+            AppLanguage.JAPANESE to "引き出しが承認され、手動で支払われました！"
+        ),
+        "vm_withdraw_rejected" to mapOf(
+            AppLanguage.INDONESIAN to "Penarikan telah ditolak dan saldo dikembalikan.",
+            AppLanguage.ENGLISH to "Withdrawal rejected and balance refunded.",
+            AppLanguage.SPANISH to "Retiro rechazado y saldo reembolsado.",
+            AppLanguage.CHINESE to "提款被拒绝，余额已退还。",
+            AppLanguage.ARABIC to "تم رفض السحب وإرجاع الرصيد.",
+            AppLanguage.JAPANESE to "引き出しが拒否され、残高が返金されました。"
+        ),
+        "vm_stage_load_account" to mapOf(
+            AppLanguage.INDONESIAN to "Memuatkan akun",
+            AppLanguage.ENGLISH to "Loading account",
+            AppLanguage.SPANISH to "Cargando cuenta",
+            AppLanguage.CHINESE to "加载账户",
+            AppLanguage.ARABIC to "تحميل الحساب",
+            AppLanguage.JAPANESE to "アカウントを読み込み中"
+        ),
+        "vm_stage_sync_profile" to mapOf(
+            AppLanguage.INDONESIAN to "Sinkronisasi profil",
+            AppLanguage.ENGLISH to "Syncing profile",
+            AppLanguage.SPANISH to "Sincronizando perfil",
+            AppLanguage.CHINESE to "同步个人资料",
+            AppLanguage.ARABIC to "مزامنة الملف الشخصي",
+            AppLanguage.JAPANESE to "プロフィールを同期中"
+        ),
+        "vm_stage_load_miner" to mapOf(
+            AppLanguage.INDONESIAN to "Memuat katalog miner",
+            AppLanguage.ENGLISH to "Loading miner catalog",
+            AppLanguage.SPANISH to "Cargando catálogo de mineros",
+            AppLanguage.CHINESE to "加载矿工目录",
+            AppLanguage.ARABIC to "تحميل كتالوج المعدن",
+            AppLanguage.JAPANESE to "マイナーカタログを読み込み中"
+        ),
+        "vm_stage_prepare_game" to mapOf(
+            AppLanguage.INDONESIAN to "Menyiapkan game",
+            AppLanguage.ENGLISH to "Preparing game",
+            AppLanguage.SPANISH to "Preparando juego",
+            AppLanguage.CHINESE to "准备游戏",
+            AppLanguage.ARABIC to "تحضير اللعبة",
+            AppLanguage.JAPANESE to "ゲームを準備中"
+        ),
+        "vm_stage_load_affiliate" to mapOf(
+            AppLanguage.INDONESIAN to "Memuat komisi affiliate",
+            AppLanguage.ENGLISH to "Loading affiliate commission",
+            AppLanguage.SPANISH to "Cargando comisión de afiliados",
+            AppLanguage.CHINESE to "加载联盟佣金",
+            AppLanguage.ARABIC to "تحميل عمولة التسويق بالعمولة",
+            AppLanguage.JAPANESE to "アフィリエイトコミッションを読み込み中"
+        ),
+        "vm_stage_prepare_ads" to mapOf(
+            AppLanguage.INDONESIAN to "Menyiapkan iklan",
+            AppLanguage.ENGLISH to "Preparing ads",
+            AppLanguage.SPANISH to "Preparando anuncios",
+            AppLanguage.CHINESE to "准备广告",
+            AppLanguage.ARABIC to "تحضير الإعلانات",
+            AppLanguage.JAPANESE to "広告を準備中"
+        ),
+        "vm_stage_connect_notif" to mapOf(
+            AppLanguage.INDONESIAN to "Menyambung notifikasi",
+            AppLanguage.ENGLISH to "Connecting notifications",
+            AppLanguage.SPANISH to "Conectando notificaciones",
+            AppLanguage.CHINESE to "连接通知",
+            AppLanguage.ARABIC to "ربط الإشعارات",
+            AppLanguage.JAPANESE to "通知を接続中"
+        ),
+        "vm_upgrade_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Upgrade gagal",
+            AppLanguage.ENGLISH to "Upgrade failed",
+            AppLanguage.SPANISH to "Error al mejorar",
+            AppLanguage.CHINESE to "升级失败",
+            AppLanguage.ARABIC to "فشل الترقية",
+            AppLanguage.JAPANESE to "アップグレードに失敗しました"
+        ),
+        "vm_redeem_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal tukar poin",
+            AppLanguage.ENGLISH to "Failed to exchange points",
+            AppLanguage.SPANISH to "Error al intercambiar puntos",
+            AppLanguage.CHINESE to "积分兑换失败",
+            AppLanguage.ARABIC to "فشل تبادل النقاط",
+            AppLanguage.JAPANESE to "ポイント交換に失敗しました"
+        ),
+        "vm_coupon_buy_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal membeli kupon",
+            AppLanguage.ENGLISH to "Failed to buy coupon",
+            AppLanguage.SPANISH to "Error al comprar cupón",
+            AppLanguage.CHINESE to "购买优惠券失败",
+            AppLanguage.ARABIC to "فشل شراء القسيمة",
+            AppLanguage.JAPANESE to "クーポンの購入に失敗しました"
+        ),
+        "vm_coupon_listed" to mapOf(
+            AppLanguage.INDONESIAN to "Kupon aktif didaftarkan di Pasar Sekunder!",
+            AppLanguage.ENGLISH to "Active coupon listed on Secondary Market!",
+            AppLanguage.SPANISH to "¡Cupón activo listado en el Mercado Secundario!",
+            AppLanguage.CHINESE to "活跃优惠券已在二级市场上市！",
+            AppLanguage.ARABIC to "تم إدراج القسيمة النشطة في السوق الثانوي!",
+            AppLanguage.JAPANESE to "アクティブなクーポンをセカンダリ市場に出品しました！"
+        ),
+        "vm_coupon_delisted" to mapOf(
+            AppLanguage.INDONESIAN to "Kupon ditarik dari Pasar Sekunder.",
+            AppLanguage.ENGLISH to "Coupon withdrawn from Secondary Market.",
+            AppLanguage.SPANISH to "Cupón retirado del Mercado Secundario.",
+            AppLanguage.CHINESE to "优惠券已从二级市场撤回。",
+            AppLanguage.ARABIC to "تم سحب القسيمة من السوق الثانوي.",
+            AppLanguage.JAPANESE to "クーポンをセカンダリ市場から取り下げました。"
+        ),
+        "vm_yield_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal klaim yield",
+            AppLanguage.ENGLISH to "Failed to claim yield",
+            AppLanguage.SPANISH to "Error al reclamar rendimiento",
+            AppLanguage.CHINESE to "领取收益失败",
+            AppLanguage.ARABIC to "فشل المطالبة بالعائد",
+            AppLanguage.JAPANESE to "利回りの請求に失敗しました"
+        ),
+        "vm_mining_claim_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal mengklaim hasil mining",
+            AppLanguage.ENGLISH to "Failed to claim mining result",
+            AppLanguage.SPANISH to "Error al reclamar resultado de minería",
+            AppLanguage.CHINESE to "领取挖矿结果失败",
+            AppLanguage.ARABIC to "فشل المطالبة بنتيجة التعدين",
+            AppLanguage.JAPANESE to "マイニング結果の請求に失敗しました"
+        ),
+        "vm_miner_buy_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal membeli item penambang",
+            AppLanguage.ENGLISH to "Failed to buy miner item",
+            AppLanguage.SPANISH to "Error al comprar artículo de minero",
+            AppLanguage.CHINESE to "购买矿工物品失败",
+            AppLanguage.ARABIC to "فشل شراء عنصر المعدن",
+            AppLanguage.JAPANESE to "マイナーアイテムの購入に失敗しました"
+        ),
+        "vm_move_item_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal memindahkan item",
+            AppLanguage.ENGLISH to "Failed to move item",
+            AppLanguage.SPANISH to "Error al mover artículo",
+            AppLanguage.CHINESE to "移动物品失败",
+            AppLanguage.ARABIC to "فشل نقل العنصر",
+            AppLanguage.JAPANESE to "アイテムの移動に失敗しました"
+        ),
+        "vm_game_reward_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal memproses reward game",
+            AppLanguage.ENGLISH to "Failed to process game reward",
+            AppLanguage.SPANISH to "Error al procesar recompensa del juego",
+            AppLanguage.CHINESE to "处理游戏奖励失败",
+            AppLanguage.ARABIC to "فشل معالجة مكافأة اللعبة",
+            AppLanguage.JAPANESE to "ゲーム報酬の処理に失敗しました"
+        ),
+        "vm_user_not_found" to mapOf(
+            AppLanguage.INDONESIAN to "User tidak ditemukan",
+            AppLanguage.ENGLISH to "User not found",
+            AppLanguage.SPANISH to "Usuario no encontrado",
+            AppLanguage.CHINESE to "未找到用户",
+            AppLanguage.ARABIC to "لم يتم العثور على المستخدم",
+            AppLanguage.JAPANESE to "ユーザーが見つかりません"
+        ),
+        "vm_save_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal simpan: ",
+            AppLanguage.ENGLISH to "Save failed: ",
+            AppLanguage.SPANISH to "Error al guardar: ",
+            AppLanguage.CHINESE to "保存失败：",
+            AppLanguage.ARABIC to "فشل الحفظ: ",
+            AppLanguage.JAPANESE to "保存に失敗: "
+        ),
+        "vm_all_notif_read" to mapOf(
+            AppLanguage.INDONESIAN to "Semua notifikasi ditandai telah dibaca.",
+            AppLanguage.ENGLISH to "All notifications marked as read.",
+            AppLanguage.SPANISH to "Todas las notificaciones marcadas como leídas.",
+            AppLanguage.CHINESE to "所有通知已标记为已读。",
+            AppLanguage.ARABIC to "تم وضع علامة مقروء على جميع الإشعارات.",
+            AppLanguage.JAPANESE to "すべての通知を既読にしました。"
+        ),
+        "vm_all_notif_deleted" to mapOf(
+            AppLanguage.INDONESIAN to "Semua notifikasi dihapus.",
+            AppLanguage.ENGLISH to "All notifications deleted.",
+            AppLanguage.SPANISH to "Todas las notificaciones eliminadas.",
+            AppLanguage.CHINESE to "所有通知已删除。",
+            AppLanguage.ARABIC to "تم حذف جميع الإشعارات.",
+            AppLanguage.JAPANESE to "すべての通知を削除しました。"
+        ),
+        "vm_checkin_success" to mapOf(
+            AppLanguage.INDONESIAN to "Check-in Hari ke-%d Berhasil! +%d RTP 🌟",
+            AppLanguage.ENGLISH to "Day %d Check-in Success! +%d RTP 🌟",
+            AppLanguage.SPANISH to "¡Check-in del Día %d Exitoso! +%d RTP 🌟",
+            AppLanguage.CHINESE to "第 %d 天签到成功！+%d RTP 🌟",
+            AppLanguage.ARABIC to "تسجيل الوصول لليوم %d ناجح! +%d RTP 🌟",
+            AppLanguage.JAPANESE to "%d日目のチェックイン成功！+%d RTP 🌟"
+        ),
+        "vm_checkin_saved" to mapOf(
+            AppLanguage.INDONESIAN to "Check-in tersimpan! +%d RTP",
+            AppLanguage.ENGLISH to "Check-in saved! +%d RTP",
+            AppLanguage.SPANISH to "¡Check-in guardado! +%d RTP",
+            AppLanguage.CHINESE to "签到已保存！+%d RTP",
+            AppLanguage.ARABIC to "تم حفظ تسجيل الوصول! +%d RTP",
+            AppLanguage.JAPANESE to "チェックインを保存しました！+%d RTP"
+        ),
+
+        "vm_server_unreachable" to mapOf(
+            AppLanguage.INDONESIAN to "Tidak dapat menjangkau server",
+            AppLanguage.ENGLISH to "Cannot reach server",
+            AppLanguage.SPANISH to "No se puede alcanzar el servidor",
+            AppLanguage.CHINESE to "无法访问服务器",
+            AppLanguage.ARABIC to "لا يمكن الوصول إلى الخادم",
+            AppLanguage.JAPANESE to "サーバーに到達できません"
+        ),
+        "vm_withdraw_submitted" to mapOf(
+            AppLanguage.INDONESIAN to "Withdraw berhasil diajukan!",
+            AppLanguage.ENGLISH to "Withdrawal submitted successfully!",
+            AppLanguage.SPANISH to "¡Retiro enviado con éxito!",
+            AppLanguage.CHINESE to "提款申请成功！",
+            AppLanguage.ARABIC to "تم إرسال طلب السحب بنجاح!",
+            AppLanguage.JAPANESE to "引き出し申請が成功しました！"
+        ),
+        "vm_withdraw_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal withdraw",
+            AppLanguage.ENGLISH to "Withdrawal failed",
+            AppLanguage.SPANISH to "Error al retirar",
+            AppLanguage.CHINESE to "提款失败",
+            AppLanguage.ARABIC to "فشل السحب",
+            AppLanguage.JAPANESE to "引き出しに失敗しました"
+        ),
+        "vm_backend_reject" to mapOf(
+            AppLanguage.INDONESIAN to "Backend reject",
+            AppLanguage.ENGLISH to "Backend reject",
+            AppLanguage.SPANISH to "Rechazo del backend",
+            AppLanguage.CHINESE to "后端拒绝",
+            AppLanguage.ARABIC to "رفض الخادم",
+            AppLanguage.JAPANESE to "バックエンド拒否"
+        ),
+
+        "vm_open_slot_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal membuka slot",
+            AppLanguage.ENGLISH to "Failed to open slot",
+            AppLanguage.SPANISH to "Error al abrir ranura",
+            AppLanguage.CHINESE to "打开槽失败",
+            AppLanguage.ARABIC to "فشل فتح الفتحة",
+            AppLanguage.JAPANESE to "スロットを開くのに失敗"
+        ),
+        "vm_unknown_error" to mapOf(
+            AppLanguage.INDONESIAN to "Error tidak diketahui",
+            AppLanguage.ENGLISH to "Unknown error",
+            AppLanguage.SPANISH to "Error desconocido",
+            AppLanguage.CHINESE to "未知错误",
+            AppLanguage.ARABIC to "خطأ غير معروف",
+            AppLanguage.JAPANESE to "不明なエラー"
+        ),
+        "vm_network_error" to mapOf(
+            AppLanguage.INDONESIAN to "Error jaringan",
+            AppLanguage.ENGLISH to "Network error",
+            AppLanguage.SPANISH to "Error de red",
+            AppLanguage.CHINESE to "网络错误",
+            AppLanguage.ARABIC to "خطأ في الشبكة",
+            AppLanguage.JAPANESE to "ネットワークエラー"
+        ),
+        "vm_checkin_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal check-in",
+            AppLanguage.ENGLISH to "Check-in failed",
+            AppLanguage.SPANISH to "Error en el check-in",
+            AppLanguage.CHINESE to "签到失败",
+            AppLanguage.ARABIC to "فشل تسجيل الوصول",
+            AppLanguage.JAPANESE to "チェックインに失敗"
+        ),
+        "vm_claim_token_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal claim token",
+            AppLanguage.ENGLISH to "Failed to claim token",
+            AppLanguage.SPANISH to "Error al reclamar token",
+            AppLanguage.CHINESE to "领取代币失败",
+            AppLanguage.ARABIC to "فشل المطالبة بالرمز",
+            AppLanguage.JAPANESE to "トークンの請求に失敗"
+        ),
+        "vm_miner_unlocked" to mapOf(
+            AppLanguage.INDONESIAN to "Miner berhasil di-unlock!",
+            AppLanguage.ENGLISH to "Miner unlocked successfully!",
+            AppLanguage.SPANISH to "¡Minero desbloqueado!",
+            AppLanguage.CHINESE to "矿工已解锁！",
+            AppLanguage.ARABIC to "تم فتح المعدن بنجاح!",
+            AppLanguage.JAPANESE to "マイナーのロックを解除しました！"
+        ),
+        "vm_unlock_miner_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal unlock miner",
+            AppLanguage.ENGLISH to "Failed to unlock miner",
+            AppLanguage.SPANISH to "Error al desbloquear minero",
+            AppLanguage.CHINESE to "解锁矿工失败",
+            AppLanguage.ARABIC to "فشل فتح المعدن",
+            AppLanguage.JAPANESE to "マイナーのロック解除に失敗"
+        ),
+        "vm_reward_claimed" to mapOf(
+            AppLanguage.INDONESIAN to "Reward berhasil diklaim",
+            AppLanguage.ENGLISH to "Reward claimed successfully",
+            AppLanguage.SPANISH to "Recompensa reclamada",
+            AppLanguage.CHINESE to "奖励已领取",
+            AppLanguage.ARABIC to "تمت المطالبة بالمكافأة",
+            AppLanguage.JAPANESE to "報酬を請求しました"
+        ),
+        "vm_error_prefix" to mapOf(
+            AppLanguage.INDONESIAN to "Error: ",
+            AppLanguage.ENGLISH to "Error: ",
+            AppLanguage.SPANISH to "Error: ",
+            AppLanguage.CHINESE to "错误：",
+            AppLanguage.ARABIC to "خطأ: ",
+            AppLanguage.JAPANESE to "エラー: "
+        ),
+        "vm_failed_prefix" to mapOf(
+            AppLanguage.INDONESIAN to "❌ Gagal: ",
+            AppLanguage.ENGLISH to "❌ Failed: ",
+            AppLanguage.SPANISH to "❌ Error: ",
+            AppLanguage.CHINESE to "❌ 失败：",
+            AppLanguage.ARABIC to "❌ فشل: ",
+            AppLanguage.JAPANESE to "❌ 失敗: "
+        ),
+        "vm_save_failed_prefix" to mapOf(
+            AppLanguage.INDONESIAN to "❌ Gagal simpan: ",
+            AppLanguage.ENGLISH to "❌ Save failed: ",
+            AppLanguage.SPANISH to "❌ Error al guardar: ",
+            AppLanguage.CHINESE to "❌ 保存失败：",
+            AppLanguage.ARABIC to "❌ فشل الحفظ: ",
+            AppLanguage.JAPANESE to "❌ 保存失敗: "
+        ),
+        "vm_checkin_error_prefix" to mapOf(
+            AppLanguage.INDONESIAN to "Error check-in: ",
+            AppLanguage.ENGLISH to "Check-in error: ",
+            AppLanguage.SPANISH to "Error de check-in: ",
+            AppLanguage.CHINESE to "签到错误：",
+            AppLanguage.ARABIC to "خطأ تسجيل الوصول: ",
+            AppLanguage.JAPANESE to "チェックインエラー: "
+        ),
+
+        "vm_connection_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Koneksi gagal",
+            AppLanguage.ENGLISH to "Connection failed",
+            AppLanguage.SPANISH to "Conexión fallida",
+            AppLanguage.CHINESE to "连接失败",
+            AppLanguage.ARABIC to "فشل الاتصال",
+            AppLanguage.JAPANESE to "接続に失敗"
+        ),
+        "vm_verifying_purchase" to mapOf(
+            AppLanguage.INDONESIAN to "Memverifikasi pembelian...",
+            AppLanguage.ENGLISH to "Verifying purchase...",
+            AppLanguage.SPANISH to "Verificando compra...",
+            AppLanguage.CHINESE to "正在验证购买...",
+            AppLanguage.ARABIC to "جاري التحقق من الشراء...",
+            AppLanguage.JAPANESE to "購入を確認中..."
+        ),
+        "vm_upgrade_success" to mapOf(
+            AppLanguage.INDONESIAN to "Upgrade berhasil!",
+            AppLanguage.ENGLISH to "Upgrade successful!",
+            AppLanguage.SPANISH to "¡Mejora exitosa!",
+            AppLanguage.CHINESE to "升级成功！",
+            AppLanguage.ARABIC to "تمت الترقية بنجاح!",
+            AppLanguage.JAPANESE to "アップグレード成功！"
+        ),
+        "vm_verification_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Verifikasi gagal",
+            AppLanguage.ENGLISH to "Verification failed",
+            AppLanguage.SPANISH to "Verificación fallida",
+            AppLanguage.CHINESE to "验证失败",
+            AppLanguage.ARABIC to "فشل التحقق",
+            AppLanguage.JAPANESE to "検証に失敗"
+        ),
+        "vm_unknown" to mapOf(
+            AppLanguage.INDONESIAN to "Tidak diketahui",
+            AppLanguage.ENGLISH to "Unknown",
+            AppLanguage.SPANISH to "Desconocido",
+            AppLanguage.CHINESE to "未知",
+            AppLanguage.ARABIC to "غير معروف",
+            AppLanguage.JAPANESE to "不明"
+        ),
+        "vm_activate_miner_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal aktifkan miner",
+            AppLanguage.ENGLISH to "Failed to activate miner",
+            AppLanguage.SPANISH to "Error al activar minero",
+            AppLanguage.CHINESE to "激活矿工失败",
+            AppLanguage.ARABIC to "فشل تنشيط المعدن",
+            AppLanguage.JAPANESE to "マイナーの有効化に失敗"
+        ),
+        "vm_activation_error_prefix" to mapOf(
+            AppLanguage.INDONESIAN to "Aktivasi error: ",
+            AppLanguage.ENGLISH to "Activation error: ",
+            AppLanguage.SPANISH to "Error de activación: ",
+            AppLanguage.CHINESE to "激活错误：",
+            AppLanguage.ARABIC to "خطأ التنشيط: ",
+            AppLanguage.JAPANESE to "アクティベーションエラー: "
+        ),
+        "vm_backend_reject_prefix" to mapOf(
+            AppLanguage.INDONESIAN to "Backend reject: ",
+            AppLanguage.ENGLISH to "Backend reject: ",
+            AppLanguage.SPANISH to "Rechazo del backend: ",
+            AppLanguage.CHINESE to "后端拒绝：",
+            AppLanguage.ARABIC to "رفض الخادم: ",
+            AppLanguage.JAPANESE to "バックエンド拒否: "
+        ),
+
+        "vm_buy_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal beli",
+            AppLanguage.ENGLISH to "Purchase failed",
+            AppLanguage.SPANISH to "Error al comprar",
+            AppLanguage.CHINESE to "购买失败",
+            AppLanguage.ARABIC to "فشل الشراء",
+            AppLanguage.JAPANESE to "購入に失敗"
+        ),
+        "vm_mission_claim_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal klaim hadiah misi",
+            AppLanguage.ENGLISH to "Failed to claim mission reward",
+            AppLanguage.SPANISH to "Error al reclamar recompensa de misión",
+            AppLanguage.CHINESE to "领取任务奖励失败",
+            AppLanguage.ARABIC to "فشل المطالبة بمكافأة المهمة",
+            AppLanguage.JAPANESE to "ミッション報酬の請求に失敗"
+        ),
+        "vm_task_failed" to mapOf(
+            AppLanguage.INDONESIAN to "Gagal memproses tugas",
+            AppLanguage.ENGLISH to "Failed to process task",
+            AppLanguage.SPANISH to "Error al procesar tarea",
+            AppLanguage.CHINESE to "处理任务失败",
+            AppLanguage.ARABIC to "فشل معالجة المهمة",
+            AppLanguage.JAPANESE to "タスクの処理に失敗"
+        ),
+        "vm_transfer_failed_prefix" to mapOf(
+            AppLanguage.INDONESIAN to "Transfer gagal: ",
+            AppLanguage.ENGLISH to "Transfer failed: ",
+            AppLanguage.SPANISH to "Transferencia fallida: ",
+            AppLanguage.CHINESE to "转账失败：",
+            AppLanguage.ARABIC to "فشل التحويل: ",
+            AppLanguage.JAPANESE to "送金失敗: "
+        ),
+        "vm_location_updated_prefix" to mapOf(
+            AppLanguage.INDONESIAN to "Lokasi diperbarui: ",
+            AppLanguage.ENGLISH to "Location updated: ",
+            AppLanguage.SPANISH to "Ubicación actualizada: ",
+            AppLanguage.CHINESE to "位置已更新：",
+            AppLanguage.ARABIC to "تم تحديث الموقع: ",
+            AppLanguage.JAPANESE to "位置が更新されました: "
+        ),
+        "vm_location_tracking_on" to mapOf(
+            AppLanguage.INDONESIAN to "Pelacakan lokasi aktif untuk analitik provider.",
+            AppLanguage.ENGLISH to "Location tracking active for provider analytics.",
+            AppLanguage.SPANISH to "Seguimiento de ubicación activo para análisis de proveedores.",
+            AppLanguage.CHINESE to "位置跟踪已启用以供提供商分析。",
+            AppLanguage.ARABIC to "تتبع الموقع نشط لتحليلات المزود.",
+            AppLanguage.JAPANESE to "プロバイダー分析用の位置追跡が有効です。"
+        ),
+        "vm_location_tracking_off" to mapOf(
+            AppLanguage.INDONESIAN to "Pelacakan lokasi dinonaktifkan.",
+            AppLanguage.ENGLISH to "Location tracking disabled.",
+            AppLanguage.SPANISH to "Seguimiento de ubicación desactivado.",
+            AppLanguage.CHINESE to "位置跟踪已禁用。",
+            AppLanguage.ARABIC to "تم تعطيل تتبع الموقع.",
+            AppLanguage.JAPANESE to "位置追跡が無効になりました。"
+        ),
+        "vm_system_settings_saved" to mapOf(
+            AppLanguage.INDONESIAN to "Pengaturan sistem berhasil disimpan & disinkronkan!",
+            AppLanguage.ENGLISH to "System settings saved & synced successfully!",
+            AppLanguage.SPANISH to "¡Configuración del sistema guardada y sincronizada!",
+            AppLanguage.CHINESE to "系统设置已成功保存并同步！",
+            AppLanguage.ARABIC to "تم حفظ إعدادات النظام ومزامنتها بنجاح!",
+            AppLanguage.JAPANESE to "システム設定が保存され、同期されました！"
+        ),
+        "vm_new_pin_prefix" to mapOf(
+            AppLanguage.INDONESIAN to "Pin pengguna baru ditambahkan di ",
+            AppLanguage.ENGLISH to "New user pin added in ",
+            AppLanguage.SPANISH to "Nuevo pin de usuario agregado en ",
+            AppLanguage.CHINESE to "新用户 pin 已添加到 ",
+            AppLanguage.ARABIC to "تمت إضافة دبوس مستخدم جديد في ",
+            AppLanguage.JAPANESE to "新規ユーザーピンを追加: "
+        ),
+        "vm_new_user" to mapOf(
+            AppLanguage.INDONESIAN to "User Baru",
+            AppLanguage.ENGLISH to "New User",
+            AppLanguage.SPANISH to "Usuario Nuevo",
+            AppLanguage.CHINESE to "新用户",
+            AppLanguage.ARABIC to "مستخدم جديد",
+            AppLanguage.JAPANESE to "新規ユーザー"
+        ),
+
     )
 
     fun getString(key: String, language: AppLanguage): String {
