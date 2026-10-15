@@ -3177,6 +3177,217 @@ object LanguageManager {
             AppLanguage.JAPANESE to "プロフィールの変更を保存"
         ),
 
+
+        // ========== INVESTMENT COUPON SCREEN ==========
+        "investment_total_value" to mapOf(
+            AppLanguage.INDONESIAN to "Total Nilai Investasi:",
+            AppLanguage.ENGLISH to "Total Investment Value:",
+            AppLanguage.SPANISH to "Valor Total de Inversión:",
+            AppLanguage.CHINESE to "总投资价值：",
+            AppLanguage.ARABIC to "إجمالي قيمة الاستثمار:",
+            AppLanguage.JAPANESE to "総投資額:"
+        ),
+        "investment_dividend_return" to mapOf(
+            AppLanguage.INDONESIAN to "Hasil Return Dividen:",
+            AppLanguage.ENGLISH to "Dividend Return Yield:",
+            AppLanguage.SPANISH to "Rendimiento de Dividendos:",
+            AppLanguage.CHINESE to "股息回报：",
+            AppLanguage.ARABIC to "عائد الأرباح:",
+            AppLanguage.JAPANESE to "配当利回り:"
+        ),
+        "investment_tab_catalog" to mapOf(
+            AppLanguage.INDONESIAN to "Katalog Proyek",
+            AppLanguage.ENGLISH to "Project Catalog",
+            AppLanguage.SPANISH to "Catálogo de Proyectos",
+            AppLanguage.CHINESE to "项目目录",
+            AppLanguage.ARABIC to "كتالوج المشاريع",
+            AppLanguage.JAPANESE to "プロジェクトカタログ"
+        ),
+        "investment_tab_portfolio" to mapOf(
+            AppLanguage.INDONESIAN to "Portofolio (",
+            AppLanguage.ENGLISH to "Portfolio (",
+            AppLanguage.SPANISH to "Portafolio (",
+            AppLanguage.CHINESE to "投资组合（",
+            AppLanguage.ARABIC to "المحفظة (",
+            AppLanguage.JAPANESE to "ポートフォリオ ("
+        ),
+        "investment_tab_secondary" to mapOf(
+            AppLanguage.INDONESIAN to "Pasar Sekunder (",
+            AppLanguage.ENGLISH to "Secondary Market (",
+            AppLanguage.SPANISH to "Mercado Secundario (",
+            AppLanguage.CHINESE to "二级市场（",
+            AppLanguage.ARABIC to "السوق الثانوي (",
+            AppLanguage.JAPANESE to "セカンダリ市場 ("
+        ),
+        "investment_empty_coupon_title" to mapOf(
+            AppLanguage.INDONESIAN to "Belum Ada Kupon Investasi",
+            AppLanguage.ENGLISH to "No Investment Coupons Yet",
+            AppLanguage.SPANISH to "Aún No Hay Cupones de Inversión",
+            AppLanguage.CHINESE to "尚无投资优惠券",
+            AppLanguage.ARABIC to "لا توجد قسائم استثمار بعد",
+            AppLanguage.JAPANESE to "投資クーポンはまだありません"
+        ),
+        "investment_empty_coupon_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Pilih kupon di Katalog untuk mulai mendiversifikasi saldo komisi Anda.",
+            AppLanguage.ENGLISH to "Pick a coupon in the Catalog to start diversifying your commission balance.",
+            AppLanguage.SPANISH to "Elige un cupón en el Catálogo para diversificar tu saldo de comisiones.",
+            AppLanguage.CHINESE to "在目录中选择优惠券以开始分散您的佣金余额。",
+            AppLanguage.ARABIC to "اختر قسيمة من الكتالوج لبدء تنويع رصيد عمولتك.",
+            AppLanguage.JAPANESE to "カタログでクーポンを選んで、手数料残高の分散を始めましょう。"
+        ),
+        "investment_empty_secondary_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Belum ada kupon yang dipasang di pasar sekunder saat ini.",
+            AppLanguage.ENGLISH to "No coupons listed on the secondary market yet.",
+            AppLanguage.SPANISH to "Aún no hay cupones en el mercado secundario.",
+            AppLanguage.CHINESE to "目前二级市场上没有优惠券。",
+            AppLanguage.ARABIC to "لا توجد قسائم مدرجة في السوق الثانوي حتى الآن.",
+            AppLanguage.JAPANESE to "現在、セカンダリ市場に出品されたクーポンはありません。"
+        ),
+        "investment_coupon_risk" to mapOf(
+            AppLanguage.INDONESIAN to "Risiko: ",
+            AppLanguage.ENGLISH to "Risk: ",
+            AppLanguage.SPANISH to "Riesgo: ",
+            AppLanguage.CHINESE to "风险：",
+            AppLanguage.ARABIC to "المخاطر: ",
+            AppLanguage.JAPANESE to "リスク: "
+        ),
+        "investment_coupon_unit_price" to mapOf(
+            AppLanguage.INDONESIAN to "Harga Unit:",
+            AppLanguage.ENGLISH to "Unit Price:",
+            AppLanguage.SPANISH to "Precio Unitario:",
+            AppLanguage.CHINESE to "单价：",
+            AppLanguage.ARABIC to "سعر الوحدة:",
+            AppLanguage.JAPANESE to "単価:"
+        ),
+        "investment_coupon_tenor" to mapOf(
+            AppLanguage.INDONESIAN to "Tenor:",
+            AppLanguage.ENGLISH to "Tenor:",
+            AppLanguage.SPANISH to "Plazo:",
+            AppLanguage.CHINESE to "期限：",
+            AppLanguage.ARABIC to "المدة:",
+            AppLanguage.JAPANESE to "期間:"
+        ),
+        "investment_coupon_days_suffix" to mapOf(
+            AppLanguage.INDONESIAN to " Hari",
+            AppLanguage.ENGLISH to " Days",
+            AppLanguage.SPANISH to " Días",
+            AppLanguage.CHINESE to " 天",
+            AppLanguage.ARABIC to " يوم",
+            AppLanguage.JAPANESE to " 日"
+        ),
+        "investment_coupon_available" to mapOf(
+            AppLanguage.INDONESIAN to "Tersedia:",
+            AppLanguage.ENGLISH to "Available:",
+            AppLanguage.SPANISH to "Disponible:",
+            AppLanguage.CHINESE to "可用：",
+            AppLanguage.ARABIC to "متاح:",
+            AppLanguage.JAPANESE to "利用可能:"
+        ),
+        "investment_coupon_units_suffix" to mapOf(
+            AppLanguage.INDONESIAN to " Kupon",
+            AppLanguage.ENGLISH to " Coupons",
+            AppLanguage.SPANISH to " Cupones",
+            AppLanguage.CHINESE to " 张",
+            AppLanguage.ARABIC to " قسيمة",
+            AppLanguage.JAPANESE to " クーポン"
+        ),
+        "investment_coupon_buy_btn" to mapOf(
+            AppLanguage.INDONESIAN to "Beli Kupon Investasi",
+            AppLanguage.ENGLISH to "Buy Investment Coupon",
+            AppLanguage.SPANISH to "Comprar Cupón de Inversión",
+            AppLanguage.CHINESE to "购买投资优惠券",
+            AppLanguage.ARABIC to "شراء قسيمة استثمار",
+            AppLanguage.JAPANESE to "投資クーポンを購入"
+        ),
+        "investment_portfolio_ownership" to mapOf(
+            AppLanguage.INDONESIAN to "Kepemilikan: ",
+            AppLanguage.ENGLISH to "Ownership: ",
+            AppLanguage.SPANISH to "Propiedad: ",
+            AppLanguage.CHINESE to "持有：",
+            AppLanguage.ARABIC to "الملكية: ",
+            AppLanguage.JAPANESE to "所有:"
+        ),
+        "investment_portfolio_units_suffix" to mapOf(
+            AppLanguage.INDONESIAN to " Unit Kupon",
+            AppLanguage.ENGLISH to " Coupon Units",
+            AppLanguage.SPANISH to " Unidades de Cupón",
+            AppLanguage.CHINESE to " 优惠券单位",
+            AppLanguage.ARABIC to " وحدة قسيمة",
+            AppLanguage.JAPANESE to " クーポン単位"
+        ),
+        "investment_portfolio_listed" to mapOf(
+            AppLanguage.INDONESIAN to "DIPASANG JUAL",
+            AppLanguage.ENGLISH to "LISTED FOR SALE",
+            AppLanguage.SPANISH to "EN VENTA",
+            AppLanguage.CHINESE to "已上市出售",
+            AppLanguage.ARABIC to "معروض للبيع",
+            AppLanguage.JAPANESE to "売り出し中"
+        ),
+        "investment_portfolio_total" to mapOf(
+            AppLanguage.INDONESIAN to "Total Nilai:",
+            AppLanguage.ENGLISH to "Total Value:",
+            AppLanguage.SPANISH to "Valor Total:",
+            AppLanguage.CHINESE to "总价值：",
+            AppLanguage.ARABIC to "القيمة الإجمالية:",
+            AppLanguage.JAPANESE to "総額:"
+        ),
+        "investment_portfolio_dividend" to mapOf(
+            AppLanguage.INDONESIAN to "Dividen Berjalan:",
+            AppLanguage.ENGLISH to "Running Dividend:",
+            AppLanguage.SPANISH to "Dividendo en Curso:",
+            AppLanguage.CHINESE to "累计股息：",
+            AppLanguage.ARABIC to "الأرباح الجارية:",
+            AppLanguage.JAPANESE to "配当進行中:"
+        ),
+        "investment_portfolio_claim_yield" to mapOf(
+            AppLanguage.INDONESIAN to "Klaim Yield",
+            AppLanguage.ENGLISH to "Claim Yield",
+            AppLanguage.SPANISH to "Reclamar Rendimiento",
+            AppLanguage.CHINESE to "领取收益",
+            AppLanguage.ARABIC to "المطالبة بالعائد",
+            AppLanguage.JAPANESE to "利回りを請求"
+        ),
+        "investment_secondary_apy" to mapOf(
+            AppLanguage.INDONESIAN to "Return APY: ",
+            AppLanguage.ENGLISH to "Return APY: ",
+            AppLanguage.SPANISH to "Retorno APY: ",
+            AppLanguage.CHINESE to "年化收益率：",
+            AppLanguage.ARABIC to "عائد APY: ",
+            AppLanguage.JAPANESE to "APYリターン: "
+        ),
+        "investment_secondary_apy_suffix" to mapOf(
+            AppLanguage.INDONESIAN to "% p.a. • Sisa: ",
+            AppLanguage.ENGLISH to "% p.a. • Remaining: ",
+            AppLanguage.SPANISH to "% anual • Restante: ",
+            AppLanguage.CHINESE to "% 年化 • 剩余：",
+            AppLanguage.ARABIC to "% سنويًا • المتبقي: ",
+            AppLanguage.JAPANESE to "% p.a. • 残り: "
+        ),
+        "investment_secondary_badge" to mapOf(
+            AppLanguage.INDONESIAN to "SEKUNDER",
+            AppLanguage.ENGLISH to "SECONDARY",
+            AppLanguage.SPANISH to "SECUNDARIO",
+            AppLanguage.CHINESE to "二级",
+            AppLanguage.ARABIC to "ثانوي",
+            AppLanguage.JAPANESE to "セカンダリ"
+        ),
+        "investment_secondary_sell_price" to mapOf(
+            AppLanguage.INDONESIAN to "Harga Jual:",
+            AppLanguage.ENGLISH to "Selling Price:",
+            AppLanguage.SPANISH to "Precio de Venta:",
+            AppLanguage.CHINESE to "售价：",
+            AppLanguage.ARABIC to "سعر البيع:",
+            AppLanguage.JAPANESE to "販売価格:"
+        ),
+        "investment_secondary_buy_now" to mapOf(
+            AppLanguage.INDONESIAN to "Beli Sekarang",
+            AppLanguage.ENGLISH to "Buy Now",
+            AppLanguage.SPANISH to "Comprar Ahora",
+            AppLanguage.CHINESE to "立即购买",
+            AppLanguage.ARABIC to "اشتر الآن",
+            AppLanguage.JAPANESE to "今すぐ購入"
+        ),
+
     )
 
     fun getString(key: String, language: AppLanguage): String {

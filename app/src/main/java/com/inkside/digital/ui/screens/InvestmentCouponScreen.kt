@@ -67,6 +67,7 @@ import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.ui.theme.PurpleSecondary
 import com.inkside.digital.util.GlobalPointsManager
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 
 @Composable
 fun InvestmentCouponScreen(
@@ -126,11 +127,11 @@ fun InvestmentCouponScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Column {
-                                Text("Total Nilai Investasi:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("investment_total_value", currentLanguage, "Total Nilai Investasi:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text(GlobalPointsManager.formatBalanceIdr(totalInvested, currentLanguage.code), fontWeight = FontWeight.Bold, fontSize = 13.sp)
                             }
                             Column(horizontalAlignment = Alignment.End) {
-                                Text("Hasil Return Dividen:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("investment_dividend_return", currentLanguage, "Hasil Return Dividen:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text("+Rp ${String.format("%,.0f", totalAccumYield)}", fontWeight = FontWeight.Black, fontSize = 13.sp, color = EmeraldLight)
                             }
                         }
@@ -155,17 +156,17 @@ fun InvestmentCouponScreen(
                 Tab(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
-                    text = { Text("Katalog Proyek", fontSize = 11.sp, fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal) }
+                    text = { Text(LanguageManager.translate("investment_tab_catalog", currentLanguage, "Katalog Proyek"), fontSize = 11.sp, fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal) }
                 )
                 Tab(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
-                    text = { Text("Portofolio (${myPortfolio.size})", fontSize = 11.sp, fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal) }
+                    text = { Text(LanguageManager.translate("investment_tab_portfolio", currentLanguage, "Portofolio (") + "${myPortfolio.size})", fontSize = 11.sp, fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal) }
                 )
                 Tab(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
-                    text = { Text("Pasar Sekunder (${secondaryMarketList.size})", fontSize = 11.sp, fontWeight = if (selectedTab == 2) FontWeight.Bold else FontWeight.Normal) }
+                    text = { Text(LanguageManager.translate("investment_tab_secondary", currentLanguage, "Pasar Sekunder (") + "${secondaryMarketList.size})", fontSize = 11.sp, fontWeight = if (selectedTab == 2) FontWeight.Bold else FontWeight.Normal) }
                 )
             }
         }
@@ -198,8 +199,8 @@ fun InvestmentCouponScreen(
                             ) {
                                 Icon(imageVector = Icons.Default.Savings, contentDescription = null, tint = EmeraldLight, modifier = Modifier.size(40.dp))
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text("Belum Ada Kupon Investasi", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                                Text("Pilih kupon di Katalog untuk mulai mendiversifikasi saldo komisi Anda.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("investment_empty_coupon_title", currentLanguage, "Belum Ada Kupon Investasi"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                Text(LanguageManager.translate("investment_empty_coupon_desc", currentLanguage, "Pilih kupon di Katalog untuk mulai mendiversifikasi saldo komisi Anda."), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
                     }
@@ -248,7 +249,7 @@ fun InvestmentCouponScreen(
                                 modifier = Modifier.padding(20.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text("Belum ada kupon yang dipasang di pasar sekunder saat ini.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("investment_empty_secondary_desc", currentLanguage, "Belum ada kupon yang dipasang di pasar sekunder saat ini."), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
                     }
@@ -295,7 +296,7 @@ fun CouponCatalogCard(
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
                                 .padding(horizontal = 5.dp, vertical = 2.dp)
                         ) {
-                            Text("Risiko: ${coupon.riskRating}", fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                            Text(LanguageManager.translate("investment_coupon_risk", currentLanguage, "Risiko: ") + "${coupon.riskRating}", fontSize = 9.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                     Spacer(modifier = Modifier.height(2.dp))
@@ -331,16 +332,16 @@ fun CouponCatalogCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column {
-                        Text("Harga Unit:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("investment_coupon_unit_price", currentLanguage, "Harga Unit:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(GlobalPointsManager.formatBalanceIdr(coupon.unitPrice, currentLanguage.code), fontWeight = FontWeight.Bold, fontSize = 12.sp)
                     }
                     Column {
-                        Text("Tenor:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("${coupon.durationDays} Hari", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        Text(LanguageManager.translate("investment_coupon_tenor", currentLanguage, "Tenor:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("${coupon.durationDays}" + LanguageManager.translate("investment_coupon_days_suffix", currentLanguage, " Hari"), fontWeight = FontWeight.Bold, fontSize = 12.sp)
                     }
                     Column(horizontalAlignment = Alignment.End) {
-                        Text("Tersedia:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("${coupon.totalUnitsAvailable} Kupon", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        Text(LanguageManager.translate("investment_coupon_available", currentLanguage, "Tersedia:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("${coupon.totalUnitsAvailable}" + LanguageManager.translate("investment_coupon_units_suffix", currentLanguage, " Kupon"), fontWeight = FontWeight.Bold, fontSize = 12.sp)
                     }
                 }
             }
@@ -355,7 +356,7 @@ fun CouponCatalogCard(
             ) {
                 Icon(imageVector = Icons.Default.AddShoppingCart, contentDescription = null, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Beli Kupon Investasi", fontWeight = FontWeight.Bold)
+                Text(LanguageManager.translate("investment_coupon_buy_btn", currentLanguage, "Beli Kupon Investasi"), fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -381,7 +382,7 @@ fun MyCouponPortfolioCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(coupon.projectTitle, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    Text("Kepemilikan: ${coupon.ownedUnits} Unit Kupon", fontSize = 11.sp, color = EmeraldLight, fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("investment_portfolio_ownership", currentLanguage, "Kepemilikan: ") + "${coupon.ownedUnits}" + LanguageManager.translate("investment_portfolio_units_suffix", currentLanguage, " Unit Kupon"), fontSize = 11.sp, color = EmeraldLight, fontWeight = FontWeight.Bold)
                 }
 
                 if (coupon.isListedOnSecondaryMarket) {
@@ -391,7 +392,7 @@ fun MyCouponPortfolioCard(
                             .background(PurpleSecondary.copy(alpha = 0.2f))
                             .padding(horizontal = 8.dp, vertical = 3.dp)
                     ) {
-                        Text("DIPASANG JUAL", fontSize = 9.sp, fontWeight = FontWeight.Black, color = PurpleSecondary)
+                        Text(LanguageManager.translate("investment_portfolio_listed", currentLanguage, "DIPASANG JUAL"), fontSize = 9.sp, fontWeight = FontWeight.Black, color = PurpleSecondary)
                     }
                 }
             }
@@ -410,11 +411,11 @@ fun MyCouponPortfolioCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column {
-                        Text("Total Nilai:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("investment_portfolio_total", currentLanguage, "Total Nilai:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(GlobalPointsManager.formatBalanceIdr(coupon.unitPrice * coupon.ownedUnits, currentLanguage.code), fontWeight = FontWeight.Bold, fontSize = 12.sp)
                     }
                     Column(horizontalAlignment = Alignment.End) {
-                        Text("Dividen Berjalan:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("investment_portfolio_dividend", currentLanguage, "Dividen Berjalan:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(GlobalPointsManager.formatBalanceIdr(coupon.accumulatedYield, currentLanguage.code), fontWeight = FontWeight.Black, fontSize = 12.sp, color = EmeraldLight)
                     }
                 }
@@ -436,7 +437,7 @@ fun MyCouponPortfolioCard(
                     colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Klaim Yield", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("investment_portfolio_claim_yield", currentLanguage, "Klaim Yield"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -462,7 +463,7 @@ fun SecondaryMarketCard(
             ) {
                 Column {
                     Text(coupon.projectTitle, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    Text("Return APY: ${coupon.expectedApyPercent}% p.a. • Sisa: ${coupon.durationDays} Hari", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(LanguageManager.translate("investment_secondary_apy", currentLanguage, "Return APY: ") + "${coupon.expectedApyPercent}" + LanguageManager.translate("investment_secondary_apy_suffix", currentLanguage, "% p.a. • Sisa: ") + "${coupon.durationDays}" + LanguageManager.translate("investment_coupon_days_suffix", currentLanguage, " Hari"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
 
                 Box(
@@ -471,7 +472,7 @@ fun SecondaryMarketCard(
                         .background(PurpleSecondary.copy(alpha = 0.2f))
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
-                    Text("SEKUNDER", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = PurpleSecondary)
+                    Text(LanguageManager.translate("investment_secondary_badge", currentLanguage, "SEKUNDER"), fontSize = 9.sp, fontWeight = FontWeight.Bold, color = PurpleSecondary)
                 }
             }
 
@@ -483,7 +484,7 @@ fun SecondaryMarketCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text("Harga Jual:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(LanguageManager.translate("investment_secondary_sell_price", currentLanguage, "Harga Jual:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(
                         text = GlobalPointsManager.formatBalanceIdr(coupon.secondaryMarketPrice, currentLanguage.code),
                         fontWeight = FontWeight.Black,
@@ -497,7 +498,7 @@ fun SecondaryMarketCard(
                     colors = ButtonDefaults.buttonColors(containerColor = PurpleSecondary),
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text("Beli Sekarang", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("investment_secondary_buy_now", currentLanguage, "Beli Sekarang"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
