@@ -1236,6 +1236,7 @@ fun MainAffiliateAppContent(
     if (showWithdraw) {
         WithdrawDialog(
             user = user,
+            currentLanguage = currentLanguage,
             onDismiss = onWithdrawDismiss,
             onSubmit = onWithdrawSubmit
         )
@@ -1252,6 +1253,7 @@ fun MainAffiliateAppContent(
         NewLinkModal(
             campaigns = campaigns,
             preselectedCampaign = selectedCampForLink,
+            currentLanguage = currentLanguage,
             onDismiss = onNewLinkDismiss,
             onCreateLink = onNewLinkCreate
         )
@@ -1260,6 +1262,7 @@ fun MainAffiliateAppContent(
     if (showUpgrade) {
         UpgradeVipModal(
             user = user,
+            currentLanguage = currentLanguage,
             onDismiss = onUpgradeDismiss,
             onUpgrade = { tier ->
                 android.util.Log.d("MainActivity", "Upgrade tier: $tier")
@@ -1271,6 +1274,7 @@ fun MainAffiliateAppContent(
     if (showRedeemPoints) {
         RedeemPointsModal(
             user = user,
+            currentLanguage = currentLanguage,
             onDismiss = onRedeemDismiss,
             onRedeem = onRedeemConfirm,
             onOpenTransferQr = onRedeemOpenQr
@@ -1289,6 +1293,7 @@ fun MainAffiliateAppContent(
         BuyCouponModal(
             coupon = coupon,
             user = user,
+            currentLanguage = currentLanguage,
             onDismiss = onBuyCouponDismiss,
             onBuy = { qty -> onBuyCouponConfirm(coupon, qty) }
         )
@@ -1313,6 +1318,7 @@ fun MainAffiliateAppContent(
     if (show2FA) {
         TwoFactorModal(
             user = user,
+            currentLanguage = currentLanguage,
             onDismiss = on2FADismiss,
             onVerifyToggle = on2FAVerifyToggle
         )
