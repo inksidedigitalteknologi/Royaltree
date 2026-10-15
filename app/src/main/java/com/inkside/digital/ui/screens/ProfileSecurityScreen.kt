@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.security.SecurityManager
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
@@ -168,7 +169,7 @@ fun ProfileSecurityScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = GoldVip),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("Upgrade", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                            Text(LanguageManager.translate("profile_security_upgrade_btn", currentLanguage, "Upgrade"), color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 11.sp)
                         }
                     }
                 }
@@ -192,8 +193,8 @@ fun ProfileSecurityScreen(
                             Icon(imageVector = Icons.Default.Security, contentDescription = null, tint = EmeraldLight)
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
-                                Text("Autentikasi Dua Faktor (2FA)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                                Text("Wajib untuk penarikan dana di atas batas minimum", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("profile_security_2fa_title", currentLanguage, "Autentikasi Dua Faktor (2FA)"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                Text(LanguageManager.translate("profile_security_2fa_desc", currentLanguage, "Wajib untuk penarikan dana di atas batas minimum"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
 
@@ -218,9 +219,9 @@ fun ProfileSecurityScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(imageVector = Icons.Default.CheckCircle, contentDescription = null, tint = EmeraldLight, modifier = Modifier.size(14.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Protokol Enkripsi: ${SecurityManager.ENCRYPTION_ALGORITHM}", fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
+                                Text(LanguageManager.translate("profile_security_encryption_protocol", currentLanguage, "Protokol Enkripsi: ") + SecurityManager.ENCRYPTION_ALGORITHM, fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
                             }
-                            Text("Kunci Pertukaran: ${SecurityManager.KEY_EXCHANGE} • SHA-256 HMAC", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("profile_security_key_exchange", currentLanguage, "Kunci Pertukaran: ") + "${SecurityManager.KEY_EXCHANGE} • SHA-256 HMAC", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
@@ -244,8 +245,8 @@ fun ProfileSecurityScreen(
                             Text("📍", fontSize = 20.sp)
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
-                                Text("Pelacakan Lokasi Provider (Pinpoint)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                                Text("Izinkan analitik pemetaan wilayah provider untuk mendeteksi persebaran pengguna", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("profile_security_location_title", currentLanguage, "Pelacakan Lokasi Provider (Pinpoint)"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                Text(LanguageManager.translate("profile_security_location_desc", currentLanguage, "Izinkan analitik pemetaan wilayah provider untuk mendeteksi persebaran pengguna"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
 
@@ -268,11 +269,15 @@ fun ProfileSecurityScreen(
                     ) {
                         Column(modifier = Modifier.padding(10.dp)) {
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("Posisi Wilayah Terdeteksi:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("${user?.locationCity ?: "Jakarta Pusat"}, ${user?.locationProvince ?: "DKI Jakarta"}", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                Text(LanguageManager.translate("profile_security_region_detected", currentLanguage, "Posisi Wilayah Terdeteksi:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(
+                                    "${user?.locationCity ?: LanguageManager.translate("profile_security_default_city", currentLanguage, "Jakarta Pusat")}, " +
+                                    "${user?.locationProvince ?: LanguageManager.translate("profile_security_default_province", currentLanguage, "DKI Jakarta")}",
+                                    fontSize = 10.sp, fontWeight = FontWeight.Bold
+                                )
                             }
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("Koordinat GPS Presisi:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("profile_security_gps_coords", currentLanguage, "Koordinat GPS Presisi:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text("${String.format("%.4f", user?.latitude ?: -6.2088)}, ${String.format("%.4f", user?.longitude ?: 106.8456)}", fontSize = 10.sp, fontFamily = FontFamily.Monospace)
                             }
                         }
@@ -292,9 +297,9 @@ fun ProfileSecurityScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(imageVector = Icons.Default.Share, contentDescription = null, tint = ElectricBlue)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Program Afiliasi Referral Bertingkat", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("profile_security_referral_title", currentLanguage, "Program Afiliasi Referral Bertingkat"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
-                    Text("Ajak teman & peroleh komisi pasif 5% (Tier 1) dan 2% (Tier 2) selamanya.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(LanguageManager.translate("profile_security_referral_desc", currentLanguage, "Ajak teman & peroleh komisi pasif 5% (Tier 1) dan 2% (Tier 2) selamanya."), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
                     Spacer(modifier = Modifier.height(12.dp))
 
@@ -311,14 +316,14 @@ fun ProfileSecurityScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column {
-                                Text("Kode Referral Anda:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("profile_security_referral_code", currentLanguage, "Kode Referral Anda:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text(user?.referralCode ?: "-", fontWeight = FontWeight.Black, fontSize = 15.sp, fontFamily = FontFamily.Monospace, color = ElectricBlue)
                             }
 
                             IconButton(
                                 onClick = {
                                     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                    val clip = ClipData.newPlainText("Referral", user?.referralCode ?: "-")
+                                    val clip = ClipData.newPlainText(LanguageManager.translate("profile_security_referral_clip_label", currentLanguage, "Referral"), user?.referralCode ?: "-")
                                     clipboard.setPrimaryClip(clip)
                                     Toast.makeText(context, "Kode referral disalin!", Toast.LENGTH_SHORT).show()
                                 }
@@ -351,8 +356,8 @@ fun ProfileSecurityScreen(
                         Icon(imageVector = Icons.Default.Language, contentDescription = null, tint = EmeraldLight)
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            Text("Bahasa Internasional & Zona Wilayah", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                            Text("Pilihan: 6 Bahasa Internasional", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("profile_security_language_title", currentLanguage, "Bahasa Internasional & Zona Wilayah"), fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text(LanguageManager.translate("profile_security_language_desc", currentLanguage, "Pilihan: 6 Bahasa Internasional"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
 
@@ -373,8 +378,8 @@ fun ProfileSecurityScreen(
                         Text("🌍", fontSize = 20.sp)
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            Text("Standar Nilai Poin Global (Universal Rate)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                            Text("Nilai beli poin seragam di seluruh dunia: 100 Pts = $1.00 USD / USDT", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("profile_security_universal_title", currentLanguage, "Standar Nilai Poin Global (Universal Rate)"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            Text(LanguageManager.translate("profile_security_universal_desc", currentLanguage, "Nilai beli poin seragam di seluruh dunia: 100 Pts = $1.00 USD / USDT"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
 
@@ -428,12 +433,12 @@ fun ProfileSecurityScreen(
                         Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null, tint = GoldVip)
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            Text("Tonton Iklan Sponsor Pengembang", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                            Text("Dapatkan +50 Poin aktivitas setiap tontonan", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("profile_security_ad_title", currentLanguage, "Tonton Iklan Sponsor Pengembang"), fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text(LanguageManager.translate("profile_security_ad_desc", currentLanguage, "Dapatkan +50 Poin aktivitas setiap tontonan"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
 
-                    Text("+50 Poin", fontWeight = FontWeight.Black, fontSize = 12.sp, color = GoldVip)
+                    Text(LanguageManager.translate("profile_security_ad_reward", currentLanguage, "+50 Poin"), fontWeight = FontWeight.Black, fontSize = 12.sp, color = GoldVip)
                 }
             }
         }
@@ -446,13 +451,13 @@ fun ProfileSecurityScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Informasi Profil Pribadi", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(LanguageManager.translate("profile_security_info_title", currentLanguage, "Informasi Profil Pribadi"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(10.dp))
 
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        label = { Text("Nama Lengkap", fontSize = 12.sp) },
+                        label = { Text(LanguageManager.translate("profile_security_full_name", currentLanguage, "Nama Lengkap"), fontSize = 12.sp) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
@@ -462,7 +467,7 @@ fun ProfileSecurityScreen(
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
-                        label = { Text("Alamat Email", fontSize = 12.sp) },
+                        label = { Text(LanguageManager.translate("profile_security_email", currentLanguage, "Alamat Email"), fontSize = 12.sp) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
@@ -472,7 +477,7 @@ fun ProfileSecurityScreen(
                     OutlinedTextField(
                         value = phone,
                         onValueChange = { phone = it },
-                        label = { Text("Nomor WhatsApp / HP", fontSize = 12.sp) },
+                        label = { Text(LanguageManager.translate("profile_security_phone", currentLanguage, "Nomor WhatsApp / HP"), fontSize = 12.sp) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
@@ -485,7 +490,7 @@ fun ProfileSecurityScreen(
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Simpan Perubahan Profil", fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("profile_security_save_btn", currentLanguage, "Simpan Perubahan Profil"), fontWeight = FontWeight.Bold)
                     }
                 }
             }
