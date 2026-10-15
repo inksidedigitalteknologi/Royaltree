@@ -105,10 +105,10 @@ object IapManager {
             )
             .build()
 
-        client.queryProductDetailsAsync(params) { result, productDetailsResult ->
+        client.queryProductDetailsAsync(params) { result, productDetailsList ->
             if (result.responseCode == BillingClient.BillingResponseCode.OK) {
                 val map = mutableMapOf<String, ProductDetails>()
-                productDetailsResult.productDetailsList?.forEach { pd ->
+                productDetailsList.forEach { pd ->
                     map[pd.productId] = pd
                     Log.d(TAG, "Product: ${pd.productId} — ${pd.oneTimePurchaseOfferDetails?.formattedPrice}")
                 }
