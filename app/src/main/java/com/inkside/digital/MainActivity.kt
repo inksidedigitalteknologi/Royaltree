@@ -954,8 +954,8 @@ fun MainAffiliateAppContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
-                        top = innerPadding.calculateTopPadding(),
-                        bottom = bottomNavHeightState.value
+                        top = innerPadding.calculateTopPadding()
+                        // bottom = bottomNavHeightState.value  // TEST_NO_BOTTOM_PAD
                     )
             ) {
             com.inkside.digital.ui.components.AnimatedBackground {
