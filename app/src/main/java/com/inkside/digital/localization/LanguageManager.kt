@@ -3527,6 +3527,25 @@ object LanguageManager {
             AppLanguage.JAPANESE to "コンバージョンをテスト"
         ),
 
+
+        // ========== GAME ROOM SCREEN ==========
+        "game_room_processing" to mapOf(
+            AppLanguage.INDONESIAN to "Memproses...",
+            AppLanguage.ENGLISH to "Processing...",
+            AppLanguage.SPANISH to "Procesando...",
+            AppLanguage.CHINESE to "处理中...",
+            AppLanguage.ARABIC to "جاري المعالجة...",
+            AppLanguage.JAPANESE to "処理中..."
+        ),
+        "game_room_ok_understood" to mapOf(
+            AppLanguage.INDONESIAN to "OK, Mengerti",
+            AppLanguage.ENGLISH to "OK, Got It",
+            AppLanguage.SPANISH to "OK, Entendido",
+            AppLanguage.CHINESE to "好的，明白了",
+            AppLanguage.ARABIC to "حسنًا، فهمت",
+            AppLanguage.JAPANESE to "OK、了解しました"
+        ),
+
     )
 
     fun getString(key: String, language: AppLanguage): String {
