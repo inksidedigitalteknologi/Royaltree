@@ -440,7 +440,7 @@ object ApiClient {
     // ============================================================
     suspend fun getPurchaseTiersPublic(): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
-            val resp = apiService.getPurchaseTiersPublic()
+            val resp = apiService.getTiersPublic()
             val json = JSONObject(resp.string())
             Result.success(json)
         } catch (e: Exception) {
