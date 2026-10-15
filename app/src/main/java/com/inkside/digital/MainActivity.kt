@@ -958,12 +958,7 @@ fun MainAffiliateAppContent(
                         bottom = bottomNavHeightState.value
                     )
             ) {
-            // BYPASS_ANIMATED_BG_999 — test parent constraint
-            androidx.compose.foundation.layout.Box(
-                modifier = androidx.compose.ui.Modifier
-                    .fillMaxSize()
-                    .background(androidx.compose.ui.graphics.Color.Magenta)
-            ) {
+            com.inkside.digital.ui.components.AnimatedBackground {
                 android.util.Log.d("NAV_DEBUG", "🔵 when(currentScreen) = $currentScreen")
                 when (currentScreen) {
                 AppScreen.HOME -> {

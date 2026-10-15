@@ -78,7 +78,7 @@ fun HomeScreen(
     adButtonState: AdButtonState = AdButtonState.LOADING,
     onRetryAdLoad: () -> Unit = {}
 ) {
-    android.util.Log.d("HOME_SCREEN", "🔵 HomeScreen called! user=${user?.name}, tier=${user?.tier}, links=${links.size}, transactions=${recentTransactions.size}")
+    android.util.Log.e("HOME_SCREEN", "🔵 HomeScreen called! user=${user?.name}, tier=${user?.tier}, links=${links.size}, transactions=${recentTransactions.size}")
     val isPremium = user?.tier in listOf("PREMIUM", "VIP", "ROYAL")
 
     LazyColumn(
