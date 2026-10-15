@@ -97,6 +97,15 @@ import com.inkside.digital.util.HashrateFormatter
 import com.inkside.digital.util.GlobalPointsManager
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.rotate
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.offset
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.material.icons.filled.Close
 
 // ==== Retro Pixel Palette ====
 private val RetroGold = Color(0xFFFFD700)
@@ -386,124 +395,382 @@ fun GameRoomScreenContent(
         }
     }
 
-    // Modal: Confirmation Beli Item — Framed Style
+    // Modal: Confirmation Beli Item — v2 Lebar & Canggih
     selectedItemToBuy?.let { item ->
         val userPoints = user?.points ?: 0.0
         val canAfford = userPoints >= item.tokenCost
-        // Debug log untuk trace
-        android.util.Log.d("GameRoomBuy", "canAfford check: userPoints=$userPoints, tokenCost=${item.tokenCost}, canAfford=$canAfford")
         val unlockedSlots = roomState?.unlockedSlots ?: 2
         val usedSlots = minerItems
             .filter { it.isPlacedInRoom }
             .map { it.placedSlotIndex }
             .toSet()
         val hasEmptySlot = (0 until unlockedSlots).any { it !in usedSlots }
+        val rarityColor = tierColor(item.tier)
 
-        Dialog(onDismissRequest = { selectedItemToBuy = null }) {
+        // Current stats untuk comparison
+        val placedMiners = minerItems.filter { it.isPlacedInRoom }
+        val currentPower = placedMiners.sumOf { it.powerGhs }
+        val currentRate = placedMiners.sumOf { it.pointsPerMinute }
+        val newPower = currentPower + item.powerGhs
+        val newRate = currentRate + item.pointsPerMinute
+
+        // State untuk checkbox & countdown
+        var agreeChecked by remember { mutableStateOf(false) }
+        var isBuying by remember { mutableStateOf(false) }
+        var countdownSec by remember { mutableStateOf(30) }
+
+        // Countdown timer
+        LaunchedEffect(selectedItemToBuy) {
+            countdownSec = 30
+            while (countdownSec > 0 && selectedItemToBuy != null) {
+                kotlinx.coroutines.delay(1000L)
+                countdownSec--
+            }
+            if (countdownSec <= 0) {
+                selectedItemToBuy = null
+            }
+        }
+
+        // Animasi pulse untuk icon miner
+        val infiniteTransition = rememberInfiniteTransition(label = "miner_pulse")
+        val pulseScale by infiniteTransition.animateFloat(
+            initialValue = 0.95f,
+            targetValue = 1.05f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1500, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "pulse"
+        )
+        val rotateAngle by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(8000, easing = androidx.compose.animation.core.LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "rotate"
+        )
+
+        Dialog(
+            onDismissRequest = { if (!isBuying) selectedItemToBuy = null },
+            properties = androidx.compose.ui.window.DialogProperties(
+                usePlatformDefaultWidth = false
+            )
+        ) {
             Surface(
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(24.dp),
                 color = Color(0xFF0F172A),
                 border = BorderStroke(
-                    width = 1.5.dp,
+                    width = 2.dp,
                     brush = Brush.linearGradient(
-                        colors = listOf(EmeraldPrimary, GoldVip)
+                        colors = listOf(rarityColor, GoldVip, rarityColor)
                     )
                 ),
-                shadowElevation = 16.dp,
-                modifier = Modifier.fillMaxWidth()
+                shadowElevation = 24.dp,
+                modifier = Modifier
+                    .fillMaxWidth(0.95f)
+                    .widthIn(max = 520.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(R.drawable.micro_chip),
-                            contentDescription = item.name,
-                            modifier = Modifier.size(32.dp)
+                    // ==== Header: Close + Countdown ====
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(
+                            color = rarityColor.copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(20.dp),
+                            border = BorderStroke(1.dp, rarityColor.copy(alpha = 0.4f))
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Timer,
+                                    contentDescription = null,
+                                    tint = rarityColor,
+                                    modifier = Modifier.size(12.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "${countdownSec}s",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = rarityColor
+                                )
+                            }
+                        }
+                        if (!isBuying) {
+                            IconButton(onClick = { selectedItemToBuy = null }) {
+                                Icon(
+                                    imageVector = androidx.compose.material.icons.Icons.Default.Close,
+                                    contentDescription = "Close",
+                                    tint = Color(0xFF94A3B8)
+                                )
+                            }
+                        }
+                    }
+
+                    // ==== Icon Miner Besar + Glow + Animasi ====
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(140.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        // Glow layer
+                        Box(
+                            modifier = Modifier
+                                .size(120.dp)
+                                .scale(pulseScale)
+                                .background(
+                                    brush = Brush.radialGradient(
+                                        colors = listOf(
+                                            rarityColor.copy(alpha = 0.4f),
+                                            Color.Transparent
+                                        )
+                                    ),
+                                    shape = CircleShape
+                                )
                         )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column {
-                            Text(
-                                text = "Beli " + item.name,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp,
-                                color = Color.White
+                        // Icon miner
+                        Box(
+                            modifier = Modifier
+                                .size(90.dp)
+                                .rotate(rotateAngle * 0.1f)
+                                .scale(pulseScale)
+                                .clip(RoundedCornerShape(24.dp))
+                                .background(Color(0xFF0A0E1A))
+                                .border(2.dp, rarityColor, RoundedCornerShape(24.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.micro_chip),
+                                contentDescription = item.name,
+                                modifier = Modifier.size(64.dp)
                             )
+                        }
+                        // Tier badge besar
+                        Surface(
+                            color = rarityColor,
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .offset(y = 8.dp)
+                        ) {
                             Text(
-                                text = item.description,
-                                fontSize = 11.sp,
-                                color = Color(0xFF94A3B8)
+                                text = item.tier,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Black,
+                                color = Color.Black,
+                                letterSpacing = 1.sp,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
                             )
                         }
                     }
 
+                    // ==== Nama + Deskripsi ====
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = item.name,
+                            fontWeight = FontWeight.Black,
+                            fontSize = 20.sp,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = item.description,
+                            fontSize = 12.sp,
+                            color = Color(0xFF94A3B8),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    // ==== Stat Grid 2x2 ====
                     Surface(
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(14.dp),
                         color = Color(0xFF1E293B),
-                        border = BorderStroke(1.dp, EmeraldPrimary.copy(alpha = 0.3f)),
+                        border = BorderStroke(1.dp, rarityColor.copy(alpha = 0.3f)),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Column(
-                            modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            BuyStatRow("Harga", "${item.tokenCost} RTP", GoldVip)
-                            BuyStatRow("Mining Power", "+${HashrateFormatter.format(item.powerGhs)}", EmeraldLight)
-                            BuyStatRow("Rate RTP", "+${String.format(Locale.US, "%.4f", item.pointsPerMinute)}/mnt", EmeraldLight)
-                            BuyStatRow("Saldo Anda", "${user?.points ?: 0} RTP", Color.White)
+                        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                MiniStatBox(
+                                    icon = "💰",
+                                    label = "Harga",
+                                    value = "${item.tokenCost} RTP",
+                                    valueColor = GoldVip,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                MiniStatBox(
+                                    icon = "⚡",
+                                    label = "Power",
+                                    value = "+${HashrateFormatter.format(item.powerGhs)}",
+                                    valueColor = EmeraldLight,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                MiniStatBox(
+                                    icon = "📈",
+                                    label = "Rate",
+                                    value = "+${String.format(Locale.US, "%.4f", item.pointsPerMinute)}/mnt",
+                                    valueColor = EmeraldLight,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                MiniStatBox(
+                                    icon = "💎",
+                                    label = "Saldo",
+                                    value = String.format(Locale.US, "%.2f", userPoints),
+                                    valueColor = if (canAfford) Color.White else Color(0xFFEF4444),
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
                         }
                     }
 
+                    // ==== Comparison Before → After ====
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = Color(0xFF0A0E1A),
+                        border = BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.3f)),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                text = "📊 PERBANDINGAN",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = EmeraldLight,
+                                letterSpacing = 1.sp
+                            )
+                            ComparisonRow(
+                                label = "Power",
+                                before = HashrateFormatter.format(currentPower),
+                                after = HashrateFormatter.format(newPower),
+                                delta = "+${HashrateFormatter.format(item.powerGhs)}"
+                            )
+                            ComparisonRow(
+                                label = "Rate",
+                                before = String.format(Locale.US, "%.4f", currentRate),
+                                after = String.format(Locale.US, "%.4f", newRate),
+                                delta = "+${String.format(Locale.US, "%.4f", item.pointsPerMinute)}"
+                            )
+                        }
+                    }
+
+                    // ==== Warning kalau tidak cukup ====
                     if (!canAfford) {
                         Surface(
                             color = Color(0xFFEF4444).copy(alpha = 0.12f),
-                            shape = RoundedCornerShape(8.dp)
+                            shape = RoundedCornerShape(10.dp),
+                            border = BorderStroke(1.dp, Color(0xFFEF4444).copy(alpha = 0.4f))
                         ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("⚠️", fontSize = 14.sp)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "RTP tidak mencukupi — kurang ${String.format(Locale.US, "%.2f", item.tokenCost - userPoints)} RTP",
+                                    fontSize = 11.sp,
+                                    color = Color(0xFFEF4444),
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    }
+
+                    // ==== Confirmation Checkbox ====
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable(enabled = canAfford && !isBuying) { agreeChecked = !agreeChecked }
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        androidx.compose.material3.Checkbox(
+                            checked = agreeChecked,
+                            onCheckedChange = { agreeChecked = it },
+                            enabled = canAfford && !isBuying,
+                            colors = androidx.compose.material3.CheckboxDefaults.colors(
+                                checkedColor = EmeraldLight,
+                                uncheckedColor = Color(0xFF475569)
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Saya setuju membeli ${item.name} dengan ${item.tokenCost} RTP",
+                            fontSize = 11.sp,
+                            color = Color(0xFF94A3B8)
+                        )
+                    }
+
+                    // ==== Tombol Full-width ====
+                    Button(
+                        onClick = {
+                            if (isBuying) return@Button
+                            try {
+                                isBuying = true
+                                if (hasEmptySlot) {
+                                    onBuyAndPlaceGameMinerItem(item.id)
+                                } else {
+                                    onBuyGameMinerItem(item.id)
+                                }
+                            } catch (e: Exception) {
+                                android.util.Log.e("GameRoomBuy", "❌ Error onClick: " + e.message, e)
+                                isBuying = false
+                            }
+                        },
+                        enabled = canAfford && agreeChecked && !isBuying,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (canAfford && agreeChecked) EmeraldPrimary else Color(0xFF334155),
+                            disabledContainerColor = Color(0xFF334155)
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        if (isBuying) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                strokeWidth = 2.dp,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Memproses...", fontWeight = FontWeight.Bold)
+                        } else {
                             Text(
-                                text = "RTP tidak mencukupi - kurang ${String.format(Locale.US, "%.2f", item.tokenCost - (user?.points ?: 0.0))} RTP",
-                                fontSize = 11.sp,
-                                color = Color(0xFFEF4444),
-                                modifier = Modifier.padding(8.dp)
+                                text = if (hasEmptySlot) "🔥 BELI & PASANG" else "🔥 BELI SAHAJA",
+                                fontWeight = FontWeight.Black,
+                                fontSize = 14.sp,
+                                letterSpacing = 1.sp
                             )
                         }
                     }
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
+                    // ==== Tombol Batal ====
+                    if (!isBuying) {
                         OutlinedButton(
                             onClick = { selectedItemToBuy = null },
-                            modifier = Modifier.weight(1f),
-                            border = BorderStroke(1.dp, Color(0xFF475569))
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(44.dp),
+                            border = BorderStroke(1.dp, Color(0xFF475569)),
+                            shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Batal", color = Color(0xFF94A3B8))
-                        }
-                        Button(
-                            onClick = {
-                                android.util.Log.d("GameRoomBuy", "🔘 Button diklik: item=${item.id}, hasEmptySlot=$hasEmptySlot, canAfford=$canAfford")
-                                try {
-                                    if (hasEmptySlot) {
-                                        android.util.Log.d("GameRoomBuy", "→ onBuyAndPlaceGameMinerItem")
-                                        onBuyAndPlaceGameMinerItem(item.id)
-                                    } else {
-                                        android.util.Log.d("GameRoomBuy", "→ onBuyGameMinerItem")
-                                        onBuyGameMinerItem(item.id)
-                                    }
-                                } catch (e: Exception) {
-                                    android.util.Log.e("GameRoomBuy", "❌ Error onClick: " + e.message, e)
-                                }
-                                selectedItemToBuy = null
-                            },
-                            enabled = canAfford,
-                            modifier = Modifier.weight(1.5f),
-                            colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
-                        ) {
-                            Text(
-                                text = if (hasEmptySlot) "Beli & Pasang" else "Beli Sahaja",
-                                fontWeight = FontWeight.Bold
-                            )
+                            Text("Batal", color = Color(0xFF94A3B8), fontWeight = FontWeight.Medium)
                         }
                     }
                 }
@@ -2002,3 +2269,86 @@ private fun BuyStatRow(label: String, value: String, valueColor: Color) {
     }
 }
 
+
+
+@Composable
+private fun MiniStatBox(
+    icon: String,
+    label: String,
+    value: String,
+    valueColor: Color,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        shape = RoundedCornerShape(10.dp),
+        color = Color(0xFF0A0E1A),
+        border = BorderStroke(1.dp, valueColor.copy(alpha = 0.25f)),
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier.padding(10.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(icon, fontSize = 12.sp)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = label.uppercase(),
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF94A3B8),
+                    letterSpacing = 0.5.sp
+                )
+            }
+            Text(
+                text = value,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Black,
+                color = valueColor
+            )
+        }
+    }
+}
+
+@Composable
+private fun ComparisonRow(
+    label: String,
+    before: String,
+    after: String,
+    delta: String
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            fontSize = 11.sp,
+            color = Color(0xFF94A3B8),
+            modifier = Modifier.width(60.dp)
+        )
+        Text(
+            text = before,
+            fontSize = 11.sp,
+            color = Color.White.copy(alpha = 0.5f)
+        )
+        Text(
+            text = " → ",
+            fontSize = 11.sp,
+            color = Color(0xFF94A3B8)
+        )
+        Text(
+            text = after,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = delta,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Black,
+            color = EmeraldLight
+        )
+    }
+}
