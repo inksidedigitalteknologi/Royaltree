@@ -959,6 +959,7 @@ fun MainAffiliateAppContent(
                     )
             ) {
             com.inkside.digital.ui.components.AnimatedBackground {
+                android.util.Log.d("NAV_DEBUG", "🔵 when(currentScreen) = $currentScreen")
                 when (currentScreen) {
                 AppScreen.HOME -> {
                     HomeScreen(
