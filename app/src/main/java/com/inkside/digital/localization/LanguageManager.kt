@@ -3912,6 +3912,388 @@ object LanguageManager {
             AppLanguage.JAPANESE to "取引をキャンセル"
         ),
 
+
+        // ========== APP MODALS ==========
+        "appmodal_withdraw_account_holder" to mapOf(
+            AppLanguage.INDONESIAN to "Nama Pemilik Rekening / Akun",
+            AppLanguage.ENGLISH to "Account Holder Name",
+            AppLanguage.SPANISH to "Nombre del Titular",
+            AppLanguage.CHINESE to "账户持有人姓名",
+            AppLanguage.ARABIC to "اسم صاحب الحساب",
+            AppLanguage.JAPANESE to "口座名義人"
+        ),
+        "appmodal_withdraw_amount" to mapOf(
+            AppLanguage.INDONESIAN to "Jumlah Penarikan (Rp)",
+            AppLanguage.ENGLISH to "Withdrawal Amount (Rp)",
+            AppLanguage.SPANISH to "Monto de Retiro (Rp)",
+            AppLanguage.CHINESE to "提款金额（Rp）",
+            AppLanguage.ARABIC to "مبلغ السحب (Rp)",
+            AppLanguage.JAPANESE to "引き出し金額 (Rp)"
+        ),
+        "appmodal_withdraw_ref_id" to mapOf(
+            AppLanguage.INDONESIAN to "Ref ID:",
+            AppLanguage.ENGLISH to "Ref ID:",
+            AppLanguage.SPANISH to "ID de Referencia:",
+            AppLanguage.CHINESE to "参考 ID：",
+            AppLanguage.ARABIC to "معرف المرجع:",
+            AppLanguage.JAPANESE to "参照ID:"
+        ),
+        "appmodal_withdraw_destination" to mapOf(
+            AppLanguage.INDONESIAN to "Tujuan:",
+            AppLanguage.ENGLISH to "Destination:",
+            AppLanguage.SPANISH to "Destino:",
+            AppLanguage.CHINESE to "目的地：",
+            AppLanguage.ARABIC to "الوجهة:",
+            AppLanguage.JAPANESE to "送金先:"
+        ),
+        "appmodal_withdraw_net" to mapOf(
+            AppLanguage.INDONESIAN to "Nominal Net:",
+            AppLanguage.ENGLISH to "Net Amount:",
+            AppLanguage.SPANISH to "Monto Neto:",
+            AppLanguage.CHINESE to "净额：",
+            AppLanguage.ARABIC to "المبلغ الصافي:",
+            AppLanguage.JAPANESE to "純額:"
+        ),
+        "appmodal_withdraw_hmac" to mapOf(
+            AppLanguage.INDONESIAN to "HMAC Sig:",
+            AppLanguage.ENGLISH to "HMAC Sig:",
+            AppLanguage.SPANISH to "Firma HMAC:",
+            AppLanguage.CHINESE to "HMAC 签名：",
+            AppLanguage.ARABIC to "توقيع HMAC:",
+            AppLanguage.JAPANESE to "HMAC署名:"
+        ),
+        "appmodal_withdraw_done_close" to mapOf(
+            AppLanguage.INDONESIAN to "Selesai & Tutup",
+            AppLanguage.ENGLISH to "Done & Close",
+            AppLanguage.SPANISH to "Listo y Cerrar",
+            AppLanguage.CHINESE to "完成并关闭",
+            AppLanguage.ARABIC to "إنهاء وإغلاق",
+            AppLanguage.JAPANESE to "完了して閉じる"
+        ),
+        "appmodal_newlink_slug" to mapOf(
+            AppLanguage.INDONESIAN to "Custom Slug URL",
+            AppLanguage.ENGLISH to "Custom Slug URL",
+            AppLanguage.SPANISH to "URL Slug Personalizado",
+            AppLanguage.CHINESE to "自定义 Slug URL",
+            AppLanguage.ARABIC to "URL Slug مخصص",
+            AppLanguage.JAPANESE to "カスタムSlug URL"
+        ),
+        "appmodal_newlink_subid" to mapOf(
+            AppLanguage.INDONESIAN to "SubID Tracking (opsional: ig, tiktok, wa)",
+            AppLanguage.ENGLISH to "SubID Tracking (optional: ig, tiktok, wa)",
+            AppLanguage.SPANISH to "Seguimiento SubID (opcional: ig, tiktok, wa)",
+            AppLanguage.CHINESE to "SubID 跟踪（可选：ig、tiktok、wa）",
+            AppLanguage.ARABIC to "تتبع SubID (اختياري: ig، tiktok، wa)",
+            AppLanguage.JAPANESE to "SubIDトラッキング（オプション: ig、tiktok、wa）"
+        ),
+        "appmodal_newlink_create" to mapOf(
+            AppLanguage.INDONESIAN to "Buat Tautan & Mulai Melacak",
+            AppLanguage.ENGLISH to "Create Link & Start Tracking",
+            AppLanguage.SPANISH to "Crear Enlace y Comenzar a Rastrear",
+            AppLanguage.CHINESE to "创建链接并开始跟踪",
+            AppLanguage.ARABIC to "إنشاء رابط وبدء التتبع",
+            AppLanguage.JAPANESE to "リンク作成と追跡開始"
+        ),
+        "appmodal_upgrade_basic" to mapOf(
+            AppLanguage.INDONESIAN to "Paket dasar",
+            AppLanguage.ENGLISH to "Basic Package",
+            AppLanguage.SPANISH to "Paquete Básico",
+            AppLanguage.CHINESE to "基础套餐",
+            AppLanguage.ARABIC to "الحزمة الأساسية",
+            AppLanguage.JAPANESE to "ベーシックパッケージ"
+        ),
+        "appmodal_upgrade_coming_soon" to mapOf(
+            AppLanguage.INDONESIAN to "Coming Soon",
+            AppLanguage.ENGLISH to "Coming Soon",
+            AppLanguage.SPANISH to "Próximamente",
+            AppLanguage.CHINESE to "即将推出",
+            AppLanguage.ARABIC to "قريبًا",
+            AppLanguage.JAPANESE to "近日公開"
+        ),
+        "appmodal_upgrade_retry" to mapOf(
+            AppLanguage.INDONESIAN to "Cuba Lagi",
+            AppLanguage.ENGLISH to "Try Again",
+            AppLanguage.SPANISH to "Intentar de Nuevo",
+            AppLanguage.CHINESE to "重试",
+            AppLanguage.ARABIC to "حاول مرة أخرى",
+            AppLanguage.JAPANESE to "もう一度"
+        ),
+        "appmodal_redeem_title" to mapOf(
+            AppLanguage.INDONESIAN to "Tukar RTP (Royaltree Point) Global",
+            AppLanguage.ENGLISH to "Redeem Global RTP (Royaltree Point)",
+            AppLanguage.SPANISH to "Canjear RTP (Royaltree Point) Global",
+            AppLanguage.CHINESE to "兑换全球 RTP（Royaltree Point）",
+            AppLanguage.ARABIC to "استبدال RTP (Royaltree Point) العالمي",
+            AppLanguage.JAPANESE to "グローバルRTP（Royaltree Point）を交換"
+        ),
+        "appmodal_redeem_global_standard" to mapOf(
+            AppLanguage.INDONESIAN to "🌍 Standar Nilai RTP Global",
+            AppLanguage.ENGLISH to "🌍 Global RTP Value Standard",
+            AppLanguage.SPANISH to "🌍 Estándar de Valor RTP Global",
+            AppLanguage.CHINESE to "🌍 全球 RTP 价值标准",
+            AppLanguage.ARABIC to "🌍 معيار قيمة RTP العالمي",
+            AppLanguage.JAPANESE to "🌍 グローバルRTP価値基準"
+        ),
+        "appmodal_redeem_send_to_other" to mapOf(
+            AppLanguage.INDONESIAN to "Mau kirim poin ke pengguna lain?",
+            AppLanguage.ENGLISH to "Want to send points to other users?",
+            AppLanguage.SPANISH to "¿Quieres enviar puntos a otros usuarios?",
+            AppLanguage.CHINESE to "想向其他用户发送积分吗？",
+            AppLanguage.ARABIC to "هل تريد إرسال نقاط لمستخدمين آخرين؟",
+            AppLanguage.JAPANESE to "他のユーザーにポイントを送りたいですか？"
+        ),
+        "appmodal_redeem_use_qr" to mapOf(
+            AppLanguage.INDONESIAN to "Gunakan Transfer RTP via Scan QR",
+            AppLanguage.ENGLISH to "Use RTP Transfer via QR Scan",
+            AppLanguage.SPANISH to "Usar Transferencia RTP vía Escaneo QR",
+            AppLanguage.CHINESE to "通过 QR 扫描使用 RTP 转账",
+            AppLanguage.ARABIC to "استخدام تحويل RTP عبر مسح QR",
+            AppLanguage.JAPANESE to "QRスキャンでRTP送金を使用"
+        ),
+        "appmodal_redeem_transfer_arrow" to mapOf(
+            AppLanguage.INDONESIAN to "Transfer >",
+            AppLanguage.ENGLISH to "Transfer >",
+            AppLanguage.SPANISH to "Transferir >",
+            AppLanguage.CHINESE to "转账 >",
+            AppLanguage.ARABIC to "تحويل >",
+            AppLanguage.JAPANESE to "送金 >"
+        ),
+        "appmodal_redeem_currency" to mapOf(
+            AppLanguage.INDONESIAN to "Pilih Mata Uang Pencairan Poin:",
+            AppLanguage.ENGLISH to "Select Point Withdrawal Currency:",
+            AppLanguage.SPANISH to "Seleccionar Moneda de Retiro de Puntos:",
+            AppLanguage.CHINESE to "选择积分提取货币：",
+            AppLanguage.ARABIC to "اختر عملة سحب النقاط:",
+            AppLanguage.JAPANESE to "ポイント換金通貨を選択:"
+        ),
+        "appmodal_redeem_payment_channel" to mapOf(
+            AppLanguage.INDONESIAN to "Saluran Pembayaran Poin:",
+            AppLanguage.ENGLISH to "Point Payment Channel:",
+            AppLanguage.SPANISH to "Canal de Pago de Puntos:",
+            AppLanguage.CHINESE to "积分支付渠道：",
+            AppLanguage.ARABIC to "قناة دفع النقاط:",
+            AppLanguage.JAPANESE to "ポイント支払いチャネル:"
+        ),
+        "appmodal_redeem_amount" to mapOf(
+            AppLanguage.INDONESIAN to "Jumlah Poin yang Ditukar:",
+            AppLanguage.ENGLISH to "Points Amount to Redeem:",
+            AppLanguage.SPANISH to "Cantidad de Puntos a Canjear:",
+            AppLanguage.CHINESE to "兑换积分数量：",
+            AppLanguage.ARABIC to "مبلغ النقاط للاستبدال:",
+            AppLanguage.JAPANESE to "交換するポイント数:"
+        ),
+        "appmodal_redeem_total_received" to mapOf(
+            AppLanguage.INDONESIAN to "Total yang Diterima:",
+            AppLanguage.ENGLISH to "Total Received:",
+            AppLanguage.SPANISH to "Total Recibido:",
+            AppLanguage.CHINESE to "总收款：",
+            AppLanguage.ARABIC to "الإجمالي المستلم:",
+            AppLanguage.JAPANESE to "受取総額:"
+        ),
+        "appmodal_redeem_global_usd" to mapOf(
+            AppLanguage.INDONESIAN to "Nilai Acuan Global (USD):",
+            AppLanguage.ENGLISH to "Global Reference Value (USD):",
+            AppLanguage.SPANISH to "Valor de Referencia Global (USD):",
+            AppLanguage.CHINESE to "全球参考价值（USD）：",
+            AppLanguage.ARABIC to "القيمة المرجعية العالمية (USD):",
+            AppLanguage.JAPANESE to "グローバル参照値 (USD):"
+        ),
+        "appmodal_redeem_confirm" to mapOf(
+            AppLanguage.INDONESIAN to "Konfirmasi Penukaran Poin Global",
+            AppLanguage.ENGLISH to "Confirm Global Point Exchange",
+            AppLanguage.SPANISH to "Confirmar Canje de Puntos Global",
+            AppLanguage.CHINESE to "确认全球积分兑换",
+            AppLanguage.ARABIC to "تأكيد استبدال النقاط العالمي",
+            AppLanguage.JAPANESE to "グローバルポイント交換の確認"
+        ),
+        "appmodal_coupon_buy_title" to mapOf(
+            AppLanguage.INDONESIAN to "Beli Kupon Investasi",
+            AppLanguage.ENGLISH to "Buy Investment Coupon",
+            AppLanguage.SPANISH to "Comprar Cupón de Inversión",
+            AppLanguage.CHINESE to "购买投资优惠券",
+            AppLanguage.ARABIC to "شراء قسيمة استثمار",
+            AppLanguage.JAPANESE to "投資クーポンを購入"
+        ),
+        "appmodal_coupon_apy" to mapOf(
+            AppLanguage.INDONESIAN to "Estimasi Return (APY):",
+            AppLanguage.ENGLISH to "Estimated Return (APY):",
+            AppLanguage.SPANISH to "Retorno Estimado (APY):",
+            AppLanguage.CHINESE to "预计回报（APY）：",
+            AppLanguage.ARABIC to "العائد المتوقع (APY):",
+            AppLanguage.JAPANESE to "予想リターン (APY):"
+        ),
+        "appmodal_coupon_unit_price" to mapOf(
+            AppLanguage.INDONESIAN to "Harga per Kupon:",
+            AppLanguage.ENGLISH to "Price per Coupon:",
+            AppLanguage.SPANISH to "Precio por Cupón:",
+            AppLanguage.CHINESE to "每张优惠券价格：",
+            AppLanguage.ARABIC to "السعر لكل قسيمة:",
+            AppLanguage.JAPANESE to "クーポン単価:"
+        ),
+        "appmodal_coupon_duration" to mapOf(
+            AppLanguage.INDONESIAN to "Durasi Jatuh Tempo:",
+            AppLanguage.ENGLISH to "Maturity Duration:",
+            AppLanguage.SPANISH to "Duración de Vencimiento:",
+            AppLanguage.CHINESE to "到期期限：",
+            AppLanguage.ARABIC to "مدة الاستحقاق:",
+            AppLanguage.JAPANESE to "満期期間:"
+        ),
+        "common_days_suffix" to mapOf(
+            AppLanguage.INDONESIAN to " Hari",
+            AppLanguage.ENGLISH to " Days",
+            AppLanguage.SPANISH to " Días",
+            AppLanguage.CHINESE to " 天",
+            AppLanguage.ARABIC to " يوم",
+            AppLanguage.JAPANESE to " 日"
+        ),
+        "appmodal_coupon_quantity" to mapOf(
+            AppLanguage.INDONESIAN to "Jumlah Kupon:",
+            AppLanguage.ENGLISH to "Coupon Quantity:",
+            AppLanguage.SPANISH to "Cantidad de Cupones:",
+            AppLanguage.CHINESE to "优惠券数量：",
+            AppLanguage.ARABIC to "عدد القسائم:",
+            AppLanguage.JAPANESE to "クーポン数:"
+        ),
+        "appmodal_coupon_total_cost" to mapOf(
+            AppLanguage.INDONESIAN to "Total Biaya:",
+            AppLanguage.ENGLISH to "Total Cost:",
+            AppLanguage.SPANISH to "Costo Total:",
+            AppLanguage.CHINESE to "总成本：",
+            AppLanguage.ARABIC to "التكلفة الإجمالية:",
+            AppLanguage.JAPANESE to "総費用:"
+        ),
+        "appmodal_coupon_buy_portfolio" to mapOf(
+            AppLanguage.INDONESIAN to "Beli & Tambah ke Portofolio",
+            AppLanguage.ENGLISH to "Buy & Add to Portfolio",
+            AppLanguage.SPANISH to "Comprar y Agregar al Portafolio",
+            AppLanguage.CHINESE to "购买并添加到投资组合",
+            AppLanguage.ARABIC to "شراء وإضافة إلى المحفظة",
+            AppLanguage.JAPANESE to "購入してポートフォリオに追加"
+        ),
+        "appmodal_2fa_otp_label" to mapOf(
+            AppLanguage.INDONESIAN to "Masukkan 6 Digit OTP",
+            AppLanguage.ENGLISH to "Enter 6-Digit OTP",
+            AppLanguage.SPANISH to "Ingrese OTP de 6 Dígitos",
+            AppLanguage.CHINESE to "输入 6 位 OTP",
+            AppLanguage.ARABIC to "أدخل OTP المكون من 6 أرقام",
+            AppLanguage.JAPANESE to "6桁のOTPを入力"
+        ),
+        "appmodal_2fa_disable" to mapOf(
+            AppLanguage.INDONESIAN to "Matikan 2FA",
+            AppLanguage.ENGLISH to "Disable 2FA",
+            AppLanguage.SPANISH to "Desactivar 2FA",
+            AppLanguage.CHINESE to "禁用 2FA",
+            AppLanguage.ARABIC to "تعطيل 2FA",
+            AppLanguage.JAPANESE to "2FAを無効化"
+        ),
+        "appmodal_2fa_verify_save" to mapOf(
+            AppLanguage.INDONESIAN to "Verifikasi & Simpan",
+            AppLanguage.ENGLISH to "Verify & Save",
+            AppLanguage.SPANISH to "Verificar y Guardar",
+            AppLanguage.CHINESE to "验证并保存",
+            AppLanguage.ARABIC to "التحقق والحفظ",
+            AppLanguage.JAPANESE to "確認して保存"
+        ),
+
+
+        // ========== APP MODALS (SISA) ==========
+        "appmodal_listcoupon_title" to mapOf(
+            AppLanguage.INDONESIAN to "Jual ke Pasar Sekunder",
+            AppLanguage.ENGLISH to "Sell to Secondary Market",
+            AppLanguage.SPANISH to "Vender al Mercado Secundario",
+            AppLanguage.CHINESE to "出售到二级市场",
+            AppLanguage.ARABIC to "البيع في السوق الثانوي",
+            AppLanguage.JAPANESE to "セカンダリ市場に売却"
+        ),
+        "appmodal_listcoupon_price" to mapOf(
+            AppLanguage.INDONESIAN to "Harga Jual di Pasar Sekunder (Rp)",
+            AppLanguage.ENGLISH to "Selling Price in Secondary Market (Rp)",
+            AppLanguage.SPANISH to "Precio de Venta en el Mercado Secundario (Rp)",
+            AppLanguage.CHINESE to "二级市场售价（Rp）",
+            AppLanguage.ARABIC to "سعر البيع في السوق الثانوي (Rp)",
+            AppLanguage.JAPANESE to "セカンダリ市場の販売価格 (Rp)"
+        ),
+        "appmodal_listcoupon_cancel" to mapOf(
+            AppLanguage.INDONESIAN to "Batal Jual",
+            AppLanguage.ENGLISH to "Cancel Sell",
+            AppLanguage.SPANISH to "Cancelar Venta",
+            AppLanguage.CHINESE to "取消出售",
+            AppLanguage.ARABIC to "إلغاء البيع",
+            AppLanguage.JAPANESE to "売却をキャンセル"
+        ),
+        "appmodal_adminreview_title" to mapOf(
+            AppLanguage.INDONESIAN to "Verifikasi Admin Manual",
+            AppLanguage.ENGLISH to "Manual Admin Verification",
+            AppLanguage.SPANISH to "Verificación Manual del Administrador",
+            AppLanguage.CHINESE to "手动管理员验证",
+            AppLanguage.ARABIC to "التحقق اليدوي من المسؤول",
+            AppLanguage.JAPANESE to "手動管理者認証"
+        ),
+        "appmodal_adminreview_gross" to mapOf(
+            AppLanguage.INDONESIAN to "Nominal Kotor:",
+            AppLanguage.ENGLISH to "Gross Amount:",
+            AppLanguage.SPANISH to "Monto Bruto:",
+            AppLanguage.CHINESE to "总金额：",
+            AppLanguage.ARABIC to "المبلغ الإجمالي:",
+            AppLanguage.JAPANESE to "総額:"
+        ),
+        "appmodal_adminreview_fee" to mapOf(
+            AppLanguage.INDONESIAN to "Biaya:",
+            AppLanguage.ENGLISH to "Fee:",
+            AppLanguage.SPANISH to "Tarifa:",
+            AppLanguage.CHINESE to "费用：",
+            AppLanguage.ARABIC to "الرسوم:",
+            AppLanguage.JAPANESE to "手数料:"
+        ),
+        "appmodal_adminreview_net" to mapOf(
+            AppLanguage.INDONESIAN to "Bersih Dibayarkan:",
+            AppLanguage.ENGLISH to "Net Paid:",
+            AppLanguage.SPANISH to "Neto Pagado:",
+            AppLanguage.CHINESE to "净支付额：",
+            AppLanguage.ARABIC to "الصافي المدفوع:",
+            AppLanguage.JAPANESE to "純支払額:"
+        ),
+        "appmodal_adminreview_note" to mapOf(
+            AppLanguage.INDONESIAN to "Catatan Validasi Admin",
+            AppLanguage.ENGLISH to "Admin Validation Note",
+            AppLanguage.SPANISH to "Nota de Validación del Administrador",
+            AppLanguage.CHINESE to "管理员验证备注",
+            AppLanguage.ARABIC to "ملاحظة التحقق من المسؤول",
+            AppLanguage.JAPANESE to "管理者検証メモ"
+        ),
+        "appmodal_adminreview_reject" to mapOf(
+            AppLanguage.INDONESIAN to "Tolak & Revert",
+            AppLanguage.ENGLISH to "Reject & Revert",
+            AppLanguage.SPANISH to "Rechazar y Revertir",
+            AppLanguage.CHINESE to "拒绝并回滚",
+            AppLanguage.ARABIC to "رفض وإرجاع",
+            AppLanguage.JAPANESE to "拒否して元に戻す"
+        ),
+        "appmodal_adminreview_approve" to mapOf(
+            AppLanguage.INDONESIAN to "Setujui & Bayar",
+            AppLanguage.ENGLISH to "Approve & Pay",
+            AppLanguage.SPANISH to "Aprobar y Pagar",
+            AppLanguage.CHINESE to "批准并支付",
+            AppLanguage.ARABIC to "الموافقة والدفع",
+            AppLanguage.JAPANESE to "承認して支払う"
+        ),
+        "appmodal_language_title" to mapOf(
+            AppLanguage.INDONESIAN to "Pilih Bahasa Internasional",
+            AppLanguage.ENGLISH to "Select International Language",
+            AppLanguage.SPANISH to "Seleccionar Idioma Internacional",
+            AppLanguage.CHINESE to "选择国际语言",
+            AppLanguage.ARABIC to "اختر اللغة الدولية",
+            AppLanguage.JAPANESE to "国際言語を選択"
+        ),
+        "appmodal_2fa_secret_key" to mapOf(
+            AppLanguage.INDONESIAN to "Secret Key: ",
+            AppLanguage.ENGLISH to "Secret Key: ",
+            AppLanguage.SPANISH to "Clave Secreta: ",
+            AppLanguage.CHINESE to "密钥：",
+            AppLanguage.ARABIC to "المفتاح السري: ",
+            AppLanguage.JAPANESE to "シークレットキー: "
+        ),
+
     )
 
     fun getString(key: String, language: AppLanguage): String {
