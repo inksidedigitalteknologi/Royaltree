@@ -166,11 +166,19 @@ class MainActivity : ComponentActivity() {
         } catch (e: Exception) {
             android.util.Log.e("MainActivity", "❌ Failed to schedule MiningWorker: ${e.message}")
         }
-        // Init IapManager
+        // Init IapManager — DISABLED untuk debug blank screen
+        // try {
+        //     com.inkside.digital.util.IapManager.connect(this, this)
+        // } catch (e: Exception) {
+        //     android.util.Log.e("IAP", "connect failed: ${e.message}", e)
+        // }
+
+        // DEBUG: Force skip onboarding
         try {
-            com.inkside.digital.util.IapManager.connect(this, this)
+            com.inkside.digital.data.preferences.AppThemePreferences.setOnboarded(this, true)
+            android.util.Log.d("DEBUG_FORCE_ONBOARDED", "✅ Onboarded = true")
         } catch (e: Exception) {
-            android.util.Log.e("IAP", "connect failed: ${e.message}", e)
+            android.util.Log.e("DEBUG_FORCE_ONBOARDED", "failed: ${e.message}")
         }
 
         setContent {
