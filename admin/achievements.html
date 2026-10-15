@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Achievements — Royaltree Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/admin.css" rel="stylesheet">
+  <script>
+    (function() {
+      if (!localStorage.getItem('royaltree_admin_token')) {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+  <style>
+    .tier-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tier-BRONZE    { background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; }
+    .tier-SILVER    { background: #e5e7eb; color: #374151; border: 1px solid #9ca3af; }
+    .tier-GOLD      { background: #fef9c3; color: #854d0e; border: 1px solid #eab308; }
+    .tier-DIAMOND   { background: #dbeafe; color: #1e40af; border: 1px solid #3b82f6; }
+    .tier-LEGENDARY { background: #fce7f3; color: #9d174d; border: 1px solid #ec4899; }
+    .ach-icon {
+      font-size: 24px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: #f1f5f9;
+    }
+    .table-row-ach:hover { background: #f8fafc; }
+    .reward-chip {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #d1fae5;
+      color: #065f46;
+      font-weight: 600;
+      margin-right: 4px;
+    }
+    .reward-chip.badge-chip { background: #ede9fe; color: #5b21b6; }
+    .reward-chip.frame-chip { background: #fce7f3; color: #9d174d; }
+    .skeleton {
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 6px;
+      height: 16px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .action-btn {
+      padding: 2px 8px;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="d-flex">
+  <div id="admin-sidebar"></div>
+  <div class="flex-grow-1" style="min-width:0;">
+    <div id="admin-navbar"></div>
+
+    <main class="admin-content">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+          <h4 class="mb-1 fw-bold">🏆 Achievements</h4>
+          <p class="text-muted mb-0 small">Kelola achievement, tier, kondisi, dan reward</p>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-warning" id="seedBtn">
+            <i class="bi bi-database-add me-1"></i> Seed Catalog
+          </button>
+          <button class="btn btn-sm btn-outline-secondary" id="exportBtn">
+            <i class="bi bi-download me-1"></i> Export
+          </button>
+          <button class="btn btn-sm btn-outline-secondary" id="refreshBtn">
+            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+          </button>
+          <button class="btn btn-sm btn-primary" id="createBtn">
+            <i class="bi bi-plus-lg me-1"></i> Tambah
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="row g-3 mb-4" id="statsRow">
+        <div class="col-6 col-md-2">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-icon bg-primary-subtle text-primary mb-2">
+                <i class="bi bi-trophy"></i>
+              </div>
+              <div class="stat-value" id="statTotal">-</div>
+              <div class="stat-label">Total</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-icon bg-success-subtle text-success mb-2">
+                <i class="bi bi-check-circle"></i>
+              </div>
+              <div class="stat-value" id="statActive">-</div>
+              <div class="stat-label">Active</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-icon bg-warning-subtle text-warning mb-2">🥉</div>
+              <div class="stat-value" id="statBronze">-</div>
+              <div class="stat-label">Bronze</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-icon bg-light text-dark mb-2">🥈</div>
+              <div class="stat-value" id="statSilver">-</div>
+              <div class="stat-label">Silver</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-icon bg-warning-subtle text-warning mb-2">🥇</div>
+              <div class="stat-value" id="statGold">-</div>
+              <div class="stat-label">Gold</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-icon bg-danger-subtle text-danger mb-2">👑</div>
+              <div class="stat-value" id="statLegendary">-</div>
+              <div class="stat-label">Legendary</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="card stat-card mb-3">
+        <div class="card-body">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="🔍 Cari nama / ID...">
+            </div>
+            <div class="col-md-2">
+              <select class="form-select form-select-sm" id="filterCategory">
+                <option value="">Semua Kategori</option>
+                <option value="MINING">Mining</option>
+                <option value="STEP">Step</option>
+                <option value="REFERRAL">Referral</option>
+                <option value="MINI_GAME">Mini-Game</option>
+                <option value="WITHDRAWAL">Withdrawal</option>
+                <option value="SOCIAL">Social</option>
+                <option value="STREAK">Streak</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select class="form-select form-select-sm" id="filterTier">
+                <option value="">Semua Tier</option>
+                <option value="BRONZE">🥉 Bronze</option>
+                <option value="SILVER">🥈 Silver</option>
+                <option value="GOLD">🥇 Gold</option>
+                <option value="DIAMOND">💎 Diamond</option>
+                <option value="LEGENDARY">👑 Legendary</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select class="form-select form-select-sm" id="filterStatus">
+                <option value="">Semua Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-sm btn-outline-secondary w-100" id="resetFilter">
+                <i class="bi bi-x-circle me-1"></i> Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card stat-card">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+              <thead>
+                <tr>
+                  <th style="width: 60px;">Icon</th>
+                  <th>Nama</th>
+                  <th>Kategori</th>
+                  <th>Tier</th>
+                  <th>Kondisi</th>
+                  <th>Reward</th>
+                  <th style="width: 80px;">Status</th>
+                  <th style="width: 140px;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody">
+                <tr><td colspan="8" class="text-center py-4 text-muted">Memuat...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div id="emptyState" class="text-center py-5 d-none">
+        <div style="font-size: 4rem;">🏆</div>
+        <h5 class="mt-3">Belum ada achievement</h5>
+        <p class="text-muted">Klik "Seed Catalog" untuk load 20 achievement default</p>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Modal Create/Edit -->
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">Tambah Achievement</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">ID (unique)</label>
+              <input type="text" class="form-control" id="fieldId" placeholder="mining_first_claim" required>
+              <div class="form-text small">Hanya huruf, angka, underscore</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Nama</label>
+              <input type="text" class="form-control" id="fieldName" placeholder="First Claim" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label small fw-bold">Deskripsi</label>
+              <input type="text" class="form-control" id="fieldDescription" placeholder="Klaim mining 1x">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Kategori</label>
+              <select class="form-select" id="fieldCategory">
+                <option value="MINING">Mining</option>
+                <option value="STEP">Step</option>
+                <option value="REFERRAL">Referral</option>
+                <option value="MINI_GAME">Mini-Game</option>
+                <option value="WITHDRAWAL">Withdrawal</option>
+                <option value="SOCIAL">Social</option>
+                <option value="STREAK">Streak</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Tier</label>
+              <select class="form-select" id="fieldTier">
+                <option value="BRONZE">🥉 Bronze</option>
+                <option value="SILVER">🥈 Silver</option>
+                <option value="GOLD">🥇 Gold</option>
+                <option value="DIAMOND">💎 Diamond</option>
+                <option value="LEGENDARY">👑 Legendary</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Icon (emoji)</label>
+              <input type="text" class="form-control" id="fieldIcon" placeholder="⛏️" maxlength="4">
+            </div>
+
+            <div class="col-12"><hr class="my-1"><h6 class="fw-bold">Kondisi</h6></div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Field Counter</label>
+              <select class="form-select" id="fieldConditionField">
+                <option value="miningClaimCount">Mining Claim Count</option>
+                <option value="totalRTPEarned">Total RTP Earned</option>
+                <option value="minersOwnedCount">Miners Owned</option>
+                <option value="totalSteps">Total Steps</option>
+                <option value="checkInStreak">Check-in Streak</option>
+                <option value="referralCount">Referral Count</option>
+                <option value="minigameHighScore">Minigame High Score</option>
+                <option value="minigamePlayCount">Minigame Play Count</option>
+                <option value="withdrawCount">Withdraw Count</option>
+                <option value="totalWithdrawAmount">Total Withdraw Amount</option>
+                <option value="chatMessageCount">Chat Message Count</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Target</label>
+              <input type="number" class="form-control" id="fieldTarget" placeholder="100" min="1" value="1">
+            </div>
+
+            <div class="col-12"><hr class="my-1"><h6 class="fw-bold">Reward</h6></div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">RTP</label>
+              <input type="number" class="form-control" id="fieldRewardRtp" placeholder="0.05" step="0.01" value="0">
+              <div class="form-text small">0 = tidak ada RTP</div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Badge ID (opsional)</label>
+              <input type="text" class="form-control" id="fieldRewardBadge" placeholder="badge_pro_miner">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Frame ID (opsional)</label>
+              <input type="text" class="form-control" id="fieldRewardFrame" placeholder="frame_collector">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Order</label>
+              <input type="number" class="form-control" id="fieldOrder" placeholder="1" value="1">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Status</label>
+              <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" id="fieldActive" checked>
+                <label class="form-check-label" for="fieldActive">Active</label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button class="btn btn-primary" id="saveBtn">
+          <i class="bi bi-check-lg me-1"></i> Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+  <div id="toast" class="toast align-items-center text-white bg-success border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body" id="toastMsg">Saved!</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/layout.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  AdminLayout.init('Achievements');
+
+  const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+  const toastEl = document.getElementById('toast');
+  const toast = new bootstrap.Toast(toastEl, { delay: 2500 });
+
+  let allAchievements = [];
+  let editMode = 'create'; // 'create' | 'edit'
+
+  // ============ HELPERS ============
+  function showToast(msg, type = 'success') {
+    toastEl.className = 'toast align-items-center text-white border-0 bg-' + (type === 'error' ? 'danger' : 'success');
+    document.getElementById('toastMsg').textContent = msg;
+    toast.show();
+  }
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  function tierClass(tier) {
+    return 'tier-' + (tier || 'BRONZE').toUpperCase();
+  }
+
+  function renderStats(list) {
+    const total = list.length;
+    const active = list.filter(a => a.active !== false).length;
+    const bronze = list.filter(a => a.tier === 'BRONZE').length;
+    const silver = list.filter(a => a.tier === 'SILVER').length;
+    const gold = list.filter(a => a.tier === 'GOLD').length;
+    const legendary = list.filter(a => a.tier === 'LEGENDARY').length;
+
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statActive').textContent = active;
+    document.getElementById('statBronze').textContent = bronze;
+    document.getElementById('statSilver').textContent = silver;
+    document.getElementById('statGold').textContent = gold;
+    document.getElementById('statLegendary').textContent = legendary;
+  }
+
+  function renderTable(list) {
+    const tbody = document.getElementById('tableBody');
+    const empty = document.getElementById('emptyState');
+
+    if (!list.length) {
+      tbody.innerHTML = '';
+      empty.classList.remove('d-none');
+      return;
+    }
+    empty.classList.add('d-none');
+
+    tbody.innerHTML = list.map(a => {
+      const reward = a.reward || {};
+      const rewardChips = [];
+      if (reward.rtp > 0) rewardChips.push(`<span class="reward-chip">💰 ${reward.rtp} RTP</span>`);
+      if (reward.badge) rewardChips.push(`<span class="reward-chip badge-chip">🎖️ badge</span>`);
+      if (reward.frame) rewardChips.push(`<span class="reward-chip frame-chip">🖼️ frame</span>`);
+      if (!rewardChips.length) rewardChips.push('<span class="text-muted small">-</span>');
+
+      const cond = a.condition || {};
+      const condText = `${escapeHtml(cond.field || '-')} ≥ ${cond.target || 0}`;
+
+      const statusBadge = a.active !== false
+        ? '<span class="badge bg-success">Active</span>'
+        : '<span class="badge bg-secondary">Inactive</span>';
+
+      return `
+        <tr class="table-row-ach">
+          <td><div class="ach-icon">${escapeHtml(a.icon || '🏆')}</div></td>
+          <td>
+            <div class="fw-bold small">${escapeHtml(a.name || '-')}</div>
+            <div class="text-muted" style="font-size: 11px;">${escapeHtml(a.id || '')}</div>
+          </td>
+          <td><span class="badge bg-light text-dark">${escapeHtml(a.category || '-')}</span></td>
+          <td><span class="tier-badge ${tierClass(a.tier)}">${escapeHtml(a.tier || 'BRONZE')}</span></td>
+          <td class="small text-muted">${condText}</td>
+          <td>${rewardChips.join(' ')}</td>
+          <td>${statusBadge}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary action-btn me-1" onclick="window.__edit('${escapeHtml(a.id)}')">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger action-btn" onclick="window.__del('${escapeHtml(a.id)}')">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  function applyFilter() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const cat = document.getElementById('filterCategory').value;
+    const tier = document.getElementById('filterTier').value;
+    const status = document.getElementById('filterStatus').value;
+
+    let filtered = allAchievements.filter(a => {
+      if (q && !((a.name || '').toLowerCase().includes(q) || (a.id || '').toLowerCase().includes(q))) return false;
+      if (cat && a.category !== cat) return false;
+      if (tier && a.tier !== tier) return false;
+      if (status === 'active' && a.active === false) return false;
+      if (status === 'inactive' && a.active !== false) return false;
+      return true;
+    });
+    renderTable(filtered);
+  }
+
+  // ============ LOAD ============
+  async function loadAll() {
+    document.getElementById('tableBody').innerHTML =
+      '<tr><td colspan="8" class="text-center py-4"><div class="spinner-border spinner-border-sm text-primary"></div></td></tr>';
+
+    const res = await AdminAPI.getAchievements();
+    if (!res.success) {
+      showToast(res.message || 'Gagal load', 'error');
+      document.getElementById('tableBody').innerHTML =
+        '<tr><td colspan="8" class="text-center py-4 text-danger">Gagal load data</td></tr>';
+      return;
+    }
+    allAchievements = (res.data || []).sort((a, b) => (a.order || 0) - (b.order || 0));
+    renderStats(allAchievements);
+    renderTable(allAchievements);
+    applyFilter();
+  }
+
+  // ============ MODAL ============
+  function clearForm() {
+    ['fieldId', 'fieldName', 'fieldDescription', 'fieldIcon', 'fieldRewardBadge', 'fieldRewardFrame'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('fieldCategory').value = 'MINING';
+    document.getElementById('fieldTier').value = 'BRONZE';
+    document.getElementById('fieldConditionField').value = 'miningClaimCount';
+    document.getElementById('fieldTarget').value = 1;
+    document.getElementById('fieldRewardRtp').value = 0;
+    document.getElementById('fieldOrder').value = 1;
+    document.getElementById('fieldActive').checked = true;
+  }
+
+  function fillForm(a) {
+    document.getElementById('fieldId').value = a.id || '';
+    document.getElementById('fieldId').disabled = true;
+    document.getElementById('fieldName').value = a.name || '';
+    document.getElementById('fieldDescription').value = a.description || '';
+    document.getElementById('fieldCategory').value = a.category || 'MINING';
+    document.getElementById('fieldTier').value = a.tier || 'BRONZE';
+    document.getElementById('fieldIcon').value = a.icon || '🏆';
+    const c = a.condition || {};
+    document.getElementById('fieldConditionField').value = c.field || 'miningClaimCount';
+    document.getElementById('fieldTarget').value = c.target || 1;
+    const r = a.reward || {};
+    document.getElementById('fieldRewardRtp').value = r.rtp || 0;
+    document.getElementById('fieldRewardBadge').value = r.badge || '';
+    document.getElementById('fieldRewardFrame').value = r.frame || '';
+    document.getElementById('fieldOrder').value = a.order || 1;
+    document.getElementById('fieldActive').checked = a.active !== false;
+  }
+
+  window.__edit = function (id) {
+    const a = allAchievements.find(x => x.id === id);
+    if (!a) return;
+    editMode = 'edit';
+    document.getElementById('modalTitle').textContent = 'Edit: ' + a.name;
+    document.getElementById('fieldId').disabled = true;
+    clearForm();
+    fillForm(a);
+    editModal.show();
+  };
+
+  window.__del = async function (id) {
+    if (!confirm('Hapus achievement "' + id + '"? (soft delete)')) return;
+    const res = await AdminAPI.deleteAchievement(id);
+    if (res.success) {
+      showToast('Achievement dihapus');
+      loadAll();
+    } else {
+      showToast(res.message || 'Gagal', 'error');
+    }
+  };
+
+  // ============ SAVE ============
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    const id = document.getElementById('fieldId').value.trim();
+    const name = document.getElementById('fieldName').value.trim();
+    if (!id || !name) {
+      showToast('ID dan Nama wajib diisi', 'error');
+      return;
+    }
+    if (!/^[a-z0-9_]+$/i.test(id)) {
+      showToast('ID hanya huruf, angka, underscore', 'error');
+      return;
+    }
+
+    const payload = {
+      id,
+      name,
+      description: document.getElementById('fieldDescription').value.trim(),
+      category: document.getElementById('fieldCategory').value,
+      tier: document.getElementById('fieldTier').value,
+      icon: document.getElementById('fieldIcon').value.trim() || '🏆',
+      condition: {
+        type: 'COUNT',
+        field: document.getElementById('fieldConditionField').value,
+        target: Number(document.getElementById('fieldTarget').value) || 1
+      },
+      reward: {
+        rtp: Number(document.getElementById('fieldRewardRtp').value) || 0,
+        badge: document.getElementById('fieldRewardBadge').value.trim() || null,
+        frame: document.getElementById('fieldRewardFrame').value.trim() || null
+      },
+      order: Number(document.getElementById('fieldOrder').value) || 999,
+      active: document.getElementById('fieldActive').checked
+    };
+
+    const res = editMode === 'edit'
+      ? await AdminAPI.updateAchievement(id, payload)
+      : await AdminAPI.createAchievement(payload);
+
+    if (res.success) {
+      showToast(editMode === 'edit' ? 'Achievement diupdate' : 'Achievement dibuat');
+      editModal.hide();
+      loadAll();
+    } else {
+      showToast(res.message || 'Gagal simpan', 'error');
+    }
+  });
+
+  // ============ BUTTONS ============
+  document.getElementById('createBtn').addEventListener('click', () => {
+    editMode = 'create';
+    document.getElementById('modalTitle').textContent = 'Tambah Achievement';
+    document.getElementById('fieldId').disabled = false;
+    clearForm();
+    editModal.show();
+  });
+
+  document.getElementById('refreshBtn').addEventListener('click', loadAll);
+
+  document.getElementById('seedBtn').addEventListener('click', async () => {
+    if (!confirm('Seed 20 achievement default? (tidak menimpa yang sudah ada)')) return;
+    const res = await AdminAPI.seedAchievements();
+    if (res.success) {
+      showToast(`✅ Seeded ${res.count || 0} achievements`);
+      loadAll();
+    } else {
+      showToast(res.message || 'Gagal seed', 'error');
+    }
+  });
+
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    const dataStr = JSON.stringify(allAchievements, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'achievements-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Exported');
+  });
+
+  document.getElementById('resetFilter').addEventListener('click', () => {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('filterCategory').value = '';
+    document.getElementById('filterTier').value = '';
+    document.getElementById('filterStatus').value = '';
+    applyFilter();
+  });
+
+  ['searchInput', 'filterCategory', 'filterTier', 'filterStatus'].forEach(id => {
+    document.getElementById(id).addEventListener('input', applyFilter);
+    document.getElementById(id).addEventListener('change', applyFilter);
+  });
+
+  // ============ INIT ============
+  loadAll();
+})();
+</script>
+</body>
+</html>

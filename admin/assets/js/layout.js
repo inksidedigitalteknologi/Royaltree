@@ -14,6 +14,7 @@
     { href: 'user-detail.html', icon: 'person-badge',       label: 'User Detail' },
     { href: 'mining.html',      icon: 'pickaxe',           label: 'Mining' },
     { href: 'thermal.html',     icon: 'thermometer-half',  label: 'Thermal' },
+    { href: 'achievements.html',icon: 'trophy',           label: 'Achievements', badge: 'NEW' },
     { href: 'missions.html',    icon: 'flag',              label: 'Missions' },
     { href: 'campaigns.html',   icon: 'megaphone',         label: 'Campaigns' },
     { href: 'chat.html',        icon: 'chat-dots',         label: 'Chat' },
