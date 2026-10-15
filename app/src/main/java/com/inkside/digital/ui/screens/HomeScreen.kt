@@ -81,6 +81,13 @@ fun HomeScreen(
     android.util.Log.d("HOME_SCREEN", "🔵 HomeScreen called! user=${user?.name}, tier=${user?.tier}, links=${links.size}, transactions=${recentTransactions.size}")
     val isPremium = user?.tier in listOf("PREMIUM", "VIP", "ROYAL")
 
+    // ISOLATION_TEST_12345
+    androidx.compose.material3.Text(
+        "🔴 HomeScreen RENDER — LazyColumn di bawah",
+        color = androidx.compose.ui.graphics.Color.White,
+        fontSize = androidx.compose.ui.unit.TextUnit(24f, androidx.compose.ui.unit.TextUnitType.Sp),
+        modifier = androidx.compose.ui.Modifier.padding(50.dp)
+    )
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
