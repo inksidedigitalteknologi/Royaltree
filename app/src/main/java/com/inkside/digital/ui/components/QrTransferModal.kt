@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import com.inkside.digital.data.preferences.AppThemePreferences
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -1032,9 +1033,9 @@ fun ScannerViewFinder(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(LanguageManager.translate("qr_scan_camera_title", currentLanguage, "Pindai Kamera QR Penerima"), fontWeight = FontWeight.Bold, fontSize = 13.sp)
+            Text(LanguageManager.translate("qr_scan_camera_title", AppThemePreferences.currentLanguage, "Pindai Kamera QR Penerima"), fontWeight = FontWeight.Bold, fontSize = 13.sp)
             IconButton(onClick = onCancel) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_cancel", currentLanguage, "Batal"))
+                Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_cancel", AppThemePreferences.currentLanguage, "Batal"))
             }
         }
 
@@ -1186,7 +1187,7 @@ fun TransferReceiptDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(LanguageManager.translate("qr_receipt_tx_id", currentLanguage, "ID Transaksi:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_receipt_tx_id", AppThemePreferences.currentLanguage, "ID Transaksi:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(receipt.transferId, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.height(6.dp))
@@ -1194,7 +1195,7 @@ fun TransferReceiptDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(LanguageManager.translate("qr_receipt_time", currentLanguage, "Waktu:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_receipt_time", AppThemePreferences.currentLanguage, "Waktu:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(dateStr, fontSize = 11.sp, fontWeight = FontWeight.Medium)
                         }
                         Spacer(modifier = Modifier.height(6.dp))
@@ -1202,7 +1203,7 @@ fun TransferReceiptDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(LanguageManager.translate("qr_receipt_recipient", currentLanguage, "Penerima:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_receipt_recipient", AppThemePreferences.currentLanguage, "Penerima:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text("${receipt.recipientName} (${receipt.recipientIdentifier})", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
 
@@ -1394,7 +1395,7 @@ fun SecurityPinModal(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Lock,
-                        contentDescription = LanguageManager.translate("cd_security_pin", currentLanguage, "Security PIN"),
+                        contentDescription = LanguageManager.translate("cd_security_pin", AppThemePreferences.currentLanguage, "Security PIN"),
                         tint = EmeraldPrimary,
                         modifier = Modifier.size(28.dp)
                     )
@@ -1427,7 +1428,7 @@ fun SecurityPinModal(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(LanguageManager.translate("qr_receipt_recipient", currentLanguage, "Penerima:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_receipt_recipient", AppThemePreferences.currentLanguage, "Penerima:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(recipientName, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
@@ -1435,7 +1436,7 @@ fun SecurityPinModal(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(LanguageManager.translate("qr_pin_amount", currentLanguage, "Nominal Transfer:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_pin_amount", AppThemePreferences.currentLanguage, "Nominal Transfer:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             RtpAmount(amount = "${GlobalPointsManager.formatRtp(amount)} RTP", fontSize = 12.sp, iconSize = 14.dp, fontWeight = FontWeight.ExtraBold, color = EmeraldLight)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
@@ -1443,7 +1444,7 @@ fun SecurityPinModal(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(LanguageManager.translate("qr_pin_admin_fee", currentLanguage, "Biaya Admin (Penerima):"), fontSize = 10.sp, color = Color(0xFFEF4444))
+                            Text(LanguageManager.translate("qr_pin_admin_fee", AppThemePreferences.currentLanguage, "Biaya Admin (Penerima):"), fontSize = 10.sp, color = Color(0xFFEF4444))
                             RtpAmount(amount = "-${GlobalPointsManager.formatRtp(adminFee)} RTP", fontSize = 10.sp, iconSize = 12.dp, color = Color(0xFFEF4444), fontWeight = FontWeight.Bold)
                         }
                     }

@@ -1,6 +1,7 @@
 package com.inkside.digital.ui.screens
 
 import com.inkside.digital.R
+import com.inkside.digital.data.preferences.AppThemePreferences
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -264,7 +265,7 @@ fun GameRoomScreenContent(
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = LanguageManager.translate("game_room_title", currentLanguage, "Royaltree Mining Room"),
+                                text = LanguageManager.translate("game_room_title", AppThemePreferences.currentLanguage, "Royaltree Mining Room"),
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
@@ -273,7 +274,7 @@ fun GameRoomScreenContent(
                                 shape = RoundedCornerShape(4.dp)
                             ) {
                                 Text(
-                                    text = LanguageManager.translate("badge_passive", currentLanguage, "PASSIVE"),
+                                    text = LanguageManager.translate("badge_passive", AppThemePreferences.currentLanguage, "PASSIVE"),
                                     fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = EmeraldLight,
@@ -284,7 +285,7 @@ fun GameRoomScreenContent(
                             }
                         }
                         Text(
-                            text = LanguageManager.translate("game_room_subtitle", currentLanguage, "Buy miners with RTP & earn passive income"),
+                            text = LanguageManager.translate("game_room_subtitle", AppThemePreferences.currentLanguage, "Buy miners with RTP & earn passive income"),
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 11.sp
@@ -297,7 +298,7 @@ fun GameRoomScreenContent(
                         onClick = onBack,
                         modifier = Modifier.testTag("game_room_back_button")
                     ) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = LanguageManager.translate("cd_back", currentLanguage, "Kembali"))
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = LanguageManager.translate("cd_back", AppThemePreferences.currentLanguage, "Kembali"))
                     }
                 },
                 // Chip kuning RTP dah dibuang — sebab ada di stats row bawah
@@ -512,7 +513,7 @@ fun GameRoomScreenContent(
                             IconButton(onClick = { selectedItemToBuy = null }) {
                                 Icon(
                                     imageVector = androidx.compose.material.icons.Icons.Default.Close,
-                                    contentDescription = LanguageManager.translate("cd_close_en", currentLanguage, "Close"),
+                                    contentDescription = LanguageManager.translate("cd_close_en", AppThemePreferences.currentLanguage, "Close"),
                                     tint = Color(0xFF94A3B8)
                                 )
                             }
@@ -749,7 +750,7 @@ fun GameRoomScreenContent(
                                 modifier = Modifier.size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(LanguageManager.translate("game_room_processing", currentLanguage, "Memproses..."), fontWeight = FontWeight.Bold)
+                            Text(LanguageManager.translate("game_room_processing", AppThemePreferences.currentLanguage, "Memproses..."), fontWeight = FontWeight.Bold)
                         } else {
                             Text(
                                 text = if (hasEmptySlot) "🔥 BELI & PASANG" else "🔥 BELI SAHAJA",
@@ -770,7 +771,7 @@ fun GameRoomScreenContent(
                             border = BorderStroke(1.dp, Color(0xFF475569)),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text(LanguageManager.translate("common_cancel", currentLanguage, "Batal"), color = Color(0xFF94A3B8), fontWeight = FontWeight.Medium)
+                            Text(LanguageManager.translate("common_cancel", AppThemePreferences.currentLanguage, "Batal"), color = Color(0xFF94A3B8), fontWeight = FontWeight.Medium)
                         }
                     }
                 }
@@ -849,7 +850,7 @@ fun GameRoomScreenContent(
                                         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                                         modifier = Modifier.height(30.dp)
                                     ) {
-                                        Text(LanguageManager.translate("game_install", currentLanguage, "Pasang"), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                        Text(LanguageManager.translate("game_install", AppThemePreferences.currentLanguage, "Pasang"), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                                     }
                                 }
                             }
@@ -866,13 +867,13 @@ fun GameRoomScreenContent(
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
                     ) {
-                        Text(LanguageManager.translate("game_open_shop", currentLanguage, "Buka Toko Item"))
+                        Text(LanguageManager.translate("game_open_shop", AppThemePreferences.currentLanguage, "Buka Toko Item"))
                     }
                 }
             },
             dismissButton = {
                 OutlinedButton(onClick = { slotToAssignItem = null }) {
-                    Text(LanguageManager.translate("common_close", currentLanguage, "Tutup"))
+                    Text(LanguageManager.translate("common_close", AppThemePreferences.currentLanguage, "Tutup"))
                 }
             }
         )
@@ -907,7 +908,7 @@ fun GameRoomScreenContent(
                     onClick = { viewModel.showThermalPauseAlert.value = false },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A))
                 ) {
-                    Text(LanguageManager.translate("game_room_ok_understood", currentLanguage, "OK, Mengerti"))
+                    Text(LanguageManager.translate("game_room_ok_understood", AppThemePreferences.currentLanguage, "OK, Mengerti"))
                 }
             }
         )
@@ -939,7 +940,7 @@ private fun RetroStatBox(
             if (useRtpIcon) {
                 Image(
                     painter = painterResource(R.drawable.rtp_coin),
-                    contentDescription = LanguageManager.translate("cd_rtp", currentLanguage, "RTP"),
+                    contentDescription = LanguageManager.translate("cd_rtp", AppThemePreferences.currentLanguage, "RTP"),
                     modifier = Modifier.size(16.dp)
                 )
             } else {
@@ -1039,14 +1040,14 @@ private fun MiningRoomTab(
                             ) {
                                 Column(Modifier.weight(1f)) {
                                     Text(
-                                        text = LanguageManager.translate("game_mining_tycoon", currentLanguage, "MINING TYCOON"),
+                                        text = LanguageManager.translate("game_mining_tycoon", AppThemePreferences.currentLanguage, "MINING TYCOON"),
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Black,
                                         color = EmeraldLight,
                                         letterSpacing = 1.5.sp
                                     )
                                     Text(
-                                        text = LanguageManager.translate("game_points_miner", currentLanguage, "Royaltree Points Miner"),
+                                        text = LanguageManager.translate("game_points_miner", AppThemePreferences.currentLanguage, "Royaltree Points Miner"),
                                         fontSize = 10.sp,
                                         color = RetroAmber,
                                         letterSpacing = 0.5.sp
@@ -1086,14 +1087,14 @@ private fun MiningRoomTab(
                                 ) {
                                     RetroStatBox(
                                         emoji = "🔥",
-                                        label = LanguageManager.translate("game_mining_power", currentLanguage, "POWER"),
+                                        label = LanguageManager.translate("game_mining_power", AppThemePreferences.currentLanguage, "POWER"),
                                         value = HashrateFormatter.format(totalPowerGhs),
                                         color = RetroAmber,
                                         modifier = Modifier.weight(1f)
                                     )
                                     RetroStatBox(
                                         emoji = "💰",
-                                        label = LanguageManager.translate("game_mining_rtp", currentLanguage, "RTP"),
+                                        label = LanguageManager.translate("game_mining_rtp", AppThemePreferences.currentLanguage, "RTP"),
                                         value = "${GlobalPointsManager.formatRtp(userPoints + liveUnclaimedPoints)}",
                                         color = RetroGold,
                                         modifier = Modifier.weight(1.5f),
@@ -1101,7 +1102,7 @@ private fun MiningRoomTab(
                                     )
                                     RetroStatBox(
                                         emoji = "⚡",
-                                        label = LanguageManager.translate("game_mining_rate", currentLanguage, "RATE"),
+                                        label = LanguageManager.translate("game_mining_rate", AppThemePreferences.currentLanguage, "RATE"),
                                         value = "${String.format(Locale.US, "%.4f", generationRatePerMin)}/m",
                                         color = EmeraldLight,
                                         modifier = Modifier.weight(1f)
@@ -1197,7 +1198,7 @@ private fun MiningRoomTab(
                                         ) {
                                             Column {
                                                 Text(
-                                                    text = "⛏️ ${LanguageManager.translate("game_miner_active", currentLanguage, "MINER SEDANG AKTIF")}",
+                                                    text = "⛏️ ${LanguageManager.translate("game_miner_active", AppThemePreferences.currentLanguage, "MINER SEDANG AKTIF")}",
                                                     fontSize = 11.sp,
                                                     fontWeight = FontWeight.Bold,
                                                     color = EmeraldLight
@@ -1211,7 +1212,7 @@ private fun MiningRoomTab(
                                             }
                                             Icon(
                                                 imageVector = Icons.Filled.Bolt,
-                                                contentDescription = LanguageManager.translate("cd_active", currentLanguage, "Active"),
+                                                contentDescription = LanguageManager.translate("cd_active", AppThemePreferences.currentLanguage, "Active"),
                                                 tint = GoldVip,
                                                 modifier = Modifier.size(32.dp)
                                             )
@@ -1226,13 +1227,13 @@ private fun MiningRoomTab(
                                     ) {
                                         Column {
                                             Text(
-                                                text = "⛔ ${LanguageManager.translate("game_miner_inactive", currentLanguage, "MINER TIDAK AKTIF")}",
+                                                text = "⛔ ${LanguageManager.translate("game_miner_inactive", AppThemePreferences.currentLanguage, "MINER TIDAK AKTIF")}",
                                                 fontSize = 10.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 color = Color(0xFFF87171)
                                             )
                                             Text(
-                                                text = LanguageManager.translate("game_miner_hint", currentLanguage, "Aktifkan untuk mula mining"),
+                                                text = LanguageManager.translate("game_miner_hint", AppThemePreferences.currentLanguage, "Aktifkan untuk mula mining"),
                                                 fontSize = 13.sp,
                                                 fontWeight = FontWeight.Medium,
                                                 color = Color(0xFF94A3B8)
@@ -1255,7 +1256,7 @@ private fun MiningRoomTab(
                                             Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
                                             Spacer(modifier = Modifier.width(6.dp))
                                             Text(
-                                                text = "🎬 ${LanguageManager.translate("game_miner_button", currentLanguage, "Aktifkan Miner (Tonton Iklan)")}",
+                                                text = "🎬 ${LanguageManager.translate("game_miner_button", AppThemePreferences.currentLanguage, "Aktifkan Miner (Tonton Iklan)")}",
                                                 color = Color.Black,
                                                 fontWeight = FontWeight.Bold,
                                                 fontSize = 13.sp
@@ -1298,7 +1299,7 @@ private fun MiningRoomTab(
                 ) {
                     Icon(imageVector = Icons.Filled.ShoppingBag, contentDescription = null, modifier = Modifier.size(13.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(LanguageManager.translate("game_buy_item", currentLanguage, "Beli Item"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("game_buy_item", AppThemePreferences.currentLanguage, "Beli Item"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -1380,7 +1381,7 @@ private fun MiningRoomTab(
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                         modifier = Modifier.height(34.dp)
                     ) {
-                        Text(LanguageManager.translate("game_play", currentLanguage, "Main"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("game_play", AppThemePreferences.currentLanguage, "Main"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -1447,7 +1448,7 @@ private fun LockedSlotCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = LanguageManager.translate("slot_locked", currentLanguage, "TERKUNCI"),
+                text = LanguageManager.translate("slot_locked", AppThemePreferences.currentLanguage, "TERKUNCI"),
                 fontSize = 9.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF94A3B8),
@@ -1662,13 +1663,13 @@ private fun LoadingState(currentLanguage: AppLanguage) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = LanguageManager.translate("common_loading", currentLanguage, "Memuat data..."),
+                text = LanguageManager.translate("common_loading", AppThemePreferences.currentLanguage, "Memuat data..."),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = LanguageManager.translate("common_loading_desc", currentLanguage, "Menyinkronkan data dari server"),
+                text = LanguageManager.translate("common_loading_desc", AppThemePreferences.currentLanguage, "Menyinkronkan data dari server"),
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                 fontSize = 11.sp
             )
@@ -1712,12 +1713,12 @@ private fun ItemShopTab(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = LanguageManager.translate("game_unlock_miner", currentLanguage, "Unlock Miner dengan RTP"),
+                            text = LanguageManager.translate("game_unlock_miner", AppThemePreferences.currentLanguage, "Unlock Miner dengan RTP"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
                         )
                         Text(
-                            text = LanguageManager.translate("game_unlock_miner_desc", currentLanguage, "Kumpulkan RTP dari iklan & misi untuk membuka miner baru!"),
+                            text = LanguageManager.translate("game_unlock_miner_desc", AppThemePreferences.currentLanguage, "Kumpulkan RTP dari iklan & misi untuk membuka miner baru!"),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -1762,8 +1763,8 @@ private fun ItemShopTab(
                         Text("💡", fontSize = 16.sp)
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            Text(LanguageManager.translate("game_need_more_points", currentLanguage, "Butuh Poin Lebih Banyak?"), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = GoldVip)
-                            Text(LanguageManager.translate("game_complete_missions", currentLanguage, "Selesaikan misi Like, Subscribe, Nonton, & Web"), fontSize = 10.sp, color = Color(0xFF94A3B8))
+                            Text(LanguageManager.translate("game_need_more_points", AppThemePreferences.currentLanguage, "Butuh Poin Lebih Banyak?"), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = GoldVip)
+                            Text(LanguageManager.translate("game_complete_missions", AppThemePreferences.currentLanguage, "Selesaikan misi Like, Subscribe, Nonton, & Web"), fontSize = 10.sp, color = Color(0xFF94A3B8))
                         }
                     }
                     Button(
@@ -1772,7 +1773,7 @@ private fun ItemShopTab(
                         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                         modifier = Modifier.height(28.dp)
                     ) {
-                        Text(LanguageManager.translate("game_open_missions", currentLanguage, "Buka Misi"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                        Text(LanguageManager.translate("game_open_missions", AppThemePreferences.currentLanguage, "Buka Misi"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                     }
                 }
             }
@@ -2068,8 +2069,8 @@ private fun MiniGameArcadeTab(
                                 Text("🎮", fontSize = 24.sp)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Column {
-                                    Text(LanguageManager.translate("game_coinrush_title", currentLanguage, "Crypto Coin Tap Rush"), fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
-                                    Text(LanguageManager.translate("game_coinrush_subtitle", currentLanguage, "Mini-Game Penghasil Power Royaltree"), fontSize = 11.sp, color = Color(0xFFC7D2FE))
+                                    Text(LanguageManager.translate("game_coinrush_title", AppThemePreferences.currentLanguage, "Crypto Coin Tap Rush"), fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
+                                    Text(LanguageManager.translate("game_coinrush_subtitle", AppThemePreferences.currentLanguage, "Mini-Game Penghasil Power Royaltree"), fontSize = 11.sp, color = Color(0xFFC7D2FE))
                                 }
                             }
                             Surface(
@@ -2138,7 +2139,7 @@ private fun MiniGameArcadeTab(
                         ) {
                             Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = null, tint = Color.Black)
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text(LanguageManager.translate("game_start_now", currentLanguage, "Mulai Game Sekarang (15s)"), fontWeight = FontWeight.Bold, color = Color.Black)
+                            Text(LanguageManager.translate("game_start_now", AppThemePreferences.currentLanguage, "Mulai Game Sekarang (15s)"), fontWeight = FontWeight.Bold, color = Color.Black)
                         }
                     }
                 } else {

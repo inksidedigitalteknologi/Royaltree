@@ -1,5 +1,6 @@
 package com.inkside.digital.ui.screens
 
+import com.inkside.digital.data.preferences.AppThemePreferences
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -147,11 +148,11 @@ fun CoinRushScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = LanguageManager.translate("cd_back", currentLanguage, "Back"), tint = Color.White)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = LanguageManager.translate("cd_back", AppThemePreferences.currentLanguage, "Back"), tint = Color.White)
                 }
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(LanguageManager.translate("game_hub_coinrush", currentLanguage, "Coin Rush"), color = Color.White, fontWeight = FontWeight.Black, fontSize = 18.sp)
-                    Text(LanguageManager.translate("coinrush_tagline", currentLanguage, "Tap koin sebelum hilang!"), color = EmeraldPrimary, fontSize = 11.sp)
+                    Text(LanguageManager.translate("game_hub_coinrush", AppThemePreferences.currentLanguage, "Coin Rush"), color = Color.White, fontWeight = FontWeight.Black, fontSize = 18.sp)
+                    Text(LanguageManager.translate("coinrush_tagline", AppThemePreferences.currentLanguage, "Tap koin sebelum hilang!"), color = EmeraldPrimary, fontSize = 11.sp)
                 }
             }
 
@@ -162,8 +163,8 @@ fun CoinRushScreen(
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                HudCard(label = LanguageManager.translate("coinrush_score", currentLanguage, "SKOR"), value = "$score", accent = GoldVip, modifier = Modifier.weight(1f))
-                HudCard(label = LanguageManager.translate("coinrush_time", currentLanguage, "WAKTU"), value = "${timeLeftMs / 1000}s", accent = EmeraldPrimary, modifier = Modifier.weight(1f))
+                HudCard(label = LanguageManager.translate("coinrush_score", AppThemePreferences.currentLanguage, "SKOR"), value = "$score", accent = GoldVip, modifier = Modifier.weight(1f))
+                HudCard(label = LanguageManager.translate("coinrush_time", AppThemePreferences.currentLanguage, "WAKTU"), value = "${timeLeftMs / 1000}s", accent = EmeraldPrimary, modifier = Modifier.weight(1f))
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -217,7 +218,7 @@ fun CoinRushScreen(
                         Text("🎰", fontSize = 64.sp)
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            LanguageManager.translate("coinrush_start_hint", currentLanguage, "Tekan MULAI untuk bermain"),
+                            LanguageManager.translate("coinrush_start_hint", AppThemePreferences.currentLanguage, "Tekan MULAI untuk bermain"),
                             color = Color.White,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold
@@ -233,7 +234,7 @@ fun CoinRushScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text(LanguageManager.translate("coinrush_start", currentLanguage, "MULAI"), color = Color.Black, fontWeight = FontWeight.Black)
+                            Text(LanguageManager.translate("coinrush_start", AppThemePreferences.currentLanguage, "MULAI"), color = Color.Black, fontWeight = FontWeight.Black)
                         }
                     }
                 }
@@ -245,7 +246,7 @@ fun CoinRushScreen(
                     ) {
                         Text("🏁", fontSize = 64.sp)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(LanguageManager.translate("coinrush_final_score", currentLanguage, "Skor Akhir"), color = Color.White, fontSize = 13.sp)
+                        Text(LanguageManager.translate("coinrush_final_score", AppThemePreferences.currentLanguage, "Skor Akhir"), color = Color.White, fontSize = 13.sp)
                         Text("$score", color = GoldVip, fontSize = 42.sp, fontWeight = FontWeight.Black)
                         Spacer(modifier = Modifier.height(12.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -260,14 +261,14 @@ fun CoinRushScreen(
                                 colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
-                                Text(LanguageManager.translate("coinrush_play_again", currentLanguage, "MAIN LAGI"), color = Color.Black, fontWeight = FontWeight.Black)
+                                Text(LanguageManager.translate("coinrush_play_again", AppThemePreferences.currentLanguage, "MAIN LAGI"), color = Color.Black, fontWeight = FontWeight.Black)
                             }
                             Button(
                                 onClick = { onBack() },
                                 colors = ButtonDefaults.buttonColors(containerColor = EmeraldDark),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
-                                Text(LanguageManager.translate("coinrush_exit", currentLanguage, "KELUAR"), color = Color.White, fontWeight = FontWeight.Black)
+                                Text(LanguageManager.translate("coinrush_exit", AppThemePreferences.currentLanguage, "KELUAR"), color = Color.White, fontWeight = FontWeight.Black)
                             }
                         }
                     }
@@ -361,7 +362,7 @@ private fun CoinSprite(
         // Coin icon
         Image(
             painter = painterResource(id = R.drawable.rtp_coin),
-            contentDescription = LanguageManager.translate("cd_rtp", currentLanguage, "RTP"),
+            contentDescription = LanguageManager.translate("cd_rtp", AppThemePreferences.currentLanguage, "RTP"),
             modifier = Modifier
                 .size(44.dp)
                 .clip(CircleShape)
