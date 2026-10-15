@@ -67,7 +67,8 @@ enum class AppScreen {
     TRANSFER,
     WHITEPAPER,
     GLOBAL_CHAT,
-    ACHIEVEMENT
+    ACHIEVEMENT,
+    PURCHASE
 }
 
 // ==== Ad Button State ====
@@ -1620,6 +1621,89 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 onResult(false, "Error: ${e.message}")
             }
         }
+    }
+
+    // ============ PURCHASE / IAP ============
+    private val _purchaseTiers = MutableStateFlow<List<com.inkside.digital.data.model.PurchaseTier>>(emptyList())
+    val purchaseTiers: StateFlow<List<com.inkside.digital.data.model.PurchaseTier>> = _purchaseTiers.asStateFlow()
+
+    private val _purchaseLoading = MutableStateFlow(false)
+    val purchaseLoading: StateFlow<Boolean> = _purchaseLoading.asStateFlow()
+
+    private val _purchaseMessage = MutableStateFlow("")
+    val purchaseMessage: StateFlow<String> = _purchaseMessage.asStateFlow()
+
+    fun loadPurchaseTiers() {
+        viewModelScope.launch {
+            _purchaseLoading.value = true
+            try {
+                val result = com.inkside.digital.data.network.ApiClient.getPurchaseTiersPublic()
+                result.getOrNull()?.let { json ->
+                    val arr = json.optJSONArray("data")
+                    if (arr != null) {
+                        val list = mutableListOf<com.inkside.digital.data.model.PurchaseTier>()
+                        for (i in 0 until arr.length()) {
+                            val o = arr.getJSONObject(i)
+                            val benefitsArr = o.optJSONArray("benefits")
+                            val benefits = mutableListOf<String>()
+                            if (benefitsArr != null) {
+                                for (j in 0 until benefitsArr.length()) {
+                                    benefits.add(benefitsArr.getString(j))
+                                }
+                            }
+                            list.add(
+                                com.inkside.digital.data.model.PurchaseTier(
+                                    productId = o.optString("productId", ""),
+                                    tier = o.optString("tier", "FREE"),
+                                    displayName = o.optString("displayName", ""),
+                                    priceUsd = o.optDouble("priceUsd", 0.0),
+                                    maxMinerSlots = o.optInt("maxMinerSlots", 0),
+                                    affiliateRate = o.optDouble("affiliateRate", 0.0),
+                                    tierOrder = o.optInt("tierOrder", 0),
+                                    benefits = benefits
+                                )
+                            )
+                        }
+                        _purchaseTiers.value = list.sortedBy { it.tierOrder }
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("Purchase", "load error: ${e.message}", e)
+            } finally {
+                _purchaseLoading.value = false
+            }
+        }
+    }
+
+    fun handlePurchaseSuccess(productId: String, purchaseToken: String, packageName: String) {
+        viewModelScope.launch {
+            _purchaseMessage.value = "Memverifikasi pembelian..."
+            try {
+                val body = org.json.JSONObject().apply {
+                    put("purchaseToken", purchaseToken)
+                    put("productId", productId)
+                    put("packageName", packageName)
+                }
+                val result = com.inkside.digital.data.network.ApiClient.verifyPurchase(body)
+                result.getOrNull()?.let { json ->
+                    if (json.optBoolean("success", false)) {
+                        _purchaseMessage.value = "✅ " + json.optString("message", "Upgrade berhasil!")
+                        // Refresh profile
+                        loadProfileFromBackend()
+                    } else {
+                        _purchaseMessage.value = "❌ " + json.optString("message", "Verifikasi gagal")
+                    }
+                } ?: run {
+                    _purchaseMessage.value = "❌ Koneksi gagal"
+                }
+            } catch (e: Exception) {
+                _purchaseMessage.value = "❌ Error: ${e.message}"
+            }
+        }
+    }
+
+    fun clearPurchaseMessage() {
+        _purchaseMessage.value = ""
     }
 
     private val _batteryTemp = MutableStateFlow(0f)

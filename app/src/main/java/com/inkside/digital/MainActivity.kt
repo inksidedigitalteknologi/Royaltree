@@ -69,6 +69,8 @@ import com.inkside.digital.ui.screens.ReferralScreen
 import com.inkside.digital.ui.screens.SettingsScreen
 import com.inkside.digital.ui.screens.FaqScreen
 import com.inkside.digital.ui.screens.AchievementScreen
+import com.inkside.digital.ui.screens.PurchaseScreen
+import com.inkside.digital.util.IapManager
 import kotlinx.coroutines.launch
 import com.inkside.digital.ui.screens.AdminScreen
 import com.inkside.digital.ui.screens.InboxScreen
@@ -163,6 +165,13 @@ class MainActivity : ComponentActivity() {
         } catch (e: Exception) {
             android.util.Log.e("MainActivity", "❌ Failed to schedule MiningWorker: ${e.message}")
         }
+        // Init IapManager
+        try {
+            com.inkside.digital.util.IapManager.connect(this, this)
+        } catch (e: Exception) {
+            android.util.Log.e("IAP", "connect failed: ${e.message}", e)
+        }
+
         setContent {
             MyApplicationTheme(
                 darkTheme = true  // Force dark mode
@@ -201,6 +210,22 @@ fun RootNav(
     // Sync user dari Firebase saat app dibuka
     androidx.compose.runtime.LaunchedEffect(Unit) {
         affiliateViewModel.syncFirebaseUser()
+    }
+
+    // Setup IAP callback
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        com.inkside.digital.util.IapManager.onPurchaseSuccess = { productId, token, packageName ->
+            affiliateViewModel.handlePurchaseSuccess(productId, token, packageName)
+        }
+        com.inkside.digital.util.IapManager.onPurchaseError = { msg ->
+            android.util.Log.w("IAP", "Purchase error: $msg")
+        }
+    }
+
+    androidx.compose.runtime.DisposableEffect(Unit) {
+        onDispose {
+            com.inkside.digital.util.IapManager.disconnect()
+        }
     }
 
     // Preload semua komponen + auto-navigate bila complete
@@ -935,7 +960,7 @@ fun MainAffiliateAppContent(
                         onNavigate = { onNavigate(it) },
                         onOpenWithdraw = { onSetWithdrawModalVisible(true) },
                         onOpenNewLink = { onSetNewLinkModalVisible(true) },
-                        onOpenUpgrade = { onSetUpgradeModalVisible(true) },
+                        onOpenUpgrade = { onNavigate(AppScreen.PURCHASE) },
                         onOpenRedeemPoints = { onSetRedeemPointsModalVisible(true) },
                         onOpenTransferQr = { onSetQrTransferModalVisible(true) },
                         onSimulateConversion = { onSimulateConversion(it) },
@@ -1004,7 +1029,7 @@ fun MainAffiliateAppContent(
                         affiliateBalance = affiliateBalance,
                         onOpenWithdraw = onOpenWithdraw,
                         onOpenWithdrawHistory = onOpenWithdrawHistory,
-                        onOpenUpgrade = { onSetUpgradeModalVisible(true) },
+                        onOpenUpgrade = { onNavigate(AppScreen.PURCHASE) },
                         onNavigateToDailyCheckIn = { onNavigate(AppScreen.DAILY_CHECK_IN) },
                         onNavigateToMining = { onNavigate(AppScreen.GAME_MINING) },
                         onNavigateToCoinRush = { onNavigate(AppScreen.GAME_COIN_RUSH) },
@@ -1073,6 +1098,13 @@ fun MainAffiliateAppContent(
                     AchievementScreen(
                         viewModel = affiliateViewModel,
                         currentLanguage = currentLanguage,
+                        onBack = { onNavigate(AppScreen.PROFILE) }
+                    )
+                }
+
+                AppScreen.PURCHASE -> {
+                    PurchaseScreen(
+                        viewModel = affiliateViewModel,
                         onBack = { onNavigate(AppScreen.PROFILE) }
                     )
                 }
