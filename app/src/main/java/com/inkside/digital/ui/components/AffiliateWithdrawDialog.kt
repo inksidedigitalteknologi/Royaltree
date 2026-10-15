@@ -1,5 +1,7 @@
 package com.inkside.digital.ui.components
 
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,6 +43,7 @@ fun AffiliateWithdrawDialog(
     userEmail: String = "",
     isLoading: Boolean = false,
     errorMessage: String? = null,
+    currentLanguage: AppLanguage,
     onSubmit: (amount: Double, destination: String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -101,7 +104,7 @@ fun AffiliateWithdrawDialog(
                         amountText = it.filter { c -> c.isDigit() || c == '.' }
                         localError = null
                     },
-                    label = { Text("Jumlah (USD)") },
+                    label = { Text(LanguageManager.translate("affiliate_withdraw_amount", currentLanguage, "Jumlah (USD)")) },
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.fillMaxWidth(),
@@ -116,7 +119,7 @@ fun AffiliateWithdrawDialog(
                         destination = it
                         localError = null
                     },
-                    label = { Text("Email PayPal") },
+                    label = { Text(LanguageManager.translate("affiliate_withdraw_email", currentLanguage, "Email PayPal")) },
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.fillMaxWidth()

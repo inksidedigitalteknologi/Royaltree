@@ -325,7 +325,7 @@ fun ProfileSecurityScreen(
                                     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                     val clip = ClipData.newPlainText(LanguageManager.translate("profile_security_referral_clip_label", currentLanguage, "Referral"), user?.referralCode ?: "-")
                                     clipboard.setPrimaryClip(clip)
-                                    Toast.makeText(context, "Kode referral disalin!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, LanguageManager.translate("toast_referral_code_copied", currentLanguage, "Kode referral disalin!"), Toast.LENGTH_SHORT).show()
                                 }
                             ) {
                                 Icon(imageVector = Icons.Default.ContentCopy, contentDescription = null, tint = EmeraldLight)

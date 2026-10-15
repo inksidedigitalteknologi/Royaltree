@@ -383,6 +383,7 @@ fun RootNav(
                 isLoading = isLoading,
                 errorMessage = errorMessage,
                 successMessage = successMessage,
+                currentLanguage = currentLanguage,
                 onSendReset = { email -> authViewModel.resetPassword(email) },
                 onNavigateBack = { authViewModel.navigateToLogin() }
             )
@@ -1394,6 +1395,7 @@ fun MainAffiliateAppContent(
             minWithdraw = affiliateBalance.minWithdraw,
             userEmail = user?.email ?: "",
             isLoading = affiliateLoading,
+            currentLanguage = currentLanguage,
             onSubmit = { amount, dest -> onWithdrawAffiliateSubmit(amount, dest) },
             onDismiss = { onWithdrawAffiliateDismiss() }
         )
