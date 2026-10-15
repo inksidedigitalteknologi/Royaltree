@@ -89,6 +89,7 @@ import com.inkside.digital.data.model.InvestmentCouponEntity
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.data.model.WithdrawalEntity
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.security.SecurityManager
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
@@ -101,6 +102,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun WithdrawDialog(
     user: UserEntity?,
+    currentLanguage: AppLanguage,
     onDismiss: () -> Unit,
     onSubmit: (amount: Double, currency: String, channel: String, provider: String, accountDest: String, accountHolder: String) -> Unit
 ) {
@@ -574,6 +576,7 @@ fun PaymentGatewaySimulatorModal(
 fun NewLinkModal(
     campaigns: List<CampaignEntity>,
     preselectedCampaign: CampaignEntity?,
+    currentLanguage: AppLanguage,
     onDismiss: () -> Unit,
     onCreateLink: (campaign: CampaignEntity, slug: String, subId: String) -> Unit
 ) {
@@ -687,6 +690,7 @@ fun NewLinkModal(
 fun UpgradeVipModal(
     user: UserEntity?,
     tiers: List<org.json.JSONObject> = emptyList(),
+    currentLanguage: AppLanguage,
     onDismiss: () -> Unit,
     onUpgrade: (String) -> Unit = {}
 ) {
@@ -1169,6 +1173,7 @@ fun BannedDialog(
 @Composable
 fun RedeemPointsModal(
     user: UserEntity?,
+    currentLanguage: AppLanguage,
     onDismiss: () -> Unit,
     onRedeem: (points: Int, wallet: String, phoneOrDest: String, currency: String) -> Unit,
     onOpenTransferQr: (() -> Unit)? = null
@@ -1442,6 +1447,7 @@ fun RedeemPointsModal(
 fun BuyCouponModal(
     coupon: InvestmentCouponEntity,
     user: UserEntity?,
+    currentLanguage: AppLanguage,
     onDismiss: () -> Unit,
     onBuy: (quantity: Int) -> Unit
 ) {
@@ -1737,6 +1743,7 @@ fun AdminReviewModal(
 @Composable
 fun TwoFactorModal(
     user: UserEntity?,
+    currentLanguage: AppLanguage,
     onDismiss: () -> Unit,
     onVerifyToggle: (enable: Boolean) -> Unit
 ) {
