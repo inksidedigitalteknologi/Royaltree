@@ -1160,7 +1160,7 @@ router.get('/mining/pool-fund', checkAdmin, async (req, res) => {
                 totalCollected,
                 totalPaidOut,
                 devProfit: totalCollected - totalPaidOut,
-                health: poolFund > 1000 ? 'HEALTHY' : (poolFund > 200 ? 'LOW' : 'CRITICAL'),
+                health: poolFund > 10000 ? 'HEALTHY' : (poolFund > 1000 ? 'LOW' : 'WARNING'),
                 timestamp: Date.now()
             }
         });
