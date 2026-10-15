@@ -2958,6 +2958,225 @@ object LanguageManager {
             AppLanguage.JAPANESE to "はい、申請"
         ),
 
+
+        // ========== PROFILE SECURITY SCREEN ==========
+        "profile_security_upgrade_btn" to mapOf(
+            AppLanguage.INDONESIAN to "Upgrade",
+            AppLanguage.ENGLISH to "Upgrade",
+            AppLanguage.SPANISH to "Mejorar",
+            AppLanguage.CHINESE to "升级",
+            AppLanguage.ARABIC to "ترقية",
+            AppLanguage.JAPANESE to "アップグレード"
+        ),
+        "profile_security_2fa_title" to mapOf(
+            AppLanguage.INDONESIAN to "Autentikasi Dua Faktor (2FA)",
+            AppLanguage.ENGLISH to "Two-Factor Authentication (2FA)",
+            AppLanguage.SPANISH to "Autenticación de Dos Factores (2FA)",
+            AppLanguage.CHINESE to "双重身份验证 (2FA)",
+            AppLanguage.ARABIC to "المصادقة الثنائية (2FA)",
+            AppLanguage.JAPANESE to "二要素認証 (2FA)"
+        ),
+        "profile_security_2fa_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Wajib untuk penarikan dana di atas batas minimum",
+            AppLanguage.ENGLISH to "Required for withdrawals above minimum limit",
+            AppLanguage.SPANISH to "Requerido para retiros superiores al límite mínimo",
+            AppLanguage.CHINESE to "超过最低限额提款时必须",
+            AppLanguage.ARABIC to "مطلوب للسحوبات التي تتجاوز الحد الأدنى",
+            AppLanguage.JAPANESE to "最低限度を超える引き出しに必要"
+        ),
+        "profile_security_encryption_protocol" to mapOf(
+            AppLanguage.INDONESIAN to "Protokol Enkripsi: ",
+            AppLanguage.ENGLISH to "Encryption Protocol: ",
+            AppLanguage.SPANISH to "Protocolo de Cifrado: ",
+            AppLanguage.CHINESE to "加密协议：",
+            AppLanguage.ARABIC to "بروتوكول التشفير: ",
+            AppLanguage.JAPANESE to "暗号化プロトコル: "
+        ),
+        "profile_security_key_exchange" to mapOf(
+            AppLanguage.INDONESIAN to "Kunci Pertukaran: ",
+            AppLanguage.ENGLISH to "Key Exchange: ",
+            AppLanguage.SPANISH to "Intercambio de Claves: ",
+            AppLanguage.CHINESE to "密钥交换：",
+            AppLanguage.ARABIC to "تبادل المفاتيح: ",
+            AppLanguage.JAPANESE to "鍵交換: "
+        ),
+        "profile_security_location_title" to mapOf(
+            AppLanguage.INDONESIAN to "Pelacakan Lokasi Provider (Pinpoint)",
+            AppLanguage.ENGLISH to "Provider Location Tracking (Pinpoint)",
+            AppLanguage.SPANISH to "Seguimiento de Ubicación del Proveedor (Pinpoint)",
+            AppLanguage.CHINESE to "提供商位置跟踪（精确）",
+            AppLanguage.ARABIC to "تتبع موقع المزود (دقيق)",
+            AppLanguage.JAPANESE to "プロバイダー位置追跡（ピンポイント）"
+        ),
+        "profile_security_location_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Izinkan analitik pemetaan wilayah provider untuk mendeteksi persebaran pengguna",
+            AppLanguage.ENGLISH to "Allow provider region mapping analytics to detect user distribution",
+            AppLanguage.SPANISH to "Permitir análisis de mapeo regional para detectar distribución de usuarios",
+            AppLanguage.CHINESE to "允许提供商区域映射分析以检测用户分布",
+            AppLanguage.ARABIC to "السماح بتحليلات رسم خرائط المنطقة لاكتشاف توزيع المستخدمين",
+            AppLanguage.JAPANESE to "ユーザー分布を検出するための地域マッピング分析を許可"
+        ),
+        "profile_security_region_detected" to mapOf(
+            AppLanguage.INDONESIAN to "Posisi Wilayah Terdeteksi:",
+            AppLanguage.ENGLISH to "Detected Region:",
+            AppLanguage.SPANISH to "Región Detectada:",
+            AppLanguage.CHINESE to "检测到的区域：",
+            AppLanguage.ARABIC to "المنطقة المكتشفة:",
+            AppLanguage.JAPANESE to "検出された地域:"
+        ),
+        "profile_security_default_city" to mapOf(
+            AppLanguage.INDONESIAN to "Jakarta Pusat",
+            AppLanguage.ENGLISH to "Central Jakarta",
+            AppLanguage.SPANISH to "Yakarta Central",
+            AppLanguage.CHINESE to "雅加达中部",
+            AppLanguage.ARABIC to "جاكرتا الوسطى",
+            AppLanguage.JAPANESE to "中央ジャカルタ"
+        ),
+        "profile_security_default_province" to mapOf(
+            AppLanguage.INDONESIAN to "DKI Jakarta",
+            AppLanguage.ENGLISH to "DKI Jakarta",
+            AppLanguage.SPANISH to "DKI Yakarta",
+            AppLanguage.CHINESE to "雅加达首都特区",
+            AppLanguage.ARABIC to "جاكرتا",
+            AppLanguage.JAPANESE to "ジャカルタ首都特別州"
+        ),
+        "profile_security_gps_coords" to mapOf(
+            AppLanguage.INDONESIAN to "Koordinat GPS Presisi:",
+            AppLanguage.ENGLISH to "Precise GPS Coordinates:",
+            AppLanguage.SPANISH to "Coordenadas GPS Precisas:",
+            AppLanguage.CHINESE to "精确 GPS 坐标：",
+            AppLanguage.ARABIC to "إحداثيات GPS الدقيقة:",
+            AppLanguage.JAPANESE to "正確な GPS 座標:"
+        ),
+        "profile_security_referral_title" to mapOf(
+            AppLanguage.INDONESIAN to "Program Afiliasi Referral Bertingkat",
+            AppLanguage.ENGLISH to "Multi-Tier Referral Affiliate Program",
+            AppLanguage.SPANISH to "Programa de Afiliados Multinivel",
+            AppLanguage.CHINESE to "多层推荐联盟计划",
+            AppLanguage.ARABIC to "برنامج التسويق بالعمولة متعدد المستويات",
+            AppLanguage.JAPANESE to "マルチティア紹介アフィリエイトプログラム"
+        ),
+        "profile_security_referral_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Ajak teman & peroleh komisi pasif 5% (Tier 1) dan 2% (Tier 2) selamanya.",
+            AppLanguage.ENGLISH to "Invite friends & earn passive commission 5% (Tier 1) and 2% (Tier 2) forever.",
+            AppLanguage.SPANISH to "Invita amigos y gana comisión pasiva 5% (Nivel 1) y 2% (Nivel 2) para siempre.",
+            AppLanguage.CHINESE to "邀请好友并永久获得 5%（一级）和 2%（二级）被动佣金。",
+            AppLanguage.ARABIC to "ادعُ الأصدقاء واربح عمولة سلبية 5% (المستوى 1) و2% (المستوى 2) للأبد.",
+            AppLanguage.JAPANESE to "友達を招待して、5%（ティア1）と2%（ティア2）のパッシブコミッションを永久に獲得。"
+        ),
+        "profile_security_referral_code" to mapOf(
+            AppLanguage.INDONESIAN to "Kode Referral Anda:",
+            AppLanguage.ENGLISH to "Your Referral Code:",
+            AppLanguage.SPANISH to "Tu Código de Referido:",
+            AppLanguage.CHINESE to "您的推荐码：",
+            AppLanguage.ARABIC to "رمز الإحالة الخاص بك:",
+            AppLanguage.JAPANESE to "あなたの紹介コード:"
+        ),
+        "profile_security_referral_clip_label" to mapOf(
+            AppLanguage.INDONESIAN to "Referral",
+            AppLanguage.ENGLISH to "Referral",
+            AppLanguage.SPANISH to "Referido",
+            AppLanguage.CHINESE to "推荐",
+            AppLanguage.ARABIC to "إحالة",
+            AppLanguage.JAPANESE to "紹介"
+        ),
+        "profile_security_language_title" to mapOf(
+            AppLanguage.INDONESIAN to "Bahasa Internasional & Zona Wilayah",
+            AppLanguage.ENGLISH to "International Language & Region",
+            AppLanguage.SPANISH to "Idioma Internacional y Región",
+            AppLanguage.CHINESE to "国际语言和地区",
+            AppLanguage.ARABIC to "اللغة الدولية والمنطقة",
+            AppLanguage.JAPANESE to "国際言語と地域"
+        ),
+        "profile_security_language_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Pilihan: 6 Bahasa Internasional",
+            AppLanguage.ENGLISH to "Options: 6 International Languages",
+            AppLanguage.SPANISH to "Opciones: 6 Idiomas Internacionales",
+            AppLanguage.CHINESE to "选项：6 种国际语言",
+            AppLanguage.ARABIC to "الخيارات: 6 لغات دولية",
+            AppLanguage.JAPANESE to "オプション：6つの国際言語"
+        ),
+        "profile_security_universal_title" to mapOf(
+            AppLanguage.INDONESIAN to "Standar Nilai Poin Global (Universal Rate)",
+            AppLanguage.ENGLISH to "Global Point Value Standard (Universal Rate)",
+            AppLanguage.SPANISH to "Estándar de Valor de Puntos Global (Tarifa Universal)",
+            AppLanguage.CHINESE to "全球积分价值标准（通用费率）",
+            AppLanguage.ARABIC to "معيار قيمة النقاط العالمي (السعر العالمي)",
+            AppLanguage.JAPANESE to "グローバルポイント価値基準（ユニバーサルレート）"
+        ),
+        "profile_security_universal_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Nilai beli poin seragam di seluruh dunia: 100 Pts = $1.00 USD / USDT",
+            AppLanguage.ENGLISH to "Uniform point purchase value worldwide: 100 Pts = $1.00 USD / USDT",
+            AppLanguage.SPANISH to "Valor de compra de puntos uniforme en todo el mundo: 100 Pts = $1.00 USD / USDT",
+            AppLanguage.CHINESE to "全球统一积分购买价值：100 Pts = $1.00 USD / USDT",
+            AppLanguage.ARABIC to "قيمة شراء النقاط الموحدة عالميًا: 100 نقطة = 1.00 دولار أمريكي / USDT",
+            AppLanguage.JAPANESE to "世界中で統一されたポイント購入額: 100 Pts = $1.00 USD / USDT"
+        ),
+        "profile_security_ad_title" to mapOf(
+            AppLanguage.INDONESIAN to "Tonton Iklan Sponsor Pengembang",
+            AppLanguage.ENGLISH to "Watch Developer Sponsor Ad",
+            AppLanguage.SPANISH to "Ver Anuncio de Patrocinador",
+            AppLanguage.CHINESE to "观看开发者赞助广告",
+            AppLanguage.ARABIC to "شاهد إعلان الراعي المطور",
+            AppLanguage.JAPANESE to "開発者スポンサー広告を視聴"
+        ),
+        "profile_security_ad_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Dapatkan +50 Poin aktivitas setiap tontonan",
+            AppLanguage.ENGLISH to "Get +50 Activity Points per view",
+            AppLanguage.SPANISH to "Obtén +50 Puntos de Actividad por vista",
+            AppLanguage.CHINESE to "每次观看可获得 +50 活动积分",
+            AppLanguage.ARABIC to "احصل على +50 نقطة نشاط لكل مشاهدة",
+            AppLanguage.JAPANESE to "視聴ごとに +50 アクティビティポイントを獲得"
+        ),
+        "profile_security_ad_reward" to mapOf(
+            AppLanguage.INDONESIAN to "+50 Poin",
+            AppLanguage.ENGLISH to "+50 Points",
+            AppLanguage.SPANISH to "+50 Puntos",
+            AppLanguage.CHINESE to "+50 积分",
+            AppLanguage.ARABIC to "+50 نقطة",
+            AppLanguage.JAPANESE to "+50 ポイント"
+        ),
+        "profile_security_info_title" to mapOf(
+            AppLanguage.INDONESIAN to "Informasi Profil Pribadi",
+            AppLanguage.ENGLISH to "Personal Profile Information",
+            AppLanguage.SPANISH to "Información del Perfil Personal",
+            AppLanguage.CHINESE to "个人资料信息",
+            AppLanguage.ARABIC to "معلومات الملف الشخصي",
+            AppLanguage.JAPANESE to "個人プロフィール情報"
+        ),
+        "profile_security_full_name" to mapOf(
+            AppLanguage.INDONESIAN to "Nama Lengkap",
+            AppLanguage.ENGLISH to "Full Name",
+            AppLanguage.SPANISH to "Nombre Completo",
+            AppLanguage.CHINESE to "全名",
+            AppLanguage.ARABIC to "الاسم الكامل",
+            AppLanguage.JAPANESE to "氏名"
+        ),
+        "profile_security_email" to mapOf(
+            AppLanguage.INDONESIAN to "Alamat Email",
+            AppLanguage.ENGLISH to "Email Address",
+            AppLanguage.SPANISH to "Correo Electrónico",
+            AppLanguage.CHINESE to "电子邮件地址",
+            AppLanguage.ARABIC to "عنوان البريد الإلكتروني",
+            AppLanguage.JAPANESE to "メールアドレス"
+        ),
+        "profile_security_phone" to mapOf(
+            AppLanguage.INDONESIAN to "Nomor WhatsApp / HP",
+            AppLanguage.ENGLISH to "WhatsApp / Phone Number",
+            AppLanguage.SPANISH to "Número de WhatsApp / Teléfono",
+            AppLanguage.CHINESE to "WhatsApp / 电话号码",
+            AppLanguage.ARABIC to "رقم WhatsApp / الهاتف",
+            AppLanguage.JAPANESE to "WhatsApp / 電話番号"
+        ),
+        "profile_security_save_btn" to mapOf(
+            AppLanguage.INDONESIAN to "Simpan Perubahan Profil",
+            AppLanguage.ENGLISH to "Save Profile Changes",
+            AppLanguage.SPANISH to "Guardar Cambios del Perfil",
+            AppLanguage.CHINESE to "保存个人资料更改",
+            AppLanguage.ARABIC to "حفظ تغييرات الملف الشخصي",
+            AppLanguage.JAPANESE to "プロフィールの変更を保存"
+        ),
+
     )
 
     fun getString(key: String, language: AppLanguage): String {
