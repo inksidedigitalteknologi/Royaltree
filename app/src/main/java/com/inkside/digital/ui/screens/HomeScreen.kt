@@ -81,17 +81,10 @@ fun HomeScreen(
     android.util.Log.d("HOME_SCREEN", "🔵 HomeScreen called! user=${user?.name}, tier=${user?.tier}, links=${links.size}, transactions=${recentTransactions.size}")
     val isPremium = user?.tier in listOf("PREMIUM", "VIP", "ROYAL")
 
-    // ISOLATION_TEST_12345
-    androidx.compose.material3.Text(
-        "🔴 HomeScreen RENDER — LazyColumn di bawah",
-        color = androidx.compose.ui.graphics.Color.White,
-        fontSize = androidx.compose.ui.unit.TextUnit(24f, androidx.compose.ui.unit.TextUnitType.Sp),
-        modifier = androidx.compose.ui.Modifier.padding(50.dp)
-    )
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(androidx.compose.ui.graphics.Color.Red)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
@@ -108,13 +101,13 @@ fun HomeScreen(
                     Text(
                         text = LanguageManager.translate("home_welcome", currentLanguage, "Selamat Datang"),
                         fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = androidx.compose.ui.graphics.Color.White // TEST
                     )
                     Text(
                         text = user?.name ?: "User",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = androidx.compose.ui.graphics.Color.White // TEST
                     )
                 }
 
@@ -177,7 +170,7 @@ fun HomeScreen(
                         Text(
                             text = LanguageManager.translate("total_commission", currentLanguage, "Saldo Tersedia"),
                             fontSize = 10.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = androidx.compose.ui.graphics.Color.White // TEST
                         )
                         Spacer(modifier = Modifier.height(3.dp))
                         Text(
@@ -380,7 +373,7 @@ fun HomeScreen(
                         Text(
                             text = subtitle,
                             fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = androidx.compose.ui.graphics.Color.White // TEST
                         )
                     }
                     if (adButtonState == AdButtonState.NO_AD) {
@@ -473,7 +466,7 @@ private fun StatCard(
                     text = label,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = androidx.compose.ui.graphics.Color.White // TEST,
                     textAlign = TextAlign.Center
                 )
             }
@@ -512,7 +505,7 @@ private fun QuickActionButton(
                 text = label,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = androidx.compose.ui.graphics.Color.White // TEST
             )
         }
     }
