@@ -749,7 +749,7 @@ fun GameRoomScreenContent(
                                 modifier = Modifier.size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Memproses...", fontWeight = FontWeight.Bold)
+                            Text(LanguageManager.translate("game_room_processing", currentLanguage, "Memproses..."), fontWeight = FontWeight.Bold)
                         } else {
                             Text(
                                 text = if (hasEmptySlot) "🔥 BELI & PASANG" else "🔥 BELI SAHAJA",
@@ -770,7 +770,7 @@ fun GameRoomScreenContent(
                             border = BorderStroke(1.dp, Color(0xFF475569)),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Batal", color = Color(0xFF94A3B8), fontWeight = FontWeight.Medium)
+                            Text(LanguageManager.translate("common_cancel", currentLanguage, "Batal"), color = Color(0xFF94A3B8), fontWeight = FontWeight.Medium)
                         }
                     }
                 }
@@ -907,7 +907,7 @@ fun GameRoomScreenContent(
                     onClick = { viewModel.showThermalPauseAlert.value = false },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A))
                 ) {
-                    Text("OK, Mengerti")
+                    Text(LanguageManager.translate("game_room_ok_understood", currentLanguage, "OK, Mengerti"))
                 }
             }
         )
