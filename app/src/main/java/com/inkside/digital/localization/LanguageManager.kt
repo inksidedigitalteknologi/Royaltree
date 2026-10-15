@@ -3629,6 +3629,289 @@ object LanguageManager {
             AppLanguage.JAPANESE to "ダウンロードと確認中..."
         ),
 
+
+        // ========== QR TRANSFER MODAL ==========
+        "qr_send_scan" to mapOf(
+            AppLanguage.INDONESIAN to "Kirim RTP (Scan)",
+            AppLanguage.ENGLISH to "Send RTP (Scan)",
+            AppLanguage.SPANISH to "Enviar RTP (Escanear)",
+            AppLanguage.CHINESE to "发送 RTP（扫描）",
+            AppLanguage.ARABIC to "إرسال RTP (مسح)",
+            AppLanguage.JAPANESE to "RTP送信（スキャン）"
+        ),
+        "qr_receive_my_qr" to mapOf(
+            AppLanguage.INDONESIAN to "Terima (QR Saya)",
+            AppLanguage.ENGLISH to "Receive (My QR)",
+            AppLanguage.SPANISH to "Recibir (Mi QR)",
+            AppLanguage.CHINESE to "接收（我的 QR）",
+            AppLanguage.ARABIC to "استلام (QR الخاص بي)",
+            AppLanguage.JAPANESE to "受信（マイQR）"
+        ),
+        "qr_open_scanner" to mapOf(
+            AppLanguage.INDONESIAN to "Buka Scanner",
+            AppLanguage.ENGLISH to "Open Scanner",
+            AppLanguage.SPANISH to "Abrir Escáner",
+            AppLanguage.CHINESE to "打开扫描仪",
+            AppLanguage.ARABIC to "فتح الماسح",
+            AppLanguage.JAPANESE to "スキャナーを開く"
+        ),
+        "qr_search_placeholder" to mapOf(
+            AppLanguage.INDONESIAN to "Cari kontak, @username, atau kode referral...",
+            AppLanguage.ENGLISH to "Search contacts, @username, or referral code...",
+            AppLanguage.SPANISH to "Buscar contactos, @username o código de referido...",
+            AppLanguage.CHINESE to "搜索联系人、@用户名或推荐码...",
+            AppLanguage.ARABIC to "ابحث عن جهات الاتصال أو @username أو رمز الإحالة...",
+            AppLanguage.JAPANESE to "連絡先、@ユーザー名、紹介コードを検索..."
+        ),
+        "qr_recipient_label" to mapOf(
+            AppLanguage.INDONESIAN to "ID Pengguna, Kode Referral, atau Hasil Scan QR",
+            AppLanguage.ENGLISH to "User ID, Referral Code, or QR Scan Result",
+            AppLanguage.SPANISH to "ID de Usuario, Código de Referido o Resultado de Escaneo QR",
+            AppLanguage.CHINESE to "用户 ID、推荐码或 QR 扫描结果",
+            AppLanguage.ARABIC to "معرف المستخدم أو رمز الإحالة أو نتيجة مسح QR",
+            AppLanguage.JAPANESE to "ユーザーID、紹介コード、QRスキャン結果"
+        ),
+        "qr_recipient_hint" to mapOf(
+            AppLanguage.INDONESIAN to "Contoh: USR-8821 atau PRO8892",
+            AppLanguage.ENGLISH to "Example: USR-8821 or PRO8892",
+            AppLanguage.SPANISH to "Ejemplo: USR-8821 o PRO8892",
+            AppLanguage.CHINESE to "示例：USR-8821 或 PRO8892",
+            AppLanguage.ARABIC to "مثال: USR-8821 أو PRO8892",
+            AppLanguage.JAPANESE to "例: USR-8821 または PRO8892"
+        ),
+        "qr_selected" to mapOf(
+            AppLanguage.INDONESIAN to "Terpilih",
+            AppLanguage.ENGLISH to "Selected",
+            AppLanguage.SPANISH to "Seleccionado",
+            AppLanguage.CHINESE to "已选择",
+            AppLanguage.ARABIC to "محدد",
+            AppLanguage.JAPANESE to "選択中"
+        ),
+        "qr_amount_title" to mapOf(
+            AppLanguage.INDONESIAN to "Jumlah Transfer (RTP):",
+            AppLanguage.ENGLISH to "Transfer Amount (RTP):",
+            AppLanguage.SPANISH to "Monto de Transferencia (RTP):",
+            AppLanguage.CHINESE to "转账金额（RTP）：",
+            AppLanguage.ARABIC to "مبلغ التحويل (RTP):",
+            AppLanguage.JAPANESE to "送金金額 (RTP):"
+        ),
+        "qr_note_label" to mapOf(
+            AppLanguage.INDONESIAN to "Catatan Transfer (Opsional)",
+            AppLanguage.ENGLISH to "Transfer Note (Optional)",
+            AppLanguage.SPANISH to "Nota de Transferencia (Opcional)",
+            AppLanguage.CHINESE to "转账备注（可选）",
+            AppLanguage.ARABIC to "ملاحظة التحويل (اختياري)",
+            AppLanguage.JAPANESE to "送金メモ（オプション）"
+        ),
+        "qr_note_hint" to mapOf(
+            AppLanguage.INDONESIAN to "Contoh: Bagi reward campaign, bonus referral, dll.",
+            AppLanguage.ENGLISH to "Example: Split campaign reward, referral bonus, etc.",
+            AppLanguage.SPANISH to "Ejemplo: Compartir recompensa de campaña, bono de referido, etc.",
+            AppLanguage.CHINESE to "示例：分享活动奖励、推荐奖金等。",
+            AppLanguage.ARABIC to "مثال: مشاركة مكافأة الحملة، مكافأة الإحالة، إلخ.",
+            AppLanguage.JAPANESE to "例: キャンペーン報酬の共有、紹介ボーナスなど"
+        ),
+        "qr_fee_terms_title" to mapOf(
+            AppLanguage.INDONESIAN to "Ketentuan & Biaya Admin Transfer",
+            AppLanguage.ENGLISH to "Transfer Terms & Admin Fee",
+            AppLanguage.SPANISH to "Términos de Transferencia y Tarifa Administrativa",
+            AppLanguage.CHINESE to "转账条款和管理费",
+            AppLanguage.ARABIC to "شروط التحويل ورسوم الإدارة",
+            AppLanguage.JAPANESE to "送金条件と管理手数料"
+        ),
+        "qr_fee_sent" to mapOf(
+            AppLanguage.INDONESIAN to "Jumlah Ditransfer:",
+            AppLanguage.ENGLISH to "Amount Sent:",
+            AppLanguage.SPANISH to "Monto Enviado:",
+            AppLanguage.CHINESE to "已发送金额：",
+            AppLanguage.ARABIC to "المبلغ المرسل:",
+            AppLanguage.JAPANESE to "送金金額:"
+        ),
+        "qr_fee_admin" to mapOf(
+            AppLanguage.INDONESIAN to "Potongan Biaya Admin (Fixed):",
+            AppLanguage.ENGLISH to "Admin Fee Deduction (Fixed):",
+            AppLanguage.SPANISH to "Deducción de Tarifa Administrativa (Fija):",
+            AppLanguage.CHINESE to "管理费扣除（固定）：",
+            AppLanguage.ARABIC to "خصم رسوم الإدارة (ثابت):",
+            AppLanguage.JAPANESE to "管理手数料控除（固定）:"
+        ),
+        "qr_fee_net_received" to mapOf(
+            AppLanguage.INDONESIAN to "Bersih Diterima Penerima:",
+            AppLanguage.ENGLISH to "Net Received by Recipient:",
+            AppLanguage.SPANISH to "Neto Recibido por el Destinatario:",
+            AppLanguage.CHINESE to "收款人实收净额：",
+            AppLanguage.ARABIC to "الصافي المستلم من قبل المستلم:",
+            AppLanguage.JAPANESE to "受取人の純受取額:"
+        ),
+        "qr_bill_amount_label" to mapOf(
+            AppLanguage.INDONESIAN to "Atur Nominal Tagihan / Split Bill (Opsional)",
+            AppLanguage.ENGLISH to "Set Bill / Split Bill Amount (Optional)",
+            AppLanguage.SPANISH to "Establecer Monto de Factura / Split Bill (Opcional)",
+            AppLanguage.CHINESE to "设置账单/分摊金额（可选）",
+            AppLanguage.ARABIC to "تعيين مبلغ الفاتورة / تقسيم الفاتورة (اختياري)",
+            AppLanguage.JAPANESE to "請求額/割り勘金額を設定（オプション）"
+        ),
+        "qr_bill_amount_hint" to mapOf(
+            AppLanguage.INDONESIAN to "Contoh: 100",
+            AppLanguage.ENGLISH to "Example: 100",
+            AppLanguage.SPANISH to "Ejemplo: 100",
+            AppLanguage.CHINESE to "示例：100",
+            AppLanguage.ARABIC to "مثال: 100",
+            AppLanguage.JAPANESE to "例: 100"
+        ),
+        "qr_bill_note_label" to mapOf(
+            AppLanguage.INDONESIAN to "Catatan Tagihan / Split Bill (Opsional)",
+            AppLanguage.ENGLISH to "Bill / Split Bill Note (Optional)",
+            AppLanguage.SPANISH to "Nota de Factura / Split Bill (Opcional)",
+            AppLanguage.CHINESE to "账单/分摊备注（可选）",
+            AppLanguage.ARABIC to "ملاحظة الفاتورة / تقسيم الفاتورة (اختياري)",
+            AppLanguage.JAPANESE to "請求書/割り勘メモ（オプション）"
+        ),
+        "qr_bill_note_hint" to mapOf(
+            AppLanguage.INDONESIAN to "Cth: Iuran makan siang, patungan proyek",
+            AppLanguage.ENGLISH to "E.g.: Lunch fee, project split",
+            AppLanguage.SPANISH to "Ej.: Cuota de almuerzo, división de proyecto",
+            AppLanguage.CHINESE to "例如：午餐费、项目分摊",
+            AppLanguage.ARABIC to "على سبيل المثال: رسوم الغداء، تقسيم المشروع",
+            AppLanguage.JAPANESE to "例: 昼食代、プロジェクト分担"
+        ),
+        "qr_copy_qr" to mapOf(
+            AppLanguage.INDONESIAN to "Salin QR",
+            AppLanguage.ENGLISH to "Copy QR",
+            AppLanguage.SPANISH to "Copiar QR",
+            AppLanguage.CHINESE to "复制 QR",
+            AppLanguage.ARABIC to "نسخ QR",
+            AppLanguage.JAPANESE to "QRをコピー"
+        ),
+        "qr_share_bill" to mapOf(
+            AppLanguage.INDONESIAN to "Bagikan Tagihan",
+            AppLanguage.ENGLISH to "Share Bill",
+            AppLanguage.SPANISH to "Compartir Factura",
+            AppLanguage.CHINESE to "分享账单",
+            AppLanguage.ARABIC to "مشاركة الفاتورة",
+            AppLanguage.JAPANESE to "請求書を共有"
+        ),
+        "qr_scan_camera_title" to mapOf(
+            AppLanguage.INDONESIAN to "Pindai Kamera QR Penerima",
+            AppLanguage.ENGLISH to "Scan Recipient QR Camera",
+            AppLanguage.SPANISH to "Escanear Cámara QR del Destinatario",
+            AppLanguage.CHINESE to "扫描收款人 QR 相机",
+            AppLanguage.ARABIC to "مسح كاميرا QR المستلم",
+            AppLanguage.JAPANESE to "受取人QRカメラをスキャン"
+        ),
+        "qr_receipt_tx_id" to mapOf(
+            AppLanguage.INDONESIAN to "ID Transaksi:",
+            AppLanguage.ENGLISH to "Transaction ID:",
+            AppLanguage.SPANISH to "ID de Transacción:",
+            AppLanguage.CHINESE to "交易 ID：",
+            AppLanguage.ARABIC to "معرف المعاملة:",
+            AppLanguage.JAPANESE to "取引ID:"
+        ),
+        "qr_receipt_time" to mapOf(
+            AppLanguage.INDONESIAN to "Waktu:",
+            AppLanguage.ENGLISH to "Time:",
+            AppLanguage.SPANISH to "Hora:",
+            AppLanguage.CHINESE to "时间：",
+            AppLanguage.ARABIC to "الوقت:",
+            AppLanguage.JAPANESE to "時間:"
+        ),
+        "qr_receipt_recipient" to mapOf(
+            AppLanguage.INDONESIAN to "Penerima:",
+            AppLanguage.ENGLISH to "Recipient:",
+            AppLanguage.SPANISH to "Destinatario:",
+            AppLanguage.CHINESE to "收款人：",
+            AppLanguage.ARABIC to "المستلم:",
+            AppLanguage.JAPANESE to "受取人:"
+        ),
+        "qr_receipt_amount_sent" to mapOf(
+            AppLanguage.INDONESIAN to "Jumlah Dikirim:",
+            AppLanguage.ENGLISH to "Amount Sent:",
+            AppLanguage.SPANISH to "Monto Enviado:",
+            AppLanguage.CHINESE to "已发送金额：",
+            AppLanguage.ARABIC to "المبلغ المرسل:",
+            AppLanguage.JAPANESE to "送金金額:"
+        ),
+        "qr_receipt_admin_fee" to mapOf(
+            AppLanguage.INDONESIAN to "Potongan Biaya Admin:",
+            AppLanguage.ENGLISH to "Admin Fee Deduction:",
+            AppLanguage.SPANISH to "Deducción de Tarifa Administrativa:",
+            AppLanguage.CHINESE to "管理费扣除：",
+            AppLanguage.ARABIC to "خصم رسوم الإدارة:",
+            AppLanguage.JAPANESE to "管理手数料控除:"
+        ),
+        "qr_receipt_net_received" to mapOf(
+            AppLanguage.INDONESIAN to "Bersih Diterima Penerima:",
+            AppLanguage.ENGLISH to "Net Received by Recipient:",
+            AppLanguage.SPANISH to "Neto Recibido por el Destinatario:",
+            AppLanguage.CHINESE to "收款人实收净额：",
+            AppLanguage.ARABIC to "الصافي المستلم من قبل المستلم:",
+            AppLanguage.JAPANESE to "受取人の純受取額:"
+        ),
+        "qr_receipt_remaining_balance" to mapOf(
+            AppLanguage.INDONESIAN to "Sisa Saldo Anda:",
+            AppLanguage.ENGLISH to "Your Remaining Balance:",
+            AppLanguage.SPANISH to "Tu Saldo Restante:",
+            AppLanguage.CHINESE to "您的剩余余额：",
+            AppLanguage.ARABIC to "رصيدك المتبقي:",
+            AppLanguage.JAPANESE to "残りの残高:"
+        ),
+        "qr_receipt_crypto_verified" to mapOf(
+            AppLanguage.INDONESIAN to "Validasi Kriptografis Terverifikasi",
+            AppLanguage.ENGLISH to "Cryptographic Validation Verified",
+            AppLanguage.SPANISH to "Validación Criptográfica Verificada",
+            AppLanguage.CHINESE to "加密验证已验证",
+            AppLanguage.ARABIC to "تم التحقق من التحقق التشفيري",
+            AppLanguage.JAPANESE to "暗号化検証済み"
+        ),
+        "qr_receipt_copy" to mapOf(
+            AppLanguage.INDONESIAN to "Salin",
+            AppLanguage.ENGLISH to "Copy",
+            AppLanguage.SPANISH to "Copiar",
+            AppLanguage.CHINESE to "复制",
+            AppLanguage.ARABIC to "نسخ",
+            AppLanguage.JAPANESE to "コピー"
+        ),
+        "qr_receipt_share" to mapOf(
+            AppLanguage.INDONESIAN to "Bagikan Struk",
+            AppLanguage.ENGLISH to "Share Receipt",
+            AppLanguage.SPANISH to "Compartir Recibo",
+            AppLanguage.CHINESE to "分享收据",
+            AppLanguage.ARABIC to "مشاركة الإيصال",
+            AppLanguage.JAPANESE to "領収書を共有"
+        ),
+        "qr_receipt_finish" to mapOf(
+            AppLanguage.INDONESIAN to "Selesai",
+            AppLanguage.ENGLISH to "Finish",
+            AppLanguage.SPANISH to "Terminar",
+            AppLanguage.CHINESE to "完成",
+            AppLanguage.ARABIC to "إنهاء",
+            AppLanguage.JAPANESE to "完了"
+        ),
+        "qr_pin_amount" to mapOf(
+            AppLanguage.INDONESIAN to "Nominal Transfer:",
+            AppLanguage.ENGLISH to "Transfer Amount:",
+            AppLanguage.SPANISH to "Monto de Transferencia:",
+            AppLanguage.CHINESE to "转账金额：",
+            AppLanguage.ARABIC to "مبلغ التحويل:",
+            AppLanguage.JAPANESE to "送金金額:"
+        ),
+        "qr_pin_admin_fee" to mapOf(
+            AppLanguage.INDONESIAN to "Biaya Admin (Penerima):",
+            AppLanguage.ENGLISH to "Admin Fee (Recipient):",
+            AppLanguage.SPANISH to "Tarifa Administrativa (Destinatario):",
+            AppLanguage.CHINESE to "管理费（收款人）：",
+            AppLanguage.ARABIC to "رسوم الإدارة (المستلم):",
+            AppLanguage.JAPANESE to "管理手数料（受取人）:"
+        ),
+        "qr_pin_cancel" to mapOf(
+            AppLanguage.INDONESIAN to "Batal Transaksi",
+            AppLanguage.ENGLISH to "Cancel Transaction",
+            AppLanguage.SPANISH to "Cancelar Transacción",
+            AppLanguage.CHINESE to "取消交易",
+            AppLanguage.ARABIC to "إلغاء المعاملة",
+            AppLanguage.JAPANESE to "取引をキャンセル"
+        ),
+
     )
 
     fun getString(key: String, language: AppLanguage): String {
