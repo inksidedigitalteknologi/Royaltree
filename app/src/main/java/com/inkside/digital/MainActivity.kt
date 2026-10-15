@@ -123,6 +123,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.compose.ui.unit.dp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -1096,7 +1097,7 @@ fun MainAffiliateAppContent(
 
                 AppScreen.ACHIEVEMENT -> {
                     AchievementScreen(
-                        viewModel = affiliateViewModel,
+                        viewModel = viewModel,
                         currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.PROFILE) }
                     )
@@ -1104,7 +1105,7 @@ fun MainAffiliateAppContent(
 
                 AppScreen.PURCHASE -> {
                     PurchaseScreen(
-                        viewModel = affiliateViewModel,
+                        viewModel = viewModel,
                         onBack = { onNavigate(AppScreen.PROFILE) }
                     )
                 }
