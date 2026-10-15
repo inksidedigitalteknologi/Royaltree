@@ -156,21 +156,21 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     val portalBaseUrl = MutableStateFlow(com.inkside.digital.data.network.ApiClient.getStoredBaseUrl(application))
     val portalApiKey = MutableStateFlow(com.inkside.digital.data.network.ApiClient.getStoredApiKey(application))
     val portalConnectionStatus = MutableStateFlow("IDLE") // IDLE, TESTING, ONLINE, ERROR
-    val portalStatusMessage = MutableStateFlow("Belum diuji")
+    val portalStatusMessage = MutableStateFlow(LanguageManager.translate("vm_portal_untested", _currentLanguage.value, "Belum diuji"))
     val isSyncingWithPortal = MutableStateFlow(false)
 
     fun testPortalConnection(url: String, apiKey: String) {
         viewModelScope.launch {
             portalConnectionStatus.value = "TESTING"
-            portalStatusMessage.value = "Menghubungkan ke $url..."
+            portalStatusMessage.value = LanguageManager.translate("vm_portal_connecting", _currentLanguage.value, "Menghubungkan ke $url...")
             val result = com.inkside.digital.data.network.ApiClient.testConnection(url)
             result.onSuccess { res ->
                 portalConnectionStatus.value = "ONLINE"
-                portalStatusMessage.value = "Tersambung (HTTP 200 OK) - ${res.message}"
+                portalStatusMessage.value = LanguageManager.translate("vm_portal_connected_detail", _currentLanguage.value, "Tersambung (HTTP 200 OK) - ${res.message}")
                 showSnackbar(LanguageManager.translate("snackbar_portal_connected", _currentLanguage.value, "Berhasil terhubung ke portal Anda! 🟢"))
             }.onFailure { err ->
                 portalConnectionStatus.value = "ERROR"
-                portalStatusMessage.value = "Gagal: ${err.localizedMessage ?: "Tidak dapat menjangkau server"}"
+                portalStatusMessage.value = "Gagal: ${err.localizedMessage ?: LanguageManager.translate("vm_server_unreachable", _currentLanguage.value, "Tidak dapat menjangkau server")}"
                 showSnackbar(String.format(LanguageManager.translate("snackbar_portal_failed", _currentLanguage.value, "Koneksi gagal: %s 🔴"), err.message))
             }
         }
@@ -271,7 +271,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     fun switchUser(userId: String) {
         repository.switchUser(userId)
         val targetUser = allUsers.value.find { it.id == userId }
-        _snackbarMessage.value = "Beralih akun: ${targetUser?.name ?: userId}"
+        _snackbarMessage.value = LanguageManager.translate("vm_switch_account", _currentLanguage.value, "Beralih akun: ${targetUser?.name ?: userId}")
     }
 
     fun addSteps(steps: Int) {
@@ -289,10 +289,10 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             val result = repository.convertStepsToCoins()
             if (result.isSuccess) {
                 val (coins, rupiah) = result.getOrThrow()
-                _snackbarMessage.value = "Sukses menukar langkah! +$coins Koin (Rp ${String.format(java.util.Locale.US, "%,.0f", rupiah)})"
+                _snackbarMessage.value = LanguageManager.translate("vm_step_exchange_success", _currentLanguage.value, "Sukses menukar langkah! +$coins Koin (Rp ${String.format(java.util.Locale.US, "%,.0f", rupiah)})")
                 onComplete?.invoke(true, "+$coins Koin")
             } else {
-                val msg = result.exceptionOrNull()?.message ?: "Gagal menukar langkah"
+                val msg = result.exceptionOrNull()?.message ?: LanguageManager.translate("vm_step_exchange_failed", _currentLanguage.value, "Gagal menukar langkah")
                 _snackbarMessage.value = msg
                 onComplete?.invoke(false, msg)
             }
@@ -302,7 +302,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     fun downloadApp(adId: String) {
         viewModelScope.launch {
             repository.simulateDownloadApp(adId)
-            _snackbarMessage.value = "Aplikasi berhasil diunduh & dipasang! Klaim bonus sekarang."
+            _snackbarMessage.value = LanguageManager.translate("vm_app_installed", _currentLanguage.value, "Aplikasi berhasil diunduh & dipasang! Klaim bonus sekarang.")
         }
     }
 
@@ -311,10 +311,10 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             val result = repository.claimAppDownloadReward(adId)
             if (result.isSuccess) {
                 val (coins, rupiah) = result.getOrThrow()
-                _snackbarMessage.value = "Klaim berhasil! +$coins Koin (+Rp ${String.format(java.util.Locale.US, "%,.0f", rupiah)})"
+                _snackbarMessage.value = LanguageManager.translate("vm_claim_success", _currentLanguage.value, "Klaim berhasil! +$coins Koin (+Rp ${String.format(java.util.Locale.US, "%,.0f", rupiah)})")
                 onComplete?.invoke(true, "+$coins Koin")
             } else {
-                val msg = result.exceptionOrNull()?.message ?: "Gagal klaim hadiah"
+                val msg = result.exceptionOrNull()?.message ?: LanguageManager.translate("vm_claim_failed", _currentLanguage.value, "Gagal klaim hadiah")
                 _snackbarMessage.value = msg
                 onComplete?.invoke(false, msg)
             }
@@ -325,7 +325,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             val result = repository.claimBannerAdBonus(bannerId, sponsorName, coins)
             if (result.isSuccess) {
-                _snackbarMessage.value = "Bonus sponsor $sponsorName! +$coins Koin didapatkan 🎉"
+                _snackbarMessage.value = LanguageManager.translate("vm_sponsor_bonus", _currentLanguage.value, "Bonus sponsor $sponsorName! +$coins Koin didapatkan 🎉")
             }
         }
     }
@@ -528,11 +528,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 ApiClient.createWithdrawal(req)
                     .onSuccess { response ->
                         if (!response.success) {
-                            showSnackbar("Backend: " + (response.message ?: "Gagal"))
+                            showSnackbar("Backend: " + (response.message ?: LanguageManager.translate("vm_failed", _currentLanguage.value, "Gagal")))
                         }
                     }
                     .onFailure { error ->
-                        showSnackbar(String.format(LanguageManager.translate("snackbar_backend_error", _currentLanguage.value, "Backend error: %s"), error.message ?: "Network error"))
+                        showSnackbar(String.format(LanguageManager.translate("snackbar_backend_error", _currentLanguage.value, "Backend error: %s"), error.message ?: LanguageManager.translate("vm_network_error", _currentLanguage.value, "Network error")))
                     }
             }.onFailure { error ->
                 showSnackbar(String.format(LanguageManager.translate("snackbar_generic_failed", _currentLanguage.value, "Gagal: %s"), error.message ?: "Unknown"))
@@ -545,7 +545,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             val newStatus = if (isApprove) "PAID" else "REJECTED"
             repository.updateWithdrawalStatusByAdmin(withdrawal, newStatus, note)
             showAdminReviewModal.value = null
-            showSnackbar(if (isApprove) "Penarikan berhasil disetujui & dicairkan manual!" else "Penarikan telah ditolak dan saldo dikembalikan.")
+            showSnackbar(if (isApprove) LanguageManager.translate("vm_withdraw_approved", _currentLanguage.value, "Penarikan berhasil disetujui & dicairkan manual!") else "Penarikan telah ditolak dan saldo dikembalikan.")
         }
     }
 
@@ -610,13 +610,13 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         val isComplete: Boolean get() = readyCount == totalItems
 
         fun itemList(): List<Pair<String, Boolean>> = listOf(
-            "Memuatkan akun" to firebaseAuth,
-            "Sinkronisasi profil" to userProfile,
-            "Memuat katalog miner" to minerCatalog,
-            "Menyiapkan game" to gameState,
-            "Memuat komisi affiliate" to affiliateBalance,
-            "Menyiapkan iklan" to adMobReady,
-            "Menyambung notifikasi" to fcmToken
+            LanguageManager.translate("vm_stage_load_account", _currentLanguage.value, "Memuatkan akun") to firebaseAuth,
+            LanguageManager.translate("vm_stage_sync_profile", _currentLanguage.value, "Sinkronisasi profil") to userProfile,
+            LanguageManager.translate("vm_stage_load_miner", _currentLanguage.value, "Memuat katalog miner") to minerCatalog,
+            LanguageManager.translate("vm_stage_prepare_game", _currentLanguage.value, "Menyiapkan game") to gameState,
+            LanguageManager.translate("vm_stage_load_affiliate", _currentLanguage.value, "Memuat komisi affiliate") to affiliateBalance,
+            LanguageManager.translate("vm_stage_prepare_ads", _currentLanguage.value, "Menyiapkan iklan") to adMobReady,
+            LanguageManager.translate("vm_stage_connect_notif", _currentLanguage.value, "Menyambung notifikasi") to fcmToken
         )
     }
 
@@ -801,11 +801,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             ApiClient.requestAffiliateWithdraw(amount, destination, method)
                 .onSuccess { json ->
                     if (json.optBoolean("success", false)) {
-                        showSnackbar(json.optString("message", "Withdraw berhasil diajukan!"))
+                        showSnackbar(json.optString("message", LanguageManager.translate("vm_withdraw_submitted", _currentLanguage.value, "Withdraw berhasil diajukan!")))
                         loadAffiliateBalance()
                         loadAffiliateWithdrawals()
                     } else {
-                        showSnackbar(json.optString("message", "Gagal withdraw"))
+                        showSnackbar(json.optString("message", LanguageManager.translate("vm_withdraw_failed", _currentLanguage.value, "Gagal withdraw")))
                     }
                 }
                 .onFailure {
@@ -853,7 +853,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 showUpgradeModal.value = false
                 showSnackbar("👑 Selamat! Akun Anda kini berstatus VIP Premium.")
             }.onFailure {
-                showSnackbar(it.message ?: "Upgrade gagal")
+                showSnackbar(it.message ?: LanguageManager.translate("vm_upgrade_failed", _currentLanguage.value, "Upgrade gagal"))
             }
         }
     }
@@ -865,7 +865,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 showRedeemPointsModal.value = false
                 showSnackbar(String.format(LanguageManager.translate("snackbar_redeem_success", _currentLanguage.value, "Sukses tukar poin! +Rp %s"), String.format(java.util.Locale.US, "%,.0f", earned)))
             }.onFailure {
-                showSnackbar(it.message ?: "Gagal tukar poin")
+                showSnackbar(it.message ?: LanguageManager.translate("vm_redeem_failed", _currentLanguage.value, "Gagal tukar poin"))
             }
         }
     }
@@ -877,7 +877,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 showBuyCouponModal.value = null
                 showSnackbar(LanguageManager.translate("snackbar_coupon_bought", _currentLanguage.value, "Kupon berhasil dibeli!"))
             }.onFailure {
-                showSnackbar(it.message ?: "Gagal membeli kupon")
+                showSnackbar(it.message ?: LanguageManager.translate("vm_coupon_buy_failed", _currentLanguage.value, "Gagal membeli kupon"))
             }
         }
     }
@@ -886,7 +886,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             repository.toggleListCouponSecondaryMarket(coupon, price, isListing)
             showListCouponModal.value = null
-            showSnackbar(if (isListing) "Kupon aktif didaftarkan di Pasar Sekunder!" else "Kupon ditarik dari Pasar Sekunder.")
+            showSnackbar(if (isListing) LanguageManager.translate("vm_coupon_listed", _currentLanguage.value, "Kupon aktif didaftarkan di Pasar Sekunder!") else "Kupon ditarik dari Pasar Sekunder.")
         }
     }
 
@@ -896,7 +896,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             res.onSuccess { amount ->
                 showSnackbar(String.format(LanguageManager.translate("snackbar_dividend_paid", _currentLanguage.value, "Dividen +Rp %s dicairkan!"), String.format(java.util.Locale.US, "%,.0f", amount)))
             }.onFailure {
-                showSnackbar(it.message ?: "Gagal klaim yield")
+                showSnackbar(it.message ?: LanguageManager.translate("vm_yield_failed", _currentLanguage.value, "Gagal klaim yield"))
             }
         }
     }
@@ -936,7 +936,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             result.onSuccess { points ->
                 showSnackbar(String.format(LanguageManager.translate("snackbar_mining_harvest", _currentLanguage.value, "Panen Berhasil! +%s Poin 🎉"), points.toInt()))
             }.onFailure { error ->
-                showSnackbar(error.message ?: "Gagal mengklaim hasil mining")
+                showSnackbar(error.message ?: LanguageManager.translate("vm_mining_claim_failed", _currentLanguage.value, "Gagal mengklaim hasil mining"))
             }
         }
     }
@@ -974,7 +974,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                                     if (success) {
                                         loadGameState()
                                     } else {
-                                        showSnackbar(resp.optString("message", "Backend reject"))
+                                        showSnackbar(resp.optString("message", LanguageManager.translate("vm_backend_reject", _currentLanguage.value, "Backend reject")))
                                     }
                                 }
                                 .onFailure { err ->
@@ -991,11 +991,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                 }.onFailure { error ->
                     android.util.Log.e("BuyMiner", "❌ Lokal fail: ${error.message}", error)
-                    showSnackbar(error.message ?: "Gagal membeli item penambang")
+                    showSnackbar(error.message ?: LanguageManager.translate("vm_miner_buy_failed", _currentLanguage.value, "Gagal membeli item penambang"))
                 }
             } catch (e: Exception) {
                 android.util.Log.e("BuyMiner", "❌ Fatal error: ${e.message}", e)
-                showSnackbar("Error: ${e.message}")
+                showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             }
         }
     }
@@ -1033,7 +1033,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                                     val success = resp.optBoolean("success", false)
                                     android.util.Log.d("BuyMiner", "✅ Sync response: $resp")
                                     if (!success) {
-                                        showSnackbar("Backend reject: ${resp.optString("message")}")
+                                        showSnackbar(LanguageManager.translate("vm_backend_reject_prefix", _currentLanguage.value, "Backend reject: ") + resp.optString("message"))
                                         return@onSuccess
                                     }
 
@@ -1073,11 +1073,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                 }.onFailure { error ->
                     android.util.Log.e("BuyMiner", "❌ Lokal fail: ${error.message}", error)
-                    showSnackbar(error.message ?: "Gagal membeli item penambang")
+                    showSnackbar(error.message ?: LanguageManager.translate("vm_miner_buy_failed", _currentLanguage.value, "Gagal membeli item penambang"))
                 }
             } catch (e: Exception) {
                 android.util.Log.e("BuyMiner", "❌ Fatal error: ${e.message}", e)
-                showSnackbar("Error: ${e.message}")
+                showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             }
         }
     }
@@ -1125,7 +1125,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         }
                 }
             }.onFailure { error ->
-                showSnackbar(error.message ?: "Gagal memindahkan item")
+                showSnackbar(error.message ?: LanguageManager.translate("vm_move_item_failed", _currentLanguage.value, "Gagal memindahkan item"))
             }
         }
     }
@@ -1147,7 +1147,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         android.util.Log.e("MiniGame", "❌ Sync failed: ${err.message}")
                     }
             }.onFailure { error ->
-                showSnackbar(error.message ?: "Gagal memproses reward game")
+                showSnackbar(error.message ?: LanguageManager.translate("vm_game_reward_failed", _currentLanguage.value, "Gagal memproses reward game"))
             }
         }
     }
@@ -1172,7 +1172,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         loadGameState()
                         loadUserFromBackend()
                     } else {
-                        val msg = json.optString("message", "Gagal membuka slot")
+                        val msg = json.optString("message", LanguageManager.translate("vm_open_slot_failed", _currentLanguage.value, "Gagal membuka slot"))
                         val httpCode = json.optInt("httpCode", 0)
                         android.util.Log.w("UnlockSlot", "Failed: HTTP $httpCode — $msg")
                         showSnackbar("⚠️ $msg")
@@ -1180,7 +1180,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 }
                 .onFailure { err ->
                     android.util.Log.e("UnlockSlot", "❌ Error: ${err.message}")
-                    showSnackbar(String.format(LanguageManager.translate("snackbar_network_error", _currentLanguage.value, "Error: %s"), err.message ?: "Network error"))
+                    showSnackbar(String.format(LanguageManager.translate("snackbar_network_error", _currentLanguage.value, "Error: %s"), err.message ?: LanguageManager.translate("vm_network_error", _currentLanguage.value, "Network error")))
                 }
         }
     }
@@ -1189,7 +1189,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             val currentUser = user.value
             if (currentUser == null) {
-                showSnackbar("User tidak ditemukan")
+                showSnackbar(LanguageManager.translate("vm_user_not_found", _currentLanguage.value, "User tidak ditemukan"))
                 return@launch
             }
 
@@ -1223,11 +1223,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         )
                         showSnackbar("✅ Profil berhasil disimpan")
                     } else {
-                        showSnackbar("❌ Gagal: " + (response.message ?: "Unknown error"))
+                        showSnackbar(LanguageManager.translate("vm_failed_prefix", _currentLanguage.value, "❌ Gagal: ") + (response.message ?: LanguageManager.translate("vm_unknown_error", _currentLanguage.value, "Unknown error")))
                     }
                 }
                 .onFailure { error ->
-                    showSnackbar("❌ Gagal simpan: " + (error.message ?: "Network error"))
+                    showSnackbar(LanguageManager.translate("vm_save_failed_prefix", _currentLanguage.value, "❌ Gagal simpan: ") + (error.message ?: LanguageManager.translate("vm_network_error", _currentLanguage.value, "Network error")))
                 }
         }
     }
@@ -1243,14 +1243,14 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     fun markAllNotificationsRead() {
         viewModelScope.launch {
             repository.markAllNotificationsAsRead()
-            showSnackbar("Semua notifikasi ditandai telah dibaca.")
+            showSnackbar(LanguageManager.translate("vm_all_notif_read", _currentLanguage.value, "Semua notifikasi ditandai telah dibaca."))
         }
     }
 
     fun clearAllNotifications() {
         viewModelScope.launch {
             repository.deleteAllNotifications()
-            showSnackbar("Semua notifikasi dihapus.")
+            showSnackbar(LanguageManager.translate("vm_all_notif_deleted", _currentLanguage.value, "Semua notifikasi dihapus."))
         }
     }
 
@@ -1259,7 +1259,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             val res = repository.performDailyCheckIn()
             res.onSuccess { (reward, streak) ->
                 showDailyCheckInModal.value = false
-                showSnackbar("Check-in Hari ke-$streak Berhasil! +$reward RTP 🌟")
+                showSnackbar(LanguageManager.translate("vm_checkin_success", _currentLanguage.value, "Check-in Hari ke-$streak Berhasil! +$reward RTP 🌟"))
 
                 // Update widget
                 user.value?.let { u ->
@@ -1271,16 +1271,16 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     .onSuccess { json ->
                         if (json.optBoolean("success", false)) {
                             val serverPoints = json.optInt("points", reward)
-                            showSnackbar("Check-in tersimpan! +$serverPoints RTP")
+                            showSnackbar(LanguageManager.translate("vm_checkin_saved", _currentLanguage.value, "Check-in tersimpan! +$serverPoints RTP"))
                             // Refresh user + update widget
                             loadUserFromBackend()
                         }
                     }
                     .onFailure { error ->
-                        showSnackbar(String.format(LanguageManager.translate("snackbar_backend_error", _currentLanguage.value, "Backend error: %s"), error.message ?: "Network error"))
+                        showSnackbar(String.format(LanguageManager.translate("snackbar_backend_error", _currentLanguage.value, "Backend error: %s"), error.message ?: LanguageManager.translate("vm_network_error", _currentLanguage.value, "Network error")))
                     }
             }.onFailure {
-                showSnackbar(it.message ?: "Gagal check-in")
+                showSnackbar(it.message ?: LanguageManager.translate("vm_checkin_failed", _currentLanguage.value, "Gagal check-in"))
             }
         }
     }
@@ -1313,14 +1313,14 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                                 WidgetUpdater.refreshFromRoom(getApplication(), u.id)
                             }
                         } else {
-                            showSnackbar(json.optString("message", "Gagal check-in"))
+                            showSnackbar(json.optString("message", LanguageManager.translate("vm_checkin_failed", _currentLanguage.value, "Gagal check-in")))
                         }
                     }
                     .onFailure { error ->
-                        showSnackbar("Error check-in: ${error.message ?: "Network error"}")
+                        showSnackbar("Error check-in: ${error.message ?: LanguageManager.translate("vm_network_error", _currentLanguage.value, "Network error")}")
                     }
             } catch (e: Exception) {
-                showSnackbar("Error: ${e.message}")
+                showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             }
         }
     }
@@ -1379,13 +1379,13 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         showSnackbar("+$tokens Miner Token! ⛏️")
                         loadGameState()
                     } else {
-                        showSnackbar(json.optString("message", "Gagal claim token"))
+                        showSnackbar(json.optString("message", LanguageManager.translate("vm_claim_token_failed", _currentLanguage.value, "Gagal claim token")))
                     }
                 }.onFailure {
                     showSnackbar(String.format(LanguageManager.translate("snackbar_network_error", _currentLanguage.value, "Error: %s"), it.message ?: "Unknown"))
                 }
             } catch (e: Exception) {
-                showSnackbar("Error: ${e.message}")
+                showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             }
         }
     }
@@ -1402,17 +1402,17 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
                 ApiClient.unlockMiner(body).onSuccess { json ->
                     if (json.optBoolean("success", false)) {
-                        showSnackbar(json.optString("message", "Miner berhasil di-unlock!"))
+                        showSnackbar(json.optString("message", LanguageManager.translate("vm_miner_unlocked", _currentLanguage.value, "Miner berhasil di-unlock!")))
                         loadGameState()
                         loadMinerCatalog()
                     } else {
-                        showSnackbar(json.optString("message", "Gagal unlock miner"))
+                        showSnackbar(json.optString("message", LanguageManager.translate("vm_unlock_miner_failed", _currentLanguage.value, "Gagal unlock miner")))
                     }
                 }.onFailure {
                     showSnackbar(String.format(LanguageManager.translate("snackbar_network_error", _currentLanguage.value, "Error: %s"), it.message ?: "Unknown"))
                 }
             } catch (e: Exception) {
-                showSnackbar("Error: ${e.message}")
+                showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             }
         }
     }
@@ -1610,15 +1610,15 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 result.getOrNull()?.let { json ->
                     if (json.optBoolean("success", false)) {
                         loadAchievements()
-                        onResult(true, json.optString("message", "Reward berhasil diklaim"))
+                        onResult(true, json.optString("message", LanguageManager.translate("vm_reward_claimed", _currentLanguage.value, "Reward berhasil diklaim")))
                     } else {
-                        onResult(false, json.optString("message", "Gagal klaim"))
+                        onResult(false, json.optString("message", LanguageManager.translate("vm_claim_failed", _currentLanguage.value, "Gagal klaim")))
                     }
                 } ?: run {
-                    onResult(false, "Koneksi gagal")
+                    onResult(false, LanguageManager.translate("vm_connection_failed", _currentLanguage.value, "Koneksi gagal"))
                 }
             } catch (e: Exception) {
-                onResult(false, "Error: ${e.message}")
+                onResult(false, LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             }
         }
     }
@@ -1677,7 +1677,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun handlePurchaseSuccess(productId: String, purchaseToken: String, packageName: String) {
         viewModelScope.launch {
-            _purchaseMessage.value = "Memverifikasi pembelian..."
+            _purchaseMessage.value = LanguageManager.translate("vm_verifying_purchase", _currentLanguage.value, "Memverifikasi pembelian...")
             try {
                 val body = org.json.JSONObject().apply {
                     put("purchaseToken", purchaseToken)
@@ -1687,11 +1687,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 val result = com.inkside.digital.data.network.ApiClient.verifyPurchase(body)
                 result.getOrNull()?.let { json ->
                     if (json.optBoolean("success", false)) {
-                        _purchaseMessage.value = "✅ " + json.optString("message", "Upgrade berhasil!")
+                        _purchaseMessage.value = "✅ " + json.optString("message", LanguageManager.translate("vm_upgrade_success", _currentLanguage.value, "Upgrade berhasil!"))
                         // Refresh profile
                         loadProfileFromBackend()
                     } else {
-                        _purchaseMessage.value = "❌ " + json.optString("message", "Verifikasi gagal")
+                        _purchaseMessage.value = "❌ " + json.optString("message", LanguageManager.translate("vm_verification_failed", _currentLanguage.value, "Verifikasi gagal"))
                     }
                 } ?: run {
                     _purchaseMessage.value = "❌ Koneksi gagal"
@@ -1718,7 +1718,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     private val _tempStatus = MutableStateFlow(BatteryTempHelper.TempStatus.NORMAL)
     val tempStatus: StateFlow<BatteryTempHelper.TempStatus> = _tempStatus.asStateFlow()
 
-    private val _userRegion = MutableStateFlow("Unknown")
+    private val _userRegion = MutableStateFlow(LanguageManager.translate("vm_unknown", _currentLanguage.value, "Unknown"))
     val userRegion: StateFlow<String> = _userRegion.asStateFlow()
 
     // ============ MINING PAUSE STATE (dari backend) ============
@@ -1805,15 +1805,15 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             // loadGameState()
                             // loadUserFromBackend()
                         } else {
-                            val errMsg = json.optString("message", "Gagal aktifkan miner")
+                            val errMsg = json.optString("message", LanguageManager.translate("vm_activate_miner_failed", _currentLanguage.value, "Gagal aktifkan miner"))
                             showSnackbar(errMsg)
                         }
                     }
                     .onFailure {
-                        showSnackbar("Error: ${it.message}")
+                        showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + it.message)
                     }
             } catch (e: Exception) {
-                showSnackbar("Aktivasi error: ${e.message}")
+                showSnackbar(LanguageManager.translate("vm_activation_error_prefix", _currentLanguage.value, "Aktivasi error: ") + e.message)
             }
         }
     }
@@ -2107,7 +2107,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     loadUserFromBackend()
                     loadGameState()
                 } else {
-                    val msg = json.optString("message", "Gagal klaim")
+                    val msg = json.optString("message", LanguageManager.translate("vm_claim_failed", _currentLanguage.value, "Gagal klaim"))
                     val remaining = json.optLong("cooldownRemainingMs", 0L)
                     val httpCode = json.optInt("httpCode", 0)
                     
@@ -2121,7 +2121,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 }
             }.onFailure {
                 android.util.Log.e("ClaimMining", "Network error: ${it.message}")
-                showSnackbar("Error: ${it.message ?: "Network error"}")
+                showSnackbar("Error: ${it.message ?: LanguageManager.translate("vm_network_error", _currentLanguage.value, "Network error")}")
             }
 
             _miningClaimInProgress.value = false
@@ -2136,7 +2136,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 localResult.onSuccess { points ->
                     showSnackbar(String.format(LanguageManager.translate("snackbar_mining_claim_success", _currentLanguage.value, "Berhasil klaim %s RTP! ⛏️"), points.toInt()))
                 }.onFailure {
-                    showSnackbar(it.message ?: "Gagal claim")
+                    showSnackbar(it.message ?: LanguageManager.translate("vm_claim_failed", _currentLanguage.value, "Gagal claim"))
                     return@launch
                 }
 
@@ -2153,7 +2153,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                 }
             } catch (e: Exception) {
-                showSnackbar("Error: ${e.message}")
+                showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             }
         }
     }
@@ -2169,7 +2169,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 localResult.onSuccess { msg ->
                     showSnackbar(msg)
                 }.onFailure {
-                    showSnackbar(it.message ?: "Gagal beli")
+                    showSnackbar(it.message ?: LanguageManager.translate("vm_buy_failed", _currentLanguage.value, "Gagal beli"))
                     return@launch
                 }
 
@@ -2192,7 +2192,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 loadGameState()
                 loadUserFromBackend()
             } catch (e: Exception) {
-                showSnackbar("Error: ${e.message}")
+                showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             }
         }
     }
@@ -2215,7 +2215,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
                 loadGameState()
             } catch (e: Exception) {
-                showSnackbar("Error: ${e.message}")
+                showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             }
         }
     }
@@ -2236,7 +2236,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
                 loadGameState()
             } catch (e: Exception) {
-                showSnackbar("Error: ${e.message}")
+                showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             }
         }
     }
@@ -2252,16 +2252,16 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 ApiClient.claimMission(missionId, currentUser.id)
                     .onSuccess { json ->
                         if (!json.optBoolean("success", false)) {
-                            showSnackbar("Backend: " + json.optString("message", "Gagal"))
+                            showSnackbar("Backend: " + json.optString("message", LanguageManager.translate("vm_failed", _currentLanguage.value, "Gagal")))
                         } else {
                             loadUserFromBackend()
                         }
                     }
                     .onFailure { error ->
-                        showSnackbar(String.format(LanguageManager.translate("snackbar_backend_error", _currentLanguage.value, "Backend error: %s"), error.message ?: "Network error"))
+                        showSnackbar(String.format(LanguageManager.translate("snackbar_backend_error", _currentLanguage.value, "Backend error: %s"), error.message ?: LanguageManager.translate("vm_network_error", _currentLanguage.value, "Network error")))
                     }
             }.onFailure {
-                showSnackbar(it.message ?: "Gagal klaim hadiah misi")
+                showSnackbar(it.message ?: LanguageManager.translate("vm_mission_claim_failed", _currentLanguage.value, "Gagal klaim hadiah misi"))
             }
         }
     }
@@ -2277,14 +2277,14 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 ApiClient.completeMission(missionId, currentUser.id)
                     .onSuccess { json ->
                         if (!json.optBoolean("success", false)) {
-                            showSnackbar("Backend: " + json.optString("message", "Gagal"))
+                            showSnackbar("Backend: " + json.optString("message", LanguageManager.translate("vm_failed", _currentLanguage.value, "Gagal")))
                         }
                     }
                     .onFailure { error ->
-                        showSnackbar(String.format(LanguageManager.translate("snackbar_backend_error", _currentLanguage.value, "Backend error: %s"), error.message ?: "Network error"))
+                        showSnackbar(String.format(LanguageManager.translate("snackbar_backend_error", _currentLanguage.value, "Backend error: %s"), error.message ?: LanguageManager.translate("vm_network_error", _currentLanguage.value, "Network error")))
                     }
             }.onFailure {
-                showSnackbar(it.message ?: "Gagal memproses tugas")
+                showSnackbar(it.message ?: LanguageManager.translate("vm_task_failed", _currentLanguage.value, "Gagal memproses tugas"))
             }
         }
     }
@@ -2301,7 +2301,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 transferSuccessReceipt.value = result
                 showSnackbar(String.format(LanguageManager.translate("snackbar_transfer_success", _currentLanguage.value, "Berhasil transfer %s RTP ke %s!"), result.sentPoints, result.recipientName))
             }.onFailure { err ->
-                showSnackbar("Transfer gagal: ${err.message}")
+                showSnackbar(LanguageManager.translate("vm_transfer_failed_prefix", _currentLanguage.value, "Transfer gagal: ") + (err.message ?: ""))
             }
         }
     }
@@ -2328,21 +2328,21 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     fun updateUserLocation(lat: Double, lng: Double, city: String, province: String, accuracyMeters: Float = 10f) {
         viewModelScope.launch {
             repository.updateUserLocation(lat, lng, city, province, accuracyMeters)
-            showSnackbar("Lokasi diperbarui: $city, $province 📍")
+            showSnackbar(LanguageManager.translate("vm_location_updated_prefix", _currentLanguage.value, "Lokasi diperbarui: ") + "$city, $province 📍")
         }
     }
 
     fun toggleLocationTracking(allowed: Boolean) {
         viewModelScope.launch {
             repository.toggleUserLocationTracking(allowed)
-            showSnackbar(if (allowed) "Pelacakan lokasi aktif untuk analitik provider." else "Pelacakan lokasi dinonaktifkan.")
+            showSnackbar(if (allowed) LanguageManager.translate("vm_location_tracking_on", _currentLanguage.value, "Pelacakan lokasi aktif untuk analitik provider.") else LanguageManager.translate("vm_location_tracking_off", _currentLanguage.value, "Pelacakan lokasi dinonaktifkan."))
         }
     }
 
     fun saveSystemSettings(settings: SystemSettingsEntity) {
         viewModelScope.launch {
             repository.saveSystemSettings(settings)
-            showSnackbar("Pengaturan sistem berhasil disimpan & disinkronkan!")
+            showSnackbar(LanguageManager.translate("vm_system_settings_saved", _currentLanguage.value, "Pengaturan sistem berhasil disimpan & disinkronkan!"))
         }
     }
 
@@ -2357,7 +2357,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     ) {
         viewModelScope.launch {
             repository.recordSimulatedProviderPing(userId, userName, tier, lat, lng, city, province)
-            showSnackbar("Pin pengguna baru ditambahkan di $city!")
+            showSnackbar(LanguageManager.translate("vm_new_pin_prefix", _currentLanguage.value, "Pin pengguna baru ditambahkan di ") + "$city!")
         }
     }
 
@@ -2664,7 +2664,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 val firebaseUser = FirebaseAuth.getInstance().currentUser ?: return@launch
                 val body = org.json.JSONObject().apply {
-                    put("name", firebaseUser.displayName ?: "User Baru")
+                    put("name", firebaseUser.displayName ?: LanguageManager.translate("vm_new_user", _currentLanguage.value, "User Baru"))
                 }
                 ApiClient.syncFirebaseUser(body).onSuccess {
                     android.util.Log.d("AffiliateViewModel", "✅ User synced to backend")
