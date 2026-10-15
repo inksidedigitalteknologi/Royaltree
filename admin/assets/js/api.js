@@ -275,6 +275,18 @@
         console.log(`[${type}]`, msg);
       }
     }
+
+    // ============================================================
+    // ACHIEVEMENT
+    // ============================================================
+    getAchievements: () => request('/achievements'),
+    getAchievement: (id) => request('/achievements/' + id),
+    createAchievement: (data) => request('/achievements', { method: 'POST', body: data }),
+    updateAchievement: (id, data) => request('/achievements/' + id, { method: 'PUT', body: data }),
+    deleteAchievement: (id) => request('/achievements/' + id, { method: 'DELETE' }),
+    seedAchievements: () => request('/achievements/seed', { method: 'POST' }),
+    getUserAchievements: (uid) => request('/user-achievements/' + uid),
+
   };
 
   console.log('[AdminAPI] loaded');
