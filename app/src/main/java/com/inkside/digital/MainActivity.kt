@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -875,6 +876,10 @@ fun MainAffiliateAppContent(
             }
         }
     ) {
+    val navDensity = androidx.compose.ui.platform.LocalDensity.current
+    val bottomNavHeightState = androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf(0.dp)
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -913,7 +918,10 @@ fun MainAffiliateAppContent(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = innerPadding.calculateTopPadding())
+                    .padding(
+                        top = innerPadding.calculateTopPadding(),
+                        bottom = bottomNavHeightState.value
+                    )
             ) {
             com.inkside.digital.ui.components.AnimatedBackground {
                 when (currentScreen) {
@@ -1164,7 +1172,11 @@ fun MainAffiliateAppContent(
                 onNavigate = { onNavigate(it) },
                 isAdminMode = isAdminMode,
                 currentLanguage = currentLanguage,
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .onSizeChanged {
+                        bottomNavHeightState.value = with(navDensity) { it.height.toDp() }
+                    }
             )
         }  // close Box utama
     }  // close Scaffold content
