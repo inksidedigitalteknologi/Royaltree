@@ -1,0 +1,176 @@
+========================================
+  i18n (Internationalization) GUIDE
+  Royaltree — October 2026
+========================================
+
+BAHASA DIDUKUNG (6)
+-------------------
+  Code  | Bahasa              | Flag | RTL
+  ------+---------------------+------+-----
+  ID    | Bahasa Indonesia    | ID   | No
+  EN    | English             | US   | No
+  ES    | Espanol             | ES   | No
+  ZH    | Chinese (Simplified) | CN  | No
+  AR    | Arabic              | SA   | YES (RTL)
+  JA    | Japanese            | JP   | No
+
+
+CARA PAKAI DI UI
+----------------
+
+1. Composable dengan parameter currentLanguage:
+
+   Text(LanguageManager.translate("key_name", currentLanguage, "Fallback"))
+
+2. Composable tanpa parameter (global state):
+
+   Text(LanguageManager.translate("key_name", AppThemePreferences.currentLanguage, "Fallback"))
+
+3. ViewModel:
+
+   _snackbarMessage.value = LanguageManager.translate("key_name", _currentLanguage.value, "Fallback")
+
+
+KONVENSI KEY NAMING
+-------------------
+
+  Prefix              | Kegunaan                    | Contoh
+  --------------------+-----------------------------+----------------------------------
+  {screen}_           | Screen-specific             | withdrawal_title
+  common_             | Common action               | common_cancel
+  cd_                 | contentDescription (a11y)   | cd_close
+  toast_              | Toast message               | toast_promo_link_copied
+  vm_                 | ViewModel string            | vm_portal_untested
+  qr_                 | QR Transfer                 | qr_send_scan
+  admin_              | Admin screen                | admin_header_title
+  appmodal_           | App modal                   | appmodal_withdraw_account_holder
+  snackbar_           | Snackbar                    | snackbar_portal_connected
+  profile_security_   | Profile Security            | profile_security_2fa_title
+  investment_         | Investment Coupon           | investment_total_value
+  campaigns_          | Campaigns                   | campaigns_tab_catalog
+  game_room_          | Game Room                   | game_room_processing
+
+
+CARA TAMBAH KEY BARU
+--------------------
+
+STEP 1: Buka file LanguageManager.kt
+
+STEP 2: Cari bagian: private val translations = mapOf(
+
+STEP 3: Tambah entry baru DI DALAM mapOf, contoh:
+
+    "new_key_name" to mapOf(
+        AppLanguage.INDONESIAN to "Text Indonesia",
+        AppLanguage.ENGLISH to "English Text",
+        AppLanguage.SPANISH to "Texto Espanol",
+        AppLanguage.CHINESE to "Chinese Text",
+        AppLanguage.ARABIC to "Arabic Text",
+        AppLanguage.JAPANESE to "Japanese Text"
+    ),
+
+STEP 4: Pakai di UI:
+
+    Text(LanguageManager.translate("new_key_name", currentLanguage, "Fallback"))
+
+
+TEST RTL (ARABIC)
+-----------------
+  - Compose otomatis handle RTL untuk Row, Column
+  - Test: ganti ke Arabic, cek alignment
+  - Perlu extra TextAlign untuk label panjang
+
+
+BEST PRACTICE
+-------------
+
+  1. JANGAN hardcode text user-facing - selalu pakai LanguageManager
+  2. Fallback WAJIB - kasih text Indonesia sebagai default
+  3. Reuse key - pakai common_* untuk aksi umum (Batal, Kirim, OK)
+  4. Skip non-translatable:
+     - Emoji
+     - Angka murni
+     - Nama brand (Node.js, PHP, WhatsApp)
+     - API keys / URL
+     - JSON field names
+     - Log tags
+  5. Test multi-bahasa - minimal ID + EN + ZH
+  6. JANGAN pakai '// comment,' setelah argumen - bikin syntax error
+
+
+STATISTIK (OCT 2026)
+--------------------
+  - Total key: 708
+  - Total translate usage: 721
+  - Coverage: ~99%
+  - File disentuh: ~30 (screens + components + viewmodel)
+
+
+KNOWN ISSUES
+------------
+
+  1. BUILD CACHE STALE
+     Gejala: Build "sukses" tapi kode lama (7 detik, bukan 3 menit)
+     Fix: Pakai flag --rerun-tasks --no-build-cache --no-configuration-cache
+
+  2. LOG.D FILTER DI HP VIVO
+     Gejala: Log.d tidak muncul di logcat
+     Fix: Pakai Log.e untuk debug
+
+  3. bottomNavHeightState BUG
+     Gejala: Konten blank hitam, bottom padding = full screen
+     Fix: Hapus 'bottom = bottomNavHeightState.value' dari padding
+
+
+ALUR KERJA TAMBAH TEXT MULTI-BAHASA
+-----------------------------------
+
+  1. Identifikasi text hardcoded di UI
+  2. Buat key name sesuai konvensi
+  3. Tulis terjemahan 6 bahasa
+  4. Tambah entry ke LanguageManager.kt
+  5. Replace text hardcoded di UI dengan LanguageManager.translate()
+  6. Build + test di HP dengan 2-3 bahasa
+  7. Commit + push
+
+
+FILE YANG SUDAH DII18N
+----------------------
+
+  SCREENS:
+  - WithdrawalScreen.kt
+  - ProfileSecurityScreen.kt
+  - InvestmentCouponScreen.kt
+  - CampaignsScreen.kt
+  - GameRoomScreen.kt
+  - AdminScreen.kt
+  - SweepstakesScreen.kt
+  - TransferSimpleScreen.kt
+  - ReferralScreen.kt
+  - AnalyticsScreen.kt
+  - PurchaseScreen.kt
+  - DailyCheckInScreen.kt
+  - ProfileSetupScreen.kt
+  - ForgotPasswordScreen.kt
+  - dll.
+
+  COMPONENTS:
+  - AppModals.kt
+  - QrTransferModal.kt
+  - NavigationBars.kt
+  - CameraScannerView.kt
+  - AffiliateWithdrawDialog.kt
+  - dll.
+
+  VIEWMODEL:
+  - AffiliateViewModel.kt
+
+
+KONTAK & RESOURCES
+------------------
+  - File utama: app/src/main/java/com/inkside/digital/localization/LanguageManager.kt
+  - Repository: https://github.com/inksidedigitalteknologi/Royaltree
+
+========================================
+  END OF GUIDE
+========================================
