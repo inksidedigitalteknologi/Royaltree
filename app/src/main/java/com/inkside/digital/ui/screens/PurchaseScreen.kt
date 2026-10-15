@@ -48,11 +48,14 @@ import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.PurchaseTier
 import com.inkside.digital.util.IapManager
 import com.inkside.digital.viewmodel.AffiliateViewModel
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PurchaseScreen(
     viewModel: AffiliateViewModel,
+    currentLanguage: AppLanguage,
     onBack: () -> Unit
 ) {
     val tiers by viewModel.purchaseTiers.collectAsState()
@@ -77,7 +80,7 @@ fun PurchaseScreen(
             TopAppBar(
                 title = {
                     Column {
-                        Text("👑 Upgrade Tier", fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("purchase_upgrade_tier", currentLanguage, "👑 Upgrade Tier"), fontWeight = FontWeight.Bold)
                         Text(
                             "Buka slot miner & benefit eksklusif",
                             fontSize = 11.sp,

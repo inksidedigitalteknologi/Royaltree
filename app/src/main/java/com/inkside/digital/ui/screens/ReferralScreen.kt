@@ -119,7 +119,7 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
                         )
                         IconButton(onClick = {
                             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            clipboard.setPrimaryClip(ClipData.newPlainText("Referral", referralCode))
+                            clipboard.setPrimaryClip(ClipData.newPlainText(LanguageManager.translate("referral_title", currentLanguage, "Referral"), referralCode))
                             Toast.makeText(context, LanguageManager.translate("referral_copied", currentLanguage, "Code copied!"), Toast.LENGTH_SHORT).show()
                         }) {
                             Icon(Icons.Default.ContentCopy, "Copy", tint = Color.White)
@@ -214,7 +214,7 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
                         Text(LanguageManager.translate("referral_how_it_works", currentLanguage, "Cara Kerja"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("1. Bagikan kode referral ke teman\n2. Teman daftar pakai kode kamu\n3. Kamu dapat komisi 5%\n4. Komisi masuk otomatis ke saldo", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 20.sp)
+                    Text(LanguageManager.translate("referral_steps", currentLanguage, "1. Bagikan kode referral ke teman\n2. Teman daftar pakai kode kamu\n3. Kamu dapat komisi 5%\n4. Komisi masuk otomatis ke saldo"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 20.sp)
                 }
             }
         }

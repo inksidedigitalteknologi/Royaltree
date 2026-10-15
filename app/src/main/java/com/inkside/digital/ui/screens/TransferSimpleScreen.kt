@@ -257,7 +257,7 @@ fun TransferSimpleScreen(
                     OutlinedTextField(
                         value = amountText,
                         onValueChange = { if (it.all { c -> c.isDigit() }) amountText = it },
-                        placeholder = { Text("Min. 20 RTP", fontSize = 12.sp) },
+                        placeholder = { Text(LanguageManager.translate("transfersimple_min_amount", currentLanguage, "Min. 20 RTP"), fontSize = 12.sp) },
                         suffix = { Text("RTP") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth(),
@@ -436,14 +436,14 @@ fun TransferSimpleScreen(
         AlertDialog(
             onDismissRequest = { showSuccessDialog = false },
             icon = { Text("✅", fontSize = 40.sp) },
-            title = { Text("Transfer Berhasil!", fontWeight = FontWeight.Bold) },
+            title = { Text(LanguageManager.translate("transfersimple_success", currentLanguage, "Transfer Berhasil!"), fontWeight = FontWeight.Bold) },
             text = { Text(lastTransferInfo) },
             confirmButton = {
                 Button(
                     onClick = { showSuccessDialog = false },
                     colors = ButtonDefaults.buttonColors(containerColor = EmeraldLight, contentColor = Color.White)
                 ) {
-                    Text("OK", fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("common_ok", currentLanguage, "OK"), fontWeight = FontWeight.Bold)
                 }
             }
         )
