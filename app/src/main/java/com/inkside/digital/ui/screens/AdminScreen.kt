@@ -495,7 +495,7 @@ fun AdminScreen(
                                         updatedTimestamp = System.currentTimeMillis()
                                     )
                                     onSaveSystemSettings(updated)
-                                    Toast.makeText(context, "Pengaturan sistem berhasil disimpan!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, LanguageManager.translate("toast_admin_settings_saved", currentLanguage, "Pengaturan sistem berhasil disimpan!"), Toast.LENGTH_SHORT).show()
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = PurpleSecondary),
                                 shape = RoundedCornerShape(10.dp),
@@ -822,7 +822,7 @@ fun AdminLocationTrackingSection(
                         Button(
                             onClick = {
                                 onSimulatePing("Surabaya", "Jawa Timur", -7.2575, 112.7521)
-                                Toast.makeText(context, "Pin baru masuk di Surabaya (+1 Ramai)", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, LanguageManager.translate("toast_admin_pin_surabaya", currentLanguage, "Pin baru masuk di Surabaya (+1 Ramai)"), Toast.LENGTH_SHORT).show()
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
                             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 8.dp, vertical = 4.dp),
@@ -834,7 +834,7 @@ fun AdminLocationTrackingSection(
                         Button(
                             onClick = {
                                 onSimulatePing("Jayapura", "Papua", -2.5337, 140.7181)
-                                Toast.makeText(context, "Pin baru masuk di Jayapura (Wilayah Sepi)", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, LanguageManager.translate("toast_admin_pin_jayapura", currentLanguage, "Pin baru masuk di Jayapura (Wilayah Sepi)"), Toast.LENGTH_SHORT).show()
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = PurpleSecondary),
                             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 8.dp, vertical = 4.dp),
@@ -1129,7 +1129,7 @@ fun AdminPortalEndpointSection(
                     Button(
                         onClick = {
                             onSaveConfig()
-                            Toast.makeText(context, "URL & Key Portal disimpan!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, LanguageManager.translate("toast_admin_portal_saved", currentLanguage, "URL & Key Portal disimpan!"), Toast.LENGTH_SHORT).show()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = PurpleSecondary),
                         shape = RoundedCornerShape(10.dp),
@@ -1297,7 +1297,7 @@ fun AdminPortalEndpointSection(
                                     IconButton(
                                         onClick = {
                                             clipboardManager.setText(AnnotatedString(ep.curl))
-                                            Toast.makeText(context, "Perintah cURL disalin ke clipboard!", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, LanguageManager.translate("toast_admin_curl_copied", currentLanguage, "Perintah cURL disalin ke clipboard!"), Toast.LENGTH_SHORT).show()
                                         },
                                         modifier = Modifier.size(24.dp)
                                     ) {
@@ -1457,7 +1457,7 @@ if (strpos(${'$'}uri, '/users/sync') !== false) {
                     IconButton(
                         onClick = {
                             clipboardManager.setText(AnnotatedString(codeSnippet))
-                            Toast.makeText(context, "Kode $fileName disalin ke clipboard!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, LanguageManager.translate("toast_admin_code_copied", currentLanguage, "Kode $fileName disalin ke clipboard!"), Toast.LENGTH_SHORT).show()
                         },
                         modifier = Modifier.size(28.dp)
                     ) {
@@ -1484,7 +1484,7 @@ if (strpos(${'$'}uri, '/users/sync') !== false) {
                 Button(
                     onClick = {
                         clipboardManager.setText(AnnotatedString(codeSnippet))
-                        Toast.makeText(context, "Kode $fileName disalin! Siap ditaruh di hosting Anda.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, LanguageManager.translate("toast_admin_code_ready", currentLanguage, "Kode $fileName disalin! Siap ditaruh di hosting Anda."), Toast.LENGTH_SHORT).show()
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = PurpleSecondary),
                     shape = RoundedCornerShape(10.dp),

@@ -1,5 +1,7 @@
 package com.inkside.digital.ui.screens.auth
 
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -35,6 +37,7 @@ fun ProfileSetupScreen(
     defaultName: String,
     isLoading: Boolean,
     errorMessage: String?,
+    currentLanguage: AppLanguage,
     onSave: (name: String, phone: String, city: String, referralCode: String?) -> Unit,
     onLogout: () -> Unit
 ) {
@@ -71,7 +74,7 @@ fun ProfileSetupScreen(
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Nama Lengkap *") },
+            label = { Text(LanguageManager.translate("profile_setup_full_name", currentLanguage, "Nama Lengkap *")) },
             singleLine = true,
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier.fillMaxWidth()
@@ -82,7 +85,7 @@ fun ProfileSetupScreen(
         OutlinedTextField(
             value = phone,
             onValueChange = { phone = it },
-            label = { Text("Nomor WhatsApp / HP") },
+            label = { Text(LanguageManager.translate("profile_setup_phone", currentLanguage, "Nomor WhatsApp / HP")) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
             singleLine = true,
             shape = RoundedCornerShape(10.dp),
@@ -94,7 +97,7 @@ fun ProfileSetupScreen(
         OutlinedTextField(
             value = city,
             onValueChange = { city = it },
-            label = { Text("Kota / Wilayah") },
+            label = { Text(LanguageManager.translate("profile_setup_city", currentLanguage, "Kota / Wilayah")) },
             singleLine = true,
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier.fillMaxWidth()
@@ -105,7 +108,7 @@ fun ProfileSetupScreen(
         OutlinedTextField(
             value = referralCode,
             onValueChange = { referralCode = it.uppercase() },
-            label = { Text("Kode Referral (opsional)") },
+            label = { Text(LanguageManager.translate("profile_setup_referral", currentLanguage, "Kode Referral (opsional)")) },
             singleLine = true,
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier.fillMaxWidth()

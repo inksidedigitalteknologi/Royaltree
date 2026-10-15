@@ -4836,6 +4836,156 @@ object LanguageManager {
             AppLanguage.JAPANESE to "VIPユーザー"
         ),
 
+
+        // ========== LABEL + PLACEHOLDER ==========
+        "profile_setup_full_name" to mapOf(
+            AppLanguage.INDONESIAN to "Nama Lengkap *",
+            AppLanguage.ENGLISH to "Full Name *",
+            AppLanguage.SPANISH to "Nombre Completo *",
+            AppLanguage.CHINESE to "全名 *",
+            AppLanguage.ARABIC to "الاسم الكامل *",
+            AppLanguage.JAPANESE to "氏名 *"
+        ),
+        "profile_setup_phone" to mapOf(
+            AppLanguage.INDONESIAN to "Nomor WhatsApp / HP",
+            AppLanguage.ENGLISH to "WhatsApp / Phone Number",
+            AppLanguage.SPANISH to "Número de WhatsApp / Teléfono",
+            AppLanguage.CHINESE to "WhatsApp / 电话号码",
+            AppLanguage.ARABIC to "رقم WhatsApp / الهاتف",
+            AppLanguage.JAPANESE to "WhatsApp / 電話番号"
+        ),
+        "profile_setup_city" to mapOf(
+            AppLanguage.INDONESIAN to "Kota / Wilayah",
+            AppLanguage.ENGLISH to "City / Region",
+            AppLanguage.SPANISH to "Ciudad / Región",
+            AppLanguage.CHINESE to "城市/地区",
+            AppLanguage.ARABIC to "المدينة / المنطقة",
+            AppLanguage.JAPANESE to "市/地域"
+        ),
+        "profile_setup_referral" to mapOf(
+            AppLanguage.INDONESIAN to "Kode Referral (opsional)",
+            AppLanguage.ENGLISH to "Referral Code (optional)",
+            AppLanguage.SPANISH to "Código de Referido (opcional)",
+            AppLanguage.CHINESE to "推荐码（可选）",
+            AppLanguage.ARABIC to "رمز الإحالة (اختياري)",
+            AppLanguage.JAPANESE to "紹介コード（オプション）"
+        ),
+        "forgot_password_email" to mapOf(
+            AppLanguage.INDONESIAN to "Email",
+            AppLanguage.ENGLISH to "Email",
+            AppLanguage.SPANISH to "Correo Electrónico",
+            AppLanguage.CHINESE to "电子邮件",
+            AppLanguage.ARABIC to "البريد الإلكتروني",
+            AppLanguage.JAPANESE to "メールアドレス"
+        ),
+        "affiliate_withdraw_amount" to mapOf(
+            AppLanguage.INDONESIAN to "Jumlah (USD)",
+            AppLanguage.ENGLISH to "Amount (USD)",
+            AppLanguage.SPANISH to "Monto (USD)",
+            AppLanguage.CHINESE to "金额（USD）",
+            AppLanguage.ARABIC to "المبلغ (USD)",
+            AppLanguage.JAPANESE to "金額 (USD)"
+        ),
+        "affiliate_withdraw_email" to mapOf(
+            AppLanguage.INDONESIAN to "Email PayPal",
+            AppLanguage.ENGLISH to "PayPal Email",
+            AppLanguage.SPANISH to "Correo de PayPal",
+            AppLanguage.CHINESE to "PayPal 电子邮件",
+            AppLanguage.ARABIC to "البريد الإلكتروني لـ PayPal",
+            AppLanguage.JAPANESE to "PayPalメール"
+        ),
+
+
+        // ========== TOASTS ==========
+        "toast_whatsapp_not_installed" to mapOf(
+            AppLanguage.INDONESIAN to "WhatsApp tak dipasang",
+            AppLanguage.ENGLISH to "WhatsApp not installed",
+            AppLanguage.SPANISH to "WhatsApp no instalado",
+            AppLanguage.CHINESE to "WhatsApp 未安装",
+            AppLanguage.ARABIC to "WhatsApp غير مثبت",
+            AppLanguage.JAPANESE to "WhatsAppがインストールされていません"
+        ),
+        "toast_telegram_not_installed" to mapOf(
+            AppLanguage.INDONESIAN to "Telegram tak dipasang",
+            AppLanguage.ENGLISH to "Telegram not installed",
+            AppLanguage.SPANISH to "Telegram no instalado",
+            AppLanguage.CHINESE to "Telegram 未安装",
+            AppLanguage.ARABIC to "Telegram غير مثبت",
+            AppLanguage.JAPANESE to "Telegramがインストールされていません"
+        ),
+        "toast_promo_link_copied" to mapOf(
+            AppLanguage.INDONESIAN to "Tautan promosi disalin!",
+            AppLanguage.ENGLISH to "Promo link copied!",
+            AppLanguage.SPANISH to "¡Enlace promocional copiado!",
+            AppLanguage.CHINESE to "推广链接已复制！",
+            AppLanguage.ARABIC to "تم نسخ رابط الترويج!",
+            AppLanguage.JAPANESE to "プロモリンクをコピーしました！"
+        ),
+        "toast_referral_code_copied" to mapOf(
+            AppLanguage.INDONESIAN to "Kode referral disalin!",
+            AppLanguage.ENGLISH to "Referral code copied!",
+            AppLanguage.SPANISH to "¡Código de referido copiado!",
+            AppLanguage.CHINESE to "推荐码已复制！",
+            AppLanguage.ARABIC to "تم نسخ رمز الإحالة!",
+            AppLanguage.JAPANESE to "紹介コードをコピーしました！"
+        ),
+        "toast_admin_settings_saved" to mapOf(
+            AppLanguage.INDONESIAN to "Pengaturan sistem berhasil disimpan!",
+            AppLanguage.ENGLISH to "System settings saved successfully!",
+            AppLanguage.SPANISH to "¡Configuración del sistema guardada!",
+            AppLanguage.CHINESE to "系统设置已成功保存！",
+            AppLanguage.ARABIC to "تم حفظ إعدادات النظام بنجاح!",
+            AppLanguage.JAPANESE to "システム設定を保存しました！"
+        ),
+        "toast_admin_pin_surabaya" to mapOf(
+            AppLanguage.INDONESIAN to "Pin baru masuk di Surabaya (+1 Ramai)",
+            AppLanguage.ENGLISH to "New pin added in Surabaya (+1 Crowded)",
+            AppLanguage.SPANISH to "Nuevo pin en Surabaya (+1 Concurrido)",
+            AppLanguage.CHINESE to "泗水新增 pin（+1 拥挤）",
+            AppLanguage.ARABIC to "تمت إضافة دبوس جديد في سورابايا (+1 مزدحم)",
+            AppLanguage.JAPANESE to "スラバヤに新しいピン (+1 混雑)"
+        ),
+        "toast_admin_pin_jayapura" to mapOf(
+            AppLanguage.INDONESIAN to "Pin baru masuk di Jayapura (Wilayah Sepi)",
+            AppLanguage.ENGLISH to "New pin added in Jayapura (Quiet Area)",
+            AppLanguage.SPANISH to "Nuevo pin en Jayapura (Área Tranquila)",
+            AppLanguage.CHINESE to "查亚普拉新增 pin（安静区域）",
+            AppLanguage.ARABIC to "تمت إضافة دبوس جديد في جايا بورا (منطقة هادئة)",
+            AppLanguage.JAPANESE to "ジャヤプラに新しいピン (閑散エリア)"
+        ),
+        "toast_admin_portal_saved" to mapOf(
+            AppLanguage.INDONESIAN to "URL & Key Portal disimpan!",
+            AppLanguage.ENGLISH to "Portal URL & Key saved!",
+            AppLanguage.SPANISH to "¡URL y Clave del Portal guardadas!",
+            AppLanguage.CHINESE to "门户 URL 和密钥已保存！",
+            AppLanguage.ARABIC to "تم حفظ URL ومفتاح البوابة!",
+            AppLanguage.JAPANESE to "ポータルURLとキーを保存しました！"
+        ),
+        "toast_admin_curl_copied" to mapOf(
+            AppLanguage.INDONESIAN to "Perintah cURL disalin ke clipboard!",
+            AppLanguage.ENGLISH to "cURL command copied to clipboard!",
+            AppLanguage.SPANISH to "¡Comando cURL copiado al portapapeles!",
+            AppLanguage.CHINESE to "cURL 命令已复制到剪贴板！",
+            AppLanguage.ARABIC to "تم نسخ أمر cURL إلى الحافظة!",
+            AppLanguage.JAPANESE to "cURLコマンドをクリップボードにコピーしました！"
+        ),
+        "toast_admin_code_copied" to mapOf(
+            AppLanguage.INDONESIAN to "Kode $fileName disalin ke clipboard!",
+            AppLanguage.ENGLISH to "Code $fileName copied to clipboard!",
+            AppLanguage.SPANISH to "¡Código $fileName copiado al portapapeles!",
+            AppLanguage.CHINESE to "代码 $fileName 已复制到剪贴板！",
+            AppLanguage.ARABIC to "تم نسخ رمز $fileName إلى الحافظة!",
+            AppLanguage.JAPANESE to "コード $fileName をクリップボードにコピーしました！"
+        ),
+        "toast_admin_code_ready" to mapOf(
+            AppLanguage.INDONESIAN to "Kode $fileName disalin! Siap ditaruh di hosting Anda.",
+            AppLanguage.ENGLISH to "Code $fileName copied! Ready to deploy on your hosting.",
+            AppLanguage.SPANISH to "¡Código $fileName copiado! Listo para implementar en su hosting.",
+            AppLanguage.CHINESE to "代码 $fileName 已复制！准备部署到您的托管。",
+            AppLanguage.ARABIC to "تم نسخ رمز $fileName! جاهز للنشر على الاستضافة.",
+            AppLanguage.JAPANESE to "コード $fileName をコピーしました！ホスティングにデプロイする準備ができました。"
+        ),
+
     )
 
     fun getString(key: String, language: AppLanguage): String {

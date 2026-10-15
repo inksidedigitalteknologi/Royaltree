@@ -1,5 +1,7 @@
 package com.inkside.digital.ui.screens.auth
 
+import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -61,6 +63,7 @@ fun ForgotPasswordScreen(
     isLoading: Boolean,
     errorMessage: String?,
     successMessage: String?,
+    currentLanguage: AppLanguage,
     onSendReset: (email: String) -> Unit,
     onNavigateBack: () -> Unit
 ) {
@@ -138,7 +141,7 @@ fun ForgotPasswordScreen(
                             OutlinedTextField(
                                 value = email,
                                 onValueChange = { email = it },
-                                label = { Text("Email", color = Color.White.copy(alpha = 0.7f)) },
+                                label = { Text(LanguageManager.translate("forgot_password_email", currentLanguage, "Email"), color = Color.White.copy(alpha = 0.7f)) },
                                 leadingIcon = { Icon(Icons.Default.Email, null, tint = Color.White.copy(alpha = 0.8f)) },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Done),
                                 singleLine = true,

@@ -207,7 +207,7 @@ fun CampaignsScreen(
                                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                 val clip = ClipData.newPlainText(LanguageManager.translate("campaigns_clip_label", currentLanguage, "Link"), link.shortUrl)
                                 clipboard.setPrimaryClip(clip)
-                                Toast.makeText(context, "Tautan promosi disalin!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, LanguageManager.translate("toast_promo_link_copied", currentLanguage, "Tautan promosi disalin!"), Toast.LENGTH_SHORT).show()
                             },
                             onShare = {
                                 val sendIntent = Intent().apply {

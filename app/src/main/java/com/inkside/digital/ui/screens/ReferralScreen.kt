@@ -162,7 +162,7 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
                                     data = android.net.Uri.parse("https://wa.me/?text=" + java.net.URLEncoder.encode(text, "UTF-8"))
                                 }
                                 try { context.startActivity(waIntent) } catch (e: Exception) {
-                                    Toast.makeText(context, "WhatsApp tak dipasang", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, LanguageManager.translate("toast_whatsapp_not_installed", currentLanguage, "WhatsApp tak dipasang"), Toast.LENGTH_SHORT).show()
                                 }
                             },
                             shape = RoundedCornerShape(10.dp),
@@ -181,7 +181,7 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
                                     data = android.net.Uri.parse("https://t.me/share/url?url=https://play.google.com/store/apps/details?id=com.inkside.digital&text=" + java.net.URLEncoder.encode(text, "UTF-8"))
                                 }
                                 try { context.startActivity(tgIntent) } catch (e: Exception) {
-                                    Toast.makeText(context, "Telegram tak dipasang", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, LanguageManager.translate("toast_telegram_not_installed", currentLanguage, "Telegram tak dipasang"), Toast.LENGTH_SHORT).show()
                                 }
                             },
                             shape = RoundedCornerShape(10.dp),
