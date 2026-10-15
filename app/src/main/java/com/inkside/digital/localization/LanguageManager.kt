@@ -4294,6 +4294,548 @@ object LanguageManager {
             AppLanguage.JAPANESE to "シークレットキー: "
         ),
 
+
+        // ========== ADMIN SCREEN ==========
+        "admin_header_title" to mapOf(
+            AppLanguage.INDONESIAN to "Portal Admin & Provider Royaltree",
+            AppLanguage.ENGLISH to "Royaltree Admin & Provider Portal",
+            AppLanguage.SPANISH to "Portal de Administración y Proveedor Royaltree",
+            AppLanguage.CHINESE to "Royaltree 管理员和提供商门户",
+            AppLanguage.ARABIC to "بوابة مسؤول ومزود Royaltree",
+            AppLanguage.JAPANESE to "Royaltree管理者・プロバイダーポータル"
+        ),
+        "admin_header_subtitle" to mapOf(
+            AppLanguage.INDONESIAN to "Pusat Pengaturan, Keuangan & Pelacakan Wilayah",
+            AppLanguage.ENGLISH to "Settings, Finance & Region Tracking Center",
+            AppLanguage.SPANISH to "Centro de Configuración, Finanzas y Seguimiento Regional",
+            AppLanguage.CHINESE to "设置、财务和区域跟踪中心",
+            AppLanguage.ARABIC to "مركز الإعدادات والمالية وتتبع المنطقة",
+            AppLanguage.JAPANESE to "設定、財務、地域追跡センター"
+        ),
+        "admin_exit_btn" to mapOf(
+            AppLanguage.INDONESIAN to "Keluar Admin",
+            AppLanguage.ENGLISH to "Exit Admin",
+            AppLanguage.SPANISH to "Salir de Admin",
+            AppLanguage.CHINESE to "退出管理员",
+            AppLanguage.ARABIC to "خروج المسؤول",
+            AppLanguage.JAPANESE to "管理者を終了"
+        ),
+        "admin_tab_payout" to mapOf(
+            AppLanguage.INDONESIAN to "Antrean Payout (",
+            AppLanguage.ENGLISH to "Payout Queue (",
+            AppLanguage.SPANISH to "Cola de Pagos (",
+            AppLanguage.CHINESE to "付款队列（",
+            AppLanguage.ARABIC to "قائمة الانتظار (",
+            AppLanguage.JAPANESE to "支払キュー ("
+        ),
+        "admin_tab_users" to mapOf(
+            AppLanguage.INDONESIAN to "Data Pengguna (",
+            AppLanguage.ENGLISH to "User Data (",
+            AppLanguage.SPANISH to "Datos de Usuario (",
+            AppLanguage.CHINESE to "用户数据（",
+            AppLanguage.ARABIC to "بيانات المستخدم (",
+            AppLanguage.JAPANESE to "ユーザーデータ ("
+        ),
+        "admin_tab_location" to mapOf(
+            AppLanguage.INDONESIAN to "📍 Lacak Lokasi & Heatmap",
+            AppLanguage.ENGLISH to "📍 Location Tracking & Heatmap",
+            AppLanguage.SPANISH to "📍 Seguimiento de Ubicación y Mapa de Calor",
+            AppLanguage.CHINESE to "📍 位置跟踪和热力图",
+            AppLanguage.ARABIC to "📍 تتبع الموقع والخريطة الحرارية",
+            AppLanguage.JAPANESE to "📍 位置追跡とヒートマップ"
+        ),
+        "admin_tab_settings" to mapOf(
+            AppLanguage.INDONESIAN to "⚙️ Pengaturan Platform",
+            AppLanguage.ENGLISH to "⚙️ Platform Settings",
+            AppLanguage.SPANISH to "⚙️ Configuración de la Plataforma",
+            AppLanguage.CHINESE to "⚙️ 平台设置",
+            AppLanguage.ARABIC to "⚙️ إعدادات المنصة",
+            AppLanguage.JAPANESE to "⚙️ プラットフォーム設定"
+        ),
+        "admin_tab_endpoint" to mapOf(
+            AppLanguage.INDONESIAN to "🔌 Endpoint & Portal",
+            AppLanguage.ENGLISH to "🔌 Endpoint & Portal",
+            AppLanguage.SPANISH to "🔌 Endpoint y Portal",
+            AppLanguage.CHINESE to "🔌 端点与门户",
+            AppLanguage.ARABIC to "🔌 نقطة النهاية والبوابة",
+            AppLanguage.JAPANESE to "🔌 エンドポイントとポータル"
+        ),
+        "admin_payout_empty_title" to mapOf(
+            AppLanguage.INDONESIAN to "Semua Penarikan Telah Diproses!",
+            AppLanguage.ENGLISH to "All Withdrawals Have Been Processed!",
+            AppLanguage.SPANISH to "¡Todos los Retiros Han Sido Procesados!",
+            AppLanguage.CHINESE to "所有提款已处理！",
+            AppLanguage.ARABIC to "تمت معالجة جميع السحوبات!",
+            AppLanguage.JAPANESE to "すべての引き出しが処理されました！"
+        ),
+        "admin_payout_empty_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Tidak ada permintaan penarikan yang tertunda saat ini.",
+            AppLanguage.ENGLISH to "No pending withdrawal requests at this time.",
+            AppLanguage.SPANISH to "No hay solicitudes de retiro pendientes en este momento.",
+            AppLanguage.CHINESE to "目前没有待处理的提款请求。",
+            AppLanguage.ARABIC to "لا توجد طلبات سحب معلقة في الوقت الحالي.",
+            AppLanguage.JAPANESE to "現在、保留中の引き出しリクエストはありません。"
+        ),
+        "admin_settings_title" to mapOf(
+            AppLanguage.INDONESIAN to "Pusat Pengaturan Platform",
+            AppLanguage.ENGLISH to "Platform Settings Center",
+            AppLanguage.SPANISH to "Centro de Configuración de la Plataforma",
+            AppLanguage.CHINESE to "平台设置中心",
+            AppLanguage.ARABIC to "مركز إعدادات المنصة",
+            AppLanguage.JAPANESE to "プラットフォーム設定センター"
+        ),
+        "admin_settings_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Kelola semua parameter sistem, batas penarikan & keamanan",
+            AppLanguage.ENGLISH to "Manage all system parameters, withdrawal limits & security",
+            AppLanguage.SPANISH to "Administrar todos los parámetros del sistema, límites de retiro y seguridad",
+            AppLanguage.CHINESE to "管理所有系统参数、提款限制和安全",
+            AppLanguage.ARABIC to "إدارة جميع معلمات النظام وحدود السحب والأمان",
+            AppLanguage.JAPANESE to "すべてのシステムパラメータ、引き出し制限、セキュリティを管理"
+        ),
+        "admin_section_min_withdraw" to mapOf(
+            AppLanguage.INDONESIAN to "1. Batas Minimum Penarikan Dana (IDR)",
+            AppLanguage.ENGLISH to "1. Minimum Withdrawal Limit (IDR)",
+            AppLanguage.SPANISH to "1. Límite Mínimo de Retiro (IDR)",
+            AppLanguage.CHINESE to "1. 最低提款限额（IDR）",
+            AppLanguage.ARABIC to "1. الحد الأدنى للسحب (IDR)",
+            AppLanguage.JAPANESE to "1. 最低引き出し限度額 (IDR)"
+        ),
+        "admin_min_ewallet" to mapOf(
+            AppLanguage.INDONESIAN to "Min. E-Wallet",
+            AppLanguage.ENGLISH to "Min. E-Wallet",
+            AppLanguage.SPANISH to "Mín. E-Wallet",
+            AppLanguage.CHINESE to "最低电子钱包",
+            AppLanguage.ARABIC to "الحد الأدنى للمحفظة الإلكترونية",
+            AppLanguage.JAPANESE to "最低Eウォレット"
+        ),
+        "admin_min_bank" to mapOf(
+            AppLanguage.INDONESIAN to "Min. Bank",
+            AppLanguage.ENGLISH to "Min. Bank",
+            AppLanguage.SPANISH to "Mín. Banco",
+            AppLanguage.CHINESE to "最低银行",
+            AppLanguage.ARABIC to "الحد الأدنى للبنك",
+            AppLanguage.JAPANESE to "最低銀行"
+        ),
+        "admin_min_crypto" to mapOf(
+            AppLanguage.INDONESIAN to "Min. Kripto",
+            AppLanguage.ENGLISH to "Min. Crypto",
+            AppLanguage.SPANISH to "Mín. Cripto",
+            AppLanguage.CHINESE to "最低加密货币",
+            AppLanguage.ARABIC to "الحد الأدنى للعملة المشفرة",
+            AppLanguage.JAPANESE to "最低暗号通貨"
+        ),
+        "admin_section_commission" to mapOf(
+            AppLanguage.INDONESIAN to "2. Tarif Komisi Affiliasi (%)",
+            AppLanguage.ENGLISH to "2. Affiliate Commission Rate (%)",
+            AppLanguage.SPANISH to "2. Tasa de Comisión de Afiliados (%)",
+            AppLanguage.CHINESE to "2. 联盟佣金率（%）",
+            AppLanguage.ARABIC to "2. معدل عمولة التسويق بالعمولة (%)",
+            AppLanguage.JAPANESE to "2. アフィリエイト手数料率 (%)"
+        ),
+        "admin_tier_free" to mapOf(
+            AppLanguage.INDONESIAN to "Tier Free (%)",
+            AppLanguage.ENGLISH to "Free Tier (%)",
+            AppLanguage.SPANISH to "Nivel Gratis (%)",
+            AppLanguage.CHINESE to "免费层级（%）",
+            AppLanguage.ARABIC to "المستوى المجاني (%)",
+            AppLanguage.JAPANESE to "無料ティア (%)"
+        ),
+        "admin_tier_vip" to mapOf(
+            AppLanguage.INDONESIAN to "Tier VIP (%)",
+            AppLanguage.ENGLISH to "VIP Tier (%)",
+            AppLanguage.SPANISH to "Nivel VIP (%)",
+            AppLanguage.CHINESE to "VIP 层级（%）",
+            AppLanguage.ARABIC to "المستوى VIP (%)",
+            AppLanguage.JAPANESE to "VIPティア (%)"
+        ),
+        "admin_section_security" to mapOf(
+            AppLanguage.INDONESIAN to "3. Keamanan & Batas Transfer QR (RTP)",
+            AppLanguage.ENGLISH to "3. Security & QR Transfer Limit (RTP)",
+            AppLanguage.SPANISH to "3. Seguridad y Límite de Transferencia QR (RTP)",
+            AppLanguage.CHINESE to "3. 安全和 QR 转账限额（RTP）",
+            AppLanguage.ARABIC to "3. الأمان وحد تحويل QR (RTP)",
+            AppLanguage.JAPANESE to "3. セキュリティとQR送金制限 (RTP)"
+        ),
+        "admin_fee_rtp" to mapOf(
+            AppLanguage.INDONESIAN to "Biaya Admin (RTP)",
+            AppLanguage.ENGLISH to "Admin Fee (RTP)",
+            AppLanguage.SPANISH to "Tarifa de Administración (RTP)",
+            AppLanguage.CHINESE to "管理费（RTP）",
+            AppLanguage.ARABIC to "رسوم الإدارة (RTP)",
+            AppLanguage.JAPANESE to "管理手数料 (RTP)"
+        ),
+        "admin_daily_limit" to mapOf(
+            AppLanguage.INDONESIAN to "Limit Harian (RTP)",
+            AppLanguage.ENGLISH to "Daily Limit (RTP)",
+            AppLanguage.SPANISH to "Límite Diario (RTP)",
+            AppLanguage.CHINESE to "每日限额（RTP）",
+            AppLanguage.ARABIC to "الحد اليومي (RTP)",
+            AppLanguage.JAPANESE to "日次制限 (RTP)"
+        ),
+        "admin_mutex_delay" to mapOf(
+            AppLanguage.INDONESIAN to "Jeda Mutex (Detik)",
+            AppLanguage.ENGLISH to "Mutex Delay (Seconds)",
+            AppLanguage.SPANISH to "Retardo de Mutex (Segundos)",
+            AppLanguage.CHINESE to "互斥延迟（秒）",
+            AppLanguage.ARABIC to "تأخير Mutex (ثواني)",
+            AppLanguage.JAPANESE to "ミューテックス遅延 (秒)"
+        ),
+        "admin_section_tracking" to mapOf(
+            AppLanguage.INDONESIAN to "4. Fitur Pelacakan & Status Server",
+            AppLanguage.ENGLISH to "4. Tracking Features & Server Status",
+            AppLanguage.SPANISH to "4. Funciones de Seguimiento y Estado del Servidor",
+            AppLanguage.CHINESE to "4. 跟踪功能和服务器状态",
+            AppLanguage.ARABIC to "4. ميزات التتبع وحالة الخادم",
+            AppLanguage.JAPANESE to "4. 追跡機能とサーバーステータス"
+        ),
+        "admin_tracking_pinpoint" to mapOf(
+            AppLanguage.INDONESIAN to "Pelacakan Pinpoint Pengguna",
+            AppLanguage.ENGLISH to "User Pinpoint Tracking",
+            AppLanguage.SPANISH to "Seguimiento Preciso de Usuarios",
+            AppLanguage.CHINESE to "用户精确跟踪",
+            AppLanguage.ARABIC to "تتبع المستخدم الدقيق",
+            AppLanguage.JAPANESE to "ユーザーピンポイント追跡"
+        ),
+        "admin_tracking_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Mengumpulkan koordinat persebaran untuk analitik provider",
+            AppLanguage.ENGLISH to "Collect distribution coordinates for provider analytics",
+            AppLanguage.SPANISH to "Recopilar coordenadas de distribución para análisis de proveedores",
+            AppLanguage.CHINESE to "收集分布坐标用于提供商分析",
+            AppLanguage.ARABIC to "جمع إحداثيات التوزيع لتحليلات المزود",
+            AppLanguage.JAPANESE to "プロバイダー分析用の分布座標を収集"
+        ),
+        "admin_maintenance_mode" to mapOf(
+            AppLanguage.INDONESIAN to "Mode Pemeliharaan (Maintenance)",
+            AppLanguage.ENGLISH to "Maintenance Mode",
+            AppLanguage.SPANISH to "Modo de Mantenimiento",
+            AppLanguage.CHINESE to "维护模式",
+            AppLanguage.ARABIC to "وضع الصيانة",
+            AppLanguage.JAPANESE to "メンテナンスモード"
+        ),
+        "admin_maintenance_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Nonaktifkan sementara penarikan dana untuk audit",
+            AppLanguage.ENGLISH to "Temporarily disable withdrawals for audit",
+            AppLanguage.SPANISH to "Deshabilitar temporalmente retiros para auditoría",
+            AppLanguage.CHINESE to "暂时禁用提款以进行审计",
+            AppLanguage.ARABIC to "تعطيل السحوبات مؤقتًا للتدقيق",
+            AppLanguage.JAPANESE to "監査のため一時的に引き出しを無効化"
+        ),
+        "admin_save_settings" to mapOf(
+            AppLanguage.INDONESIAN to "Simpan Perubahan Pengaturan",
+            AppLanguage.ENGLISH to "Save Settings Changes",
+            AppLanguage.SPANISH to "Guardar Cambios de Configuración",
+            AppLanguage.CHINESE to "保存设置更改",
+            AppLanguage.ARABIC to "حفظ تغييرات الإعدادات",
+            AppLanguage.JAPANESE to "設定変更を保存"
+        ),
+        "admin_user_balance" to mapOf(
+            AppLanguage.INDONESIAN to "Saldo Komisi Tersedia:",
+            AppLanguage.ENGLISH to "Available Commission Balance:",
+            AppLanguage.SPANISH to "Saldo de Comisión Disponible:",
+            AppLanguage.CHINESE to "可用佣金余额：",
+            AppLanguage.ARABIC to "رصيد العمولة المتاح:",
+            AppLanguage.JAPANESE to "利用可能な手数料残高:"
+        ),
+        "admin_user_points" to mapOf(
+            AppLanguage.INDONESIAN to "Poin Loyalitas (RTP):",
+            AppLanguage.ENGLISH to "Loyalty Points (RTP):",
+            AppLanguage.SPANISH to "Puntos de Lealtad (RTP):",
+            AppLanguage.CHINESE to "忠诚积分（RTP）：",
+            AppLanguage.ARABIC to "نقاط الولاء (RTP):",
+            AppLanguage.JAPANESE to "ロイヤルティポイント (RTP):"
+        ),
+        "admin_user_2fa_status" to mapOf(
+            AppLanguage.INDONESIAN to "Status 2FA & Enkripsi:",
+            AppLanguage.ENGLISH to "2FA & Encryption Status:",
+            AppLanguage.SPANISH to "Estado de 2FA y Cifrado:",
+            AppLanguage.CHINESE to "2FA 和加密状态：",
+            AppLanguage.ARABIC to "حالة 2FA والتشفير:",
+            AppLanguage.JAPANESE to "2FAと暗号化の状態:"
+        ),
+        "admin_user_last_location" to mapOf(
+            AppLanguage.INDONESIAN to "Pinpoint Lokasi Terakhir:",
+            AppLanguage.ENGLISH to "Last Location Pinpoint:",
+            AppLanguage.SPANISH to "Última Ubicación Preciso:",
+            AppLanguage.CHINESE to "最后位置精确：",
+            AppLanguage.ARABIC to "آخر موقع دقيق:",
+            AppLanguage.JAPANESE to "最終位置ピンポイント:"
+        ),
+        "admin_heatmap_title" to mapOf(
+            AppLanguage.INDONESIAN to "Analisis Densitas Wilayah (Provider)",
+            AppLanguage.ENGLISH to "Region Density Analysis (Provider)",
+            AppLanguage.SPANISH to "Análisis de Densidad Regional (Proveedor)",
+            AppLanguage.CHINESE to "区域密度分析（提供商）",
+            AppLanguage.ARABIC to "تحليل كثافة المنطقة (المزود)",
+            AppLanguage.JAPANESE to "地域密度分析（プロバイダー）"
+        ),
+        "admin_heatmap_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Pelacakan otomatis kepadatan pengguna platform secara realtime",
+            AppLanguage.ENGLISH to "Automatic real-time tracking of platform user density",
+            AppLanguage.SPANISH to "Seguimiento automático en tiempo real de la densidad de usuarios",
+            AppLanguage.CHINESE to "自动实时跟踪平台用户密度",
+            AppLanguage.ARABIC to "تتبع تلقائي في الوقت الحقيقي لكثافة مستخدمي المنصة",
+            AppLanguage.JAPANESE to "プラットフォームユーザー密度の自動リアルタイム追跡"
+        ),
+        "admin_area_crowded" to mapOf(
+            AppLanguage.INDONESIAN to "WILAYAH RAMAI",
+            AppLanguage.ENGLISH to "CROWDED AREA",
+            AppLanguage.SPANISH to "ÁREA CONCURRIDA",
+            AppLanguage.CHINESE to "拥挤区域",
+            AppLanguage.ARABIC to "منطقة مزدحمة",
+            AppLanguage.JAPANESE to "混雑エリア"
+        ),
+        "admin_area_quiet" to mapOf(
+            AppLanguage.INDONESIAN to "WILAYAH SEPI",
+            AppLanguage.ENGLISH to "QUIET AREA",
+            AppLanguage.SPANISH to "ÁREA TRANQUILA",
+            AppLanguage.CHINESE to "安静区域",
+            AppLanguage.ARABIC to "منطقة هادئة",
+            AppLanguage.JAPANESE to "閑散エリア"
+        ),
+        "admin_heatmap_map_title" to mapOf(
+            AppLanguage.INDONESIAN to "Peta Persebaran & Heatmap",
+            AppLanguage.ENGLISH to "Distribution Map & Heatmap",
+            AppLanguage.SPANISH to "Mapa de Distribución y Mapa de Calor",
+            AppLanguage.CHINESE to "分布图和热力图",
+            AppLanguage.ARABIC to "خريطة التوزيع والخريطة الحرارية",
+            AppLanguage.JAPANESE to "分布図とヒートマップ"
+        ),
+        "admin_radar_indonesia" to mapOf(
+            AppLanguage.INDONESIAN to "📍 Radar Pinpoint Indonesia",
+            AppLanguage.ENGLISH to "📍 Indonesia Pinpoint Radar",
+            AppLanguage.SPANISH to "📍 Radar Preciso de Indonesia",
+            AppLanguage.CHINESE to "📍 印度尼西亚精确雷达",
+            AppLanguage.ARABIC to "📍 رادار إندونيسيا الدقيق",
+            AppLanguage.JAPANESE to "📍 インドネシアインポイントレーダー"
+        ),
+        "admin_quiet_zone_opportunity" to mapOf(
+            AppLanguage.INDONESIAN to "Zona Sepi: Peluang Promo Tambahan",
+            AppLanguage.ENGLISH to "Quiet Zone: Additional Promo Opportunity",
+            AppLanguage.SPANISH to "Zona Tranquila: Oportunidad de Promo Adicional",
+            AppLanguage.CHINESE to "安静区：额外促销机会",
+            AppLanguage.ARABIC to "المنطقة الهادئة: فرصة ترويجية إضافية",
+            AppLanguage.JAPANESE to "閑散地帯: 追加プロモ機会"
+        ),
+        "admin_simulate_pin" to mapOf(
+            AppLanguage.INDONESIAN to "Uji Simulasi Pin Provider:",
+            AppLanguage.ENGLISH to "Test Provider Pin Simulation:",
+            AppLanguage.SPANISH to "Probar Simulación de Pin de Proveedor:",
+            AppLanguage.CHINESE to "测试提供商 Pin 模拟：",
+            AppLanguage.ARABIC to "اختبار محاكاة Pin المزود:",
+            AppLanguage.JAPANESE to "プロバイダーPinシミュレーションをテスト:"
+        ),
+        "admin_pinpoint_list_title" to mapOf(
+            AppLanguage.INDONESIAN to "Daftar Detail Pinpoint Pengguna",
+            AppLanguage.ENGLISH to "User Pinpoint Detail List",
+            AppLanguage.SPANISH to "Lista Detallada de Ubicación Precisa de Usuarios",
+            AppLanguage.CHINESE to "用户精确详情列表",
+            AppLanguage.ARABIC to "قائمة تفاصيل المستخدم الدقيقة",
+            AppLanguage.JAPANESE to "ユーザーピンポイント詳細リスト"
+        ),
+        "admin_pinpoint_list_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Menampilkan data koordinat GPS yang terekam oleh server",
+            AppLanguage.ENGLISH to "Displaying GPS coordinate data recorded by the server",
+            AppLanguage.SPANISH to "Mostrando datos de coordenadas GPS registrados por el servidor",
+            AppLanguage.CHINESE to "显示服务器记录的 GPS 坐标数据",
+            AppLanguage.ARABIC to "عرض بيانات إحداثيات GPS المسجلة بواسطة الخادم",
+            AppLanguage.JAPANESE to "サーバーによって記録されたGPS座標データを表示"
+        ),
+        "admin_payout_pending" to mapOf(
+            AppLanguage.INDONESIAN to "PENDING REVIEW",
+            AppLanguage.ENGLISH to "PENDING REVIEW",
+            AppLanguage.SPANISH to "REVISIÓN PENDIENTE",
+            AppLanguage.CHINESE to "待审核",
+            AppLanguage.ARABIC to "قيد المراجعة",
+            AppLanguage.JAPANESE to "レビュー待ち"
+        ),
+        "admin_payout_net" to mapOf(
+            AppLanguage.INDONESIAN to "Nominal Cair Bersih:",
+            AppLanguage.ENGLISH to "Net Disbursed Amount:",
+            AppLanguage.SPANISH to "Monto Neto Desembolsado:",
+            AppLanguage.CHINESE to "净支付金额：",
+            AppLanguage.ARABIC to "المبلغ الصافي المصروف:",
+            AppLanguage.JAPANESE to "純支払額:"
+        ),
+        "admin_payout_process" to mapOf(
+            AppLanguage.INDONESIAN to "Proses / Validasi",
+            AppLanguage.ENGLISH to "Process / Validate",
+            AppLanguage.SPANISH to "Procesar / Validar",
+            AppLanguage.CHINESE to "处理/验证",
+            AppLanguage.ARABIC to "معالجة / التحقق",
+            AppLanguage.JAPANESE to "処理/検証"
+        ),
+        "admin_endpoint_title" to mapOf(
+            AppLanguage.INDONESIAN to "Koneksi Portal Server Anda",
+            AppLanguage.ENGLISH to "Your Portal Server Connection",
+            AppLanguage.SPANISH to "Conexión de su Servidor Portal",
+            AppLanguage.CHINESE to "您的门户服务器连接",
+            AppLanguage.ARABIC to "اتصال خادم البوابة الخاص بك",
+            AppLanguage.JAPANESE to "ポータルサーバー接続"
+        ),
+        "admin_endpoint_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Hubungkan aplikasi Royaltree ke sistem portal pusat Anda",
+            AppLanguage.ENGLISH to "Connect Royaltree app to your central portal system",
+            AppLanguage.SPANISH to "Conectar la aplicación Royaltree a su sistema de portal central",
+            AppLanguage.CHINESE to "将 Royaltree 应用连接到您的中央门户系统",
+            AppLanguage.ARABIC to "ربط تطبيق Royaltree بنظام البوابة المركزية الخاص بك",
+            AppLanguage.JAPANESE to "Royaltreeアプリを中央ポータルシステムに接続"
+        ),
+        "admin_endpoint_base_url" to mapOf(
+            AppLanguage.INDONESIAN to "Base URL Portal Server API",
+            AppLanguage.ENGLISH to "Portal Server API Base URL",
+            AppLanguage.SPANISH to "URL Base de la API del Servidor Portal",
+            AppLanguage.CHINESE to "门户服务器 API 基础 URL",
+            AppLanguage.ARABIC to "عنوان URL الأساسي لواجهة برمجة خادم البوابة",
+            AppLanguage.JAPANESE to "ポータルサーバーAPIベースURL"
+        ),
+        "admin_endpoint_api_key" to mapOf(
+            AppLanguage.INDONESIAN to "API Secret Key (Bearer Token)",
+            AppLanguage.ENGLISH to "API Secret Key (Bearer Token)",
+            AppLanguage.SPANISH to "Clave Secreta de API (Token Bearer)",
+            AppLanguage.CHINESE to "API 密钥（Bearer 令牌）",
+            AppLanguage.ARABIC to "مفتاح API السري (رمز Bearer)",
+            AppLanguage.JAPANESE to "APIシークレットキー (Bearerトークン)"
+        ),
+        "admin_endpoint_test" to mapOf(
+            AppLanguage.INDONESIAN to "Uji Koneksi",
+            AppLanguage.ENGLISH to "Test Connection",
+            AppLanguage.SPANISH to "Probar Conexión",
+            AppLanguage.CHINESE to "测试连接",
+            AppLanguage.ARABIC to "اختبار الاتصال",
+            AppLanguage.JAPANESE to "接続をテスト"
+        ),
+        "admin_endpoint_save_url" to mapOf(
+            AppLanguage.INDONESIAN to "Simpan URL",
+            AppLanguage.ENGLISH to "Save URL",
+            AppLanguage.SPANISH to "Guardar URL",
+            AppLanguage.CHINESE to "保存 URL",
+            AppLanguage.ARABIC to "حفظ URL",
+            AppLanguage.JAPANESE to "URLを保存"
+        ),
+        "admin_endpoint_syncing" to mapOf(
+            AppLanguage.INDONESIAN to "Sedang Sinkronisasi...",
+            AppLanguage.ENGLISH to "Syncing...",
+            AppLanguage.SPANISH to "Sincronizando...",
+            AppLanguage.CHINESE to "正在同步...",
+            AppLanguage.ARABIC to "جاري المزامنة...",
+            AppLanguage.JAPANESE to "同期中..."
+        ),
+        "admin_endpoint_full_sync" to mapOf(
+            AppLanguage.INDONESIAN to "Sinkronisasi Penuh Sekarang (Data User & Poin)",
+            AppLanguage.ENGLISH to "Full Sync Now (User & Points Data)",
+            AppLanguage.SPANISH to "Sincronización Completa Ahora (Datos de Usuario y Puntos)",
+            AppLanguage.CHINESE to "立即完全同步（用户和积分数据）",
+            AppLanguage.ARABIC to "مزامنة كاملة الآن (بيانات المستخدم والنقاط)",
+            AppLanguage.JAPANESE to "今すぐ完全同期（ユーザーとポイントデータ）"
+        ),
+        "admin_endpoint_catalog_title" to mapOf(
+            AppLanguage.INDONESIAN to "Katalog REST API Endpoints",
+            AppLanguage.ENGLISH to "REST API Endpoints Catalog",
+            AppLanguage.SPANISH to "Catálogo de Endpoints REST API",
+            AppLanguage.CHINESE to "REST API 端点目录",
+            AppLanguage.ARABIC to "كتالوج نقاط نهاية REST API",
+            AppLanguage.JAPANESE to "REST APIエンドポイントカタログ"
+        ),
+        "admin_endpoint_catalog_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Spesifikasi lengkap untuk ditaruh di portal/server backend Anda",
+            AppLanguage.ENGLISH to "Complete specification for your portal/backend server",
+            AppLanguage.SPANISH to "Especificación completa para su portal/servidor backend",
+            AppLanguage.CHINESE to "门户/后端服务器的完整规范",
+            AppLanguage.ARABIC to "المواصفات الكاملة لبوابة/خادم الواجهة الخلفية",
+            AppLanguage.JAPANESE to "ポータル/バックエンドサーバー用完全仕様"
+        ),
+        "admin_endpoint_curl_test" to mapOf(
+            AppLanguage.INDONESIAN to "Perintah cURL Uji Coba:",
+            AppLanguage.ENGLISH to "cURL Test Command:",
+            AppLanguage.SPANISH to "Comando de Prueba cURL:",
+            AppLanguage.CHINESE to "cURL 测试命令：",
+            AppLanguage.ARABIC to "أمر اختبار cURL:",
+            AppLanguage.JAPANESE to "cURLテストコマンド:"
+        ),
+        "admin_endpoint_json_example" to mapOf(
+            AppLanguage.INDONESIAN to "Contoh Respons JSON (200 OK):",
+            AppLanguage.ENGLISH to "Example JSON Response (200 OK):",
+            AppLanguage.SPANISH to "Ejemplo de Respuesta JSON (200 OK):",
+            AppLanguage.CHINESE to "示例 JSON 响应（200 OK）：",
+            AppLanguage.ARABIC to "مثال على استجابة JSON (200 OK):",
+            AppLanguage.JAPANESE to "JSONレスポンス例 (200 OK):"
+        ),
+        "admin_endpoint_server_script" to mapOf(
+            AppLanguage.INDONESIAN to "Script Server Siap Pakai",
+            AppLanguage.ENGLISH to "Ready-to-Use Server Script",
+            AppLanguage.SPANISH to "Script de Servidor Listo para Usar",
+            AppLanguage.CHINESE to "即用服务器脚本",
+            AppLanguage.ARABIC to "نص الخادم جاهز للاستخدام",
+            AppLanguage.JAPANESE to "すぐに使えるサーバースクリプト"
+        ),
+        "admin_endpoint_server_script_desc" to mapOf(
+            AppLanguage.INDONESIAN to "Tersedia di folder /backend/ project Anda",
+            AppLanguage.ENGLISH to "Available in your project /backend/ folder",
+            AppLanguage.SPANISH to "Disponible en la carpeta /backend/ de su proyecto",
+            AppLanguage.CHINESE to "可在项目的 /backend/ 文件夹中找到",
+            AppLanguage.ARABIC to "متاح في مجلد /backend/ الخاص بمشروعك",
+            AppLanguage.JAPANESE to "プロジェクトの/backend/フォルダにあります"
+        ),
+        "admin_endpoint_copy_script" to mapOf(
+            AppLanguage.INDONESIAN to "Salin Script Lengkap ke Clipboard",
+            AppLanguage.ENGLISH to "Copy Full Script to Clipboard",
+            AppLanguage.SPANISH to "Copiar Script Completo al Portapapeles",
+            AppLanguage.CHINESE to "将完整脚本复制到剪贴板",
+            AppLanguage.ARABIC to "نسخ النص الكامل إلى الحافظة",
+            AppLanguage.JAPANESE to "完全なスクリプトをクリップボードにコピー"
+        ),
+
+
+        // ========== ADMIN SCREEN (SISA) ==========
+        "admin_active_users" to mapOf(
+            AppLanguage.INDONESIAN to "Pengguna Aktif",
+            AppLanguage.ENGLISH to "Active Users",
+            AppLanguage.SPANISH to "Usuarios Activos",
+            AppLanguage.CHINESE to "活跃用户",
+            AppLanguage.ARABIC to "المستخدمون النشطون",
+            AppLanguage.JAPANESE to "アクティブユーザー"
+        ),
+        "admin_users_expansion" to mapOf(
+            AppLanguage.INDONESIAN to "Pengguna (Peluang Ekspansi)",
+            AppLanguage.ENGLISH to "Users (Expansion Opportunity)",
+            AppLanguage.SPANISH to "Usuarios (Oportunidad de Expansión)",
+            AppLanguage.CHINESE to "用户（扩张机会）",
+            AppLanguage.ARABIC to "المستخدمون (فرصة التوسع)",
+            AppLanguage.JAPANESE to "ユーザー（拡張機会）"
+        ),
+        "admin_total_tracked" to mapOf(
+            AppLanguage.INDONESIAN to "Total",
+            AppLanguage.ENGLISH to "Total",
+            AppLanguage.SPANISH to "Total",
+            AppLanguage.CHINESE to "总计",
+            AppLanguage.ARABIC to "الإجمالي",
+            AppLanguage.JAPANESE to "合計"
+        ),
+        "admin_tracked_points" to mapOf(
+            AppLanguage.INDONESIAN to "Titik Terlacak",
+            AppLanguage.ENGLISH to "Tracked Points",
+            AppLanguage.SPANISH to "Puntos Rastreados",
+            AppLanguage.CHINESE to "追踪点",
+            AppLanguage.ARABIC to "النقاط المتتبعة",
+            AppLanguage.JAPANESE to "追跡ポイント"
+        ),
+        "admin_legend_free" to mapOf(
+            AppLanguage.INDONESIAN to "User Free",
+            AppLanguage.ENGLISH to "Free User",
+            AppLanguage.SPANISH to "Usuario Gratis",
+            AppLanguage.CHINESE to "免费用户",
+            AppLanguage.ARABIC to "مستخدم مجاني",
+            AppLanguage.JAPANESE to "無料ユーザー"
+        ),
+        "admin_legend_vip" to mapOf(
+            AppLanguage.INDONESIAN to "VIP User",
+            AppLanguage.ENGLISH to "VIP User",
+            AppLanguage.SPANISH to "Usuario VIP",
+            AppLanguage.CHINESE to "VIP 用户",
+            AppLanguage.ARABIC to "مستخدم VIP",
+            AppLanguage.JAPANESE to "VIPユーザー"
+        ),
+
     )
 
     fun getString(key: String, language: AppLanguage): String {

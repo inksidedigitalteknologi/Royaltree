@@ -188,8 +188,8 @@ fun AdminScreen(
                             }
                             Spacer(modifier = Modifier.width(10.dp))
                             Column {
-                                Text("Portal Admin & Provider Royaltree", fontWeight = FontWeight.Black, fontSize = 16.sp)
-                                Text("Pusat Pengaturan, Keuangan & Pelacakan Wilayah", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("admin_header_title", currentLanguage, "Portal Admin & Provider Royaltree"), fontWeight = FontWeight.Black, fontSize = 16.sp)
+                                Text(LanguageManager.translate("admin_header_subtitle", currentLanguage, "Pusat Pengaturan, Keuangan & Pelacakan Wilayah"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
 
@@ -199,7 +199,7 @@ fun AdminScreen(
                             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("Keluar Admin", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurface)
+                            Text(LanguageManager.translate("admin_exit_btn", currentLanguage, "Keluar Admin"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurface)
                         }
                     }
 
@@ -235,27 +235,27 @@ fun AdminScreen(
                 Tab(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
-                    text = { Text("Antrean Payout (${pendingWithdrawals.size})", fontSize = 11.sp, fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal) }
+                    text = { Text(LanguageManager.translate("admin_tab_payout", currentLanguage, "Antrean Payout (") + "${pendingWithdrawals.size})", fontSize = 11.sp, fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal) }
                 )
                 Tab(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
-                    text = { Text("Data Pengguna (${userList.size})", fontSize = 11.sp, fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal) }
+                    text = { Text(LanguageManager.translate("admin_tab_users", currentLanguage, "Data Pengguna (") + "${userList.size})", fontSize = 11.sp, fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal) }
                 )
                 Tab(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
-                    text = { Text("📍 Lacak Lokasi & Heatmap", fontSize = 11.sp, fontWeight = if (selectedTab == 2) FontWeight.Bold else FontWeight.Normal) }
+                    text = { Text(LanguageManager.translate("admin_tab_location", currentLanguage, "📍 Lacak Lokasi & Heatmap"), fontSize = 11.sp, fontWeight = if (selectedTab == 2) FontWeight.Bold else FontWeight.Normal) }
                 )
                 Tab(
                     selected = selectedTab == 3,
                     onClick = { selectedTab = 3 },
-                    text = { Text("⚙️ Pengaturan Platform", fontSize = 11.sp, fontWeight = if (selectedTab == 3) FontWeight.Bold else FontWeight.Normal) }
+                    text = { Text(LanguageManager.translate("admin_tab_settings", currentLanguage, "⚙️ Pengaturan Platform"), fontSize = 11.sp, fontWeight = if (selectedTab == 3) FontWeight.Bold else FontWeight.Normal) }
                 )
                 Tab(
                     selected = selectedTab == 4,
                     onClick = { selectedTab = 4 },
-                    text = { Text("🔌 Endpoint & Portal", fontSize = 11.sp, fontWeight = if (selectedTab == 4) FontWeight.Bold else FontWeight.Normal) }
+                    text = { Text(LanguageManager.translate("admin_tab_endpoint", currentLanguage, "🔌 Endpoint & Portal"), fontSize = 11.sp, fontWeight = if (selectedTab == 4) FontWeight.Bold else FontWeight.Normal) }
                 )
             }
         }
@@ -276,8 +276,8 @@ fun AdminScreen(
                             ) {
                                 Icon(imageVector = Icons.Default.CheckCircle, contentDescription = null, tint = EmeraldLight, modifier = Modifier.size(40.dp))
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text("Semua Penarikan Telah Diproses!", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                                Text("Tidak ada permintaan penarikan yang tertunda saat ini.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(LanguageManager.translate("admin_payout_empty_title", currentLanguage, "Semua Penarikan Telah Diproses!"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                Text(LanguageManager.translate("admin_payout_empty_desc", currentLanguage, "Tidak ada permintaan penarikan yang tertunda saat ini."), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
                     }
@@ -339,8 +339,8 @@ fun AdminScreen(
                                     Icon(imageVector = Icons.Default.Tune, contentDescription = null, tint = PurpleSecondary)
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Column {
-                                        Text("Pusat Pengaturan Platform", fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                                        Text("Kelola semua parameter sistem, batas penarikan & keamanan", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                        Text(LanguageManager.translate("admin_settings_title", currentLanguage, "Pusat Pengaturan Platform"), fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                                        Text(LanguageManager.translate("admin_settings_desc", currentLanguage, "Kelola semua parameter sistem, batas penarikan & keamanan"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                 }
                             }
@@ -348,13 +348,13 @@ fun AdminScreen(
                             HorizontalDivider()
 
                             // Group 1: Batas Penarikan Dana
-                            Text("1. Batas Minimum Penarikan Dana (IDR)", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = PurpleSecondary)
+                            Text(LanguageManager.translate("admin_section_min_withdraw", currentLanguage, "1. Batas Minimum Penarikan Dana (IDR)"), fontWeight = FontWeight.Bold, fontSize = 13.sp, color = PurpleSecondary)
 
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 OutlinedTextField(
                                     value = minEWallet,
                                     onValueChange = { minEWallet = it },
-                                    label = { Text("Min. E-Wallet", fontSize = 11.sp) },
+                                    label = { Text(LanguageManager.translate("admin_min_ewallet", currentLanguage, "Min. E-Wallet"), fontSize = 11.sp) },
                                     modifier = Modifier.weight(1f),
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     singleLine = true
@@ -362,7 +362,7 @@ fun AdminScreen(
                                 OutlinedTextField(
                                     value = minBank,
                                     onValueChange = { minBank = it },
-                                    label = { Text("Min. Bank", fontSize = 11.sp) },
+                                    label = { Text(LanguageManager.translate("admin_min_bank", currentLanguage, "Min. Bank"), fontSize = 11.sp) },
                                     modifier = Modifier.weight(1f),
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     singleLine = true
@@ -370,7 +370,7 @@ fun AdminScreen(
                                 OutlinedTextField(
                                     value = minCrypto,
                                     onValueChange = { minCrypto = it },
-                                    label = { Text("Min. Kripto", fontSize = 11.sp) },
+                                    label = { Text(LanguageManager.translate("admin_min_crypto", currentLanguage, "Min. Kripto"), fontSize = 11.sp) },
                                     modifier = Modifier.weight(1f),
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     singleLine = true
@@ -378,13 +378,13 @@ fun AdminScreen(
                             }
 
                             // Group 2: Persentase Komisi
-                            Text("2. Tarif Komisi Affiliasi (%)", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = PurpleSecondary)
+                            Text(LanguageManager.translate("admin_section_commission", currentLanguage, "2. Tarif Komisi Affiliasi (%)"), fontWeight = FontWeight.Bold, fontSize = 13.sp, color = PurpleSecondary)
 
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 OutlinedTextField(
                                     value = freeRate,
                                     onValueChange = { freeRate = it },
-                                    label = { Text("Tier Free (%)", fontSize = 11.sp) },
+                                    label = { Text(LanguageManager.translate("admin_tier_free", currentLanguage, "Tier Free (%)"), fontSize = 11.sp) },
                                     modifier = Modifier.weight(1f),
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                     singleLine = true
@@ -392,7 +392,7 @@ fun AdminScreen(
                                 OutlinedTextField(
                                     value = vipRate,
                                     onValueChange = { vipRate = it },
-                                    label = { Text("Tier VIP (%)", fontSize = 11.sp) },
+                                    label = { Text(LanguageManager.translate("admin_tier_vip", currentLanguage, "Tier VIP (%)"), fontSize = 11.sp) },
                                     modifier = Modifier.weight(1f),
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                     singleLine = true
@@ -400,13 +400,13 @@ fun AdminScreen(
                             }
 
                             // Group 3: Batas & Keamanan Transfer RTP
-                            Text("3. Keamanan & Batas Transfer QR (RTP)", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = PurpleSecondary)
+                            Text(LanguageManager.translate("admin_section_security", currentLanguage, "3. Keamanan & Batas Transfer QR (RTP)"), fontWeight = FontWeight.Bold, fontSize = 13.sp, color = PurpleSecondary)
 
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 OutlinedTextField(
                                     value = qrFee,
                                     onValueChange = { qrFee = it },
-                                    label = { Text("Biaya Admin (RTP)", fontSize = 11.sp) },
+                                    label = { Text(LanguageManager.translate("admin_fee_rtp", currentLanguage, "Biaya Admin (RTP)"), fontSize = 11.sp) },
                                     modifier = Modifier.weight(1f),
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     singleLine = true
@@ -414,7 +414,7 @@ fun AdminScreen(
                                 OutlinedTextField(
                                     value = qrDailyLimit,
                                     onValueChange = { qrDailyLimit = it },
-                                    label = { Text("Limit Harian (RTP)", fontSize = 11.sp) },
+                                    label = { Text(LanguageManager.translate("admin_daily_limit", currentLanguage, "Limit Harian (RTP)"), fontSize = 11.sp) },
                                     modifier = Modifier.weight(1f),
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     singleLine = true
@@ -422,7 +422,7 @@ fun AdminScreen(
                                 OutlinedTextField(
                                     value = fraudVelocity,
                                     onValueChange = { fraudVelocity = it },
-                                    label = { Text("Jeda Mutex (Detik)", fontSize = 11.sp) },
+                                    label = { Text(LanguageManager.translate("admin_mutex_delay", currentLanguage, "Jeda Mutex (Detik)"), fontSize = 11.sp) },
                                     modifier = Modifier.weight(1f),
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     singleLine = true
@@ -430,7 +430,7 @@ fun AdminScreen(
                             }
 
                             // Group 4: Kebijakan Operasional Platform
-                            Text("4. Fitur Pelacakan & Status Server", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = PurpleSecondary)
+                            Text(LanguageManager.translate("admin_section_tracking", currentLanguage, "4. Fitur Pelacakan & Status Server"), fontWeight = FontWeight.Bold, fontSize = 13.sp, color = PurpleSecondary)
 
                             Surface(
                                 color = MaterialTheme.colorScheme.surfaceVariant,
@@ -444,8 +444,8 @@ fun AdminScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Column(modifier = Modifier.weight(1f)) {
-                                            Text("Pelacakan Pinpoint Pengguna", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                                            Text("Mengumpulkan koordinat persebaran untuk analitik provider", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                            Text(LanguageManager.translate("admin_tracking_pinpoint", currentLanguage, "Pelacakan Pinpoint Pengguna"), fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                            Text(LanguageManager.translate("admin_tracking_desc", currentLanguage, "Mengumpulkan koordinat persebaran untuk analitik provider"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                         }
                                         Switch(
                                             checked = locationTrackingAllowed,
@@ -463,8 +463,8 @@ fun AdminScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Column(modifier = Modifier.weight(1f)) {
-                                            Text("Mode Pemeliharaan (Maintenance)", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                                            Text("Nonaktifkan sementara penarikan dana untuk audit", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                            Text(LanguageManager.translate("admin_maintenance_mode", currentLanguage, "Mode Pemeliharaan (Maintenance)"), fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                            Text(LanguageManager.translate("admin_maintenance_desc", currentLanguage, "Nonaktifkan sementara penarikan dana untuk audit"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                         }
                                         Switch(
                                             checked = maintenanceMode,
@@ -505,7 +505,7 @@ fun AdminScreen(
                             ) {
                                 Icon(imageVector = Icons.Default.Save, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Simpan Perubahan Pengaturan", fontWeight = FontWeight.Bold)
+                                Text(LanguageManager.translate("admin_save_settings", currentLanguage, "Simpan Perubahan Pengaturan"), fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -594,19 +594,19 @@ fun AdminUserCard(user: UserEntity, currentLanguage: AppLanguage) {
             ) {
                 Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Saldo Komisi Tersedia:", fontSize = 11.sp)
+                        Text(LanguageManager.translate("admin_user_balance", currentLanguage, "Saldo Komisi Tersedia:"), fontSize = 11.sp)
                         Text(GlobalPointsManager.formatBalanceIdr(user.balance, currentLanguage.code), fontWeight = FontWeight.Bold, fontSize = 11.sp, color = EmeraldLight)
                     }
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Poin Loyalitas (RTP):", fontSize = 11.sp)
+                        Text(LanguageManager.translate("admin_user_points", currentLanguage, "Poin Loyalitas (RTP):"), fontSize = 11.sp)
                         Text("${user.points} RTP", fontWeight = FontWeight.Bold, fontSize = 11.sp)
                     }
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Status 2FA & Enkripsi:", fontSize = 11.sp)
+                        Text(LanguageManager.translate("admin_user_2fa_status", currentLanguage, "Status 2FA & Enkripsi:"), fontSize = 11.sp)
                         Text(if (user.is2FAEnabled) "AKTIF (Aman) 🔒" else "NONAKTIF", fontWeight = FontWeight.Bold, fontSize = 11.sp)
                     }
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Pinpoint Lokasi Terakhir:", fontSize = 11.sp)
+                        Text(LanguageManager.translate("admin_user_last_location", currentLanguage, "Pinpoint Lokasi Terakhir:"), fontSize = 11.sp)
                         Text("${user.locationCity}, ${user.locationProvince} 📍", fontWeight = FontWeight.Bold, fontSize = 11.sp, color = ElectricBlue)
                     }
                 }
@@ -648,8 +648,8 @@ fun AdminLocationTrackingSection(
                     Icon(imageVector = Icons.Default.Map, contentDescription = null, tint = ElectricBlue)
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
-                        Text("Analisis Densitas Wilayah (Provider)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        Text("Pelacakan otomatis kepadatan pengguna platform secara realtime", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("admin_heatmap_title", currentLanguage, "Analisis Densitas Wilayah (Provider)"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("admin_heatmap_desc", currentLanguage, "Pelacakan otomatis kepadatan pengguna platform secara realtime"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
 
@@ -666,11 +666,11 @@ fun AdminLocationTrackingSection(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text("🔥", fontSize = 14.sp)
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text("WILAYAH RAMAI", fontSize = 9.sp, fontWeight = FontWeight.Black, color = Color(0xFF2E7D32))
+                                Text(LanguageManager.translate("admin_area_crowded", currentLanguage, "WILAYAH RAMAI"), fontSize = 9.sp, fontWeight = FontWeight.Black, color = Color(0xFF2E7D32))
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(crowdedCity?.key ?: "Jakarta", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Color(0xFF1B5E20))
-                            Text("${crowdedCity?.value?.size ?: 0} Pengguna Aktif", fontSize = 10.sp, color = Color(0xFF388E3C))
+                            Text("${crowdedCity?.value?.size ?: 0} " + LanguageManager.translate("admin_active_users", currentLanguage, "Pengguna Aktif"), fontSize = 10.sp, color = Color(0xFF388E3C))
                         }
                     }
 
@@ -684,11 +684,11 @@ fun AdminLocationTrackingSection(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text("❄️", fontSize = 14.sp)
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text("WILAYAH SEPI", fontSize = 9.sp, fontWeight = FontWeight.Black, color = Color(0xFFE65100))
+                                Text(LanguageManager.translate("admin_area_quiet", currentLanguage, "WILAYAH SEPI"), fontSize = 9.sp, fontWeight = FontWeight.Black, color = Color(0xFFE65100))
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(quietCity?.key ?: "Pontianak", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Color(0xFFBF360C))
-                            Text("${quietCity?.value?.size ?: 0} Pengguna (Peluang Ekspansi)", fontSize = 10.sp, color = Color(0xFFF57C00))
+                            Text("${quietCity?.value?.size ?: 0} " + LanguageManager.translate("admin_users_expansion", currentLanguage, "Pengguna (Peluang Ekspansi)"), fontSize = 10.sp, color = Color(0xFFF57C00))
                         }
                     }
                 }
@@ -710,10 +710,10 @@ fun AdminLocationTrackingSection(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(imageVector = Icons.Default.MyLocation, contentDescription = null, tint = EmeraldLight)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Peta Persebaran & Heatmap", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("admin_heatmap_map_title", currentLanguage, "Peta Persebaran & Heatmap"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
 
-                    Text("Total $totalPins Titik Terlacak", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = ElectricBlue)
+                    Text(LanguageManager.translate("admin_total_tracked", currentLanguage, "Total") + " $totalPins " + LanguageManager.translate("admin_tracked_points", currentLanguage, "Titik Terlacak"), fontSize = 11.sp, fontWeight = FontWeight.Bold, color = ElectricBlue)
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -791,7 +791,7 @@ fun AdminLocationTrackingSection(
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("📍 Radar Pinpoint Indonesia", fontSize = 10.sp, color = Color(0xFF94A3B8), fontWeight = FontWeight.Bold)
+                            Text(LanguageManager.translate("admin_radar_indonesia", currentLanguage, "📍 Radar Pinpoint Indonesia"), fontSize = 10.sp, color = Color(0xFF94A3B8), fontWeight = FontWeight.Bold)
                             Text("🔴 Ramai: Jabodetabek, Jabar, Jatim", fontSize = 9.sp, color = EmeraldLight)
                         }
 
@@ -802,8 +802,8 @@ fun AdminLocationTrackingSection(
                                 .padding(horizontal = 8.dp, vertical = 4.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("🟢 User Free  👑 VIP User", fontSize = 9.sp, color = Color.White)
-                            Text("Zona Sepi: Peluang Promo Tambahan", fontSize = 9.sp, color = Color(0xFFFFB74D))
+                            Text("🟢 " + LanguageManager.translate("admin_legend_free", currentLanguage, "User Free") + "  👑 " + LanguageManager.translate("admin_legend_vip", currentLanguage, "VIP User"), fontSize = 9.sp, color = Color.White)
+                            Text(LanguageManager.translate("admin_quiet_zone_opportunity", currentLanguage, "Zona Sepi: Peluang Promo Tambahan"), fontSize = 9.sp, color = Color(0xFFFFB74D))
                         }
                     }
                 }
@@ -816,7 +816,7 @@ fun AdminLocationTrackingSection(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Uji Simulasi Pin Provider:", fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                    Text(LanguageManager.translate("admin_simulate_pin", currentLanguage, "Uji Simulasi Pin Provider:"), fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
 
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Button(
@@ -854,8 +854,8 @@ fun AdminLocationTrackingSection(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text("Daftar Detail Pinpoint Pengguna", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                Text("Menampilkan data koordinat GPS yang terekam oleh server", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(LanguageManager.translate("admin_pinpoint_list_title", currentLanguage, "Daftar Detail Pinpoint Pengguna"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(LanguageManager.translate("admin_pinpoint_list_desc", currentLanguage, "Menampilkan data koordinat GPS yang terekam oleh server"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -981,7 +981,7 @@ fun AdminWithdrawalCard(
                         .background(GoldVip.copy(alpha = 0.2f))
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
-                    Text("PENDING REVIEW", fontSize = 9.sp, fontWeight = FontWeight.Black, color = GoldVip)
+                    Text(LanguageManager.translate("admin_payout_pending", currentLanguage, "PENDING REVIEW"), fontSize = 9.sp, fontWeight = FontWeight.Black, color = GoldVip)
                 }
             }
 
@@ -993,7 +993,7 @@ fun AdminWithdrawalCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text("Nominal Cair Bersih:", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(LanguageManager.translate("admin_payout_net", currentLanguage, "Nominal Cair Bersih:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(GlobalPointsManager.formatBalanceIdr(withdrawal.netAmount, currentLanguage.code), fontWeight = FontWeight.Black, fontSize = 15.sp, color = EmeraldLight)
                 }
 
@@ -1004,7 +1004,7 @@ fun AdminWithdrawalCard(
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 14.dp, vertical = 6.dp),
                     modifier = Modifier.testTag("btn_admin_review_${withdrawal.id}")
                 ) {
-                    Text("Proses / Validasi", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("admin_payout_process", currentLanguage, "Proses / Validasi"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -1046,8 +1046,8 @@ fun AdminPortalEndpointSection(
                         Icon(imageVector = Icons.Default.Lan, contentDescription = null, tint = ElectricBlue)
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            Text("Koneksi Portal Server Anda", fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                            Text("Hubungkan aplikasi Royaltree ke sistem portal pusat Anda", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("admin_endpoint_title", currentLanguage, "Koneksi Portal Server Anda"), fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            Text(LanguageManager.translate("admin_endpoint_desc", currentLanguage, "Hubungkan aplikasi Royaltree ke sistem portal pusat Anda"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
 
@@ -1075,7 +1075,7 @@ fun AdminPortalEndpointSection(
                 OutlinedTextField(
                     value = portalUrl,
                     onValueChange = onUrlChange,
-                    label = { Text("Base URL Portal Server API", fontSize = 11.sp) },
+                    label = { Text(LanguageManager.translate("admin_endpoint_base_url", currentLanguage, "Base URL Portal Server API"), fontSize = 11.sp) },
                     placeholder = { Text("Contoh: https://portal-anda.com/api/v1/ atau http://10.0.2.2:3000/api/v1/") },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1089,7 +1089,7 @@ fun AdminPortalEndpointSection(
                 OutlinedTextField(
                     value = portalApiKey,
                     onValueChange = onApiKeyChange,
-                    label = { Text("API Secret Key (Bearer Token)", fontSize = 11.sp) },
+                    label = { Text(LanguageManager.translate("admin_endpoint_api_key", currentLanguage, "API Secret Key (Bearer Token)"), fontSize = 11.sp) },
                     placeholder = { Text("Contoh: <API_KEY>") },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1123,7 +1123,7 @@ fun AdminPortalEndpointSection(
                             Icon(imageVector = Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(16.dp))
                         }
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Uji Koneksi", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("admin_endpoint_test", currentLanguage, "Uji Koneksi"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
 
                     Button(
@@ -1139,7 +1139,7 @@ fun AdminPortalEndpointSection(
                     ) {
                         Icon(imageVector = Icons.Default.Save, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Simpan URL", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("admin_endpoint_save_url", currentLanguage, "Simpan URL"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
                 }
 
@@ -1157,11 +1157,11 @@ fun AdminPortalEndpointSection(
                     if (isSyncing) {
                         CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.White, strokeWidth = 2.dp)
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Sedang Sinkronisasi...", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                        Text(LanguageManager.translate("admin_endpoint_syncing", currentLanguage, "Sedang Sinkronisasi..."), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     } else {
                         Icon(imageVector = Icons.Default.CloudSync, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Sinkronisasi Penuh Sekarang (Data User & Poin)", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                        Text(LanguageManager.translate("admin_endpoint_full_sync", currentLanguage, "Sinkronisasi Penuh Sekarang (Data User & Poin)"), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     }
                 }
             }
@@ -1178,8 +1178,8 @@ fun AdminPortalEndpointSection(
                     Icon(imageVector = Icons.Default.Code, contentDescription = null, tint = PurpleSecondary)
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
-                        Text("Katalog REST API Endpoints", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        Text("Spesifikasi lengkap untuk ditaruh di portal/server backend Anda", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("admin_endpoint_catalog_title", currentLanguage, "Katalog REST API Endpoints"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(LanguageManager.translate("admin_endpoint_catalog_desc", currentLanguage, "Spesifikasi lengkap untuk ditaruh di portal/server backend Anda"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
 
@@ -1293,7 +1293,7 @@ fun AdminPortalEndpointSection(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text("Perintah cURL Uji Coba:", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = ElectricBlue)
+                                    Text(LanguageManager.translate("admin_endpoint_curl_test", currentLanguage, "Perintah cURL Uji Coba:"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = ElectricBlue)
                                     IconButton(
                                         onClick = {
                                             clipboardManager.setText(AnnotatedString(ep.curl))
@@ -1320,7 +1320,7 @@ fun AdminPortalEndpointSection(
                                 }
 
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text("Contoh Respons JSON (200 OK):", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = EmeraldLight)
+                                Text(LanguageManager.translate("admin_endpoint_json_example", currentLanguage, "Contoh Respons JSON (200 OK):"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = EmeraldLight)
                                 Surface(
                                     color = Color(0xFF0F172A),
                                     shape = RoundedCornerShape(8.dp),
@@ -1355,8 +1355,8 @@ fun AdminPortalEndpointSection(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text("Script Server Siap Pakai", fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                        Text("Tersedia di folder /backend/ project Anda", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("admin_endpoint_server_script", currentLanguage, "Script Server Siap Pakai"), fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                        Text(LanguageManager.translate("admin_endpoint_server_script_desc", currentLanguage, "Tersedia di folder /backend/ project Anda"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
 
                     // Selector Tab
@@ -1492,7 +1492,7 @@ if (strpos(${'$'}uri, '/users/sync') !== false) {
                 ) {
                     Icon(imageVector = Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Salin Script Lengkap ke Clipboard", fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                    Text(LanguageManager.translate("admin_endpoint_copy_script", currentLanguage, "Salin Script Lengkap ke Clipboard"), fontWeight = FontWeight.Bold, fontSize = 11.sp)
                 }
             }
         }
