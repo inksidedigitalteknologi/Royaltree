@@ -1093,6 +1093,7 @@ fun MainAffiliateAppContent(
                         streak = user?.checkInStreak ?: 0,
                         checkedInToday = isCheckedInToday,
                         lastCheckInDate = user?.lastCheckInDate ?: "",
+                        userId = user?.id ?: "",
                         isLoading = false,
                         errorMessage = null,
                         successMessage = null

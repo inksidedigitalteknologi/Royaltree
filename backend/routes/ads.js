@@ -217,14 +217,104 @@ router.post('/reward', verifyFirebaseToken, validate(adRewardSchema), checkFraud
 });
 
 // ============================================================
+// AdMob SSV Public Keys
+// Ambil dari: AdMob Console → Apps → Royaltree → Ad Units
+//             → Rewarded → Server-Side Verification
+// Format: { "key_id": "public_key_base64" }
+// ============================================================
+const ADMOB_SSV_KEYS = {
+    // ⚠️ TODO: ganti dengan key dari AdMob Console
+    // '3335': 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...',
+};
+
+// ============================================================
+// Helper: Verifikasi signature AdMob SSV
+// Docs: https://developers.google.com/admob/android/ssv
+// ============================================================
+function verifyAdMobSignature({ key_id, signature, transaction_id, custom_data, reward_amount }) {
+    const publicKey = ADMOB_SSV_KEYS[key_id];
+    if (!publicKey) {
+        console.error('[SSV] Unknown key_id:', key_id);
+        return false;
+    }
+
+    try {
+        // Format message: transaction_id\ncustom_data\nreward_amount
+        const message = `${transaction_id}\n${custom_data}\n${reward_amount}`;
+        const verifier = crypto.createVerify('SHA256');
+        verifier.update(message);
+        return verifier.verify(publicKey, signature, 'base64');
+    } catch (e) {
+        console.error('[SSV] Verify error:', e.message);
+        return false;
+    }
+}
+
+// ============================================================
 // GET /api/v1/ads/admob-ssv
-// Callback dari AdMob (SSV) — untuk produksi
+// Callback dari AdMob (SSV) — produksi
+// Query params: ad_network, ad_unit, custom_data, key_id,
+//               reward_amount, reward_item, signature,
+//               timestamp, transaction_id
 // ============================================================
 router.get('/admob-ssv', async (req, res) => {
-    // TODO: implementasi verifikasi signature AdMob SSV
-    // Sekarang: skip dulu (SSV off di AdMob Console)
-    console.log('AdMob SSV callback:', req.query);
-    return res.status(200).send('OK');
+    try {
+        const {
+            ad_network,
+            ad_unit,
+            custom_data,       // ← userId dari client SSV options
+            key_id,
+            reward_amount,
+            reward_item,
+            signature,
+            transaction_id,
+            timestamp
+        } = req.query;
+
+        // 1. Validasi parameter wajib
+        if (!signature || !key_id || !transaction_id || !custom_data) {
+            console.warn('[SSV] Missing params:', {
+                signature: !!signature,
+                key_id: !!key_id,
+                transaction_id: !!transaction_id,
+                custom_data: !!custom_data
+            });
+            return res.status(400).send('Missing parameters');
+        }
+
+        // 2. Verifikasi signature AdMob
+        const isValid = verifyAdMobSignature({
+            key_id,
+            signature,
+            transaction_id,
+            custom_data,
+            reward_amount
+        });
+
+        if (!isValid) {
+            console.warn('[SSV] ❌ Invalid signature:', transaction_id);
+            return res.status(403).send('Invalid signature');
+        }
+
+        // 3. Simpan transaksi terverifikasi
+        await db.collection('admob_ssv_txns').doc(transaction_id).set({
+            userId: custom_data,
+            rewardAmount: parseInt(reward_amount) || 0,
+            rewardItem: reward_item || 'RTP',
+            adNetwork: ad_network || '',
+            adUnit: ad_unit || '',
+            timestamp: parseInt(timestamp) || Date.now(),
+            verifiedAt: admin.firestore.FieldValue.serverTimestamp(),
+            ip: req.ip || 'unknown'
+        });
+
+        console.log('[SSV] ✅ Verified:', transaction_id, '| user:', custom_data);
+        return res.status(200).send('OK');
+
+    } catch (error) {
+        console.error('[SSV] Error:', error);
+        return res.status(500).send('Error');
+    }
 });
 
 module.exports = router;

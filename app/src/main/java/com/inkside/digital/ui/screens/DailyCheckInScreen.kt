@@ -2,6 +2,7 @@ package com.inkside.digital.ui.screens
 
 import com.inkside.digital.R
 import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -72,6 +73,7 @@ fun DailyCheckInScreen(
     streak: Int,
     checkedInToday: Boolean,
     lastCheckInDate: String = "",
+    userId: String = "",           // ← untuk SSV
     isLoading: Boolean,
     errorMessage: String?,
     successMessage: String?
@@ -296,26 +298,33 @@ fun DailyCheckInScreen(
                     onClick = {
                         val activity = context as? Activity
                         if (activity == null) {
-                            onClaimCheckIn()
+                            Toast.makeText(context, "Error: Activity tidak tersedia", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
                         // Trigger iklan dulu
                         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-                            val loadResult = AdMobProvider.loadRewardedAd(activity, null)
+                            val loadResult = AdMobProvider.loadRewardedAd(activity, userId = userId)
                             if (loadResult.isFailure) {
-                                onClaimCheckIn()
+                                Toast.makeText(context, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
                                 return@launch
                             }
                             AdMobProvider.showRewardedAd(
                                 activity = activity,
                                 onRewardEarned = { _, _ ->
-                                    val txId = java.util.UUID.randomUUID().toString()
-                                    onWatchAdAndClaim(txId, "admob")
+                                    // ═══════════════════════════════════════════════════
+                                    // Delay 2 detik — tunggu SSV callback AdMob sampai ke backend
+                                    // Backend juga retry 3x @ 2s, jadi double protection
+                                    // ═══════════════════════════════════════════════════
+                                    kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                                        kotlinx.coroutines.delay(2000)
+                                        val txId = java.util.UUID.randomUUID().toString()
+                                        onWatchAdAndClaim(txId, "admob")
+                                    }
                                 },
                                 onAdDismissed = {},
                                 onAdFailed = {
-                                    // Kalau gagal, pakai fallback check-in biasa
-                                    onClaimCheckIn()
+                                    // Iklan gagal — TIDAK ada reward
+                                    Toast.makeText(context, "Iklan gagal dimuat. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
                                 }
                             )
                         }
