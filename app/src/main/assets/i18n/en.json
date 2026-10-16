@@ -715,6 +715,8 @@
     "splash_tagline": "Affiliate Rewarding Platform",
     "loading_growing_tree": "Growing your tree...",
     "login_google_only_info": "Sign in only with a Google account. No password needed.",
-    "login_terms": "By signing in, you agree to our Terms & Conditions."
+    "login_terms": "By signing in, you agree to our Terms & Conditions.",
+    "splash_presented_by": "Presented by",
+    "splash_in_collaboration": "In collaboration with"
   }
 }

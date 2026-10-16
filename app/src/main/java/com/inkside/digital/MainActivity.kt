@@ -99,7 +99,7 @@ import com.inkside.digital.ui.screens.auth.AuthViewModel
 import com.inkside.digital.ui.screens.auth.LoginScreen
 import com.inkside.digital.ui.screens.auth.ProfileSetupScreen
 import com.inkside.digital.ui.screens.auth.SplashScreen
-import com.inkside.digital.ui.screens.LoadingScreen
+import com.inkside.digital.ui.screens.SplashSequenceScreen
 import com.inkside.digital.viewmodel.AffiliateViewModel
 import com.inkside.digital.viewmodel.AppScreen
 import com.inkside.digital.util.AnalyticsHelper
@@ -337,7 +337,7 @@ fun RootNav(
 
         AuthScreen.SPLASH -> {
             val loadingState by affiliateViewModel.loadingState.collectAsState()
-            LoadingScreen(
+            SplashSequenceScreen(
                 loadingState = loadingState,
                 currentLanguage = currentLanguage
             )
