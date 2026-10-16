@@ -5,7 +5,7 @@ import org.json.JSONObject
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * LanguageLoader — Load translations dari assets/i18n/*.json
+ * LanguageLoader — Load translations dari assets/i18n (JSON files)
  *
  * Keunggulan vs hardcoded mapOf:
  * - Tidak kena limit JVM (MethodTooLarge)
