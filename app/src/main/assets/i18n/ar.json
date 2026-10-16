@@ -713,6 +713,8 @@
     "vm_new_user": "مستخدم جديد",
     "faq_last_update": "آخر تحديث: 15 أكتوبر 2026",
     "splash_tagline": "منصة مكافآت التسويق بالعمولة",
-    "loading_growing_tree": "نمو شجرتك..."
+    "loading_growing_tree": "نمو شجرتك...",
+    "login_google_only_info": "تسجيل الدخول فقط بحساب Google. لا حاجة لكلمة المرور.",
+    "login_terms": "بتسجيل الدخول، فإنك توافق على الشروط والأحكام الخاصة بنا."
   }
 }

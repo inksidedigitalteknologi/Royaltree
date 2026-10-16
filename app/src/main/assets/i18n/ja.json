@@ -713,6 +713,8 @@
     "vm_new_user": "新規ユーザー",
     "faq_last_update": "最終更新日: 2026年10月15日",
     "splash_tagline": "アフィリエイト報酬プラットフォーム",
-    "loading_growing_tree": "木を育てています..."
+    "loading_growing_tree": "木を育てています...",
+    "login_google_only_info": "Googleアカウントのみでサインイン。パスワードは不要です。",
+    "login_terms": "サインインすると、利用規約に同意したことになります。"
   }
 }

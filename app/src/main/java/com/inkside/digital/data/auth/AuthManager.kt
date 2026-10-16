@@ -21,56 +21,12 @@ class AuthManager(private val context: Context) {
     val isEmailVerified: Boolean
         get() = auth.currentUser?.isEmailVerified == true
 
-    suspend fun loginWithEmail(email: String, password: String): Result<FirebaseUser> {
-        return try {
-            val result = auth.signInWithEmailAndPassword(email, password).await()
-            val user = result.user ?: return Result.failure(Exception("Login gagal"))
-            Result.success(user)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun registerWithEmail(email: String, password: String, displayName: String): Result<FirebaseUser> {
-        return try {
-            val result = auth.createUserWithEmailAndPassword(email, password).await()
-            val user = result.user ?: return Result.failure(Exception("Register gagal"))
-            val profileUpdates = userProfileChangeRequest { this.displayName = displayName }
-            user.updateProfile(profileUpdates).await()
-            user.sendEmailVerification().await()
-            Result.success(user)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
     suspend fun loginWithGoogleIdToken(idToken: String): Result<FirebaseUser> {
         return try {
             val credential = GoogleAuthProvider.getCredential(idToken, null)
             val result = auth.signInWithCredential(credential).await()
             val user = result.user ?: return Result.failure(Exception("Google login gagal"))
             Result.success(user)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun resendVerificationEmail(): Result<Unit> {
-        return try {
-            val user = auth.currentUser ?: return Result.failure(Exception("Belum login"))
-            user.sendEmailVerification().await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun reloadUser(): Result<FirebaseUser> {
-        return try {
-            val user = auth.currentUser ?: return Result.failure(Exception("Belum login"))
-            user.reload().await()
-            val refreshed = auth.currentUser ?: return Result.failure(Exception("User hilang"))
-            Result.success(refreshed)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -89,16 +45,4 @@ class AuthManager(private val context: Context) {
         }
     }
 
-    /**
-     * Kirim email reset password via Firebase
-     */
-    suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
-        return try {
-            auth.sendPasswordResetEmail(email).await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Log.e("AuthManager", "Reset password error: \${e.message}")
-            Result.failure(e)
-        }
-    }
 }

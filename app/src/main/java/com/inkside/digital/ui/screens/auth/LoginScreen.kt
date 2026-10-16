@@ -82,17 +82,11 @@ fun LoginScreen(
     errorMessage: String?,
     currentLanguage: AppLanguage,
     onLanguageChange: (AppLanguage) -> Unit,
-    onLoginEmail: (email: String, password: String) -> Unit,
-    onLoginGoogle: (idToken: String) -> Unit,
-    onNavigateRegister: () -> Unit,
-    onNavigateForgotPassword: () -> Unit = {}
+    onLoginGoogle: (idToken: String) -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
     var googleLoading by remember { mutableStateOf(false) }
     var contentVisible by remember { mutableStateOf(false) }
     var showLanguageModal by remember { mutableStateOf(false) }
@@ -122,10 +116,10 @@ fun LoginScreen(
                 androidx.compose.material3.Surface(
                     shape = RoundedCornerShape(20.dp),
                     color = Color.White.copy(alpha = 0.15f),
-                    onClick = { showLanguageModal = true },
                     modifier = Modifier
                         .height(44.dp)
                         .testTag("language_toggle_button")
+                        .clickable { showLanguageModal = true }
                 ) {
                     Row(
                         modifier = Modifier
@@ -223,157 +217,32 @@ fun LoginScreen(
 
                             Spacer(modifier = Modifier.height(24.dp))
 
-                            // Email
-                            OutlinedTextField(
-                                value = email,
-                                onValueChange = { email = it },
-                                label = { Text(LanguageManager.translate("login_email", currentLanguage, "Email"), color = Color.White.copy(alpha = 0.7f)) },
-                                leadingIcon = {
-                                    Icon(Icons.Default.Email, null, tint = Color.White.copy(alpha = 0.8f))
-                                },
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Email,
-                                    imeAction = ImeAction.Next
-                                ),
-                                singleLine = true,
-                                shape = RoundedCornerShape(14.dp),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = Color.White,
-                                    unfocusedTextColor = Color.White,
-                                    focusedBorderColor = Color.White,
-                                    unfocusedBorderColor = Color.White.copy(alpha = 0.4f),
-                                    cursorColor = Color.White
-                                ),
-                                modifier = Modifier.fillMaxWidth()
-                            )
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            // Password
-                            OutlinedTextField(
-                                value = password,
-                                onValueChange = { password = it },
-                                label = { Text(LanguageManager.translate("login_password", currentLanguage, "Password"), color = Color.White.copy(alpha = 0.7f)) },
-                                leadingIcon = {
-                                    Icon(Icons.Default.Lock, null, tint = Color.White.copy(alpha = 0.8f))
-                                },
-                                trailingIcon = {
-                                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                                        Icon(
-                                            imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                            contentDescription = LanguageManager.translate("cd_toggle_password", currentLanguage, "Toggle password"),
-                                            tint = Color.White.copy(alpha = 0.8f)
-                                        )
-                                    }
-                                },
-                                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Password,
-                                    imeAction = ImeAction.Done
-                                ),
-                                singleLine = true,
-                                shape = RoundedCornerShape(14.dp),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = Color.White,
-                                    unfocusedTextColor = Color.White,
-                                    focusedBorderColor = Color.White,
-                                    unfocusedBorderColor = Color.White.copy(alpha = 0.4f),
-                                    cursorColor = Color.White
-                                ),
-                                modifier = Modifier.fillMaxWidth()
-                            )
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            // Lupa Password
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End
+                            // Info: Login pakai Google
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        Color.White.copy(alpha = 0.08f),
+                                        RoundedCornerShape(12.dp)
+                                    )
+                                    .padding(14.dp)
                             ) {
-                                Text(
-                                    text = LanguageManager.translate("login_forgot", currentLanguage, "Lupa Password?"),
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color.White.copy(alpha = 0.9f),
-                                    modifier = Modifier.clickable { onNavigateForgotPassword() }
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            // Error
-                            if (errorMessage != null) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(
-                                            CoralRed.copy(alpha = 0.2f),
-                                            RoundedCornerShape(10.dp)
-                                        )
-                                        .padding(12.dp)
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
+                                    Text("ℹ️", fontSize = 16.sp)
+                                    Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = errorMessage,
-                                        color = Color(0xFFFECACA),
-                                        fontSize = 12.sp,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth()
+                                        text = LanguageManager.translate(
+                                            "login_google_only_info",
+                                            currentLanguage,
+                                            "Masuk hanya dengan akun Google. Tidak perlu password."
+                                        ),
+                                        fontSize = 11.sp,
+                                        color = Color.White.copy(alpha = 0.75f)
                                     )
                                 }
-                                Spacer(modifier = Modifier.height(12.dp))
-                            }
-
-                            // Tombol Masuk
-                            if (isLoading) {
-                                Box(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator(color = Color.White)
-                                }
-                            } else {
-                                Button(
-                                    onClick = { onLoginEmail(email.trim(), password) },
-                                    enabled = email.isNotBlank() && password.isNotBlank(),
-                                    shape = RoundedCornerShape(14.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color(0xFF10B981),
-                                        contentColor = Color.White,
-                                        disabledContainerColor = Color(0xFF10B981).copy(alpha = 0.3f),
-                                        disabledContentColor = Color.White.copy(alpha = 0.5f)
-                                    ),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(52.dp)
-                                ) {
-                                    Text(LanguageManager.translate("login_button", currentLanguage, "Masuk"), fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(20.dp))
-
-                            // Divider
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(1.dp)
-                                        .background(Color.White.copy(alpha = 0.3f))
-                                )
-                                Text(
-                                    text = "  atau  ",
-                                    fontSize = 11.sp,
-                                    color = Color.White.copy(alpha = 0.7f)
-                                )
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(1.dp)
-                                        .background(Color.White.copy(alpha = 0.3f))
-                                )
                             }
 
                             Spacer(modifier = Modifier.height(20.dp))
@@ -430,24 +299,18 @@ fun LoginScreen(
 
                             Spacer(modifier = Modifier.height(24.dp))
 
-                            // Daftar
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = LanguageManager.translate("login_no_account", currentLanguage, "Belum punya akun? "),
-                                    fontSize = 13.sp,
-                                    color = Color.White.copy(alpha = 0.7f)
-                                )
-                                Text(
-                                    text = LanguageManager.translate("login_register", currentLanguage, "Daftar"),
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    modifier = Modifier.clickable { onNavigateRegister() }
-                                )
-                            }
+                            // Info: Syarat & Ketentuan
+                            Text(
+                                text = LanguageManager.translate(
+                                    "login_terms",
+                                    currentLanguage,
+                                    "Dengan masuk, Anda menyetujui Syarat & Ketentuan kami."
+                                ),
+                                fontSize = 11.sp,
+                                color = Color.White.copy(alpha = 0.5f),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
                     }
                 }

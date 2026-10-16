@@ -713,6 +713,8 @@
     "vm_new_user": "New User",
     "faq_last_update": "Last update: October 15, 2026",
     "splash_tagline": "Affiliate Rewarding Platform",
-    "loading_growing_tree": "Growing your tree..."
+    "loading_growing_tree": "Growing your tree...",
+    "login_google_only_info": "Sign in only with a Google account. No password needed.",
+    "login_terms": "By signing in, you agree to our Terms & Conditions."
   }
 }

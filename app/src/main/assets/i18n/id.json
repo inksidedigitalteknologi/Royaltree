@@ -713,6 +713,8 @@
     "vm_new_user": "User Baru",
     "faq_last_update": "Terakhir update: 15 Oktober 2026",
     "splash_tagline": "Platform Affiliate Berhadiah",
-    "loading_growing_tree": "Menumbuhkan pohonmu..."
+    "loading_growing_tree": "Menumbuhkan pohonmu...",
+    "login_google_only_info": "Masuk hanya dengan akun Google. Tidak perlu password.",
+    "login_terms": "Dengan masuk, Anda menyetujui Syarat & Ketentuan kami."
   }
 }
