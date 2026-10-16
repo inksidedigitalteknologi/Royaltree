@@ -428,6 +428,25 @@ router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, re
         }
 
         // 3. VERIFIKASI SSV AdMob (KRITIS — anti-bypass AdGuard)
+        // ⚠️  TEST MODE: skip SSV verification kalau ALLOW_MOCK_SSV=true
+        const isTestMode = process.env.ALLOW_MOCK_SSV === 'true';
+        
+
+        // Pre-declare txRef (dipakai di step 4 & 8)
+        const txRef = db.collection('ad_transactions').doc(transactionId);
+
+        // 4. Cek transactionId unik (anti-replay) — SELALU
+        const txDoc = await txRef.get();
+        if (txDoc.exists) {
+            return res.status(400).json({
+                success: false,
+                message: 'Transaksi sudah digunakan.'
+            });
+        }
+
+        if (isTestMode) {
+            console.log('[SSV] ⚠️  TEST MODE — skipping SSV verification for txn:', transactionId);
+        } else {
         // Cek apakah transaksi sudah terverifikasi via AdMob SSV callback
         const ssvRef = db.collection('admob_ssv_txns').doc(transactionId);
         let ssvDoc = await ssvRef.get();
@@ -463,18 +482,9 @@ router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, re
         
         console.log('[SSV] ✅ Verified:', transactionId, '| user:', uid);
 
-        // 4. Cek transactionId unik (anti-replay)
-        const txRef = db.collection('ad_transactions').doc(transactionId);
-        const txDoc = await txRef.get();
-        if (txDoc.exists) {
-            return res.status(400).json({
-                success: false,
-                message: 'Transaksi sudah digunakan.'
-            });
-        }
-
         // 5. Hapus SSV txn (anti-replay — tidak bisa dipakai 2x)
         await ssvRef.delete();
+        }  // ← tutup else block (non-test mode)
 
         // 6. Hitung poin
         const isWeekendDay = isWeekend(today);
