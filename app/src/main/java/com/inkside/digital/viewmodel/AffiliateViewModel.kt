@@ -394,6 +394,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun setLanguage(lang: AppLanguage) {
+        android.util.Log.e("LANG_DEBUG", "🔵 setLanguage dipanggil: ${lang.code} (${lang.displayName})")
         _currentLanguage.value = lang
         // Simpan ke SharedPreferences biar persist
         val ctx = getApplication<android.app.Application>()
