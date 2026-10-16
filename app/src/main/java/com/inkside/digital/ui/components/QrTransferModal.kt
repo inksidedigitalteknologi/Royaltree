@@ -682,7 +682,7 @@ fun QrTransferModal(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Column {
-                                        Text(LanguageManager.translate("qr_fee_net_received", currentLanguage, "Bersih Diterima Penerima:"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                        Text(LanguageManager.translate("qr_fee_net_received", AppThemePreferences.currentLanguage, "Bersih Diterima Penerima:"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                         Text("Setara: $${String.format(Locale.US, "%.2f", usdValue)} USD ≈ Rp ${String.format("%,.0f", idrValue)}", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                     RtpAmount(
@@ -1215,7 +1215,7 @@ fun TransferReceiptDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(LanguageManager.translate("qr_receipt_amount_sent", currentLanguage, "Jumlah Dikirim:"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_receipt_amount_sent", AppThemePreferences.currentLanguage, "Jumlah Dikirim:"), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text("${receipt.sentPoints} RTP", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
@@ -1223,7 +1223,7 @@ fun TransferReceiptDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(LanguageManager.translate("qr_receipt_admin_fee", currentLanguage, "Potongan Biaya Admin:"), fontSize = 12.sp, color = Color(0xFFEF4444))
+                            Text(LanguageManager.translate("qr_receipt_admin_fee", AppThemePreferences.currentLanguage, "Potongan Biaya Admin:"), fontSize = 12.sp, color = Color(0xFFEF4444))
                             Text("-${receipt.adminFee} RTP", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))
                         }
                         Text(
@@ -1240,7 +1240,7 @@ fun TransferReceiptDialog(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(LanguageManager.translate("qr_fee_net_received", currentLanguage, "Bersih Diterima Penerima:"), fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                            Text(LanguageManager.translate("qr_fee_net_received", AppThemePreferences.currentLanguage, "Bersih Diterima Penerima:"), fontSize = 13.sp, fontWeight = FontWeight.Bold)
                             Text("${receipt.netPointsReceived} RTP", fontSize = 16.sp, fontWeight = FontWeight.ExtraBold, color = EmeraldLight)
                         }
                         Spacer(modifier = Modifier.height(6.dp))
@@ -1248,7 +1248,7 @@ fun TransferReceiptDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(LanguageManager.translate("qr_receipt_remaining_balance", currentLanguage, "Sisa Saldo Anda:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(LanguageManager.translate("qr_receipt_remaining_balance", AppThemePreferences.currentLanguage, "Sisa Saldo Anda:"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text("${receipt.senderPointsRemaining} RTP", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = GoldVip)
                         }
 
@@ -1267,7 +1267,7 @@ fun TransferReceiptDialog(
                                 Icon(imageVector = Icons.Default.Verified, contentDescription = null, tint = EmeraldPrimary, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Column {
-                                    Text(LanguageManager.translate("qr_receipt_crypto_verified", currentLanguage, "Validasi Kriptografis Terverifikasi"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = EmeraldPrimary)
+                                    Text(LanguageManager.translate("qr_receipt_crypto_verified", AppThemePreferences.currentLanguage, "Validasi Kriptografis Terverifikasi"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = EmeraldPrimary)
                                     Text(
                                         text = "SHA-256: ${signature.take(20)}...",
                                         fontSize = 8.sp,
@@ -1313,7 +1313,7 @@ fun TransferReceiptDialog(
                     ) {
                         Icon(imageVector = Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(15.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(LanguageManager.translate("qr_receipt_copy", currentLanguage, "Salin"), fontSize = 11.sp)
+                        Text(LanguageManager.translate("qr_receipt_copy", AppThemePreferences.currentLanguage, "Salin"), fontSize = 11.sp)
                     }
 
                     Button(
@@ -1332,7 +1332,7 @@ fun TransferReceiptDialog(
                     ) {
                         Icon(imageVector = Icons.Default.Share, contentDescription = null, modifier = Modifier.size(15.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(LanguageManager.translate("qr_receipt_share", currentLanguage, "Bagikan Struk"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("qr_receipt_share", AppThemePreferences.currentLanguage, "Bagikan Struk"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
 
                     Button(
@@ -1341,7 +1341,7 @@ fun TransferReceiptDialog(
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.weight(1f).height(46.dp)
                     ) {
-                        Text(LanguageManager.translate("qr_receipt_finish", currentLanguage, "Selesai"), fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                        Text(LanguageManager.translate("qr_receipt_finish", AppThemePreferences.currentLanguage, "Selesai"), fontWeight = FontWeight.Bold, fontSize = 11.sp)
                     }
                 }
             }
@@ -1548,7 +1548,7 @@ fun SecurityPinModal(
                                             "BIO" -> {
                                                 Icon(
                                                     imageVector = Icons.Default.Fingerprint,
-                                                    contentDescription = LanguageManager.translate("cd_biometric", currentLanguage, "Biometrik"),
+                                                    contentDescription = LanguageManager.translate("cd_biometric", AppThemePreferences.currentLanguage, "Biometrik"),
                                                     tint = EmeraldPrimary,
                                                     modifier = Modifier.size(24.dp)
                                                 )
@@ -1556,7 +1556,7 @@ fun SecurityPinModal(
                                             "DEL" -> {
                                                 Icon(
                                                     imageVector = Icons.AutoMirrored.Filled.Backspace,
-                                                    contentDescription = LanguageManager.translate("cd_delete", currentLanguage, "Hapus"),
+                                                    contentDescription = LanguageManager.translate("cd_delete", AppThemePreferences.currentLanguage, "Hapus"),
                                                     modifier = Modifier.size(20.dp)
                                                 )
                                             }
@@ -1591,7 +1591,7 @@ fun SecurityPinModal(
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth().height(42.dp)
                 ) {
-                    Text(LanguageManager.translate("qr_pin_cancel", currentLanguage, "Batal Transaksi"), fontSize = 12.sp)
+                    Text(LanguageManager.translate("qr_pin_cancel", AppThemePreferences.currentLanguage, "Batal Transaksi"), fontSize = 12.sp)
                 }
             }
         }

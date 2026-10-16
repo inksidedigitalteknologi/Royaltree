@@ -611,13 +611,13 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         val isComplete: Boolean get() = readyCount == totalItems
 
         fun itemList(): List<Pair<String, Boolean>> = listOf(
-            LanguageManager.translate("vm_stage_load_account", _currentLanguage.value, "Memuatkan akun") to firebaseAuth,
-            LanguageManager.translate("vm_stage_sync_profile", _currentLanguage.value, "Sinkronisasi profil") to userProfile,
-            LanguageManager.translate("vm_stage_load_miner", _currentLanguage.value, "Memuat katalog miner") to minerCatalog,
-            LanguageManager.translate("vm_stage_prepare_game", _currentLanguage.value, "Menyiapkan game") to gameState,
-            LanguageManager.translate("vm_stage_load_affiliate", _currentLanguage.value, "Memuat komisi affiliate") to affiliateBalance,
-            LanguageManager.translate("vm_stage_prepare_ads", _currentLanguage.value, "Menyiapkan iklan") to adMobReady,
-            LanguageManager.translate("vm_stage_connect_notif", _currentLanguage.value, "Menyambung notifikasi") to fcmToken
+            "vm_stage_load_account" to firebaseAuth,
+            "vm_stage_sync_profile" to userProfile,
+            "vm_stage_load_miner" to minerCatalog,
+            "vm_stage_prepare_game" to gameState,
+            "vm_stage_load_affiliate" to affiliateBalance,
+            "vm_stage_prepare_ads" to adMobReady,
+            "vm_stage_connect_notif" to fcmToken
         )
     }
 

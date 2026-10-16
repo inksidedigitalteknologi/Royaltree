@@ -5219,12 +5219,12 @@ object LanguageManager {
             AppLanguage.JAPANESE to "\$url に接続中..."
         ),
         "vm_portal_connected_detail" to mapOf(
-            AppLanguage.INDONESIAN to "Tersambung (HTTP 200 OK) - ${res.message}",
-            AppLanguage.ENGLISH to "Connected (HTTP 200 OK) - ${res.message}",
-            AppLanguage.SPANISH to "Conectado (HTTP 200 OK) - ${res.message}",
-            AppLanguage.CHINESE to "已连接（HTTP 200 OK）- ${res.message}",
-            AppLanguage.ARABIC to "متصل (HTTP 200 OK) - ${res.message}",
-            AppLanguage.JAPANESE to "接続済み (HTTP 200 OK) - ${res.message}"
+            AppLanguage.INDONESIAN to "Tersambung (HTTP 200 OK) - \${res.message}",
+            AppLanguage.ENGLISH to "Connected (HTTP 200 OK) - \${res.message}",
+            AppLanguage.SPANISH to "Conectado (HTTP 200 OK) - \${res.message}",
+            AppLanguage.CHINESE to "已连接（HTTP 200 OK）- \${res.message}",
+            AppLanguage.ARABIC to "متصل (HTTP 200 OK) - \${res.message}",
+            AppLanguage.JAPANESE to "接続済み (HTTP 200 OK) - \${res.message}"
         ),
         "vm_switch_account" to mapOf(
             AppLanguage.INDONESIAN to "Beralih akun: %s",
