@@ -1272,7 +1272,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 ApiClient.dailyCheckIn()
                     .onSuccess { json ->
                         if (json.optBoolean("success", false)) {
-                            val serverPoints = json.optInt("points", reward)
+                            val serverPoints = json.optDouble("points", reward)
                             showSnackbar(LanguageManager.translate("vm_checkin_saved", _currentLanguage.value, "Check-in tersimpan! +$serverPoints RTP"))
                             // Refresh user + update widget
                             loadUserFromBackend()
