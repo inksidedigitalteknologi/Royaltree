@@ -60,7 +60,8 @@ import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.components.BannerAdView
-import java.util.Calendar
+import com.inkside.digital.util.GlobalPointsManager
+import java.time.DayOfWeek
 import java.time.LocalDate
 
 @Composable
@@ -83,13 +84,10 @@ fun DailyCheckInScreen(
     var showRecoveryDialog by remember { mutableStateOf(false) }
     var selectedMissedDate by remember { mutableStateOf("") }
 
-    // Info kalender
-    val calendar = Calendar.getInstance()
-    val currentYear = calendar.get(Calendar.YEAR)
-    val currentMonth = calendar.get(Calendar.MONTH) + 1
-    val today = calendar.get(Calendar.DAY_OF_MONTH)
-    val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-    val firstDayOfWeek = getFirstDayOfWeek(currentYear, currentMonth)
+    // Info kalender — pakai LocalDate (modern)
+    val todayDate = LocalDate.now()
+    val currentYear = todayDate.year
+    val currentMonth = todayDate.monthValue
 
     LazyColumn(
         modifier = Modifier
@@ -180,17 +178,17 @@ fun DailyCheckInScreen(
             BannerAdView()
         }
 
-        // Kalender
+        // Kalender — Grid 4 minggu (Mon-Sun)
         item {
             Card(
-    shape = RoundedCornerShape(16.dp),
-    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-    modifier = Modifier.fillMaxWidth()
-) {
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Column(modifier = Modifier.padding(12.dp)) {
-                    // Header hari
+                    // Header hari: Mon - Sun
                     Row(modifier = Modifier.fillMaxWidth()) {
-                        listOf("day_sun", "day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat").forEach { dayKey ->
+                        listOf("day_mon", "day_tue", "day_wed", "day_thu", "day_fri", "day_sat", "day_sun").forEach { dayKey ->
                             Box(
                                 modifier = Modifier.weight(1f),
                                 contentAlignment = Alignment.Center
@@ -207,61 +205,61 @@ fun DailyCheckInScreen(
 
                     Spacer(modifier = Modifier.height(6.dp))
 
-                    // Grid kalender
-                    var dayCounter = 1
-                    for (week in 0 until 6) {
-                        if (dayCounter > daysInMonth) break
+                    // Kalkulasi tanggal
+                    val todayDate = LocalDate.now()
+                    val currentMonday = todayDate.with(DayOfWeek.MONDAY)
+                    val lastCheckInLocal = try {
+                        if (lastCheckInDate.isNotBlank()) LocalDate.parse(lastCheckInDate) else null
+                    } catch (e: Exception) { null }
+                    val streakStart = lastCheckInLocal?.minusDays((streak - 1).toLong().coerceAtLeast(0))
+                    val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("MM/dd")
+
+                    // Grid 4 minggu
+                    for (week in 0 until 4) {
                         Row(modifier = Modifier.fillMaxWidth()) {
-                            for (dow in 0 until 7) {
-                                if ((week == 0 && dow < firstDayOfWeek) || dayCounter > daysInMonth) {
-                                    Box(modifier = Modifier.weight(1f).aspectRatio(1f))
-                                } else {
-                                    val dayNum = dayCounter
-                                    val isWeekend = (dow == 0 || dow == 6)
-                                    val isToday = dayNum == today
-                                    val isPast = dayNum < today
-                                    val isFuture = dayNum > today
+                            for (dayOfWeek in 0 until 7) {
+                                val date = currentMonday.plusDays((week * 7 + dayOfWeek).toLong())
+                                val dayLabel = date.format(dateFormatter)
 
-                                    // Tanggal ini dalam bulan
-                                    val thisDate = try {
-                                        LocalDate.of(currentYear, currentMonth, dayNum)
-                                    } catch (e: Exception) { null }
+                                val isToday = date == todayDate
+                                val isPast = date.isBefore(todayDate)
+                                val isFuture = date.isAfter(todayDate)
+                                val isWeekend = dayOfWeek >= 5  // Sat=5, Sun=6
 
-                                    // Range streak
-                                    val lastCheckInLocal = try {
-                                        if (lastCheckInDate.isNotBlank()) LocalDate.parse(lastCheckInDate) else null
-                                    } catch (e: Exception) { null }
-                                    val streakStart = lastCheckInLocal?.minusDays((streak - 1).toLong().coerceAtLeast(0))
+                                // Hari dalam siklus (1-7)
+                                val dayInCycle = (dayOfWeek + 1)  // Mon=1, Sun=7
+                                val isSpecial = dayInCycle == 7   // Minggu = Mega Jackpot
 
-                                    val inStreak = thisDate != null && lastCheckInLocal != null && streakStart != null
-                                        && !thisDate.isBefore(streakStart) && !thisDate.isAfter(lastCheckInLocal)
+                                // Cek apakah user sudah check-in di tanggal ini
+                                val inStreak = lastCheckInLocal != null && streakStart != null
+                                    && !date.isAfter(lastCheckInLocal) && !date.isBefore(streakStart)
 
-                                    val status = when {
-                                        isToday && checkedInToday -> DayStatus.CHECKED_IN
-                                        isToday -> DayStatus.TODAY
-                                        inStreak -> DayStatus.CHECKED_IN
-                                        isPast -> DayStatus.MISSED
-                                        isFuture -> DayStatus.FUTURE
-                                        else -> DayStatus.FUTURE
-                                    }
+                                val status = when {
+                                    isToday && checkedInToday -> DayStatus.CHECKED_IN
+                                    isToday -> if (isSpecial) DayStatus.SPECIAL else DayStatus.TODAY
+                                    inStreak -> DayStatus.CHECKED_IN
+                                    isPast -> DayStatus.MISSED
+                                    isFuture -> DayStatus.FUTURE
+                                    else -> DayStatus.FUTURE
+                                }
 
-                                    val points = if (isWeekend) 10 else 5
+                                // Reward dari config (Double)
+                                val points = GlobalPointsManager.getLoginRewardForStreak(dayInCycle)
 
-                                    Box(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .aspectRatio(1f)
-                                            .padding(2.dp)
-                                    ) {
-                                        CalendarDayItem(
-                                            day = dayNum,
-                                            points = points,
-                                            status = status,
-                                            isWeekend = isWeekend,
-                                            modifier = Modifier.fillMaxSize()
-                                        )
-                                    }
-                                    dayCounter++
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(2.dp)
+                                ) {
+                                    CalendarDayItem(
+                                        day = week * 7 + dayOfWeek + 1,
+                                        dayLabel = dayLabel,
+                                        points = points,
+                                        status = status,
+                                        isWeekend = isWeekend,
+                                        isSpecial = isSpecial,
+                                        modifier = Modifier.fillMaxSize().height(76.dp)
+                                    )
                                 }
                             }
                         }
@@ -393,11 +391,4 @@ fun DailyCheckInScreen(
     }
 }
 
-/**
- * Hitung hari pertama minggu (0 = Minggu, 1 = Senin, ...)
- */
-private fun getFirstDayOfWeek(year: Int, month: Int): Int {
-    val cal = Calendar.getInstance()
-    cal.set(year, month - 1, 1)
-    return cal.get(Calendar.DAY_OF_WEEK) - 1
-}
+
