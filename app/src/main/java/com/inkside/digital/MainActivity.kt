@@ -240,10 +240,18 @@ fun RootNav(
     androidx.compose.runtime.LaunchedEffect(Unit) {
         affiliateViewModel.preloadAll()
     }
-    androidx.compose.runtime.LaunchedEffect(loadingState.isComplete) {
-        if (loadingState.isComplete && isOnboarded) {
-            // Tunggu 800ms untuk tunjuk 100% dulu, baru navigate
-            kotlinx.coroutines.delay(800)
+    // Minimum display time — supaya user sempat lihat visual
+    var minimumTimeElapsed by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(6500)  // minimum 6.5 detik
+        minimumTimeElapsed = true
+    }
+
+    // Navigate ke HOME hanya kalau: data loaded + minimum time + onboarded
+    androidx.compose.runtime.LaunchedEffect(loadingState.isComplete, minimumTimeElapsed) {
+        if (loadingState.isComplete && minimumTimeElapsed && isOnboarded) {
+            // Extra delay kecil untuk smooth transition
+            kotlinx.coroutines.delay(300)
             authViewModel.navigateTo(AuthScreen.HOME)
         }
     }
