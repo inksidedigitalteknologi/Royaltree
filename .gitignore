@@ -41,3 +41,6 @@ local.properties
 # Winston logs
 logs/
 backend/logs/
+
+# Backup folder (bukan resource)
+drawable_backup/
