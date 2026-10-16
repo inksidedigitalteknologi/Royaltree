@@ -1,8 +1,10 @@
 package com.inkside.digital.ui.screens
 
 import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import android.content.Intent
 import android.widget.Toast
 import com.inkside.digital.data.preferences.AppThemePreferences
@@ -84,6 +86,8 @@ fun CampaignsScreen(
     onOpenNewLinkModal: () -> Unit
 ) {
     val context = LocalContext.current
+    val clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
     var selectedTab by remember { mutableIntStateOf(0) } // 0: Kampanye Mitra, 1: Tautan Promosi Saya
 
     Column(
@@ -205,9 +209,11 @@ fun CampaignsScreen(
                             link = link,
                             currentLanguage = currentLanguage,
                             onCopy = {
-                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                val clip = ClipData.newPlainText(LanguageManager.translate("campaigns_clip_label", AppThemePreferences.currentLanguage, "Link"), link.shortUrl)
-                                clipboard.setPrimaryClip(clip)
+                                scope.launch {
+                                    clipboard.setClipEntry(
+                                        ClipEntry(ClipData.newPlainText(LanguageManager.translate("campaigns_clip_label", AppThemePreferences.currentLanguage, "Link"), link.shortUrl))
+                                    )
+                                }
                                 Toast.makeText(context, LanguageManager.translate("toast_promo_link_copied", AppThemePreferences.currentLanguage, "Tautan promosi disalin!"), Toast.LENGTH_SHORT).show()
                             },
                             onShare = {

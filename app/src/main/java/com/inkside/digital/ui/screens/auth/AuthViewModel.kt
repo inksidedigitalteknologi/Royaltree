@@ -208,7 +208,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     /**
      * navigateTo — method generik untuk navigate ke screen apa-apa.
-     * Dipakai oleh LoadingScreen untuk navigate ke HOME bila preload complete.
+     * Dipakai oleh SplashSequenceScreen untuk navigate ke HOME bila preload complete.
      */
     fun navigateTo(screen: AuthScreen) {
         _errorMessage.value = null
