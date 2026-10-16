@@ -45,6 +45,21 @@ android {
       "ROYALTREE_API_KEY",
       "\"${localProperties["royaltree.api.key"] ?: ""}\""
     )
+
+    // ✅ ABI Split — pisahkan per arsitektur (hemat ~10-15 MB)
+    ndk {
+      abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+    }
+  }
+
+  // ✅ ABI Split config
+  splits {
+    abi {
+      isEnable = true
+      reset()
+      include("arm64-v8a", "armeabi-v7a")
+      isUniversalApk = false
+    }
   }
 
   signingConfigs {
@@ -65,7 +80,7 @@ android {
 
   buildTypes {
     release {
-      isCrunchPngs = false
+      isCrunchPngs = true
       isMinifyEnabled = true
       isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
