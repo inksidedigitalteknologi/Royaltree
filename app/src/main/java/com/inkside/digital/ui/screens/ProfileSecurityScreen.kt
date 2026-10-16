@@ -1,8 +1,10 @@
 package com.inkside.digital.ui.screens
 
 import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -79,6 +81,8 @@ fun ProfileSecurityScreen(
     onSaveProfile: (name: String, email: String, phone: String, region: String) -> Unit
 ) {
     val context = LocalContext.current
+    val clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
     var name by remember { mutableStateOf(user?.name ?: "") }
     var email by remember { mutableStateOf(user?.email ?: "") }
     var phone by remember { mutableStateOf(user?.phone ?: "") }
@@ -322,9 +326,11 @@ fun ProfileSecurityScreen(
 
                             IconButton(
                                 onClick = {
-                                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                    val clip = ClipData.newPlainText(LanguageManager.translate("profile_security_referral_clip_label", currentLanguage, "Referral"), user?.referralCode ?: "-")
-                                    clipboard.setPrimaryClip(clip)
+                                    scope.launch {
+                                        clipboard.setClipEntry(
+                                            ClipEntry(ClipData.newPlainText(LanguageManager.translate("profile_security_referral_clip_label", currentLanguage, "Referral"), user?.referralCode ?: "-"))
+                                        )
+                                    }
                                     Toast.makeText(context, LanguageManager.translate("toast_referral_code_copied", currentLanguage, "Kode referral disalin!"), Toast.LENGTH_SHORT).show()
                                 }
                             ) {

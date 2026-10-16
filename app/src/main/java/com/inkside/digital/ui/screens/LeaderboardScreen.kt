@@ -251,14 +251,13 @@ private fun PodiumCard(entry: LeaderboardEntry, rank: Int, modifier: Modifier = 
     Box(
         modifier = modifier
             .height(height)
-            .clip(RoundedCornerShape(16.dp))
     ) {
         // Frame PNG
         Image(
             painter = painterResource(id = frameRes),
             contentDescription = null,
             modifier = Modifier.matchParentSize(),
-            contentScale = androidx.compose.ui.layout.ContentScale.Crop
+            contentScale = androidx.compose.ui.layout.ContentScale.FillBounds
         )
 
         // Konten
@@ -328,7 +327,7 @@ private fun LeaderboardRow(entry: LeaderboardEntry, isCurrentUser: Boolean = fal
             painter = painterResource(id = R.drawable.card_frame_common),
             contentDescription = null,
             modifier = Modifier.matchParentSize(),
-            contentScale = androidx.compose.ui.layout.ContentScale.Crop
+            contentScale = androidx.compose.ui.layout.ContentScale.FillBounds
         )
 
         // Border highlight untuk user sendiri

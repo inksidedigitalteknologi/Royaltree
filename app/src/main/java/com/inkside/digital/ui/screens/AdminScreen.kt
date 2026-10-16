@@ -1,5 +1,6 @@
 package com.inkside.digital.ui.screens
 
+import android.content.ClipData
 import com.inkside.digital.data.preferences.AppThemePreferences
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
@@ -66,6 +67,8 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -78,10 +81,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -1025,7 +1028,8 @@ fun AdminPortalEndpointSection(
     onSyncPortal: () -> Unit
 ) {
     val context = LocalContext.current
-    val clipboardManager = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
     var selectedCodeTab by remember { mutableIntStateOf(0) } // 0: Node.js (server.js), 1: PHP (api_portal.php), 2: cURL
     var expandedEndpointIndex by remember { mutableIntStateOf(0) }
 
@@ -1296,7 +1300,11 @@ fun AdminPortalEndpointSection(
                                     Text(LanguageManager.translate("admin_endpoint_curl_test", AppThemePreferences.currentLanguage, "Perintah cURL Uji Coba:"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = ElectricBlue)
                                     IconButton(
                                         onClick = {
-                                            clipboardManager.setText(AnnotatedString(ep.curl))
+                                            scope.launch {
+                                                clipboard.setClipEntry(
+                                                    ClipEntry(ClipData.newPlainText("curl", ep.curl))
+                                                )
+                                            }
                                             Toast.makeText(context, LanguageManager.translate("toast_admin_curl_copied", AppThemePreferences.currentLanguage, "Perintah cURL disalin ke clipboard!"), Toast.LENGTH_SHORT).show()
                                         },
                                         modifier = Modifier.size(24.dp)
@@ -1456,7 +1464,11 @@ if (strpos(${'$'}uri, '/users/sync') !== false) {
                     Text(fileName, fontSize = 11.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, color = ElectricBlue)
                     IconButton(
                         onClick = {
-                            clipboardManager.setText(AnnotatedString(codeSnippet))
+                            scope.launch {
+                                    clipboard.setClipEntry(
+                                        ClipEntry(ClipData.newPlainText("code", codeSnippet))
+                                    )
+                                }
                             Toast.makeText(context, LanguageManager.translate("toast_admin_code_copied", AppThemePreferences.currentLanguage, "Kode $fileName disalin ke clipboard!"), Toast.LENGTH_SHORT).show()
                         },
                         modifier = Modifier.size(28.dp)
@@ -1483,7 +1495,11 @@ if (strpos(${'$'}uri, '/users/sync') !== false) {
 
                 Button(
                     onClick = {
-                        clipboardManager.setText(AnnotatedString(codeSnippet))
+                        scope.launch {
+                                    clipboard.setClipEntry(
+                                        ClipEntry(ClipData.newPlainText("code", codeSnippet))
+                                    )
+                                }
                         Toast.makeText(context, LanguageManager.translate("toast_admin_code_ready", AppThemePreferences.currentLanguage, "Kode $fileName disalin! Siap ditaruh di hosting Anda."), Toast.LENGTH_SHORT).show()
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = PurpleSecondary),

@@ -1,8 +1,10 @@
 package com.inkside.digital.ui.screens
 
 import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -55,6 +57,8 @@ import com.inkside.digital.util.GlobalPointsManager
 @Composable
 fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
     val context = LocalContext.current
+    val clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
     val referralCode = user?.referralCode ?: "RT0001"
     val referredCount = user?.referredCount ?: 0
     val affiliateBalance = user?.affiliateBalance ?: 0.0
@@ -118,8 +122,11 @@ fun ReferralScreen(user: UserEntity?, currentLanguage: AppLanguage) {
                             letterSpacing = 2.sp
                         )
                         IconButton(onClick = {
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            clipboard.setPrimaryClip(ClipData.newPlainText(LanguageManager.translate("referral_title", currentLanguage, "Referral"), referralCode))
+                            scope.launch {
+                                clipboard.setClipEntry(
+                                    ClipEntry(ClipData.newPlainText(LanguageManager.translate("referral_title", currentLanguage, "Referral"), referralCode))
+                                )
+                            }
                             Toast.makeText(context, LanguageManager.translate("referral_copied", currentLanguage, "Code copied!"), Toast.LENGTH_SHORT).show()
                         }) {
                             Icon(Icons.Default.ContentCopy, "Copy", tint = Color.White)

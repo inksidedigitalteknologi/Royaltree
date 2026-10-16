@@ -1,8 +1,10 @@
 package com.inkside.digital.ui.components
 
 import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import android.content.Intent
 import com.inkside.digital.data.preferences.AppThemePreferences
 import androidx.compose.animation.core.LinearEasing
@@ -125,6 +127,9 @@ fun QrTransferModal(
     onDismiss: () -> Unit,
     onTransfer: (recipientId: String, recipientName: String, amount: Int, note: String) -> Unit
 ) {
+    val context = LocalContext.current
+    val clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
     var selectedTab by remember { mutableIntStateOf(0) } // 0: Kirim (Scan QR), 1: Terima (QR Saya)
 
     val activeContactList = remember(contacts) {
@@ -955,9 +960,11 @@ fun QrTransferModal(
                         ) {
                             OutlinedButton(
                                 onClick = {
-                                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                    val clip = ClipData.newPlainText("Royaltree QR Payload", qrPayload)
-                                    clipboard.setPrimaryClip(clip)
+                                    scope.launch {
+                                        clipboard.setClipEntry(
+                                            ClipEntry(ClipData.newPlainText("Royaltree QR Payload", qrPayload))
+                                        )
+                                    }
                                 },
                                 modifier = Modifier.weight(1f).height(44.dp)
                             ) {
@@ -1113,6 +1120,8 @@ fun TransferReceiptDialog(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
+    val clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
     val dateStr = remember(receipt.timestamp) {
         val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm:ss", Locale.forLanguageTag("id-ID"))
         sdf.format(Date(receipt.timestamp))
@@ -1304,9 +1313,11 @@ fun TransferReceiptDialog(
                 ) {
                     OutlinedButton(
                         onClick = {
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            val clip = ClipData.newPlainText("Receipt", shareReceiptText)
-                            clipboard.setPrimaryClip(clip)
+                            scope.launch {
+                                clipboard.setClipEntry(
+                                    ClipEntry(ClipData.newPlainText("Receipt", shareReceiptText))
+                                )
+                            }
                         },
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.weight(1f).height(46.dp)
