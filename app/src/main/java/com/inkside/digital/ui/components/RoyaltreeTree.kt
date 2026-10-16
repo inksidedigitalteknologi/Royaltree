@@ -14,47 +14,51 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.tooling.preview.Preview
 import kotlin.math.PI
 import kotlin.math.cos
-import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.random.Random
 
 // ============ Royaltree Tree — Colors ============
+private val TrunkDeep = Color(0xFF022C22)      // emerald 950
 private val TrunkDark = Color(0xFF064E3B)      // emerald 900
 private val TrunkMid = Color(0xFF047857)       // emerald 700
 private val TrunkLight = Color(0xFF10B981)     // emerald 500
+private val BarkHighlight = Color(0xFF34D399)  // emerald 400 — alur batang
+
+private val LeafDeep = Color(0xFF14532D)       // green 900
 private val LeafDark = Color(0xFF15803D)       // green 700
 private val LeafMid = Color(0xFF22C55E)        // green 500
 private val LeafLight = Color(0xFF34D399)      // emerald 400
 private val LeafCyan = Color(0xFF06B6D4)       // cyan 500
 private val LeafGold = Color(0xFFFFD700)       // gold
-private val RootGold = Color(0xFFFFD700)
-private val RootAmber = Color(0xFFF59E0B)
-private val GlowGold = Color(0x55FFD700)
-private val GlowEmerald = Color(0x4034D399)
+
+private val RootDark = Color(0xFFB45309)       // amber 700
+private val RootAmber = Color(0xFFF59E0B)      // amber 500
+private val RootGold = Color(0xFFFFD700)       // gold
+
+private val GlowGold = Color(0x66FFD700)
+private val GlowEmerald = Color(0x5034D399)
 
 /**
- * RoyaltreeTree — pohon generatif realistik (Royaltree theme).
+ * RoyaltreeTree — pohon realistik dengan L-system fractal + bezier natural.
  *
- * Ciri:
- * - L-system fractal (bukan rawak)
- * - Batang emerald gradient tebal
- * - Dahan bercabang rapat
- * - Daun berkelompok di hujung (hijau + cyan + emas)
- * - Glow emas radial di belakang
- * - Akar emas menonjol
- * - Idle goyang halus
- *
- * @param level 1..5 (tahap pertumbuhan)
- * @param growthProgress 0..1 (animasi tumbuh)
+ * Ciri natural:
+ * - Batang TAPER (mengecil ke atas) + lekukan organik
+ * - Cabang recursive dengan sudut & panjang random (bukan simetris)
+ * - Akar menyebar + taper
+ * - Texture alur batang (bark lines)
+ * - Leaf cluster elliptik (bukan circle polos)
+ * - Idle sway halus bertingkat (makin tinggi makin goyang)
  */
 @Composable
 fun RoyaltreeTree(
@@ -68,7 +72,7 @@ fun RoyaltreeTree(
         initialValue = -1f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(4000, easing = LinearEasing),
+            animation = tween(4500, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "sway"
@@ -98,68 +102,75 @@ fun RoyaltreeTree(
             center = Offset(cx, h * 0.40f)
         )
 
-        // ============ 2. Akar gold ============
-        drawRoots(cx, baseY, w, level, growthProgress)
+        // ============ 2. Akar menyebar + taper ============
+        drawRoots(cx, baseY, w, level, growthProgress, rand)
 
-        // ============ 3. Batang (tebal, pendek) ============
-        val trunkHeight = h * (0.12f + 0.020f * level) * growthProgress
+        // ============ 3. Batang: tinggi, taper, lekuk natural ============
+        // Batang lebih tinggi (25-32% tinggi canvas)
+        val trunkHeight = h * (0.24f + 0.025f * level) * growthProgress
         val trunkTopY = baseY - trunkHeight
-        val trunkWidth = w * (0.035f + 0.006f * level)
 
-        // Batang: gradient emerald dark -> light (MELENGKUNG natural)
-        // Guna cubicTo untuk lekuk seperti pohon sungguhan
-        val trunkBend = w * 0.025f * (1f + rand.nextFloat() * 0.4f)  // lekuk ke kanan sikit
-        val trunkPath = Path().apply {
-            moveTo(cx, baseY)
-            cubicTo(
-                cx - trunkBend * 0.3f, baseY - trunkHeight * 0.35f,   // control 1 (condong kiri sikit)
-                cx + trunkBend * 1.2f, trunkTopY + trunkHeight * 0.25f, // control 2 (condong kanan)
-                cx + trunkBend * 0.6f, trunkTopY                        // end (off-center)
-            )
-        }
-        drawPath(
-            path = trunkPath,
-            brush = Brush.verticalGradient(
-                colors = listOf(TrunkLight, TrunkMid, TrunkDark),
-                startY = trunkTopY,
-                endY = baseY
-            ),
-            style = Stroke(width = trunkWidth, cap = StrokeCap.Round)
+        // Lebar pangkal & ujung — TAPER (mengecil ke atas)
+        val trunkBaseWidth = w * (0.048f + 0.006f * level)
+        val trunkTopWidth = trunkBaseWidth * 0.35f
+
+        // Lekukan batang — 2 control points untuk S-curve
+        val bend1 = w * 0.018f * (rand.nextFloat() - 0.5f) * 2f
+        val bend2 = w * 0.014f * (rand.nextFloat() - 0.5f) * 2f
+
+        // Draw batang sebagai polygon (untuk taper)
+        drawTaperedTrunk(
+            cx = cx,
+            baseY = baseY,
+            topY = trunkTopY,
+            baseWidth = trunkBaseWidth,
+            topWidth = trunkTopWidth,
+            bend1 = bend1,
+            bend2 = bend2
         )
-        // Simpan titik hujung batang untuk cabang
-        val trunkEndX = cx + trunkBend * 0.6f
 
-        // ============ 4. Dahan fractal (L-system) ============
+        // Simpan posisi ujung batang
+        val trunkEndX = cx + bend1 * 0.5f + bend2 * 0.5f
+
+        // ============ 4. Texture alur batang (bark lines) ============
+        drawBarkLines(cx, baseY, trunkTopY, trunkBaseWidth, growthProgress, rand)
+
+        // ============ 5. Dahan fractal (rekursif lebih dalam) ============
         val branchCount = 2 + level              // 3..7
-        val branchLength = trunkHeight * (0.65f + 0.10f * level)
-        val maxDepth = 3 + (level / 2)           // 3..5
+        val branchLength = trunkHeight * (0.75f + 0.10f * level)
+        val maxDepth = 4 + (level / 2)           // 4..6
+        val baseAngleStep = 22f + level * 2.5f   // spread
 
         for (i in 0 until branchCount) {
-            val spreadDeg = 15f + level * 2f
-            val angleDeg = -90f + ((i - (branchCount - 1) / 2f) * spreadDeg)
+            // Sudut tidak simetris — pakai random offset
+            val offset = (i - (branchCount - 1) / 2f)
+            val jitter = (rand.nextFloat() - 0.5f) * 8f
+            val angleDeg = -90f + offset * baseAngleStep + jitter
+
             drawBranch(
                 start = Offset(trunkEndX, trunkTopY),
                 angleDeg = angleDeg,
-                length = branchLength,
+                length = branchLength * (0.85f + rand.nextFloat() * 0.3f),
                 depth = 0,
                 maxDepth = maxDepth,
-                thickness = trunkWidth * 0.58f,
+                thickness = trunkTopWidth * 0.9f,
                 rand = rand,
                 sway = sway,
-                growthProgress = growthProgress
+                growthProgress = growthProgress,
+                baseY = baseY
             )
         }
 
-        // ============ 5. Bunga emas di level 5 ============
+        // ============ 6. Bunga emas (level 5) ============
         if (level >= 5) {
-            for (i in 0 until 10) {
+            for (i in 0 until 14) {
                 val angleRad = rand.nextFloat() * 2f * PI.toFloat()
-                val r = branchLength * (0.8f + rand.nextFloat() * 0.4f)
-                val fx = cx + cos(angleRad) * r
-                val fy = (trunkTopY - branchLength * 0.7f) + sin(angleRad) * r * 0.7f
+                val r = branchLength * (0.9f + rand.nextFloat() * 0.5f)
+                val fx = trunkEndX + cos(angleRad) * r
+                val fy = (trunkTopY - branchLength * 0.65f) + sin(angleRad) * r * 0.75f
                 drawCircle(
                     color = RootGold.copy(alpha = 0.9f * growthProgress),
-                    radius = 3f,
+                    radius = 2.5f + rand.nextFloat() * 1.5f,
                     center = Offset(fx, fy)
                 )
             }
@@ -168,6 +179,93 @@ fun RoyaltreeTree(
 }
 
 // ============ Draw helpers ============
+
+/**
+ * Batang dengan TAPER (polygon) + lekuk natural.
+ */
+private fun DrawScope.drawTaperedTrunk(
+    cx: Float,
+    baseY: Float,
+    topY: Float,
+    baseWidth: Float,
+    topWidth: Float,
+    bend1: Float,
+    bend2: Float
+) {
+    val halfBaseW = baseWidth / 2f
+    val halfTopW = topWidth / 2f
+    val midY = (baseY + topY) / 2f
+
+    // S-curve offset
+    val midBend = bend1 * 0.6f + bend2 * 0.4f
+    val topBend = bend1 * 0.4f + bend2 * 0.6f
+
+    val path = Path().apply {
+        // Kiri bawah → kiri tengah → kiri atas
+        moveTo(cx - halfBaseW, baseY)
+        cubicTo(
+            cx - halfBaseW + bend1 * 0.3f, baseY - (baseY - topY) * 0.3f,
+            cx - halfTopW + midBend, midY + (baseY - topY) * 0.1f,
+            cx + topBend - halfTopW, topY
+        )
+        // Kanan atas → kanan tengah → kanan bawah
+        lineTo(cx + topBend + halfTopW, topY)
+        cubicTo(
+            cx + halfTopW + midBend, midY + (baseY - topY) * 0.1f,
+            cx + halfBaseW + bend1 * 0.3f, baseY - (baseY - topY) * 0.3f,
+            cx + halfBaseW, baseY
+        )
+        close()
+    }
+
+    // Gradient horizontal untuk depth (kiri terang, kanan gelap)
+    drawPath(
+        path = path,
+        brush = Brush.horizontalGradient(
+            colors = listOf(TrunkMid, TrunkLight, TrunkMid, TrunkDark),
+            startX = cx - halfBaseW,
+            endX = cx + halfBaseW
+        )
+    )
+}
+
+/**
+ * Alur batang (bark lines) — 2-3 garis melengkung natural.
+ */
+private fun DrawScope.drawBarkLines(
+    cx: Float,
+    baseY: Float,
+    topY: Float,
+    trunkWidth: Float,
+    growth: Float,
+    rand: Random
+) {
+    val lineCount = 2 + rand.nextInt(2)
+    val trunkHeight = baseY - topY
+
+    for (i in 0 until lineCount) {
+        val offsetRatio = (i - (lineCount - 1) / 2f) / (lineCount - 1f)  // -1..1
+        val xOffset = trunkWidth * 0.22f * offsetRatio
+        val curX = cx + xOffset
+
+        val path = Path().apply {
+            moveTo(curX, baseY - trunkHeight * 0.05f)
+            cubicTo(
+                curX + (rand.nextFloat() - 0.5f) * trunkWidth * 0.15f,
+                baseY - trunkHeight * 0.35f,
+                curX + (rand.nextFloat() - 0.5f) * trunkWidth * 0.15f,
+                baseY - trunkHeight * 0.65f,
+                curX + (rand.nextFloat() - 0.5f) * trunkWidth * 0.2f,
+                topY + trunkHeight * 0.15f
+            )
+        }
+        drawPath(
+            path = path,
+            color = TrunkDeep.copy(alpha = 0.55f * growth),
+            style = Stroke(width = trunkWidth * 0.06f, cap = StrokeCap.Round)
+        )
+    }
+}
 
 private fun DrawScope.drawBranch(
     start: Offset,
@@ -178,142 +276,201 @@ private fun DrawScope.drawBranch(
     thickness: Float,
     rand: Random,
     sway: Float,
-    growthProgress: Float
+    growthProgress: Float,
+    baseY: Float
 ) {
-    // Hujung dahan → lukis DAUN berkelompok
-    if (depth > maxDepth || length < 5f) {
+    // Berhenti → lukis daun
+    if (depth > maxDepth || length < 4f || thickness < 0.6f) {
         drawLeafCluster(start, depth, rand, growthProgress)
         return
     }
 
-    // Arah dengan sway halus
-    val swayOffset = sway * (0.8f + depth * 0.4f)
+    // Sway lebih besar di dahan tinggi (natural — angin menggerakkan dahan atas)
+    val heightRatio = ((baseY - start.y) / baseY).coerceIn(0f, 1f)
+    val swayOffset = sway * (0.5f + depth * 0.8f) * (0.5f + heightRatio)
+
     val angleRad = (angleDeg + swayOffset) * PI.toFloat() / 180f
     val end = Offset(
         x = start.x + cos(angleRad) * length,
         y = start.y + sin(angleRad) * length
     )
 
-    // Warna dahan: makin tinggi makin cerah
+    // Warna dahan
     val branchColor = when {
         depth == 0 -> TrunkMid
         depth == 1 -> TrunkLight
-        else -> LeafDark
+        depth == 2 -> LeafDark
+        else -> LeafDeep
     }
 
-    // Bezier curve — cabang melengkung natural, bukan straight
-    val curveOffset = length * 0.18f * (rand.nextFloat() - 0.5f)  // -0.09 to +0.09
-    val midX = (start.x + end.x) / 2f + curveOffset
-    val midY = (start.y + end.y) / 2f + curveOffset * 0.5f
-    val branchPath = Path().apply {
+    // Curve natural — cabang bukan straight
+    val curveBend = length * 0.20f * (rand.nextFloat() - 0.5f) * 2f
+    val perpAngleRad = angleRad + PI.toFloat() / 2f
+    val midX = (start.x + end.x) / 2f + cos(perpAngleRad) * curveBend
+    val midY = (start.y + end.y) / 2f + sin(perpAngleRad) * curveBend
+
+    val path = Path().apply {
         moveTo(start.x, start.y)
         quadraticTo(midX, midY, end.x, end.y)
     }
+
+    // Taper: batang lebih tebal di pangkal, nipis di ujung
     drawPath(
-        path = branchPath,
+        path = path,
         color = branchColor,
         style = Stroke(width = thickness, cap = StrokeCap.Round)
     )
 
-    // Rekursif — 2 cabang TAK SIMETRI (panjang + sudut berbeza)
+    // Rekursif — 2-3 cabang dengan sudut & panjang random
     val nextThickness = thickness * 0.62f
-    val spreadLeft = 18f + rand.nextFloat() * 14f    // 18-32°
-    val spreadRight = 20f + rand.nextFloat() * 16f   // 20-36°
-    val lenLeft = length * (0.60f + rand.nextFloat() * 0.15f)   // 0.60-0.75
-    val lenRight = length * (0.62f + rand.nextFloat() * 0.18f)  // 0.62-0.80
+    val nextLength = length * (0.65f + rand.nextFloat() * 0.15f)
 
+    // Cabang kiri
+    val spreadLeft = 18f + rand.nextFloat() * 18f
     drawBranch(
         start = end,
         angleDeg = angleDeg - spreadLeft,
-        length = lenLeft,
+        length = nextLength * (0.9f + rand.nextFloat() * 0.2f),
         depth = depth + 1,
         maxDepth = maxDepth,
         thickness = nextThickness,
         rand = rand,
         sway = sway,
-        growthProgress = growthProgress
+        growthProgress = growthProgress,
+        baseY = baseY
     )
+
+    // Cabang kanan
+    val spreadRight = 20f + rand.nextFloat() * 20f
     drawBranch(
         start = end,
         angleDeg = angleDeg + spreadRight,
-        length = lenRight,
+        length = nextLength * (0.9f + rand.nextFloat() * 0.2f),
         depth = depth + 1,
         maxDepth = maxDepth,
         thickness = nextThickness,
         rand = rand,
         sway = sway,
-        growthProgress = growthProgress
+        growthProgress = growthProgress,
+        baseY = baseY
     )
+
+    // Cabang tengah (kalau dalam) — bikin lebih padat
+    if (depth >= 2 && rand.nextFloat() < 0.4f) {
+        drawBranch(
+            start = end,
+            angleDeg = angleDeg + (rand.nextFloat() - 0.5f) * 10f,
+            length = nextLength * 0.85f,
+            depth = depth + 1,
+            maxDepth = maxDepth,
+            thickness = nextThickness * 0.85f,
+            rand = rand,
+            sway = sway,
+            growthProgress = growthProgress,
+            baseY = baseY
+        )
+    }
 }
 
+/**
+ * Leaf cluster elliptik — bukan circle polos.
+ * Setiap daun pakai ellipse yang di-rotate.
+ */
 private fun DrawScope.drawLeafCluster(
     center: Offset,
     depth: Int,
     rand: Random,
     growthProgress: Float
 ) {
-    val leafCount = 5 + rand.nextInt(5)   // 5..9 daun
-    val clusterRadius = 8f + rand.nextFloat() * 6f
+    val leafCount = 6 + rand.nextInt(5)   // 6..10 daun
+    val clusterRadius = 10f + rand.nextFloat() * 8f
 
     for (i in 0 until leafCount) {
         val angle = rand.nextFloat() * 2f * PI.toFloat()
         val r = rand.nextFloat() * clusterRadius
         val lx = center.x + cos(angle) * r
         val ly = center.y + sin(angle) * r
-        val radius = 3f + rand.nextFloat() * 3f
 
-        // Warna: leaf + occasional cyan + occasional gold
-        val roll = rand.nextFloat()
+        // Daun elliptik (bukan circle)
+        val leafW = 3.5f + rand.nextFloat() * 3f
+        val leafH = leafW * (1.4f + rand.nextFloat() * 0.4f)  // lebih tinggi dari lebar
+        val rotation = (rand.nextFloat() - 0.5f) * 90f
+
         val color = when {
-            roll > 0.92f -> LeafGold
-            roll > 0.80f -> LeafCyan
-            roll > 0.55f -> LeafLight
-            roll > 0.30f -> LeafMid
+            rand.nextFloat() > 0.93f -> LeafGold
+            rand.nextFloat() > 0.82f -> LeafCyan
+            rand.nextFloat() > 0.55f -> LeafLight
+            rand.nextFloat() > 0.28f -> LeafMid
             else -> LeafDark
         }
 
-        drawCircle(
-            color = color.copy(alpha = 0.85f * growthProgress),
-            radius = radius,
-            center = Offset(lx, ly)
-        )
+        rotate(degrees = rotation, pivot = Offset(lx, ly)) {
+            drawOval(
+                color = color.copy(alpha = 0.88f * growthProgress),
+                topLeft = Offset(lx - leafW / 2f, ly - leafH / 2f),
+                size = Size(leafW, leafH)
+            )
+        }
     }
 }
 
+/**
+ * Akar menyebar + taper (melebar keluar + curve natural).
+ */
 private fun DrawScope.drawRoots(
     cx: Float,
     baseY: Float,
     w: Float,
     level: Int,
-    growth: Float
+    growth: Float,
+    rand: Random
 ) {
     val rootCount = 3 + level / 2
-    val rootLen = w * 0.05f * (1f + level * 0.12f) * growth
-    val thickness = w * 0.014f
+    val rootLen = w * 0.08f * (1f + level * 0.15f) * growth
 
     for (i in 0 until rootCount) {
-        val offset = (i - (rootCount - 1) / 2f) * (w * 0.045f)
-        val endX = cx + offset
-        val endY = baseY + rootLen
+        val offset = (i - (rootCount - 1) / 2f) * (w * 0.05f)
+        val angle = offset / w * 1.5f  // sudut menyebar
 
-        // Akar melengkung keluar (bukan straight)
-        val rootCurve = (endX - cx) * 0.3f
-        val rootPath = Path().apply {
-            moveTo(cx, baseY)
+        // Taper: tebal di pangkal, nipis di ujung
+        val baseThickness = w * 0.016f
+        val tipThickness = w * 0.004f
+
+        // Bezier — akar melengkung turun & keluar
+        val endX = cx + offset
+        val endY = baseY + rootLen * (0.85f + rand.nextFloat() * 0.3f)
+
+        // Draw sebagai polygon (taper)
+        val path = Path().apply {
+            moveTo(cx - baseThickness / 2f, baseY)
             cubicTo(
-                cx + (endX - cx) * 0.2f, baseY + rootLen * 0.3f,
-                cx + (endX - cx) * 0.8f, baseY + rootLen * 0.5f,
-                endX, endY
+                cx - baseThickness * 0.4f + offset * 0.3f, baseY + rootLen * 0.4f,
+                endX - tipThickness * 0.8f, endY - rootLen * 0.2f,
+                endX - tipThickness / 2f, endY
             )
+            lineTo(endX + tipThickness / 2f, endY)
+            cubicTo(
+                endX + tipThickness * 0.8f, endY - rootLen * 0.2f,
+                cx + baseThickness * 0.4f + offset * 0.3f, baseY + rootLen * 0.4f,
+                cx + baseThickness / 2f, baseY
+            )
+            close()
         }
+
         drawPath(
-            path = rootPath,
+            path = path,
             brush = Brush.verticalGradient(
-                colors = listOf(RootAmber, RootGold),
+                colors = listOf(RootAmber, RootDark),
                 startY = baseY,
                 endY = endY
-            ),
-            style = Stroke(width = thickness, cap = StrokeCap.Round)
+            )
+        )
+
+        // Highlight emas di ujung akar
+        drawCircle(
+            color = RootGold.copy(alpha = 0.7f * growth),
+            radius = tipThickness * 0.6f,
+            center = Offset(endX, endY)
         )
     }
 }
@@ -328,7 +485,7 @@ private fun RoyaltreeTreePreview() {
             .background(Color(0xFF05060A))
     ) {
         RoyaltreeTree(
-            level = 3,
+            level = 5,
             growthProgress = 1f,
             modifier = Modifier.fillMaxSize()
         )
