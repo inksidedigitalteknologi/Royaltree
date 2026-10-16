@@ -566,7 +566,7 @@ fun PaymentGatewaySimulatorModal(
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(LanguageManager.translate("appmodal_withdraw_done_close", currentLanguage, "Selesai & Tutup"))
+                    Text(LanguageManager.translate("appmodal_withdraw_done_close", AppThemePreferences.currentLanguage, "Selesai & Tutup"))
                 }
             }
         }
@@ -955,7 +955,7 @@ private fun TierRow(
                             .fillMaxWidth()
                             .testTag("btn_upgrade_$tierName")
                     ) {
-                        Text(LanguageManager.translate("appmodal_upgrade_coming_soon", currentLanguage, "Coming Soon"), fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                        Text(LanguageManager.translate("appmodal_upgrade_coming_soon", AppThemePreferences.currentLanguage, "Coming Soon"), fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                     }
                 }
             }
@@ -2025,7 +2025,7 @@ fun AdRewardModal(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Info,
-                                contentDescription = LanguageManager.translate("cd_eligibility_info", currentLanguage, "Informasi Kelayakan"),
+                                contentDescription = LanguageManager.translate("cd_eligibility_info", AppThemePreferences.currentLanguage, "Informasi Kelayakan"),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(15.dp)
                             )
@@ -2052,7 +2052,7 @@ fun AdRewardModal(
                                 onClick = onDismiss,
                                 modifier = Modifier.size(26.dp)
                             ) {
-                                Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", currentLanguage, "Tutup"), modifier = Modifier.size(18.dp))
+                                Icon(imageVector = Icons.Default.Close, contentDescription = LanguageManager.translate("cd_close", AppThemePreferences.currentLanguage, "Tutup"), modifier = Modifier.size(18.dp))
                             }
                         }
                     }
@@ -2160,7 +2160,7 @@ fun AdRewardModal(
                                     ) {
                                         Icon(
                                             imageVector = if (isMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
-                                            contentDescription = LanguageManager.translate("cd_mute", currentLanguage, "Mute"),
+                                            contentDescription = LanguageManager.translate("cd_mute", AppThemePreferences.currentLanguage, "Mute"),
                                             tint = Color.White,
                                             modifier = Modifier.padding(5.dp).size(14.dp)
                                         )
@@ -2172,7 +2172,7 @@ fun AdRewardModal(
                                     ) {
                                         Icon(
                                             imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                                            contentDescription = LanguageManager.translate("cd_pause", currentLanguage, "Pause"),
+                                            contentDescription = LanguageManager.translate("cd_pause", AppThemePreferences.currentLanguage, "Pause"),
                                             tint = Color.White,
                                             modifier = Modifier.padding(5.dp).size(14.dp)
                                         )

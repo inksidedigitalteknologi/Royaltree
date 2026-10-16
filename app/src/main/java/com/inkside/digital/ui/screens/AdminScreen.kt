@@ -572,11 +572,11 @@ fun AdminUserCard(user: UserEntity, currentLanguage: AppLanguage) {
                 ) {
                     Text(
                         text = when (user.tier) {
-                            "STARTER" -> "🥉 " + LanguageManager.translate("tier_starter", currentLanguage, "Pemula")
-                            "PREMIUM" -> "🥈 " + LanguageManager.translate("tier_premium", currentLanguage, "Premium")
-                            "VIP" -> "🥇 " + LanguageManager.translate("tier_vip", currentLanguage, "VIP")
-                            "ROYAL" -> "💎 " + LanguageManager.translate("tier_royal", currentLanguage, "Royal")
-                            else -> LanguageManager.translate("tier_free", currentLanguage, "Free")
+                            "STARTER" -> "🥉 " + LanguageManager.translate("tier_starter", AppThemePreferences.currentLanguage, "Pemula")
+                            "PREMIUM" -> "🥈 " + LanguageManager.translate("tier_premium", AppThemePreferences.currentLanguage, "Premium")
+                            "VIP" -> "🥇 " + LanguageManager.translate("tier_vip", AppThemePreferences.currentLanguage, "VIP")
+                            "ROYAL" -> "💎 " + LanguageManager.translate("tier_royal", AppThemePreferences.currentLanguage, "Royal")
+                            else -> LanguageManager.translate("tier_free", AppThemePreferences.currentLanguage, "Free")
                         },
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
@@ -594,19 +594,19 @@ fun AdminUserCard(user: UserEntity, currentLanguage: AppLanguage) {
             ) {
                 Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(LanguageManager.translate("admin_user_balance", currentLanguage, "Saldo Komisi Tersedia:"), fontSize = 11.sp)
+                        Text(LanguageManager.translate("admin_user_balance", AppThemePreferences.currentLanguage, "Saldo Komisi Tersedia:"), fontSize = 11.sp)
                         Text(GlobalPointsManager.formatBalanceIdr(user.balance, currentLanguage.code), fontWeight = FontWeight.Bold, fontSize = 11.sp, color = EmeraldLight)
                     }
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(LanguageManager.translate("admin_user_points", currentLanguage, "Poin Loyalitas (RTP):"), fontSize = 11.sp)
+                        Text(LanguageManager.translate("admin_user_points", AppThemePreferences.currentLanguage, "Poin Loyalitas (RTP):"), fontSize = 11.sp)
                         Text("${user.points} RTP", fontWeight = FontWeight.Bold, fontSize = 11.sp)
                     }
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(LanguageManager.translate("admin_user_2fa_status", currentLanguage, "Status 2FA & Enkripsi:"), fontSize = 11.sp)
+                        Text(LanguageManager.translate("admin_user_2fa_status", AppThemePreferences.currentLanguage, "Status 2FA & Enkripsi:"), fontSize = 11.sp)
                         Text(if (user.is2FAEnabled) "AKTIF (Aman) 🔒" else "NONAKTIF", fontWeight = FontWeight.Bold, fontSize = 11.sp)
                     }
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(LanguageManager.translate("admin_user_last_location", currentLanguage, "Pinpoint Lokasi Terakhir:"), fontSize = 11.sp)
+                        Text(LanguageManager.translate("admin_user_last_location", AppThemePreferences.currentLanguage, "Pinpoint Lokasi Terakhir:"), fontSize = 11.sp)
                         Text("${user.locationCity}, ${user.locationProvince} 📍", fontWeight = FontWeight.Bold, fontSize = 11.sp, color = ElectricBlue)
                     }
                 }
@@ -816,13 +816,13 @@ fun AdminLocationTrackingSection(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(LanguageManager.translate("admin_simulate_pin", currentLanguage, "Uji Simulasi Pin Provider:"), fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                    Text(LanguageManager.translate("admin_simulate_pin", AppThemePreferences.currentLanguage, "Uji Simulasi Pin Provider:"), fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
 
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Button(
                             onClick = {
                                 onSimulatePing("Surabaya", "Jawa Timur", -7.2575, 112.7521)
-                                Toast.makeText(context, LanguageManager.translate("toast_admin_pin_surabaya", currentLanguage, "Pin baru masuk di Surabaya (+1 Ramai)"), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, LanguageManager.translate("toast_admin_pin_surabaya", AppThemePreferences.currentLanguage, "Pin baru masuk di Surabaya (+1 Ramai)"), Toast.LENGTH_SHORT).show()
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
                             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 8.dp, vertical = 4.dp),
@@ -834,7 +834,7 @@ fun AdminLocationTrackingSection(
                         Button(
                             onClick = {
                                 onSimulatePing("Jayapura", "Papua", -2.5337, 140.7181)
-                                Toast.makeText(context, LanguageManager.translate("toast_admin_pin_jayapura", currentLanguage, "Pin baru masuk di Jayapura (Wilayah Sepi)"), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, LanguageManager.translate("toast_admin_pin_jayapura", AppThemePreferences.currentLanguage, "Pin baru masuk di Jayapura (Wilayah Sepi)"), Toast.LENGTH_SHORT).show()
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = PurpleSecondary),
                             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 8.dp, vertical = 4.dp),
@@ -854,8 +854,8 @@ fun AdminLocationTrackingSection(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(LanguageManager.translate("admin_pinpoint_list_title", currentLanguage, "Daftar Detail Pinpoint Pengguna"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                Text(LanguageManager.translate("admin_pinpoint_list_desc", currentLanguage, "Menampilkan data koordinat GPS yang terekam oleh server"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(LanguageManager.translate("admin_pinpoint_list_title", AppThemePreferences.currentLanguage, "Daftar Detail Pinpoint Pengguna"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(LanguageManager.translate("admin_pinpoint_list_desc", AppThemePreferences.currentLanguage, "Menampilkan data koordinat GPS yang terekam oleh server"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -981,7 +981,7 @@ fun AdminWithdrawalCard(
                         .background(GoldVip.copy(alpha = 0.2f))
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
-                    Text(LanguageManager.translate("admin_payout_pending", currentLanguage, "PENDING REVIEW"), fontSize = 9.sp, fontWeight = FontWeight.Black, color = GoldVip)
+                    Text(LanguageManager.translate("admin_payout_pending", AppThemePreferences.currentLanguage, "PENDING REVIEW"), fontSize = 9.sp, fontWeight = FontWeight.Black, color = GoldVip)
                 }
             }
 
@@ -993,7 +993,7 @@ fun AdminWithdrawalCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text(LanguageManager.translate("admin_payout_net", currentLanguage, "Nominal Cair Bersih:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(LanguageManager.translate("admin_payout_net", AppThemePreferences.currentLanguage, "Nominal Cair Bersih:"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(GlobalPointsManager.formatBalanceIdr(withdrawal.netAmount, currentLanguage.code), fontWeight = FontWeight.Black, fontSize = 15.sp, color = EmeraldLight)
                 }
 
@@ -1004,7 +1004,7 @@ fun AdminWithdrawalCard(
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 14.dp, vertical = 6.dp),
                     modifier = Modifier.testTag("btn_admin_review_${withdrawal.id}")
                 ) {
-                    Text(LanguageManager.translate("admin_payout_process", currentLanguage, "Proses / Validasi"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(LanguageManager.translate("admin_payout_process", AppThemePreferences.currentLanguage, "Proses / Validasi"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -1293,15 +1293,15 @@ fun AdminPortalEndpointSection(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(LanguageManager.translate("admin_endpoint_curl_test", currentLanguage, "Perintah cURL Uji Coba:"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = ElectricBlue)
+                                    Text(LanguageManager.translate("admin_endpoint_curl_test", AppThemePreferences.currentLanguage, "Perintah cURL Uji Coba:"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = ElectricBlue)
                                     IconButton(
                                         onClick = {
                                             clipboardManager.setText(AnnotatedString(ep.curl))
-                                            Toast.makeText(context, LanguageManager.translate("toast_admin_curl_copied", currentLanguage, "Perintah cURL disalin ke clipboard!"), Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, LanguageManager.translate("toast_admin_curl_copied", AppThemePreferences.currentLanguage, "Perintah cURL disalin ke clipboard!"), Toast.LENGTH_SHORT).show()
                                         },
                                         modifier = Modifier.size(24.dp)
                                     ) {
-                                        Icon(imageVector = Icons.Default.ContentCopy, contentDescription = LanguageManager.translate("cd_copy", currentLanguage, "Salin"), modifier = Modifier.size(14.dp))
+                                        Icon(imageVector = Icons.Default.ContentCopy, contentDescription = LanguageManager.translate("cd_copy", AppThemePreferences.currentLanguage, "Salin"), modifier = Modifier.size(14.dp))
                                     }
                                 }
 
@@ -1320,7 +1320,7 @@ fun AdminPortalEndpointSection(
                                 }
 
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(LanguageManager.translate("admin_endpoint_json_example", currentLanguage, "Contoh Respons JSON (200 OK):"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = EmeraldLight)
+                                Text(LanguageManager.translate("admin_endpoint_json_example", AppThemePreferences.currentLanguage, "Contoh Respons JSON (200 OK):"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = EmeraldLight)
                                 Surface(
                                     color = Color(0xFF0F172A),
                                     shape = RoundedCornerShape(8.dp),
@@ -1355,8 +1355,8 @@ fun AdminPortalEndpointSection(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text(LanguageManager.translate("admin_endpoint_server_script", currentLanguage, "Script Server Siap Pakai"), fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                        Text(LanguageManager.translate("admin_endpoint_server_script_desc", currentLanguage, "Tersedia di folder /backend/ project Anda"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LanguageManager.translate("admin_endpoint_server_script", AppThemePreferences.currentLanguage, "Script Server Siap Pakai"), fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                        Text(LanguageManager.translate("admin_endpoint_server_script_desc", AppThemePreferences.currentLanguage, "Tersedia di folder /backend/ project Anda"), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
 
                     // Selector Tab
@@ -1457,11 +1457,11 @@ if (strpos(${'$'}uri, '/users/sync') !== false) {
                     IconButton(
                         onClick = {
                             clipboardManager.setText(AnnotatedString(codeSnippet))
-                            Toast.makeText(context, LanguageManager.translate("toast_admin_code_copied", currentLanguage, "Kode $fileName disalin ke clipboard!"), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, LanguageManager.translate("toast_admin_code_copied", AppThemePreferences.currentLanguage, "Kode $fileName disalin ke clipboard!"), Toast.LENGTH_SHORT).show()
                         },
                         modifier = Modifier.size(28.dp)
                     ) {
-                        Icon(imageVector = Icons.Default.ContentCopy, contentDescription = LanguageManager.translate("cd_copy_script", currentLanguage, "Salin Script"), modifier = Modifier.size(16.dp))
+                        Icon(imageVector = Icons.Default.ContentCopy, contentDescription = LanguageManager.translate("cd_copy_script", AppThemePreferences.currentLanguage, "Salin Script"), modifier = Modifier.size(16.dp))
                     }
                 }
 
@@ -1484,7 +1484,7 @@ if (strpos(${'$'}uri, '/users/sync') !== false) {
                 Button(
                     onClick = {
                         clipboardManager.setText(AnnotatedString(codeSnippet))
-                        Toast.makeText(context, LanguageManager.translate("toast_admin_code_ready", currentLanguage, "Kode $fileName disalin! Siap ditaruh di hosting Anda."), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, LanguageManager.translate("toast_admin_code_ready", AppThemePreferences.currentLanguage, "Kode $fileName disalin! Siap ditaruh di hosting Anda."), Toast.LENGTH_SHORT).show()
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = PurpleSecondary),
                     shape = RoundedCornerShape(10.dp),
@@ -1492,7 +1492,7 @@ if (strpos(${'$'}uri, '/users/sync') !== false) {
                 ) {
                     Icon(imageVector = Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(LanguageManager.translate("admin_endpoint_copy_script", currentLanguage, "Salin Script Lengkap ke Clipboard"), fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                    Text(LanguageManager.translate("admin_endpoint_copy_script", AppThemePreferences.currentLanguage, "Salin Script Lengkap ke Clipboard"), fontWeight = FontWeight.Bold, fontSize = 11.sp)
                 }
             }
         }
