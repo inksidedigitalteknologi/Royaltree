@@ -711,6 +711,8 @@
     "vm_system_settings_saved": "系统设置已成功保存并同步！",
     "vm_new_pin_prefix": "新用户 pin 已添加到 ",
     "vm_new_user": "新用户",
-    "faq_last_update": "最后更新：2026 年 10 月 15 日"
+    "faq_last_update": "最后更新：2026 年 10 月 15 日",
+    "splash_tagline": "联盟奖励平台",
+    "loading_growing_tree": "正在培育您的树..."
   }
 }

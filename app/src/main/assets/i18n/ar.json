@@ -711,6 +711,8 @@
     "vm_system_settings_saved": "تم حفظ إعدادات النظام ومزامنتها بنجاح!",
     "vm_new_pin_prefix": "تمت إضافة دبوس مستخدم جديد في ",
     "vm_new_user": "مستخدم جديد",
-    "faq_last_update": "آخر تحديث: 15 أكتوبر 2026"
+    "faq_last_update": "آخر تحديث: 15 أكتوبر 2026",
+    "splash_tagline": "منصة مكافآت التسويق بالعمولة",
+    "loading_growing_tree": "نمو شجرتك..."
   }
 }

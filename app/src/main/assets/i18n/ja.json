@@ -711,6 +711,8 @@
     "vm_system_settings_saved": "システム設定が保存され、同期されました！",
     "vm_new_pin_prefix": "新規ユーザーピンを追加: ",
     "vm_new_user": "新規ユーザー",
-    "faq_last_update": "最終更新日: 2026年10月15日"
+    "faq_last_update": "最終更新日: 2026年10月15日",
+    "splash_tagline": "アフィリエイト報酬プラットフォーム",
+    "loading_growing_tree": "木を育てています..."
   }
 }

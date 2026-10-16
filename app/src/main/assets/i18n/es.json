@@ -711,6 +711,8 @@
     "vm_system_settings_saved": "¡Configuración del sistema guardada y sincronizada!",
     "vm_new_pin_prefix": "Nuevo pin de usuario agregado en ",
     "vm_new_user": "Usuario Nuevo",
-    "faq_last_update": "Última actualización: 15 de octubre de 2026"
+    "faq_last_update": "Última actualización: 15 de octubre de 2026",
+    "splash_tagline": "Plataforma de Recompensas de Afiliados",
+    "loading_growing_tree": "Cultivando tu árbol..."
   }
 }
