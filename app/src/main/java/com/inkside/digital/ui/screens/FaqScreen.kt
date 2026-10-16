@@ -24,6 +24,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -383,15 +385,23 @@ Cek Statistik:
         // ============ FOOTER ============
         item {
             Spacer(modifier = Modifier.height(16.dp))
+            val context = LocalContext.current
+            val appVersion = remember {
+                try {
+                    context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.0"
+                } catch (e: Exception) {
+                    "1.0"
+                }
+            }
             Text(
-                "Royaltree v1.11.0",
+                "Royaltree v$appVersion",
                 fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
             Text(
-                "Terakhir update: 15 Oktober 2026",
+                LanguageManager.translate("faq_last_update", currentLanguage, "Terakhir update: 15 Oktober 2026"),
                 fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.fillMaxWidth(),

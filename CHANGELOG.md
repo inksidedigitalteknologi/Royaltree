@@ -7,6 +7,42 @@ Versioning: [Semantic Versioning](https://semver.org/lang/id/)
 
 ---
 
+## [1.12.0] - 2026-10-16
+
+### ✨ Added — i18n Migration (Enterprise)
+- **LanguageLoader.kt** — load translations dari JSON assets (parse + cache + fallback chain)
+- **assets/i18n/** — 6 file JSON (id, en, es, zh, ar, ja) — total **708 key × 6 bahasa = 4,248 entries**
+- **I18N_GUIDE.txt** — panduan i18n untuk developer (format key, cara pakai, best practice)
+- **LanguageManager.init()** — dipanggil di `MainActivity.onCreate()` untuk inisialisasi context
+
+### 🔧 Changed — Architecture
+- **LanguageManager.kt** — **5,785 baris → 42 baris** (data translation dipindah ke JSON)
+- API `LanguageManager.translate()` **tidak berubah** — ~700 call site tidak perlu di-refactor
+- LanguageLoader support **fallback chain**: target language → ID → param → key
+
+### 🐛 Fixed — Critical Bugs
+- **Konten blank hitam** — root cause: `bottomNavHeightState.value` terlalu besar (full screen), fix: hapus bottom padding di MainActivity
+- **JVM MethodTooLargeException** — LanguageManager `<clinit>` > 64KB, fix: migrate ke JSON asset
+- **~120 build error** `Unresolved reference 'currentLanguage'` — fix: global state `AppThemePreferences.currentLanguage` untuk composable helper
+- **~150 text hardcoded** — extract ke LanguageManager (screens + components + ViewModel)
+- **Syntax error** komentar `*.json` di LanguageLoader (bikin unclosed comment)
+- **`$` escape** — string template `$fileName`/`$url`/`$message` di JSON
+- **Duplikat key** — 4 key (`common_cancel`, `common_close`, `faq_subtitle`, `faq_contact_support`) dibersihkan → 708 key unik
+
+### 🎨 Improved — UI
+- **Efek daun jatuh terlihat** di HomeScreen, GlobalChatScreen, GameRoomScreen
+  - Background solid → semi-transparan (`alpha = 0.7f`)
+- **Debug log dirapikan** — `Log.d` → `Log.e` untuk HP vivo yang filter debug level
+
+### 🧹 Technical
+- **Auth screens i18n** — ProfileSetupScreen, ForgotPasswordScreen (tambah param `currentLanguage`)
+- **ViewModel i18n** — AffiliateViewModel: 112 translate usage (dari ~40 hardcoded)
+- **Content description i18n** — 52 `contentDescription` di 15+ file
+- **Toast i18n** — 11 Toast message (Referral, Campaigns, Admin)
+- **Label + placeholder i18n** — 7 form label
+
+---
+
 ## [1.11.0] - 2026-10-14
 
 ### ✨ Added — Thermal & Power Management

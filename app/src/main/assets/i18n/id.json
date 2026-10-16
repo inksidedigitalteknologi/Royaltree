@@ -710,6 +710,7 @@
     "vm_location_tracking_off": "Pelacakan lokasi dinonaktifkan.",
     "vm_system_settings_saved": "Pengaturan sistem berhasil disimpan & disinkronkan!",
     "vm_new_pin_prefix": "Pin pengguna baru ditambahkan di ",
-    "vm_new_user": "User Baru"
+    "vm_new_user": "User Baru",
+    "faq_last_update": "Terakhir update: 15 Oktober 2026"
   }
 }
