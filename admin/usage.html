@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Firestore Usage — Royaltree Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/admin.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    (function() {
+      if (!localStorage.getItem('royaltree_admin_token')) {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+<div class="d-flex">
+  <div id="admin-sidebar"></div>
+  <div class="flex-grow-1" style="min-width:0;">
+    <div id="admin-navbar"></div>
+
+    <main class="admin-content">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+          <h4 class="mb-1 fw-bold">
+            <i class="bi bi-database-check me-2 text-primary"></i>Firestore Usage
+          </h4>
+          <p class="text-muted mb-0 small">Monitoring reads/writes/deletes + cost estimation</p>
+        </div>
+        <div class="d-flex gap-2">
+          <select class="form-select form-select-sm" id="daysSelect" style="width:auto;">
+            <option value="7" selected>7 hari</option>
+            <option value="14">14 hari</option>
+            <option value="30">30 hari</option>
+          </select>
+          <button class="btn btn-sm btn-outline-secondary" id="refreshBtn">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Buffer Alert -->
+      <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-broadcast me-2"></i>
+        <div class="flex-grow-1">
+          <strong>Live Buffer</strong> (belum di-flush ke Firestore):
+          <span class="badge bg-primary ms-2">📖 <span id="liveReads">0</span></span>
+          <span class="badge bg-success ms-2">✍️ <span id="liveWrites">0</span></span>
+          <span class="badge bg-danger ms-2">🗑️ <span id="liveDeletes">0</span></span>
+        </div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="card stat-card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="text-muted small text-uppercase">📖 Reads</div>
+                  <h3 class="fw-bold mb-0" id="totalReads">-</h3>
+                  <div class="small text-muted mt-1" id="readsFreeTier">-</div>
+                </div>
+                <div class="text-primary fs-1"><i class="bi bi-eye"></i></div>
+              </div>
+              <div class="progress mt-3" style="height: 8px;">
+                <div class="progress-bar bg-primary" id="readsBar" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card stat-card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="text-muted small text-uppercase">✍️ Writes</div>
+                  <h3 class="fw-bold mb-0" id="totalWrites">-</h3>
+                  <div class="small text-muted mt-1" id="writesFreeTier">-</div>
+                </div>
+                <div class="text-success fs-1"><i class="bi bi-pencil"></i></div>
+              </div>
+              <div class="progress mt-3" style="height: 8px;">
+                <div class="progress-bar bg-success" id="writesBar" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card stat-card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="text-muted small text-uppercase">🗑️ Deletes</div>
+                  <h3 class="fw-bold mb-0" id="totalDeletes">-</h3>
+                  <div class="small text-muted mt-1" id="deletesFreeTier">-</div>
+                </div>
+                <div class="text-danger fs-1"><i class="bi bi-trash"></i></div>
+              </div>
+              <div class="progress mt-3" style="height: 8px;">
+                <div class="progress-bar bg-danger" id="deletesBar" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cost Card -->
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="text-muted small text-uppercase">💰 Estimasi Biaya (periode terpilih)</div>
+                  <h3 class="fw-bold mb-0 text-warning">
+                    <span id="costUsd">$0.00</span>
+                    <small class="text-muted fs-6 ms-2">≈ <span id="costIdr">Rp 0</span></small>
+                  </h3>
+                </div>
+                <div class="text-warning fs-1"><i class="bi bi-cash-coin"></i></div>
+              </div>
+              <div class="small text-muted mt-2">
+                Free tier: <span id="freeTierInfo">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="card stat-card mb-4">
+        <div class="card-header bg-white">
+          <h6 class="fw-bold mb-0">
+            <i class="bi bi-graph-up me-2 text-primary"></i>Tren Harian
+          </h6>
+        </div>
+        <div class="card-body">
+          <canvas id="usageChart" height="100"></canvas>
+        </div>
+      </div>
+
+      <!-- Top Endpoints -->
+      <div class="card stat-card">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold mb-0">
+            <i class="bi bi-list-ol me-2 text-info"></i>Top Endpoints (by Total Ops)
+          </h6>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Endpoint</th>
+                  <th class="text-end">📖 Reads</th>
+                  <th class="text-end">✍️ Writes</th>
+                  <th class="text-end">🗑️ Deletes</th>
+                  <th class="text-end">Total</th>
+                  <th class="text-end">%</th>
+                </tr>
+              </thead>
+              <tbody id="endpointsTable">
+                <tr>
+                  <td colspan="7" class="text-center py-4">
+                    <div class="spinner-border text-primary"></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/layout.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  let chart = null;
+
+  async function loadData(days = 7) {
+    const res = await AdminAPI.getFirestoreUsage(days);
+    if (!res.success) {
+      AdminAPI.toast(res.message || 'Gagal load data', 'error');
+      return;
+    }
+
+    const { totals, freeTier, cost, liveBuffer, topEndpoints, data } = res;
+
+    // Live buffer
+    document.getElementById('liveReads').textContent = AdminAPI.fmtNumber(liveBuffer.reads);
+    document.getElementById('liveWrites').textContent = AdminAPI.fmtNumber(liveBuffer.writes);
+    document.getElementById('liveDeletes').textContent = AdminAPI.fmtNumber(liveBuffer.deletes);
+
+    // Totals
+    document.getElementById('totalReads').textContent = AdminAPI.fmtNumber(totals.reads);
+    document.getElementById('totalWrites').textContent = AdminAPI.fmtNumber(totals.writes);
+    document.getElementById('totalDeletes').textContent = AdminAPI.fmtNumber(totals.deletes);
+
+    // Free tier
+    document.getElementById('readsFreeTier').textContent = `Free: ${AdminAPI.fmtNumber(freeTier.reads)}`;
+    document.getElementById('writesFreeTier').textContent = `Free: ${AdminAPI.fmtNumber(freeTier.writes)}`;
+    document.getElementById('deletesFreeTier').textContent = `Free: ${AdminAPI.fmtNumber(freeTier.deletes)}`;
+
+    // Progress bar (% vs free tier)
+    document.getElementById('readsBar').style.width = Math.min(100, (totals.reads / freeTier.reads * 100)) + '%';
+    document.getElementById('writesBar').style.width = Math.min(100, (totals.writes / freeTier.writes * 100)) + '%';
+    document.getElementById('deletesBar').style.width = Math.min(100, (totals.deletes / freeTier.deletes * 100)) + '%';
+
+    // Color kalau over free tier
+    document.getElementById('readsBar').className = 'progress-bar ' + (totals.reads > freeTier.reads ? 'bg-danger' : 'bg-primary');
+    document.getElementById('writesBar').className = 'progress-bar ' + (totals.writes > freeTier.writes ? 'bg-danger' : 'bg-success');
+    document.getElementById('deletesBar').className = 'progress-bar ' + (totals.deletes > freeTier.deletes ? 'bg-danger' : 'bg-danger');
+
+    // Cost
+    document.getElementById('costUsd').textContent = '$' + cost.total.toFixed(2);
+    document.getElementById('costIdr').textContent = 'Rp ' + AdminAPI.fmtNumber(Math.round(cost.idr));
+    document.getElementById('freeTierInfo').textContent = 
+      `${days} hari × (50K R + 20K W + 20K D)`;
+
+    // Top endpoints
+    const totalOps = topEndpoints.reduce((s, e) => s + e.total, 0) || 1;
+    const tbody = document.getElementById('endpointsTable');
+    tbody.innerHTML = topEndpoints.map((ep, i) => `
+      <tr>
+        <td><strong>${i + 1}</strong></td>
+        <td><code>${AdminAPI.escapeHtml(ep.endpoint)}</code></td>
+        <td class="text-end text-primary">${AdminAPI.fmtNumber(ep.reads)}</td>
+        <td class="text-end text-success">${AdminAPI.fmtNumber(ep.writes)}</td>
+        <td class="text-end text-danger">${AdminAPI.fmtNumber(ep.deletes)}</td>
+        <td class="text-end"><strong>${AdminAPI.fmtNumber(ep.total)}</strong></td>
+        <td class="text-end">${((ep.total / totalOps) * 100).toFixed(1)}%</td>
+      </tr>
+    `).join('');
+
+    // Chart
+    renderChart(data);
+  }
+
+  function renderChart(data) {
+    const ctx = document.getElementById('usageChart').getContext('2d');
+    if (chart) chart.destroy();
+
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.map(d => d.date),
+        datasets: [
+          {
+            label: '📖 Reads',
+            data: data.map(d => d.reads),
+            borderColor: '#0d6efd',
+            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+            tension: 0.3,
+            fill: true
+          },
+          {
+            label: '✍️ Writes',
+            data: data.map(d => d.writes),
+            borderColor: '#198754',
+            backgroundColor: 'rgba(25, 135, 84, 0.1)',
+            tension: 0.3,
+            fill: true
+          },
+          {
+            label: '🗑️ Deletes',
+            data: data.map(d => d.deletes),
+            borderColor: '#dc3545',
+            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+            tension: 0.3,
+            fill: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top' }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  // Event listeners
+  document.getElementById('daysSelect').addEventListener('change', (e) => {
+    loadData(parseInt(e.target.value));
+  });
+  document.getElementById('refreshBtn').addEventListener('click', () => {
+    const days = parseInt(document.getElementById('daysSelect').value);
+    loadData(days);
+    AdminAPI.toast('Refreshed', 'success');
+  });
+
+  // Auto-refresh tiap 30 detik (live buffer)
+  setInterval(() => {
+    const days = parseInt(document.getElementById('daysSelect').value);
+    loadData(days);
+  }, 30000);
+
+  // Initial load
+  AdminLayout.init('Firestore Usage');
+  loadData(7);
+})();
+</script>
+
+</body>
+</html>

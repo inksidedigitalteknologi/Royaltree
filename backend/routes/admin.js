@@ -1514,4 +1514,121 @@ router.get('/user-achievements/:uid', checkAdmin, async (req, res) => {
     }
 });
 
+
+// ============================================================
+// GET /api/v1/admin/firestore-usage
+// Monitoring reads/writes/deletes Firestore
+// ============================================================
+router.get('/firestore-usage', checkAdmin, async (req, res) => {
+    try {
+        const days = Math.min(parseInt(req.query.days) || 7, 30);
+        const today = new Date();
+        const dates = [];
+        for (let i = 0; i < days; i++) {
+            const d = new Date(today);
+            d.setDate(d.getDate() - i);
+            dates.push(d.toISOString().split('T')[0]);
+        }
+
+        // Fetch semua document (parallel)
+        const docs = await Promise.all(
+            dates.map(date => db.collection('firestore_usage').doc(date).get())
+        );
+
+        const data = docs.map((doc, i) => ({
+            date: dates[i],
+            reads: doc.exists ? (doc.data().reads || 0) : 0,
+            writes: doc.exists ? (doc.data().writes || 0) : 0,
+            deletes: doc.exists ? (doc.data().deletes || 0) : 0,
+            endpoints: doc.exists ? (doc.data().endpoints || {}) : {}
+        })).reverse();
+
+        // Aggregate totals
+        const totals = data.reduce((acc, day) => ({
+            reads: acc.reads + day.reads,
+            writes: acc.writes + day.writes,
+            deletes: acc.deletes + day.deletes
+        }), { reads: 0, writes: 0, deletes: 0 });
+
+        // Aggregate endpoints (top)
+        const endpointTotals = {};
+        data.forEach(day => {
+            Object.entries(day.endpoints).forEach(([ep, counts]) => {
+                if (!endpointTotals[ep]) {
+                    endpointTotals[ep] = { reads: 0, writes: 0, deletes: 0 };
+                }
+                endpointTotals[ep].reads += counts.reads || 0;
+                endpointTotals[ep].writes += counts.writes || 0;
+                endpointTotals[ep].deletes += counts.deletes || 0;
+            });
+        });
+
+        // Sort by total operations
+        const topEndpoints = Object.entries(endpointTotals)
+            .map(([endpoint, counts]) => ({
+                endpoint,
+                ...counts,
+                total: counts.reads + counts.writes + counts.deletes
+            }))
+            .sort((a, b) => b.total - a.total)
+            .slice(0, 15);
+
+        // Cost estimation — baca dari Firestore config (system/firestore_pricing)
+        const pricingDoc = await db.collection('system').doc('firestore_pricing').get();
+        const pricing = pricingDoc.exists ? pricingDoc.data() : {};
+        
+        const FREE_READS_PER_DAY = pricing.free_reads_per_day || 50000;
+        const FREE_WRITES_PER_DAY = pricing.free_writes_per_day || 20000;
+        const FREE_DELETES_PER_DAY = pricing.free_deletes_per_day || 20000;
+        const PRICE_READS = pricing.price_per_100k_reads_usd || 0.06;
+        const PRICE_WRITES = pricing.price_per_100k_writes_usd || 0.18;
+        const PRICE_DELETES = pricing.price_per_100k_deletes_usd || 0.02;
+        const USD_TO_IDR = pricing.usd_to_idr || 16000;
+        
+        const freeTier = {
+            reads: days * FREE_READS_PER_DAY,
+            writes: days * FREE_WRITES_PER_DAY,
+            deletes: days * FREE_DELETES_PER_DAY,
+            source: pricing.source || 'default',
+            updated_at: pricing.updated_at || null
+        };
+
+        const cost = {
+            reads: Math.max(0, (totals.reads - freeTier.reads) / 100000 * PRICE_READS),
+            writes: Math.max(0, (totals.writes - freeTier.writes) / 100000 * PRICE_WRITES),
+            deletes: Math.max(0, (totals.deletes - freeTier.deletes) / 100000 * PRICE_DELETES)
+        };
+        cost.total = cost.reads + cost.writes + cost.deletes;
+        cost.idr = cost.total * USD_TO_IDR;
+        cost.exchange_rate = USD_TO_IDR;
+        cost.pricing_source = pricing.source || 'hardcoded_fallback';
+
+        // Real-time buffer (dari memory, belum di-flush)
+        let liveBuffer = { reads: 0, writes: 0, deletes: 0 };
+        try {
+            const { buffer } = require('../middleware/usageTracker');
+            liveBuffer = {
+                reads: buffer.reads || 0,
+                writes: buffer.writes || 0,
+                deletes: buffer.deletes || 0
+            };
+        } catch (e) {
+            // skip
+        }
+
+        res.json({
+            success: true,
+            data,
+            totals,
+            topEndpoints,
+            freeTier,
+            cost,
+            liveBuffer,
+            days
+        });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
+});
+
 module.exports = router;
