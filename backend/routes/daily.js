@@ -427,7 +427,43 @@ router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, re
             });
         }
 
-        // 3. Cek transactionId unik (anti-replay)
+        // 3. VERIFIKASI SSV AdMob (KRITIS — anti-bypass AdGuard)
+        // Cek apakah transaksi sudah terverifikasi via AdMob SSV callback
+        const ssvRef = db.collection('admob_ssv_txns').doc(transactionId);
+        let ssvDoc = await ssvRef.get();
+        
+        // Retry 3x dengan delay 2 detik (SSV callback mungkin delay)
+        let ssvRetries = 0;
+        while (!ssvDoc.exists && ssvRetries < 3) {
+            console.log(`[SSV] Retry ${ssvRetries + 1}/3 untuk txn:`, transactionId);
+            await new Promise(r => setTimeout(r, 2000));
+            ssvDoc = await ssvRef.get();
+            ssvRetries++;
+        }
+        
+        if (!ssvDoc.exists) {
+            console.warn('[SSV] ❌ Txn tidak terverifikasi:', transactionId, '| user:', uid);
+            return res.status(400).json({
+                success: false,
+                code: 'AD_NOT_VERIFIED',
+                message: 'Iklan belum terverifikasi. Tonton iklan sampai selesai.'
+            });
+        }
+        
+        const ssvData = ssvDoc.data();
+        
+        // Pastikan SSV dari user yang benar
+        if (ssvData.userId !== uid) {
+            console.warn('[SSV] ❌ User mismatch. txn user:', ssvData.userId, '| req user:', uid);
+            return res.status(403).json({
+                success: false,
+                message: 'Verifikasi gagal.'
+            });
+        }
+        
+        console.log('[SSV] ✅ Verified:', transactionId, '| user:', uid);
+
+        // 4. Cek transactionId unik (anti-replay)
         const txRef = db.collection('ad_transactions').doc(transactionId);
         const txDoc = await txRef.get();
         if (txDoc.exists) {
@@ -437,7 +473,10 @@ router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, re
             });
         }
 
-        // 4. Hitung poin
+        // 5. Hapus SSV txn (anti-replay — tidak bisa dipakai 2x)
+        await ssvRef.delete();
+
+        // 6. Hitung poin
         const isWeekendDay = isWeekend(today);
         let points = isWeekendDay ? config.weekendPoints : config.weekdayPoints;
 
@@ -447,13 +486,13 @@ router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, re
             points = config.specialDays[mmdd];
         }
 
-        // 5. Hitung streak
+        // 7. Hitung streak
         const yesterday = daysAgo(1);
         let streak = (userData.lastCheckInDate === yesterday)
             ? (userData.checkInStreak || 0) + 1
             : 1;
 
-        // 6. Simpan transaksi iklan
+        // 8. Simpan transaksi iklan
         await txRef.set({
             userId: uid,
             type: 'CHECK_IN_AD',
@@ -462,7 +501,7 @@ router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, re
             timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
 
-        // 7. Simpan check-in
+        // 9. Simpan check-in
         const checkinRef = userRef.collection('daily_checkins').doc(today);
         await checkinRef.set({
             date: today,
@@ -474,7 +513,7 @@ router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, re
             adVendor: vendor
         });
 
-        // 8. Update user
+        // 10. Update user
         await userRef.update({
             lastCheckInDate: today,
             checkInStreak: streak,
@@ -482,7 +521,7 @@ router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, re
             monthCheckInCount: admin.firestore.FieldValue.increment(1)
         });
 
-        // 9. Audit log
+        // 11. Audit log
         await db.collection('audit_logs').add({
             userId: uid,
             action: 'DAILY_CHECK_IN_WITH_AD',
