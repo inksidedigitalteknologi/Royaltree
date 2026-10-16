@@ -21,7 +21,8 @@
     { href: 'broadcast.html',   icon: 'send',              label: 'Broadcast' },
     { href: 'schedule.html',    icon: 'clock-history',     label: 'Scheduled Notif' },
     { href: 'audit-logs.html',  icon: 'journal-text',      label: 'Audit Logs' },
-    { href: 'config.html',      icon: 'gear',              label: 'Config' }
+    { href: 'config.html',      icon: 'gear',              label: 'Config' },
+    { href: 'usage.html',       icon: 'database-check',    label: 'Firestore Usage', badge: 'NEW' }
   ];
 
   function renderSidebar() {

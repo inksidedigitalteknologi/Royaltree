@@ -31,6 +31,7 @@ const { globalLimiter, authLimiter, sensitiveLimiter, miningLimiter, adsLimiter,
 const sweepstakesJob = require('./jobs/sweepstakesJob');
 const { releasePendingCommission } = require('./services/affiliate');
 const { verifyFirebaseToken, verifyAuthAndBanCheck } = require('./middleware/firebaseAuth');
+const { usageTracker } = require('./middleware/usageTracker');
 const anomaly = require('./services/anomaly');
 
 const app = express();
@@ -38,6 +39,9 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// Track Firestore reads/writes per endpoint (flush ke Firestore tiap 1 menit)
+app.use(usageTracker);
 // ============================================================
 // ROUTES
 // ============================================================
@@ -1215,12 +1219,42 @@ setInterval(async () => {
 
                 logger.info(`[SCHEDULED] Sent "${data.title}" to ${count} users (${fcmSent} FCM)`);
             } catch (e) {
-                logger.error('[SCHEDULED] Send error:', e.message);
-                await doc.ref.update({ status: 'FAILED', error: e.message, sentAt: Date.now() });
+                // Enhanced error logging
+                const errMsg = e?.message || e?.toString() || JSON.stringify(e) || 'Unknown error';
+                logger.error('[SCHEDULED] Send error:', {
+                    message: errMsg,
+                    name: e?.name,
+                    code: e?.code,
+                    docId: doc?.id
+                });
+                try {
+                    await doc.ref.update({ 
+                        status: 'FAILED', 
+                        error: errMsg, 
+                        sentAt: Date.now() 
+                    });
+                } catch (updateErr) {
+                    logger.error('[SCHEDULED] Failed to update status:', {
+                        message: updateErr?.message || 'Unknown',
+                        docId: doc?.id
+                    });
+                }
             }
         }
     } catch (err) {
-        logger.error('[SCHEDULED-CRON] Error:', err.message);
+        // Enhanced cron-level error logging
+        const cronErrMsg = err?.message 
+            || err?.toString() 
+            || err?.code 
+            || JSON.stringify(err)
+            || 'Unknown cron error';
+        
+        logger.error('[SCHEDULED-CRON] Error:', {
+            message: cronErrMsg,
+            name: err?.name,
+            code: err?.code,
+            stack: err?.stack?.split('\n').slice(0, 3).join(' | ')
+        });
     }
 }, 60 * 1000);
 
