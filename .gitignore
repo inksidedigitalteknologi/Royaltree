@@ -23,8 +23,6 @@ Thumbs.db
 
 # Firebase & secrets
 app/google-services.json
-backend/service-account.json
-backend/.env
 backend/node_modules/
 
 # Backup files (semua variasi)
@@ -44,3 +42,7 @@ backend/logs/
 
 # Backup folder (bukan resource)
 drawable_backup/
+
+# Env backup files (jangan commit)
+*.env.bak
+.env.bak
