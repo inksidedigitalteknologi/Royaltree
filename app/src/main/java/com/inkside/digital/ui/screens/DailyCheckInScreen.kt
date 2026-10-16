@@ -53,6 +53,7 @@ import com.inkside.digital.ui.components.CalendarDayItem
 import com.inkside.digital.ui.components.DayStatus
 import com.inkside.digital.ui.components.RecoveryDialog
 import com.inkside.digital.data.ads.AdMobProvider
+import com.inkside.digital.data.ads.AdManager
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.GoldVip
@@ -319,6 +320,12 @@ fun DailyCheckInScreen(
                                         kotlinx.coroutines.delay(2000)
                                         val txId = java.util.UUID.randomUUID().toString()
                                         onWatchAdAndClaim(txId, "admob")
+                                        
+                                        // ═══════════════════════════════════════════
+                                        // Show interstitial setelah check-in (kalau eligible)
+                                        // Strategy: max 3x/hari, cooldown 5 menit, min 3 action
+                                        // ═══════════════════════════════════════════
+                                        AdManager.showInterstitialForAction(activity, "checkin")
                                     }
                                 },
                                 onAdDismissed = {},

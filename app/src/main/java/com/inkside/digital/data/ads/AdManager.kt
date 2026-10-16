@@ -102,6 +102,57 @@ object AdManager {
         )
     }
 
+    /**
+     * Show interstitial setelah user action (check-in, game, mission).
+     *
+     * Strategy:
+     * - Cek cooldown + daily limit + action count
+     * - Load kalau belum siap
+     * - Show kalau eligible, auto-skip kalau tidak
+     */
+    fun showInterstitialForAction(
+        activity: Activity,
+        actionName: String = "action",
+        onComplete: () -> Unit = {}
+    ) {
+        val context = activity.applicationContext
+
+        // Record action (buat hitung min action)
+        AdStrategy.recordAction(context)
+
+        // Cek boleh tampil?
+        if (!AdStrategy.canShowInterstitial(context)) {
+            Log.d(TAG, "Interstitial skip — strategy not eligible ($actionName)")
+            onComplete()
+            return
+        }
+
+        Log.d(TAG, "Interstitial eligible for $actionName")
+
+        CoroutineScope(Dispatchers.Main).launch {
+            val result = AdMobProvider.loadInterstitial(context)
+
+            if (result.isFailure) {
+                Log.w(TAG, "Interstitial load failed: ${result.exceptionOrNull()?.message}")
+                onComplete()
+                return@launch
+            }
+
+            AdMobProvider.showInterstitial(
+                activity = activity,
+                onDismissed = {
+                    AdStrategy.recordInterstitial(context)
+                    Log.d(TAG, "Interstitial shown & recorded ($actionName)")
+                    onComplete()
+                },
+                onFailed = { err ->
+                    Log.e(TAG, "Interstitial show failed: $err")
+                    onComplete()
+                }
+            )
+        }
+    }
+
     fun init(context: Context) {
         AdMobProvider.init(context)
     }

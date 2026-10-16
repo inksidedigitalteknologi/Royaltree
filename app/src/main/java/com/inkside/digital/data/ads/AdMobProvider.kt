@@ -11,6 +11,8 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.AdListener
@@ -48,6 +50,7 @@ object AdMobProvider {
     private const val TAG = "AdMobProvider"
 
     private var rewardedAd: RewardedAd? = null
+    private var interstitialAd: InterstitialAd? = null
     private var isInitialized = false
 
     // State: null = loading, true = ready, false = no ad
@@ -178,6 +181,71 @@ object AdMobProvider {
      * Cek apakah rewarded ad siap ditampilkan.
      */
     fun isAdReady(): Boolean = rewardedAd != null
+
+    // ═══════════════════════════════════════════════════════════
+    // INTERSTITIAL AD (Full screen, auto-close setelah 5s)
+    // ═══════════════════════════════════════════════════════════
+
+    suspend fun loadInterstitial(context: Context): Result<Unit> {
+        return suspendCancellableCoroutine { continuation ->
+            val adRequest = AdRequest.Builder().build()
+            InterstitialAd.load(
+                context,
+                AdConfig.INTERSTITIAL_AD_UNIT_ID,
+                adRequest,
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdLoaded(ad: InterstitialAd) {
+                        Log.d(TAG, "Interstitial loaded")
+                        interstitialAd = ad
+                        if (continuation.isActive) continuation.resume(Result.success(Unit))
+                    }
+
+                    override fun onAdFailedToLoad(error: LoadAdError) {
+                        Log.e(TAG, "Interstitial failed: code=${error.code}, msg=${error.message}")
+                        interstitialAd = null
+                        if (continuation.isActive) {
+                            continuation.resume(Result.failure(Exception(error.message)))
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+    fun showInterstitial(
+        activity: Activity,
+        onDismissed: () -> Unit = {},
+        onFailed: (String) -> Unit = {}
+    ) {
+        val ad = interstitialAd
+        if (ad == null) {
+            Log.e(TAG, "Interstitial belum di-load")
+            onFailed("Interstitial belum siap")
+            return
+        }
+
+        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+            override fun onAdDismissedFullScreenContent() {
+                Log.d(TAG, "Interstitial dismissed")
+                interstitialAd = null
+                onDismissed()
+            }
+
+            override fun onAdFailedToShowFullScreenContent(error: AdError) {
+                Log.e(TAG, "Interstitial show failed: code=${error.code}, msg=${error.message}")
+                interstitialAd = null
+                onFailed(error.message)
+            }
+
+            override fun onAdShowedFullScreenContent() {
+                Log.d(TAG, "Interstitial showed")
+            }
+        }
+
+        ad.show(activity)
+    }
+
+    fun isInterstitialReady(): Boolean = interstitialAd != null
 
     /**
      * Reset ad (setelah ditampilkan).
