@@ -104,7 +104,11 @@ fun GlobalChatScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    listOf(SurfaceDeep, SurfaceDark, SurfaceDeep)
+                    listOf(
+                        SurfaceDeep.copy(alpha = 0.7f),
+                        SurfaceDark.copy(alpha = 0.7f),
+                        SurfaceDeep.copy(alpha = 0.7f)
+                    )
                 )
             )
             .imePadding()

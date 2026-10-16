@@ -549,7 +549,7 @@ fun GameRoomScreenContent(
                                 .rotate(rotateAngle * 0.1f)
                                 .scale(pulseScale)
                                 .clip(RoundedCornerShape(24.dp))
-                                .background(Color(0xFF0A0E1A))
+                                .background(Color(0xFF0A0E1A).copy(alpha = 0.7f))
                                 .border(2.dp, rarityColor, RoundedCornerShape(24.dp)),
                             contentAlignment = Alignment.Center
                         ) {
