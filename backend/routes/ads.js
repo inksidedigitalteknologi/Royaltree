@@ -216,16 +216,22 @@ router.post('/reward', verifyFirebaseToken, validate(adRewardSchema), checkFraud
     }
 });
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // AdMob SSV Public Keys
-// Ambil dari: AdMob Console → Apps → Royaltree → Ad Units
-//             → Rewarded → Server-Side Verification
-// Format: { "key_id": "public_key_base64" }
-// ============================================================
-const ADMOB_SSV_KEYS = {
-    // ⚠️ TODO: ganti dengan key dari AdMob Console
-    // '3335': 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...',
-};
+//
+// PRODUCTION: set ADMOB_SSV_KEY_ID + ADMOB_SSV_PUBLIC_KEY di .env
+// TESTING: biarkan kosong → verifikasi signature di-skip (dev mode)
+// ═══════════════════════════════════════════════════════════
+const ADMOB_SSV_KEYS = {};
+
+// Load dari environment variable (kalau ada)
+if (process.env.ADMOB_SSV_KEY_ID && process.env.ADMOB_SSV_PUBLIC_KEY) {
+    ADMOB_SSV_KEYS[process.env.ADMOB_SSV_KEY_ID] = process.env.ADMOB_SSV_PUBLIC_KEY;
+    console.log('[SSV] ✅ Public key loaded:', process.env.ADMOB_SSV_KEY_ID);
+} else {
+    console.warn('[SSV] ⚠️  TESTING MODE — SSV verification disabled (no public key in .env)');
+    console.warn('[SSV] ⚠️  Set ADMOB_SSV_KEY_ID + ADMOB_SSV_PUBLIC_KEY untuk production');
+}
 
 // ============================================================
 // Helper: Verifikasi signature AdMob SSV
@@ -233,17 +239,26 @@ const ADMOB_SSV_KEYS = {
 // ============================================================
 function verifyAdMobSignature({ key_id, signature, transaction_id, custom_data, reward_amount }) {
     const publicKey = ADMOB_SSV_KEYS[key_id];
+    
+    // === TESTING MODE: skip verifikasi signature ===
+    if (Object.keys(ADMOB_SSV_KEYS).length === 0) {
+        console.warn('[SSV] ⚠️  TESTING: skipping signature verification for txn:', transaction_id);
+        return true;  // ← Terima semua (HANYA untuk testing!)
+    }
+    
+    // === PRODUCTION MODE: verifikasi ===
     if (!publicKey) {
-        console.error('[SSV] Unknown key_id:', key_id);
+        console.error('[SSV] ❌ Unknown key_id:', key_id);
         return false;
     }
 
     try {
-        // Format message: transaction_id\ncustom_data\nreward_amount
         const message = `${transaction_id}\n${custom_data}\n${reward_amount}`;
         const verifier = crypto.createVerify('SHA256');
         verifier.update(message);
-        return verifier.verify(publicKey, signature, 'base64');
+        const isValid = verifier.verify(publicKey, signature, 'base64');
+        console.log('[SSV] Verification result:', isValid ? '✅ valid' : '❌ invalid');
+        return isValid;
     } catch (e) {
         console.error('[SSV] Verify error:', e.message);
         return false;
