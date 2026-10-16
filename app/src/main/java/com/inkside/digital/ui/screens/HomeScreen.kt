@@ -148,19 +148,13 @@ fun HomeScreen(
             FramedCard(
                 frameRes = R.drawable.card_frame_balance,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                aspectRatioOverride = 1.4629f,
-                paddingPercentHorizontal = 0.15f,
-                paddingPercentVertical = 0.22f
+                paddingPercentHorizontal = 0.12f,
+                paddingPercentVertical = 0.26f
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            Brush.linearGradient(
-                                colors = listOf(Color(0xFF1E3A8A), Color(0xFF0F172A))
-                            )
-                        )
-                        .padding(20.dp)
+                        .padding(horizontal = 12.dp, vertical = 16.dp)
                 ) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),

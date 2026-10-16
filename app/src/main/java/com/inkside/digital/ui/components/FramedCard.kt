@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
  * FramedCard — Card dengan PNG frame overlay.
  *
  * Auto-detect aspect ratio dari PNG intrinsic size.
- * Content padding guna percent (default 18%) supaya konsisten.
+ * Content padding guna percent (default 22%) supaya konsisten.
  *
  * @param frameRes PNG frame dari res/drawable
  * @param paddingPercent padding content percentage (0.18 = 18%)
@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 fun FramedCard(
     frameRes: Int,
     modifier: Modifier = Modifier,
-    paddingPercent: Float = 0.18f,
+    paddingPercent: Float = 0.22f,  // default lebih aman untuk frame dengan border tebal
     paddingPercentHorizontal: Float? = null,
     paddingPercentVertical: Float? = null,
     aspectRatioOverride: Float? = null,
