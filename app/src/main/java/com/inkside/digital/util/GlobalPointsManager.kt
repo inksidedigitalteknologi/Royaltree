@@ -21,7 +21,11 @@ object GlobalPointsManager {
     const val RATE_USD_TO_USDT = 1.00
 
     // Daily Login Rewards by Streak Day (1 to 7)
-    val DAILY_STREAK_REWARDS = listOf(15, 25, 35, 50, 75, 100, 150)
+    // Daily Login Rewards — Konservatif 95% margin
+    // H-1-6: 0.05 RTP, H-7: 0.10 RTP (bonus streak)
+    // Total siklus: 0.40 RTP | Per bulan (4 siklus): 1.60 RTP
+    // Unit economics: 1 view iklan = $0.01, reward 0.0005 → margin 95%
+    val DAILY_STREAK_REWARDS = listOf(0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.10)
 
     // RTP Transfer Rules & Anti-Fraud Security Constants
     const val MIN_TRANSFER_RTP = 20
@@ -62,7 +66,7 @@ object GlobalPointsManager {
         return input.trim().replace(Regex("[^a-zA-Z0-9_@.-]"), "")
     }
 
-    fun getLoginRewardForStreak(streakDay: Int): Int {
+    fun getLoginRewardForStreak(streakDay: Int): Double {
         val index = (streakDay - 1).coerceIn(0, DAILY_STREAK_REWARDS.size - 1)
         return DAILY_STREAK_REWARDS[index]
     }

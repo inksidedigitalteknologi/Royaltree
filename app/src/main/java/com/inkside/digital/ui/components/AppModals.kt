@@ -2572,7 +2572,7 @@ fun DailyCheckInModal(
                     fontSize = 14.sp
                 )
                 Text(
-                    text = "Bangun streak 7 hari berturut-turut untuk meraih Mega Jackpot +150 RTP!",
+                    text = "Bangun streak 7 hari berturut-turut untuk meraih Mega Jackpot +${GlobalPointsManager.formatRtp(GlobalPointsManager.getLoginRewardForStreak(7))} RTP!",
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center,

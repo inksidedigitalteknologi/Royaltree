@@ -715,7 +715,7 @@ class AffiliateRepository(private val dao: AppDao) {
         dao.deleteAllNotifications()
     }
 
-    suspend fun performDailyCheckIn(): Result<Pair<Int, Int>> = withContext(Dispatchers.IO) {
+    suspend fun performDailyCheckIn(): Result<Pair<Double, Int>> = withContext(Dispatchers.IO) {
         val user = dao.getUserSync(_activeUserId.value) ?: return@withContext Result.failure(Exception("User tidak ditemukan"))
         val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
 
