@@ -1169,19 +1169,19 @@ fun MainAffiliateAppContent(
                 }
 
                 AppScreen.INVEST -> {
-                    val coupons by affiliateViewModel.investmentCoupons.collectAsState()
+                    val coupons by viewModel.investmentCoupons.collectAsState()
                     InvestmentCouponScreen(
                         currentLanguage = currentLanguage,
                         user = user,
                         coupons = coupons,
                         onBuyCoupon = { coupon ->
-                            affiliateViewModel.showBuyCouponModal.value = coupon
+                            viewModel.showBuyCouponModal.value = coupon
                         },
                         onListCoupon = { coupon ->
-                            affiliateViewModel.showListCouponModal.value = coupon
+                            viewModel.showListCouponModal.value = coupon
                         },
                         onClaimYield = { coupon ->
-                            affiliateViewModel.claimYield(coupon)
+                            viewModel.claimYield(coupon)
                         }
                     )
                 }
