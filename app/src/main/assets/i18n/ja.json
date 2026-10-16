@@ -715,6 +715,8 @@
     "splash_tagline": "アフィリエイト報酬プラットフォーム",
     "loading_growing_tree": "木を育てています...",
     "login_google_only_info": "Googleアカウントのみでサインイン。パスワードは不要です。",
-    "login_terms": "サインインすると、利用規約に同意したことになります。"
+    "login_terms": "サインインすると、利用規約に同意したことになります。",
+    "splash_presented_by": "提供",
+    "splash_in_collaboration": "コラボレーション"
   }
 }
