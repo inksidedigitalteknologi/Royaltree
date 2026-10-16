@@ -1049,7 +1049,7 @@ fun ScannerViewFinder(
         ) {
             CameraScannerView(
                 modifier = Modifier.fillMaxSize(),
-                currentLanguage = currentLanguage,
+                currentLanguage = AppThemePreferences.currentLanguage,
                 onQrDetected = onScanDetected
             )
         }
