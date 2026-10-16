@@ -2484,6 +2484,7 @@ fun LanguageModal(
                             .background(if (isSel) EmeraldPrimary.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceVariant)
                             .border(1.dp, if (isSel) EmeraldPrimary else Color.Transparent, RoundedCornerShape(10.dp))
                             .clickable {
+                                android.util.Log.e("LANG_DEBUG", "🔵 LanguageModal clickable: ${lang.code}")
                                 onSelectLanguage(lang)
                                 onDismiss()
                             }

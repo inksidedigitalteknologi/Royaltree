@@ -1408,7 +1408,9 @@ fun MainAffiliateAppContent(
             currentLanguage = currentLanguage,
             onDismiss = { showLanguageModal = false },
             onSelectLanguage = { lang ->
+                android.util.Log.e("LANG_DEBUG", "🔵 onSelectLanguage: ${lang.code}")
                 onLanguageChange(lang)
+                android.util.Log.e("LANG_DEBUG", "🔵 onLanguageChange selesai")
             }
         )
     }
