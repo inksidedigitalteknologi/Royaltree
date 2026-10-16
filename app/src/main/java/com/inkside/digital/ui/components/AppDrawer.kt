@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.TaskAlt
+import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
@@ -141,6 +142,12 @@ fun AppDrawer(
                 label = LanguageManager.translate("nav_withdraw", currentLanguage, "Penarikan"),
                 selected = currentScreen == AppScreen.WITHDRAW,
                 onClick = { onNavigate(AppScreen.WITHDRAW); onCloseDrawer() }
+            )
+            DrawerItem(
+                icon = Icons.Default.TrendingUp,
+                label = LanguageManager.translate("nav_invest", currentLanguage, "Investasi Kupon"),
+                selected = currentScreen == AppScreen.INVEST,
+                onClick = { onNavigate(AppScreen.INVEST); onCloseDrawer() }
             )
             DrawerItem(
                 icon = Icons.Default.History,

@@ -1168,9 +1168,27 @@ fun MainAffiliateAppContent(
                     )
                 }
 
+                AppScreen.INVEST -> {
+                    val coupons by affiliateViewModel.investmentCoupons.collectAsState()
+                    InvestmentCouponScreen(
+                        currentLanguage = currentLanguage,
+                        user = user,
+                        coupons = coupons,
+                        onBuyCoupon = { coupon ->
+                            affiliateViewModel.showBuyCouponModal.value = coupon
+                        },
+                        onListCoupon = { coupon ->
+                            affiliateViewModel.showListCouponModal.value = coupon
+                        },
+                        onClaimYield = { coupon ->
+                            affiliateViewModel.claimYield(coupon)
+                        }
+                    )
+                }
+
                 else -> {
                     // Screen yang dinonaktifkan (tidak ada backend support)
-                    // STEP_COUNTER, APP_OFFERS, CAMPAIGNS, ANALYTICS, INVEST
+                    // STEP_COUNTER, APP_OFFERS, CAMPAIGNS, ANALYTICS
                 }
             }  // close when (currentScreen)
             }  // close AnimatedBackground
