@@ -332,7 +332,10 @@ fun RootNav(
 
         AuthScreen.SPLASH -> {
             val loadingState by affiliateViewModel.loadingState.collectAsState()
-            LoadingScreen(loadingState = loadingState)
+            LoadingScreen(
+                loadingState = loadingState,
+                currentLanguage = currentLanguage
+            )
         }
 
         AuthScreen.LOGIN -> {

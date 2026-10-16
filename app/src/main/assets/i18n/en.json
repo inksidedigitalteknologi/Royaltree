@@ -711,6 +711,8 @@
     "vm_system_settings_saved": "System settings saved & synced successfully!",
     "vm_new_pin_prefix": "New user pin added in ",
     "vm_new_user": "New User",
-    "faq_last_update": "Last update: October 15, 2026"
+    "faq_last_update": "Last update: October 15, 2026",
+    "splash_tagline": "Affiliate Rewarding Platform",
+    "loading_growing_tree": "Growing your tree..."
   }
 }
