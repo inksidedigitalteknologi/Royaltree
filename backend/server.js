@@ -32,6 +32,7 @@ const sweepstakesJob = require('./jobs/sweepstakesJob');
 const { releasePendingCommission } = require('./services/affiliate');
 const { verifyFirebaseToken, verifyAuthAndBanCheck } = require('./middleware/firebaseAuth');
 const { usageTracker } = require('./middleware/usageTracker');
+const exchangeRate = require('./services/exchangeRate');
 const anomaly = require('./services/anomaly');
 
 const app = express();
@@ -42,6 +43,10 @@ app.use(express.json());
 
 // Track Firestore reads/writes per endpoint (flush ke Firestore tiap 1 menit)
 app.use(usageTracker);
+
+// Auto-sync kurs USD → IDR tiap 1 jam
+// Yahoo Finance (primary) → open.er-api.com (fallback)
+exchangeRate.startAutoSync();
 // ============================================================
 // ROUTES
 // ============================================================
