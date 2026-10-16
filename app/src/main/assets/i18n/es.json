@@ -713,6 +713,8 @@
     "vm_new_user": "Usuario Nuevo",
     "faq_last_update": "Última actualización: 15 de octubre de 2026",
     "splash_tagline": "Plataforma de Recompensas de Afiliados",
-    "loading_growing_tree": "Cultivando tu árbol..."
+    "loading_growing_tree": "Cultivando tu árbol...",
+    "login_google_only_info": "Inicia sesión solo con una cuenta de Google. No se necesita contraseña.",
+    "login_terms": "Al iniciar sesión, aceptas nuestros Términos y Condiciones."
   }
 }

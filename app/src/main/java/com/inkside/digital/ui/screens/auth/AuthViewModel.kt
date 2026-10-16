@@ -19,10 +19,7 @@ enum class AuthScreen {
     ONBOARDING,
     SPLASH,
     LOGIN,
-    REGISTER,
-    VERIFY_EMAIL,
     PROFILE_SETUP,
-    FORGOT_PASSWORD,
     HOME
 }
 
@@ -74,12 +71,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
         _currentUser.value = user
 
-        // Cek email verified
-        if (!user.isEmailVerified) {
-            _currentScreen.value = AuthScreen.VERIFY_EMAIL
-            return
-        }
-
+        // Google Sign-In: email otomatis verified, langsung sync ke backend
         // Sync ke backend & cek apakah profil sudah ada
         viewModelScope.launch {
             _isLoading.value = true
@@ -103,28 +95,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     // ============ LOGIN ============
 
-    fun loginWithEmail(email: String, password: String) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _errorMessage.value = null
-
-            val result = authManager.loginWithEmail(email, password)
-            if (result.isSuccess) {
-                val user = result.getOrThrow()
-                _currentUser.value = user
-
-                if (!user.isEmailVerified) {
-                    _currentScreen.value = AuthScreen.VERIFY_EMAIL
-                } else {
-                    syncUserAndNavigate()
-                }
-            } else {
-                _errorMessage.value = result.exceptionOrNull()?.message ?: "Login gagal"
-            }
-            _isLoading.value = false
-        }
-    }
-
     fun loginWithGoogle(idToken: String) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -144,64 +114,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // ============ REGISTER ============
-
-    fun registerWithEmail(email: String, password: String, displayName: String) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _errorMessage.value = null
-
-            val result = authManager.registerWithEmail(email, password, displayName)
-            if (result.isSuccess) {
-                val user = result.getOrThrow()
-                _currentUser.value = user
-                _successMessage.value = "Registrasi berhasil. Cek email untuk verifikasi."
-                _currentScreen.value = AuthScreen.VERIFY_EMAIL
-            } else {
-                _errorMessage.value = result.exceptionOrNull()?.message ?: "Registrasi gagal"
-            }
-            _isLoading.value = false
-        }
-    }
-
     // ============ VERIFIKASI EMAIL ============
-
-    fun resendVerificationEmail() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _errorMessage.value = null
-
-            val result = authManager.resendVerificationEmail()
-            if (result.isSuccess) {
-                _successMessage.value = "Email verifikasi terkirim ulang."
-            } else {
-                _errorMessage.value = result.exceptionOrNull()?.message ?: "Gagal kirim email"
-            }
-            _isLoading.value = false
-        }
-    }
-
-    fun checkEmailVerified() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _errorMessage.value = null
-
-            val result = authManager.reloadUser()
-            if (result.isSuccess) {
-                val user = result.getOrThrow()
-                _currentUser.value = user
-
-                if (user.isEmailVerified) {
-                    syncUserAndNavigate()
-                } else {
-                    _errorMessage.value = "Email belum diverifikasi. Cek inbox kamu."
-                }
-            } else {
-                _errorMessage.value = "Gagal cek status verifikasi."
-            }
-            _isLoading.value = false
-        }
-    }
 
     // ============ PROFILE SETUP ============
 
@@ -287,22 +200,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     // ============ NAVIGASI ============
 
-    fun navigateToRegister() {
-        _errorMessage.value = null
-        _successMessage.value = null
-        _currentScreen.value = AuthScreen.REGISTER
-    }
-
     fun navigateToLogin() {
         _errorMessage.value = null
         _successMessage.value = null
         _currentScreen.value = AuthScreen.LOGIN
-    }
-
-    fun navigateToForgotPassword() {
-        _errorMessage.value = null
-        _successMessage.value = null
-        _currentScreen.value = AuthScreen.FORGOT_PASSWORD
     }
 
     /**
@@ -316,19 +217,4 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // ============ RESET PASSWORD ============
-
-    fun resetPassword(email: String) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _errorMessage.value = null
-
-            val result = authManager.sendPasswordResetEmail(email)
-            if (result.isSuccess) {
-                _successMessage.value = "Link reset password telah dikirim ke email kamu."
-            } else {
-                _errorMessage.value = result.exceptionOrNull()?.message ?: "Gagal kirim email reset"
-            }
-            _isLoading.value = false
-        }
-    }
 }

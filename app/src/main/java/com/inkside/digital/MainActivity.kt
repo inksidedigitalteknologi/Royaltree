@@ -96,13 +96,10 @@ import com.inkside.digital.ui.screens.TransferSimpleScreen
 import com.inkside.digital.ui.theme.MyApplicationTheme
 import com.inkside.digital.ui.screens.auth.AuthScreen
 import com.inkside.digital.ui.screens.auth.AuthViewModel
-import com.inkside.digital.ui.screens.auth.ForgotPasswordScreen
 import com.inkside.digital.ui.screens.auth.LoginScreen
 import com.inkside.digital.ui.screens.auth.ProfileSetupScreen
-import com.inkside.digital.ui.screens.auth.RegisterScreen
 import com.inkside.digital.ui.screens.auth.SplashScreen
 import com.inkside.digital.ui.screens.LoadingScreen
-import com.inkside.digital.ui.screens.auth.VerifyEmailScreen
 import com.inkside.digital.viewmodel.AffiliateViewModel
 import com.inkside.digital.viewmodel.AppScreen
 import com.inkside.digital.util.AnalyticsHelper
@@ -346,64 +343,12 @@ fun RootNav(
                 onLanguageChange = { lang ->
                     affiliateViewModel.setLanguage(lang)
                 },
-                onLoginEmail = { email, password ->
-                    authViewModel.loginWithEmail(email, password)
-                },
                 onLoginGoogle = { idToken ->
                     authViewModel.loginWithGoogle(idToken)
-                },
-                onNavigateRegister = {
-                    authViewModel.navigateToRegister()
-                },
-                onNavigateForgotPassword = {
-                    authViewModel.navigateToForgotPassword()
                 }
             )
         }
 
-        AuthScreen.REGISTER -> {
-            RegisterScreen(
-                isLoading = isLoading,
-                errorMessage = errorMessage,
-                successMessage = successMessage,
-                currentLanguage = currentLanguage,
-                onLanguageChange = { lang ->
-                    affiliateViewModel.setLanguage(lang)
-                },
-                onRegisterEmail = { email, password, name ->
-                    authViewModel.registerWithEmail(email, password, name)
-                },
-                onRegisterGoogle = { idToken ->
-                    authViewModel.loginWithGoogle(idToken)
-                },
-                onNavigateLogin = {
-                    authViewModel.navigateToLogin()
-                }
-            )
-        }
-
-        AuthScreen.FORGOT_PASSWORD -> {
-            ForgotPasswordScreen(
-                isLoading = isLoading,
-                errorMessage = errorMessage,
-                successMessage = successMessage,
-                currentLanguage = currentLanguage,
-                onSendReset = { email -> authViewModel.resetPassword(email) },
-                onNavigateBack = { authViewModel.navigateToLogin() }
-            )
-        }
-
-        AuthScreen.VERIFY_EMAIL -> {
-            VerifyEmailScreen(
-                email = currentUser?.email,
-                isLoading = isLoading,
-                errorMessage = errorMessage,
-                successMessage = successMessage,
-                onResendEmail = { authViewModel.resendVerificationEmail() },
-                onCheckVerified = { authViewModel.checkEmailVerified() },
-                onLogout = { authViewModel.logout() }
-            )
-        }
 
         AuthScreen.PROFILE_SETUP -> {
             ProfileSetupScreen(
