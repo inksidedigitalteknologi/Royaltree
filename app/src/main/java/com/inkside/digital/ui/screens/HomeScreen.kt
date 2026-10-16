@@ -149,8 +149,8 @@ fun HomeScreen(
                 frameRes = R.drawable.card_frame_balance,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                 aspectRatioOverride = 1.4629f,
-                paddingPercentHorizontal = 0.10f,
-                paddingPercentVertical = 0.16f
+                paddingPercentHorizontal = 0.15f,
+                paddingPercentVertical = 0.22f
             ) {
                 Box(
                     modifier = Modifier

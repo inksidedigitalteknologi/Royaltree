@@ -72,7 +72,7 @@ fun FramedCard(
             painter = painter,
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.FillBounds
         )
 
         // 2. Content (overlay atas frame)
