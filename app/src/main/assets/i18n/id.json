@@ -724,6 +724,7 @@
     "login_terms_title": "Syarat & Ketentuan",
     "login_terms_content": "Dengan menggunakan Royaltree, Anda menyetujui:\\n\\n1. Data yang Anda berikan (email, nama) digunakan untuk keperluan akun.\\n\\n2. Kami tidak menjual data Anda ke pihak ketiga.\\n\\n3. Anda dapat menghapus akun kapan saja melalui pengaturan.\\n\\n4. Reward RTP dapat berubah sesuai kebijakan.\\n\\n5. Konten iklan disediakan oleh AdMob (Google).\\n\\nDengan mencentang, Anda menyetujui pemrosesan data sesuai kebijakan privasi.",
     "login_privacy_title": "Kebijakan Privasi",
-    "login_privacy_link": "Kebijakan Privasi"
+    "login_privacy_link": "Kebijakan Privasi",
+    "login_marketing_optin": "Saya ingin menerima email promosi, update fitur, dan penawaran khusus"
   }
 }

@@ -724,6 +724,7 @@
     "login_terms_title": "Términos y Condiciones",
     "login_terms_content": "Al usar Royaltree, aceptas:\\n\\n1. Tus datos (correo, nombre) se usan para la cuenta.\\n\\n2. No vendemos tus datos a terceros.\\n\\n3. Puedes eliminar tu cuenta en cualquier momento.\\n\\n4. Las recompensas RTP pueden cambiar.\\n\\n5. El contenido publicitario es de AdMob (Google).\\n\\nAl marcar, aceptas el procesamiento de datos.",
     "login_privacy_title": "Política de Privacidad",
-    "login_privacy_link": "Política de Privacidad"
+    "login_privacy_link": "Política de Privacidad",
+    "login_marketing_optin": "Quiero recibir correos promocionales, actualizaciones y ofertas especiales"
   }
 }
