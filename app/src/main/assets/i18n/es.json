@@ -714,9 +714,9 @@
     "faq_last_update": "Última actualización: 15 de octubre de 2026",
     "splash_tagline": "Plataforma de Recompensas de Afiliados",
     "loading_growing_tree": "Cultivando tu árbol...",
-    "login_google_only_info": "Inicia sesión solo con una cuenta de Google. No se necesita contraseña.",
     "login_terms": "Al iniciar sesión, aceptas nuestros Términos y Condiciones.",
     "splash_presented_by": "Presentado por",
-    "splash_in_collaboration": "En colaboración con"
+    "splash_in_collaboration": "En colaboración con",
+    "login_loading": "Cargando..."
   }
 }
