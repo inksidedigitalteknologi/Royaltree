@@ -48,15 +48,15 @@ android {
 
   }
 
-  // ✅ ABI Split config
-  splits {
-    abi {
-      isEnable = true
-      reset()
-      include("arm64-v8a", "armeabi-v7a")
-      isUniversalApk = false
-    }
-  }
+  // ABI Split config (DISABLED untuk test)
+  // splits {
+  //   abi {
+  //     isEnable = true
+  //     reset()
+  //     include("arm64-v8a", "armeabi-v7a")
+  //     isUniversalApk = false
+  //   }
+  // }
 
   signingConfigs {
     create("release") {
@@ -76,7 +76,7 @@ android {
 
   buildTypes {
     release {
-      isCrunchPngs = true
+      isCrunchPngs = false
       isMinifyEnabled = true
       isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
