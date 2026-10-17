@@ -651,8 +651,8 @@ private fun DrawScope.drawCrescentMoon(
     drawCircle(
         brush = Brush.radialGradient(
             colors = listOf(
-                GoldAccent.copy(alpha = 0.18f * growth),
-                EmeraldLight.copy(alpha = 0.06f * growth),
+                RootGold.copy(alpha = 0.18f * growth),
+                TrunkLight.copy(alpha = 0.06f * growth),
                 Color.Transparent
             ),
             center = Offset(x, y),
@@ -668,7 +668,7 @@ private fun DrawScope.drawCrescentMoon(
         brush = Brush.radialGradient(
             colors = listOf(
                 Color(0xFFFFF3B0),
-                GoldAccent,
+                RootGold,
                 Color(0xFFD97706)
             ),
             center = Offset(x - size * 0.15f, y - size * 0.15f),
@@ -687,7 +687,7 @@ private fun DrawScope.drawCrescentMoon(
 
     // Sparkle tipis di tepi sabit (gold pulse)
     drawCircle(
-        color = GoldAccent.copy(alpha = 0.5f * pulse * growth),
+        color = RootGold.copy(alpha = 0.5f * pulse * growth),
         radius = size * 0.18f,
         center = Offset(x - size * 0.55f, y + size * 0.35f)
     )
