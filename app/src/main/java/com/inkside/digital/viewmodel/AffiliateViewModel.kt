@@ -344,9 +344,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     private val _currentScreen = MutableStateFlow(AppScreen.HOME)
     val currentScreen: StateFlow<AppScreen> = _currentScreen.asStateFlow()
 
-    private val _isAdminMode = MutableStateFlow(false)
-    val isAdminMode: StateFlow<Boolean> = _isAdminMode.asStateFlow()
-
     // ==== Ad Button State ====
     private val _adButtonState = MutableStateFlow(AdButtonState.LOADING)
     val adButtonState: StateFlow<AdButtonState> = _adButtonState.asStateFlow()
@@ -382,15 +379,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun navigateTo(screen: AppScreen) {
         _currentScreen.value = screen
-    }
-
-    fun setAdminMode(isAdmin: Boolean) {
-        _isAdminMode.value = isAdmin
-        if (isAdmin) {
-            _currentScreen.value = AppScreen.ADMIN
-        } else if (_currentScreen.value == AppScreen.ADMIN) {
-            _currentScreen.value = AppScreen.HOME
-        }
     }
 
     fun setLanguage(lang: AppLanguage) {

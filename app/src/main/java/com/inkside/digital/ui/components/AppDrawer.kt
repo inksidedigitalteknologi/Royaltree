@@ -90,11 +90,9 @@ private val DangerDeep = Color(0xFFDC2626)
 @Composable
 fun AppDrawer(
     user: UserEntity?,
-    isAdminMode: Boolean,
     currentScreen: AppScreen,
     currentLanguage: AppLanguage,
     onNavigate: (AppScreen) -> Unit,
-    onToggleRole: () -> Unit,
     onCloseDrawer: () -> Unit,
     onLogout: () -> Unit
 ) {
