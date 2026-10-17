@@ -60,7 +60,8 @@ private val TextMuted = Color(0xFF94A3B8)
 @Composable
 fun SplashSequenceScreen(
     loadingState: AffiliateViewModel.LoadingState,
-    currentLanguage: AppLanguage
+    currentLanguage: AppLanguage,
+    onComplete: () -> Unit = {}
 ) {
     var phase by remember { mutableIntStateOf(0) }
 
@@ -71,6 +72,8 @@ fun SplashSequenceScreen(
         phase = 2
         delay(2500)
         phase = 3
+        delay(2500)   // tunggu scene 3 selesai
+        onComplete()
     }
 
     val animatedProgress by animateFloatAsState(
