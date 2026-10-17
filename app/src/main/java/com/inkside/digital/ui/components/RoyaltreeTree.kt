@@ -102,19 +102,6 @@ fun RoyaltreeTree(
             center = Offset(cx, h * 0.40f)
         )
 
-        // ============ 1b. Bulan sabit (level 3+) ============
-        // Posisi atas-kanan, di belakang pohon
-        if (level >= 3) {
-            val moonPulse = 0.75f + 0.25f * sin(sway * 2f)
-            drawCrescentMoon(
-                x = cx + w * 0.30f,
-                y = h * 0.18f,
-                size = w * 0.075f,
-                pulse = moonPulse,
-                growth = growthProgress
-            )
-        }
-
         // ============ 2a. Ground shadow (elips tanah) ============
         // Nutupin akar biar gak keliatan aneh + grounding natural
         val groundRx = w * 0.32f * (1f + 0.04f * level)
@@ -153,8 +140,8 @@ fun RoyaltreeTree(
         val trunkHeightFactor = when {
             isSprout -> 0.13f
             isSapling -> 0.18f
-            isYoungTree -> 0.24f       // ← transisi smooth (bukan 0.315)
-            else -> 0.24f + 0.025f * level
+            isYoungTree -> 0.24f
+            else -> 0.28f + 0.012f * level   // L4=0.328, L5=0.34 (lebih pendek dari 0.365)
         }
         val trunkHeight = h * trunkHeightFactor * growthProgress
         val trunkTopY = baseY - trunkHeight
@@ -298,17 +285,6 @@ fun RoyaltreeTree(
             }
         }
 
-        // ============ 8. Siluet orang duduk (level 3+) ============
-        // Posisi kanan bawah pohon, menghadap bulan (kanan-atas)
-        if (level >= 3 && growthProgress > 0.8f) {
-            drawSilhouettePerson(
-                x = cx + w * 0.28f,
-                baseY = baseY + groundRy * 0.15f,
-                scale = w * 0.048f * (0.7f + 0.06f * level),
-                facingRight = true,  // hadap kanan = ke arah bulan
-                growth = growthProgress
-            )
-        }
     }
 }
 
@@ -573,7 +549,7 @@ private fun DrawScope.drawRoots(
         isSprout -> w * 0.04f * growth
         isSapling -> w * 0.06f * growth
         isYoungTree -> w * 0.07f * growth
-        else -> w * 0.08f * (1f + level * 0.15f) * growth
+        else -> w * 0.08f * growth   // L4+: max 8% (bukan 14%)
     }
 
     for (i in 0 until rootCount) {
@@ -595,7 +571,7 @@ private fun DrawScope.drawRoots(
             isSprout -> baseY + rootLen * 0.15f
             isSapling -> baseY + rootLen * 0.50f
             isYoungTree -> baseY + rootLen * 0.75f
-            else -> baseY + rootLen * (0.85f + rand.nextFloat() * 0.3f)
+            else -> baseY + rootLen * (0.70f + rand.nextFloat() * 0.20f)  // max 0.90
         }
 
         // Draw sebagai polygon (taper)
@@ -631,135 +607,6 @@ private fun DrawScope.drawRoots(
             center = Offset(endX, endY)
         )
     }
-}
-
-// ============ Cinematic — Bulan Sabit + Siluet ============
-
-/**
- * Bulan sabit glowing — posisi atas-kanan, dengan pulse alpha subtle.
- * Elegan: tipis, bukan bulan penuh.
- */
-private fun DrawScope.drawCrescentMoon(
-    x: Float,
-    y: Float,
-    size: Float,
-    pulse: Float,
-    growth: Float
-) {
-    // Glow di belakang bulan (radial emerald-gold)
-    val glowRadius = size * 3.5f
-    drawCircle(
-        brush = Brush.radialGradient(
-            colors = listOf(
-                RootGold.copy(alpha = 0.18f * growth),
-                TrunkLight.copy(alpha = 0.06f * growth),
-                Color.Transparent
-            ),
-            center = Offset(x, y),
-            radius = glowRadius
-        ),
-        radius = glowRadius,
-        center = Offset(x, y)
-    )
-
-    // Bulan sabit: 2 circle bertumpuk (luar = gold, dalam = bg)
-    // Circle luar (bulan)
-    drawCircle(
-        brush = Brush.radialGradient(
-            colors = listOf(
-                Color(0xFFFFF3B0),
-                RootGold,
-                Color(0xFFD97706)
-            ),
-            center = Offset(x - size * 0.15f, y - size * 0.15f),
-            radius = size
-        ),
-        radius = size,
-        center = Offset(x, y)
-    )
-
-    // Circle dalam (potong sabit) — geser ke kanan-atas
-    drawCircle(
-        color = Color(0xFF0B1220),
-        radius = size * 0.92f,
-        center = Offset(x + size * 0.45f, y - size * 0.35f)
-    )
-
-    // Sparkle tipis di tepi sabit (gold pulse)
-    drawCircle(
-        color = RootGold.copy(alpha = 0.5f * pulse * growth),
-        radius = size * 0.18f,
-        center = Offset(x - size * 0.55f, y + size * 0.35f)
-    )
-}
-
-/**
- * Siluet orang duduk meditatif — kaki terlipat, menghadap ke bulan.
- * Pure black silhouette (elegan, kontras dengan background emerald).
- */
-private fun DrawScope.drawSilhouettePerson(
-    x: Float,
-    baseY: Float,
-    scale: Float,
-    facingRight: Boolean,
-    growth: Float
-) {
-    val silhouetteColor = Color.Black.copy(alpha = 0.92f * growth)
-    val dir = if (facingRight) 1f else -1f
-
-    // 1. Kepala (circle)
-    val headR = scale * 0.32f
-    val headY = baseY - scale * 1.55f
-    val headX = x + dir * scale * 0.05f
-    drawCircle(
-        color = silhouetteColor,
-        radius = headR,
-        center = Offset(headX, headY)
-    )
-
-    // 2. Badan (trapesium — bahu lebar, pinggang sempit)
-    val bodyPath = Path().apply {
-        val shoulderY = headY + headR * 1.1f
-        val shoulderW = scale * 0.55f
-        val waistY = baseY - scale * 0.55f
-        val waistW = scale * 0.40f
-        moveTo(headX - shoulderW, shoulderY)
-        lineTo(headX + shoulderW, shoulderY)
-        lineTo(headX + waistW, waistY)
-        lineTo(headX - waistW, waistY)
-        close()
-    }
-    drawPath(path = bodyPath, color = silhouetteColor)
-
-    // 3. Kaki terlipat (duduk bersila) — elips horizontal
-    val legWidth = scale * 1.1f
-    val legHeight = scale * 0.32f
-    drawOval(
-        color = silhouetteColor,
-        topLeft = Offset(x - legWidth * 0.55f, baseY - legHeight * 0.9f),
-        size = Size(legWidth, legHeight)
-    )
-
-    // 4. Lengan rileks di lutut — garis tebal melengkung
-    val armPath = Path().apply {
-        moveTo(headX - dir * scale * 0.4f, headY + headR * 1.8f)
-        quadraticTo(
-            headX - dir * scale * 0.55f, baseY - scale * 0.85f,
-            headX - dir * scale * 0.20f, baseY - scale * 0.70f
-        )
-    }
-    drawPath(
-        path = armPath,
-        color = silhouetteColor,
-        style = Stroke(width = scale * 0.14f, cap = StrokeCap.Round)
-    )
-
-    // 5. Rambut/sanggul tipis (elegan)
-    drawCircle(
-        color = silhouetteColor,
-        radius = headR * 0.45f,
-        center = Offset(headX - dir * headR * 0.5f, headY - headR * 0.75f)
-    )
 }
 
 // ============ Preview ============
