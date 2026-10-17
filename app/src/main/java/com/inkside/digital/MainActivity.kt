@@ -909,12 +909,17 @@ fun MainAffiliateAppContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            // ============ KONTEN UTAMA — hanya padding top (bukan bottom) ============
+            // ============ KONTEN UTAMA — padding top + bottom (fix ketutup nav) ============
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
-                        top = innerPadding.calculateTopPadding()
+                        top = innerPadding.calculateTopPadding(),
+                        bottom = if (bottomNavHeightState.value > 0.dp) {
+                            bottomNavHeightState.value + 12.dp
+                        } else {
+                            96.dp
+                        }
                     )
             ) {
             com.inkside.digital.ui.components.AnimatedBackground {
