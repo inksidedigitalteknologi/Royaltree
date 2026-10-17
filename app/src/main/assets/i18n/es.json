@@ -717,6 +717,11 @@
     "login_terms": "Al iniciar sesión, aceptas nuestros Términos y Condiciones.",
     "splash_presented_by": "Presentado por",
     "splash_in_collaboration": "En colaboración con",
-    "login_loading": "Cargando..."
+    "login_loading": "Cargando...",
+    "login_agree_prefix": "Acepto los",
+    "login_terms_link": "Términos y Condiciones y Política de Privacidad",
+    "login_must_agree": "Acepta los Términos y Condiciones primero",
+    "login_terms_title": "Términos y Condiciones",
+    "login_terms_content": "Al usar Royaltree, aceptas:\\n\\n1. Tus datos (correo, nombre) se usan para la cuenta.\\n\\n2. No vendemos tus datos a terceros.\\n\\n3. Puedes eliminar tu cuenta en cualquier momento.\\n\\n4. Las recompensas RTP pueden cambiar.\\n\\n5. El contenido publicitario es de AdMob (Google).\\n\\nAl marcar, aceptas el procesamiento de datos."
   }
 }

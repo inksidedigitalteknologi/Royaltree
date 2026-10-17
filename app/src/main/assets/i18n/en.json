@@ -717,6 +717,11 @@
     "login_terms": "By signing in, you agree to our Terms & Conditions.",
     "splash_presented_by": "Presented by",
     "splash_in_collaboration": "In collaboration with",
-    "login_loading": "Loading..."
+    "login_loading": "Loading...",
+    "login_agree_prefix": "I agree to the",
+    "login_terms_link": "Terms & Conditions and Privacy Policy",
+    "login_must_agree": "Please accept the Terms & Conditions first",
+    "login_terms_title": "Terms & Conditions",
+    "login_terms_content": "By using Royaltree, you agree to:\\n\\n1. Your data (email, name) is used for account purposes.\\n\\n2. We do not sell your data to third parties.\\n\\n3. You can delete your account anytime via settings.\\n\\n4. RTP rewards may change per policy.\\n\\n5. Ad content is provided by AdMob (Google).\\n\\nBy checking, you consent to data processing per privacy policy."
   }
 }
