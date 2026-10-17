@@ -95,6 +95,7 @@ fun LoginScreen(
     var agreementChecked by remember { mutableStateOf(false) }
     var showTermsDialog by remember { mutableStateOf(false) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
+    var marketingOptIn by remember { mutableStateOf(false) }
     var contentVisible by remember { mutableStateOf(false) }
     var showLanguageModal by remember { mutableStateOf(false) }
 
@@ -289,6 +290,40 @@ fun LoginScreen(
                                         )
                                     }
                                 }
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Checkbox Marketing (opsional)
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { marketingOptIn = !marketingOptIn }
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Checkbox(
+                                    checked = marketingOptIn,
+                                    onCheckedChange = { marketingOptIn = it },
+                                    colors = CheckboxDefaults.colors(
+                                        checkedColor = Color(0xFF34D399),
+                                        uncheckedColor = Color.White.copy(alpha = 0.5f),
+                                        checkmarkColor = Color.White
+                                    ),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = LanguageManager.translate(
+                                        "login_marketing_optin",
+                                        currentLanguage,
+                                        "Saya ingin menerima email promosi, update fitur, dan penawaran khusus"
+                                    ),
+                                    fontSize = 11.sp,
+                                    color = Color.White.copy(alpha = 0.7f),
+                                    lineHeight = 14.sp,
+                                    modifier = Modifier.weight(1f)
+                                )
                             }
 
                             Spacer(modifier = Modifier.height(16.dp))
