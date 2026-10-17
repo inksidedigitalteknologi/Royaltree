@@ -76,6 +76,9 @@ import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.components.LanguageSelectionModal
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Checkbox
 
 @Composable
 fun LoginScreen(
@@ -89,6 +92,8 @@ fun LoginScreen(
     val scope = rememberCoroutineScope()
 
     var googleLoading by remember { mutableStateOf(false) }
+    var agreementChecked by remember { mutableStateOf(false) }
+    var showTermsDialog by remember { mutableStateOf(false) }
     var contentVisible by remember { mutableStateOf(false) }
     var showLanguageModal by remember { mutableStateOf(false) }
 
@@ -218,9 +223,69 @@ fun LoginScreen(
 
                             Spacer(modifier = Modifier.height(24.dp))
 
+                            // Checkbox Terms & Conditions
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { agreementChecked = !agreementChecked }
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Checkbox(
+                                    checked = agreementChecked,
+                                    onCheckedChange = { agreementChecked = it },
+                                    colors = CheckboxDefaults.colors(
+                                        checkedColor = Color(0xFF34D399),
+                                        uncheckedColor = Color.White.copy(alpha = 0.5f),
+                                        checkmarkColor = Color.White
+                                    ),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = LanguageManager.translate(
+                                            "login_agree_prefix",
+                                            currentLanguage,
+                                            "Saya menyetujui"
+                                        ) + " ",
+                                        fontSize = 11.sp,
+                                        color = Color.White.copy(alpha = 0.7f),
+                                        lineHeight = 14.sp
+                                    )
+                                    Text(
+                                        text = LanguageManager.translate(
+                                            "login_terms_link",
+                                            currentLanguage,
+                                            "Syarat & Ketentuan serta Kebijakan Privasi"
+                                        ),
+                                        fontSize = 11.sp,
+                                        color = Color(0xFF34D399),
+                                        fontWeight = FontWeight.SemiBold,
+                                        textDecoration = TextDecoration.Underline,
+                                        modifier = Modifier.clickable { showTermsDialog = true },
+                                        lineHeight = 14.sp
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
                             // Tombol Google
                             Button(
                                 onClick = {
+                                    if (!agreementChecked) {
+                                        android.widget.Toast.makeText(
+                                            context,
+                                            LanguageManager.translate(
+                                                "login_must_agree",
+                                                currentLanguage,
+                                                "Centang Syarat & Ketentuan dulu"
+                                            ),
+                                            android.widget.Toast.LENGTH_SHORT
+                                        ).show()
+                                        return@Button
+                                    }
                                     scope.launch {
                                         googleLoading = true
                                         try {
@@ -253,7 +318,7 @@ fun LoginScreen(
                                         }
                                     }
                                 },
-                                enabled = !googleLoading,
+                                enabled = !googleLoading && agreementChecked,
                                 shape = RoundedCornerShape(14.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color.White,
@@ -293,18 +358,8 @@ fun LoginScreen(
 
                             Spacer(modifier = Modifier.height(24.dp))
 
-                            // Info: Syarat & Ketentuan
-                            Text(
-                                text = LanguageManager.translate(
-                                    "login_terms",
-                                    currentLanguage,
-                                    "Dengan masuk, Anda menyetujui Syarat & Ketentuan kami."
-                                ),
-                                fontSize = 11.sp,
-                                color = Color.White.copy(alpha = 0.5f),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                            // Footer: privasi (opsional, saat ini kosong)
+
                         }
                     }
                 }
@@ -325,6 +380,51 @@ fun LoginScreen(
                     showLanguageModal = false
                 },
                 onDismiss = { showLanguageModal = false }
+            )
+        }
+
+        // ===== TERMS & CONDITIONS DIALOG =====
+        if (showTermsDialog) {
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { showTermsDialog = false },
+                title = {
+                    Text(
+                        text = LanguageManager.translate("login_terms_title", currentLanguage, "Syarat & Ketentuan"),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    androidx.compose.foundation.layout.Column(
+                        modifier = Modifier.verticalScroll(androidx.compose.foundation.rememberScrollState())
+                    ) {
+                        Text(
+                            text = LanguageManager.translate(
+                                "login_terms_content",
+                                currentLanguage,
+                                "Dengan menggunakan Royaltree, Anda menyetujui:\n\n" +
+                                    "1. Data yang Anda berikan (email, nama) digunakan untuk keperluan akun.\n\n" +
+                                    "2. Kami tidak menjual data Anda ke pihak ketiga.\n\n" +
+                                    "3. Anda dapat menghapus akun kapan saja melalui pengaturan.\n\n" +
+                                    "4. Reward RTP dapat berubah sesuai kebijakan.\n\n" +
+                                    "5. Konten iklan disediakan oleh AdMob (Google).\n\n" +
+                                    "Dengan mencentang, Anda menyetujui pemrosesan data sesuai kebijakan privasi."
+                            ),
+                            fontSize = 13.sp,
+                            lineHeight = 18.sp
+                        )
+                    }
+                },
+                confirmButton = {
+                    androidx.compose.material3.TextButton(
+                        onClick = { showTermsDialog = false }
+                    ) {
+                        Text(
+                            text = LanguageManager.translate("common_close", currentLanguage, "Tutup"),
+                            color = Color(0xFF34D399),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
             )
         }
     }
