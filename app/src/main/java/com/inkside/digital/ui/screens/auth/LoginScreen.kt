@@ -1,12 +1,17 @@
 package com.inkside.digital.ui.screens.auth
 
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,31 +19,25 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,43 +47,43 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.inkside.digital.ui.theme.ElectricBlue
-import com.inkside.digital.ui.theme.PurpleSecondary
-import com.inkside.digital.ui.theme.CoralRed
-import com.inkside.digital.ui.theme.GoldVip
-import androidx.credentials.CredentialManager
-import androidx.credentials.GetCredentialRequest
-import androidx.credentials.CustomCredential
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.inkside.digital.ui.components.AnimatedBackground
-import kotlinx.coroutines.launch
+import com.inkside.digital.BuildConfig
+import com.inkside.digital.R
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
+import com.inkside.digital.ui.components.AnimatedBackground
 import com.inkside.digital.ui.components.LanguageSelectionModal
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.Checkbox
+import com.inkside.digital.ui.components.RoyaltreeTree
+import kotlinx.coroutines.launch
+
+// ─────────────────────────────────────────────────────────────
+// Palette
+// ─────────────────────────────────────────────────────────────
+private val EmeraldLight = Color(0xFF34D399)
+private val EmeraldDeep = Color(0xFF059669)
+private val GoldAccent = Color(0xFFFFD700)
+private val GoldSoft = Color(0xFFFBBF24)
+private val TextMuted = Color(0xFF94A3B8)
+private val GlassBg = Color(0x14FFFFFF)
 
 @Composable
 fun LoginScreen(
     isLoading: Boolean,
     errorMessage: String?,
     currentLanguage: AppLanguage,
+    isReturningUser: Boolean = false,
     onLanguageChange: (AppLanguage) -> Unit,
     onLoginGoogle: (idToken: String, marketingOptIn: Boolean) -> Unit
 ) {
@@ -93,342 +92,428 @@ fun LoginScreen(
 
     var googleLoading by remember { mutableStateOf(false) }
     var agreementChecked by remember { mutableStateOf(false) }
+    var marketingOptIn by remember { mutableStateOf(false) }
     var showTermsDialog by remember { mutableStateOf(false) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
-    var marketingOptIn by remember { mutableStateOf(false) }
     var contentVisible by remember { mutableStateOf(false) }
     var showLanguageModal by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) { contentVisible = true }
 
-    // 🔍 DEBUG: Log bila currentLanguage berubah
-    LaunchedEffect(currentLanguage) {
-        android.util.Log.d("LoginScreen", "🌐 currentLanguage CHANGED: ${currentLanguage.code}")
-    }
+    // "Centang Semua" = terms + privacy saja (marketing tetap opsional)
+    val masterChecked = agreementChecked
+    val masterIndeterminate = false
 
-    // 🔍 DEBUG: Log bila showLanguageModal berubah
-    LaunchedEffect(showLanguageModal) {
-        android.util.Log.d("LoginScreen", "🌐 showLanguageModal = $showLanguageModal")
-    }
+    // Animasi masuk
+    val contentAlpha by animateFloatAsState(
+        targetValue = if (contentVisible) 1f else 0f,
+        animationSpec = tween(800),
+        label = "contentAlpha"
+    )
+    val contentOffsetY by animateFloatAsState(
+        targetValue = if (contentVisible) 0f else 40f,
+        animationSpec = tween(800, easing = androidx.compose.animation.core.FastOutSlowInEasing),
+        label = "contentOffsetY"
+    )
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        AnimatedBackground {
-            Box(modifier = Modifier.fillMaxSize()) {
-            // ===== LANGUAGE TOGGLE (top-right) =====
+    AnimatedBackground(
+        accentColor = EmeraldLight,
+        enableAurora = true,
+        enableStars = true,
+        enableGlow = true,
+        enableParticles = true
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            // Language selector — top-left
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.End
             ) {
-                androidx.compose.material3.Surface(
+                Surface(
+                    color = Color.White.copy(alpha = 0.1f),
                     shape = RoundedCornerShape(20.dp),
-                    color = Color.White.copy(alpha = 0.15f),
-                    modifier = Modifier
-                        .height(44.dp)
-                        .testTag("language_toggle_button")
-                        .clickable { showLanguageModal = true }
+                    modifier = Modifier.clickable { showLanguageModal = true }
                 ) {
                     Row(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxHeight(),
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("🌐", fontSize = 16.sp)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(currentLanguage.flag, fontSize = 16.sp)
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(currentLanguage.flag, fontSize = 14.sp)
+                        Spacer(Modifier.width(6.dp))
                         Text(
                             text = currentLanguage.code,
-                            fontSize = 13.sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
                         )
                     }
                 }
             }
 
+            // Main content
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(horizontal = 24.dp)
+                    .alpha(contentAlpha)
+                    .padding(top = contentOffsetY.dp),
+                verticalArrangement = Arrangement.Center
             ) {
-                Spacer(modifier = Modifier.height(48.dp))
+                Spacer(Modifier.height(40.dp))
 
-                // ============ LOGO ============
-                AnimatedVisibility(
-                    visible = contentVisible,
-                    enter = fadeIn(tween(800)) + slideInVertically(tween(800)) { -50 }
+                // Logo pohon
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth(0.45f)
+                        .height(180.dp)
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "Royaltree",
-                            fontSize = 48.sp,
-                            fontWeight = FontWeight.Black,
-                            color = Color.White,
-                            style = MaterialTheme.typography.headlineLarge.copy(
-                                brush = Brush.linearGradient(
-                                    colors = listOf(Color.White, Color(0xFF10B981))
-                                )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(0.95f)
+                            .background(
+                                brush = Brush.radialGradient(
+                                    colors = listOf(
+                                        GoldAccent.copy(alpha = 0.18f),
+                                        EmeraldLight.copy(alpha = 0.08f),
+                                        Color.Transparent
+                                    )
+                                ),
+                                shape = CircleShape
                             )
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Affiliate Rewarding Platform",
-                            fontSize = 13.sp,
-                            color = Color.White.copy(alpha = 0.8f),
-                            letterSpacing = 2.sp
-                        )
-                    }
+                    )
+                    RoyaltreeTree(
+                        level = 5,
+                        growthProgress = 1f,
+                        modifier = Modifier.fillMaxWidth(0.9f)
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(Modifier.height(16.dp))
 
-                // ============ GLASS CARD ============
-                AnimatedVisibility(
-                    visible = contentVisible,
-                    enter = fadeIn(tween(800, delayMillis = 200)) + slideInVertically(tween(800, delayMillis = 200)) { 100 }
-                ) {
-                    Card(
-                        shape = RoundedCornerShape(24.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White.copy(alpha = 0.05f)  // ← SANGAT TRANSPARAN
-                        ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                        border = androidx.compose.foundation.BorderStroke(
+                // ───────────────────────────────────────
+                // Dynamic header: returning vs new user
+                // ───────────────────────────────────────
+                Text(
+                    text = if (isReturningUser) {
+                        LanguageManager.translate("login_welcome_back", currentLanguage, "Selamat Datang Kembali")
+                    } else {
+                        LanguageManager.translate("login_welcome_new", currentLanguage, "Selamat Datang di Royaltree")
+                    },
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = if (isReturningUser) {
+                        LanguageManager.translate("login_subtitle_returning", currentLanguage, "Lanjutkan perjalananmu")
+                    } else {
+                        LanguageManager.translate("login_subtitle_new", currentLanguage, "Mulai perjalananmu sekarang")
+                    },
+                    fontSize = 13.sp,
+                    color = Color.White.copy(alpha = 0.7f),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(Modifier.height(32.dp))
+
+                // ───────────────────────────────────────
+                // Glassmorphism card — semua checkbox
+                // ───────────────────────────────────────
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(GlassBg)
+                        .border(
                             width = 1.dp,
-                            color = Color.White.copy(alpha = 0.15f)  // ← subtle border
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    Color.White.copy(alpha = 0.15f),
+                                    Color.White.copy(alpha = 0.05f)
+                                )
+                            ),
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                        .padding(horizontal = 20.dp, vertical = 18.dp)
+                ) {
+                    Column {
+                        // MASTER checkbox
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(24.dp)
+                                .clickable {
+                                    agreementChecked = !agreementChecked
+                                }
+                                .padding(vertical = 4.dp)
                         ) {
+                            PremiumCheckbox(
+                                checked = masterChecked,
+                                indeterminate = masterIndeterminate,
+                                onCheckedChange = { agreementChecked = it },
+                                size = 26.dp,
+                                accentColor = GoldAccent
+                            )
+                            Spacer(Modifier.width(12.dp))
                             Text(
-                                text = LanguageManager.translate("login_welcome", currentLanguage, "Selamat Datang"),
-                                fontSize = 22.sp,
+                                text = LanguageManager.translate("login_check_all", currentLanguage, "Centang Semua"),
+                                fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = GoldAccent
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = LanguageManager.translate("login_subtitle", currentLanguage, "Masuk untuk melanjutkan"),
-                                fontSize = 12.sp,
-                                color = Color.White.copy(alpha = 0.7f)
+                        }
+
+                        Spacer(Modifier.height(12.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(Color.White.copy(alpha = 0.08f))
+                        )
+                        Spacer(Modifier.height(12.dp))
+
+                        // Terms + Privacy checkbox
+                        Row(
+                            verticalAlignment = Alignment.Top,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { agreementChecked = !agreementChecked }
+                                .padding(vertical = 4.dp)
+                        ) {
+                            PremiumCheckbox(
+                                checked = agreementChecked,
+                                indeterminate = false,
+                                onCheckedChange = { agreementChecked = it },
+                                size = 22.dp,
+                                accentColor = EmeraldLight
                             )
-
-                            Spacer(modifier = Modifier.height(24.dp))
-
-                            // Checkbox Terms & Conditions
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { agreementChecked = !agreementChecked }
-                                    .padding(vertical = 4.dp)
-                            ) {
-                                Checkbox(
-                                    checked = agreementChecked,
-                                    onCheckedChange = { agreementChecked = it },
-                                    colors = CheckboxDefaults.colors(
-                                        checkedColor = Color(0xFF34D399),
-                                        uncheckedColor = Color.White.copy(alpha = 0.5f),
-                                        checkmarkColor = Color.White
-                                    ),
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = LanguageManager.translate(
-                                            "login_agree_prefix",
-                                            currentLanguage,
-                                            "Saya menyetujui"
-                                        ),
-                                        fontSize = 11.sp,
-                                        color = Color.White.copy(alpha = 0.7f),
-                                        lineHeight = 14.sp
-                                    )
-                                    Row {
-                                        Text(
-                                            text = LanguageManager.translate(
-                                                "login_terms_link",
-                                                currentLanguage,
-                                                "Syarat & Ketentuan"
-                                            ),
-                                            fontSize = 11.sp,
-                                            color = Color(0xFF34D399),
-                                            fontWeight = FontWeight.SemiBold,
-                                            textDecoration = TextDecoration.Underline,
-                                            modifier = Modifier.clickable { showTermsDialog = true },
-                                            lineHeight = 14.sp
-                                        )
-                                        Text(
-                                            text = " & ",
-                                            fontSize = 11.sp,
-                                            color = Color.White.copy(alpha = 0.7f),
-                                            lineHeight = 14.sp
-                                        )
-                                        Text(
-                                            text = LanguageManager.translate(
-                                                "login_privacy_link",
-                                                currentLanguage,
-                                                "Kebijakan Privasi"
-                                            ),
-                                            fontSize = 11.sp,
-                                            color = Color(0xFF34D399),
-                                            fontWeight = FontWeight.SemiBold,
-                                            textDecoration = TextDecoration.Underline,
-                                            modifier = Modifier.clickable { showPrivacyDialog = true },
-                                            lineHeight = 14.sp
-                                        )
-                                    }
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            // Checkbox Marketing (opsional)
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { marketingOptIn = !marketingOptIn }
-                                    .padding(vertical = 4.dp)
-                            ) {
-                                Checkbox(
-                                    checked = marketingOptIn,
-                                    onCheckedChange = { marketingOptIn = it },
-                                    colors = CheckboxDefaults.colors(
-                                        checkedColor = Color(0xFF34D399),
-                                        uncheckedColor = Color.White.copy(alpha = 0.5f),
-                                        checkmarkColor = Color.White
-                                    ),
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(Modifier.width(10.dp))
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = LanguageManager.translate(
-                                        "login_marketing_optin",
-                                        currentLanguage,
-                                        "Saya ingin menerima email promosi, update fitur, dan penawaran khusus"
-                                    ),
-                                    fontSize = 11.sp,
-                                    color = Color.White.copy(alpha = 0.7f),
-                                    lineHeight = 14.sp,
-                                    modifier = Modifier.weight(1f)
+                                    text = LanguageManager.translate("login_agree_prefix", currentLanguage, "Saya menyetujui"),
+                                    fontSize = 12.sp,
+                                    color = Color.White.copy(alpha = 0.8f),
+                                    lineHeight = 16.sp
                                 )
-                            }
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            // Tombol Google
-                            Button(
-                                onClick = {
-                                    if (!agreementChecked) {
-                                        android.widget.Toast.makeText(
-                                            context,
-                                            LanguageManager.translate(
-                                                "login_must_agree",
-                                                currentLanguage,
-                                                "Centang Syarat & Ketentuan dulu"
-                                            ),
-                                            android.widget.Toast.LENGTH_SHORT
-                                        ).show()
-                                        return@Button
-                                    }
-                                    scope.launch {
-                                        googleLoading = true
-                                        try {
-                                            val credentialManager = CredentialManager.create(context)
-                                            val googleIdOption = GetGoogleIdOption.Builder()
-                                                .setFilterByAuthorizedAccounts(false)
-                                                .setServerClientId("969563519125-ff0itejq3fadi95eqno5205grc933bfr.apps.googleusercontent.com")
-                                                .setAutoSelectEnabled(false)
-                                                .build()
-                                            val request = GetCredentialRequest.Builder()
-                                                .addCredentialOption(googleIdOption)
-                                                .build()
-                                            val result = credentialManager.getCredential(
-                                                context = context,
-                                                request = request
-                                            )
-                                            val credential = result.credential
-                                            if (credential is CustomCredential &&
-                                                credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
-                                            ) {
-                                                val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                                                onLoginGoogle(googleIdTokenCredential.idToken, marketingOptIn)
-                                            } else {
-                                                Log.e("LoginScreen", "Credential bukan Google ID Token")
-                                            }
-                                        } catch (e: Exception) {
-                                            Log.e("LoginScreen", "Google Sign-In error: \${e.message}")
-                                        } finally {
-                                            googleLoading = false
-                                        }
-                                    }
-                                },
-                                enabled = !googleLoading && agreementChecked,
-                                shape = RoundedCornerShape(14.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.White,
-                                    contentColor = Color(0xFF1F2937),
-                                    disabledContainerColor = Color.White.copy(alpha = 0.5f)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(52.dp)
-                            ) {
-                                if (googleLoading) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(20.dp),
-                                        color = Color(0xFF1F2937),
-                                        strokeWidth = 2.dp
-                                    )
-                                    Spacer(modifier = Modifier.width(12.dp))
+                                Row {
                                     Text(
-                                        text = LanguageManager.translate("login_loading", currentLanguage, "Memuat..."),
+                                        text = LanguageManager.translate("login_terms_link", currentLanguage, "Syarat & Ketentuan"),
+                                        fontSize = 12.sp,
+                                        color = EmeraldLight,
                                         fontWeight = FontWeight.SemiBold,
-                                        fontSize = 14.sp
+                                        textDecoration = TextDecoration.Underline,
+                                        modifier = Modifier.clickable { showTermsDialog = true }
                                     )
-                                } else {
-                                    androidx.compose.foundation.Image(
-                                        painter = androidx.compose.ui.res.painterResource(id = com.inkside.digital.R.drawable.ic_google_logo),
-                                        contentDescription = "Google",
-                                        modifier = Modifier.size(22.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(12.dp))
                                     Text(
-                                        text = LanguageManager.translate("login_google", currentLanguage, "Masuk dengan Google"),
+                                        text = "  ·  ",
+                                        fontSize = 12.sp,
+                                        color = Color.White.copy(alpha = 0.5f)
+                                    )
+                                    Text(
+                                        text = LanguageManager.translate("login_privacy_link", currentLanguage, "Kebijakan Privasi"),
+                                        fontSize = 12.sp,
+                                        color = EmeraldLight,
                                         fontWeight = FontWeight.SemiBold,
-                                        fontSize = 15.sp
+                                        textDecoration = TextDecoration.Underline,
+                                        modifier = Modifier.clickable { showPrivacyDialog = true }
                                     )
                                 }
                             }
+                        }
 
-                            Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(Modifier.height(8.dp))
 
-                            // Footer: privasi (opsional, saat ini kosong)
-
+                        // Marketing checkbox (opsional)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { marketingOptIn = !marketingOptIn }
+                                .padding(vertical = 4.dp)
+                        ) {
+                            PremiumCheckbox(
+                                checked = marketingOptIn,
+                                indeterminate = false,
+                                onCheckedChange = { marketingOptIn = it },
+                                size = 22.dp,
+                                accentColor = EmeraldLight
+                            )
+                            Spacer(Modifier.width(10.dp))
+                            Text(
+                                text = LanguageManager.translate("login_marketing_short", currentLanguage, "Email promosi (opsional)"),
+                                fontSize = 12.sp,
+                                color = Color.White.copy(alpha = 0.75f),
+                                lineHeight = 16.sp,
+                                modifier = Modifier.weight(1f)
+                            )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(48.dp))
-            }
+                Spacer(Modifier.height(28.dp))
 
-            // Modal DIPINDAH ke LUAR AnimatedBackground
+                // Error message
+                if (errorMessage != null) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFFEF4444).copy(alpha = 0.15f))
+                            .padding(12.dp)
+                    ) {
+                        Text(
+                            text = errorMessage,
+                            fontSize = 12.sp,
+                            color = Color(0xFFFCA5A5),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    Spacer(Modifier.height(16.dp))
+                }
+
+                // Google button
+                Button(
+                    onClick = {
+                        if (!agreementChecked) {
+                            android.widget.Toast.makeText(
+                                context,
+                                LanguageManager.translate("login_must_agree", currentLanguage, "Centang Syarat & Ketentuan dulu"),
+                                android.widget.Toast.LENGTH_SHORT
+                            ).show()
+                            return@Button
+                        }
+                        scope.launch {
+                            googleLoading = true
+                            try {
+                                val credentialManager =
+                                    androidx.credentials.CredentialManager.create(context)
+                                val googleIdOption =
+                                    com.google.android.libraries.identity.googleid.GetGoogleIdOption.Builder()
+                                        .setFilterByAuthorizedAccounts(false)
+                                        .setServerClientId("969563519125-ff0itejq3fadi95eqno5205grc933bfr.apps.googleusercontent.com")
+                                        .setAutoSelectEnabled(false)
+                                        .build()
+                                val request =
+                                    androidx.credentials.GetCredentialRequest.Builder()
+                                        .addCredentialOption(googleIdOption)
+                                        .build()
+                                val result = credentialManager.getCredential(
+                                    context = context,
+                                    request = request
+                                )
+                                val credential = result.credential
+                                if (credential is androidx.credentials.CustomCredential &&
+                                    credential.type == com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+                                ) {
+                                    val googleIdTokenCredential =
+                                        com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.createFrom(credential.data)
+                                    onLoginGoogle(googleIdTokenCredential.idToken, marketingOptIn)
+                                } else {
+                                    android.util.Log.e("LoginScreen", "Credential bukan Google ID Token")
+                                }
+                            } catch (e: Exception) {
+                                android.util.Log.e("LoginScreen", "Google Sign-In error: ${e.message}")
+                            } finally {
+                                googleLoading = false
+                            }
+                        }
+                    },
+                    enabled = !googleLoading && agreementChecked,
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color(0xFF1F2937),
+                        disabledContainerColor = Color.White.copy(alpha = 0.4f),
+                        disabledContentColor = Color(0xFF1F2937).copy(alpha = 0.5f)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                ) {
+                    if (googleLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = Color(0xFF1F2937),
+                            strokeWidth = 2.dp
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            text = LanguageManager.translate("login_loading", currentLanguage, "Memuat..."),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_google_logo),
+                            contentDescription = "Google",
+                            modifier = Modifier.size(22.dp)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            text = LanguageManager.translate("login_google", currentLanguage, "Masuk dengan Google"),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(28.dp))
+
+                // Trust badge + versi + merek
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("🔒", fontSize = 12.sp)
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = LanguageManager.translate("login_trust_badge", currentLanguage, "Data Anda aman & terenkripsi"),
+                        fontSize = 11.sp,
+                        color = TextMuted,
+                        letterSpacing = 0.5.sp
+                    )
+                }
+
+                Spacer(Modifier.height(8.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "${LanguageManager.translate("login_version_brand", currentLanguage, "Versi")} ${BuildConfig.VERSION_NAME}",
+                        fontSize = 10.sp,
+                        color = TextMuted.copy(alpha = 0.7f)
+                    )
+                    Text(
+                        text = "  ·  ",
+                        fontSize = 10.sp,
+                        color = TextMuted.copy(alpha = 0.5f)
+                    )
+                    Text(
+                        text = "${LanguageManager.translate("login_powered_by", currentLanguage, "Didukung oleh")} Inkside Digital",
+                        fontSize = 10.sp,
+                        color = TextMuted.copy(alpha = 0.7f)
+                    )
+                }
+
+                Spacer(Modifier.height(32.dp))
             }
         }
 
-        // ===== LANGUAGE MODAL (LUAR AnimatedBackground) =====
+        // ─────────────────────────────────────────
+        // Language modal
+        // ─────────────────────────────────────────
         if (showLanguageModal) {
             LanguageSelectionModal(
                 currentLanguage = currentLanguage,
@@ -440,125 +525,184 @@ fun LoginScreen(
             )
         }
 
-        // ===== TERMS & CONDITIONS DIALOG (baca file per bahasa) =====
+        // ─────────────────────────────────────────
+        // Terms dialog
+        // ─────────────────────────────────────────
         if (showTermsDialog) {
-            val langCode = when (currentLanguage) {
-                AppLanguage.INDONESIAN -> "id"
-                AppLanguage.ENGLISH -> "en"
-                AppLanguage.SPANISH -> "es"
-                AppLanguage.CHINESE -> "zh"
-                AppLanguage.ARABIC -> "ar"
-                AppLanguage.JAPANESE -> "ja"
-            }
-            var legalContent by remember { mutableStateOf("Memuat...") }
-            LaunchedEffect(langCode) {
-                legalContent = try {
-                    context.assets.open("legal/terms_${langCode}.md")
-                        .bufferedReader()
-                        .use { it.readText() }
-                } catch (e: Exception) {
-                    try {
-                        context.assets.open("legal/terms_en.md")
-                            .bufferedReader()
-                            .use { it.readText() }
-                    } catch (e2: Exception) {
-                        "Failed to load Terms: ${e2.message}"
-                    }
-                }
-            }
-
-            androidx.compose.material3.AlertDialog(
-                onDismissRequest = { showTermsDialog = false },
-                title = {
-                    Text(
-                        text = LanguageManager.translate("login_terms_title", currentLanguage, "Syarat & Ketentuan"),
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                text = {
-                    androidx.compose.foundation.layout.Column(
-                        modifier = Modifier.verticalScroll(androidx.compose.foundation.rememberScrollState())
-                    ) {
-                        Text(
-                            text = legalContent,
-                            fontSize = 12.sp,
-                            lineHeight = 18.sp
-                        )
-                    }
-                },
-                confirmButton = {
-                    androidx.compose.material3.TextButton(
-                        onClick = { showTermsDialog = false }
-                    ) {
-                        Text(
-                            text = LanguageManager.translate("common_close", currentLanguage, "Tutup"),
-                            color = Color(0xFF34D399),
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
+            LegalDialog(
+                title = LanguageManager.translate("login_terms_title", currentLanguage, "Syarat & Ketentuan"),
+                filePrefix = "terms",
+                currentLanguage = currentLanguage,
+                onDismiss = { showTermsDialog = false }
             )
         }
 
-        // ===== PRIVACY POLICY DIALOG (baca file per bahasa) =====
+        // ─────────────────────────────────────────
+        // Privacy dialog
+        // ─────────────────────────────────────────
         if (showPrivacyDialog) {
-            val langCode = when (currentLanguage) {
-                AppLanguage.INDONESIAN -> "id"
-                AppLanguage.ENGLISH -> "en"
-                AppLanguage.SPANISH -> "es"
-                AppLanguage.CHINESE -> "zh"
-                AppLanguage.ARABIC -> "ar"
-                AppLanguage.JAPANESE -> "ja"
-            }
-            var privacyContent by remember { mutableStateOf("Memuat...") }
-            LaunchedEffect(langCode) {
-                privacyContent = try {
-                    context.assets.open("legal/privacy_${langCode}.md")
-                        .bufferedReader()
-                        .use { it.readText() }
-                } catch (e: Exception) {
-                    try {
-                        context.assets.open("legal/privacy_en.md")
-                            .bufferedReader()
-                            .use { it.readText() }
-                    } catch (e2: Exception) {
-                        "Failed to load Privacy Policy: ${e2.message}"
-                    }
-                }
-            }
-
-            androidx.compose.material3.AlertDialog(
-                onDismissRequest = { showPrivacyDialog = false },
-                title = {
-                    Text(
-                        text = LanguageManager.translate("login_privacy_title", currentLanguage, "Kebijakan Privasi"),
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                text = {
-                    androidx.compose.foundation.layout.Column(
-                        modifier = Modifier.verticalScroll(androidx.compose.foundation.rememberScrollState())
-                    ) {
-                        Text(
-                            text = privacyContent,
-                            fontSize = 12.sp,
-                            lineHeight = 18.sp
-                        )
-                    }
-                },
-                confirmButton = {
-                    androidx.compose.material3.TextButton(
-                        onClick = { showPrivacyDialog = false }
-                    ) {
-                        Text(
-                            text = LanguageManager.translate("common_close", currentLanguage, "Tutup"),
-                            color = Color(0xFF34D399),
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
+            LegalDialog(
+                title = LanguageManager.translate("login_privacy_title", currentLanguage, "Kebijakan Privasi"),
+                filePrefix = "privacy",
+                currentLanguage = currentLanguage,
+                onDismiss = { showPrivacyDialog = false }
             )
         }
     }
 }
 
+// ─────────────────────────────────────────────────────────────
+// PremiumCheckbox — custom, animated, glow
+// ─────────────────────────────────────────────────────────────
+@Composable
+private fun PremiumCheckbox(
+    checked: Boolean,
+    indeterminate: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    size: androidx.compose.ui.unit.Dp = 22.dp,
+    accentColor: Color = EmeraldLight
+) {
+    // Scale bounce saat toggle
+    val scale by animateFloatAsState(
+        targetValue = if (checked) 1.05f else 1f,
+        animationSpec = tween(180),
+        label = "checkboxScale"
+    )
+
+    // Glow pulse
+    val infinite = rememberInfiniteTransition(label = "glow")
+    val glowAlpha by infinite.animateFloat(
+        initialValue = 0.25f,
+        targetValue = 0.6f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "glow"
+    )
+
+    Box(
+        modifier = Modifier
+            .size(size)
+            .scale(scale)
+            .clip(RoundedCornerShape(6.dp))
+            .background(
+                if (checked) {
+                    Brush.linearGradient(
+                        colors = listOf(accentColor, accentColor.copy(alpha = 0.7f))
+                    )
+                } else {
+                    Brush.linearGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = 0.08f),
+                            Color.White.copy(alpha = 0.04f)
+                        )
+                    )
+                }
+            )
+            .border(
+                width = if (checked) 0.dp else 1.5.dp,
+                color = if (checked) Color.Transparent
+                else Color.White.copy(alpha = 0.4f),
+                shape = RoundedCornerShape(6.dp)
+            )
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onCheckedChange(!checked) },
+        contentAlignment = Alignment.Center
+    ) {
+        // Glow shadow saat checked
+        if (checked) {
+            Box(
+                modifier = Modifier
+                    .size(size)
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                accentColor.copy(alpha = 0.4f * glowAlpha),
+                                Color.Transparent
+                            )
+                        )
+                    )
+            )
+        }
+
+        // Checkmark icon
+        if (checked) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = "Checked",
+                tint = Color.White,
+                modifier = Modifier.size(size * 0.65f)
+            )
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// LegalDialog — baca file markdown per bahasa
+// ─────────────────────────────────────────────────────────────
+@Composable
+private fun LegalDialog(
+    title: String,
+    filePrefix: String,
+    currentLanguage: AppLanguage,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+
+    val langCode = when (currentLanguage) {
+        AppLanguage.INDONESIAN -> "id"
+        AppLanguage.ENGLISH -> "en"
+        AppLanguage.SPANISH -> "es"
+        AppLanguage.CHINESE -> "zh"
+        AppLanguage.ARABIC -> "ar"
+        AppLanguage.JAPANESE -> "ja"
+    }
+
+    var legalContent by remember { mutableStateOf("Memuat...") }
+
+    LaunchedEffect(langCode) {
+        legalContent = try {
+            context.assets.open("legal/${filePrefix}_${langCode}.md")
+                .bufferedReader()
+                .use { it.readText() }
+        } catch (e: Exception) {
+            try {
+                context.assets.open("legal/${filePrefix}_en.md")
+                    .bufferedReader()
+                    .use { it.readText() }
+            } catch (e2: Exception) {
+                "Failed to load: ${e2.message}"
+            }
+        }
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = title, fontWeight = FontWeight.Bold)
+        },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = legalContent,
+                    fontSize = 12.sp,
+                    lineHeight = 18.sp
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(
+                    text = LanguageManager.translate("common_close", currentLanguage, "Tutup"),
+                    color = EmeraldLight,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+    )
+}

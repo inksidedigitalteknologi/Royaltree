@@ -725,6 +725,15 @@
     "login_terms_content": "By using Royaltree, you agree to:\\n\\n1. Your data (email, name) is used for account purposes.\\n\\n2. We do not sell your data to third parties.\\n\\n3. You can delete your account anytime via settings.\\n\\n4. RTP rewards may change per policy.\\n\\n5. Ad content is provided by AdMob (Google).\\n\\nBy checking, you consent to data processing per privacy policy.",
     "login_privacy_title": "Privacy Policy",
     "login_privacy_link": "Privacy Policy",
-    "login_marketing_optin": "I want to receive promotional emails, feature updates, and special offers"
+    "login_marketing_optin": "I want to receive promotional emails, feature updates, and special offers",
+    "login_welcome_back": "Welcome Back",
+    "login_subtitle_returning": "Continue your journey",
+    "login_welcome_new": "Welcome to Royaltree",
+    "login_subtitle_new": "Start your journey now",
+    "login_check_all": "Check All",
+    "login_trust_badge": "Your data is safe & encrypted",
+    "login_marketing_short": "Promotional email (optional)",
+    "login_version_brand": "Version",
+    "login_powered_by": "Powered by"
   }
 }

@@ -725,6 +725,15 @@
     "login_terms_content": "使用 Royaltree 即表示您同意：\\n\\n1. 您的数据（邮箱、姓名）用于账户目的。\\n\\n2. 我们不会将您的数据出售给第三方。\\n\\n3. 您可以随时通过设置删除账户。\\n\\n4. RTP 奖励可能根据政策变化。\\n\\n5. 广告内容由 AdMob (Google) 提供。\\n\\n勾选即表示您同意数据处理。",
     "login_privacy_title": "隐私政策",
     "login_privacy_link": "隐私政策",
-    "login_marketing_optin": "我想接收促销邮件、功能更新和特别优惠"
+    "login_marketing_optin": "我想接收促销邮件、功能更新和特别优惠",
+    "login_welcome_back": "欢迎回来",
+    "login_subtitle_returning": "继续你的旅程",
+    "login_welcome_new": "欢迎来到 Royaltree",
+    "login_subtitle_new": "现在开始你的旅程",
+    "login_check_all": "全选",
+    "login_trust_badge": "您的数据安全且加密",
+    "login_marketing_short": "促销邮件（可选）",
+    "login_version_brand": "版本",
+    "login_powered_by": "由...提供支持"
   }
 }

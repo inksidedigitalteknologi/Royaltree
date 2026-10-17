@@ -725,6 +725,15 @@
     "login_terms_content": "باستخدام Royaltree، أنت توافق على:\\n\\n1. تُستخدم بياناتك (البريد الإلكتروني والاسم) لأغراض الحساب.\\n\\n2. لا نبيع بياناتك لأطراف ثالثة.\\n\\n3. يمكنك حذف حسابك في أي وقت.\\n\\n4. قد تتغير مكافآت RTP حسب السياسة.\\n\\n5. يتم توفير محتوى الإعلانات بواسطة AdMob (Google).\\n\\nبتحديد المربع، أنت توافق على معالجة البيانات.",
     "login_privacy_title": "سياسة الخصوصية",
     "login_privacy_link": "سياسة الخصوصية",
-    "login_marketing_optin": "أرغب في تلقي رسائل ترويجية وتحديثات ومزايا خاصة"
+    "login_marketing_optin": "أرغب في تلقي رسائل ترويجية وتحديثات ومزايا خاصة",
+    "login_welcome_back": "مرحبًا بعودتك",
+    "login_subtitle_returning": "تابع رحلتك",
+    "login_welcome_new": "مرحبًا بك في Royaltree",
+    "login_subtitle_new": "ابدأ رحلتك الآن",
+    "login_check_all": "تحديد الكل",
+    "login_trust_badge": "بياناتك آمنة ومشفرة",
+    "login_marketing_short": "البريد الترويجي (اختياري)",
+    "login_version_brand": "الإصدار",
+    "login_powered_by": "مدعوم من"
   }
 }

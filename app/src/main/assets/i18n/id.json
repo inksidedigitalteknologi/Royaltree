@@ -725,6 +725,15 @@
     "login_terms_content": "Dengan menggunakan Royaltree, Anda menyetujui:\\n\\n1. Data yang Anda berikan (email, nama) digunakan untuk keperluan akun.\\n\\n2. Kami tidak menjual data Anda ke pihak ketiga.\\n\\n3. Anda dapat menghapus akun kapan saja melalui pengaturan.\\n\\n4. Reward RTP dapat berubah sesuai kebijakan.\\n\\n5. Konten iklan disediakan oleh AdMob (Google).\\n\\nDengan mencentang, Anda menyetujui pemrosesan data sesuai kebijakan privasi.",
     "login_privacy_title": "Kebijakan Privasi",
     "login_privacy_link": "Kebijakan Privasi",
-    "login_marketing_optin": "Saya ingin menerima email promosi, update fitur, dan penawaran khusus"
+    "login_marketing_optin": "Saya ingin menerima email promosi, update fitur, dan penawaran khusus",
+    "login_welcome_back": "Selamat Datang Kembali",
+    "login_subtitle_returning": "Lanjutkan perjalananmu",
+    "login_welcome_new": "Selamat Datang di Royaltree",
+    "login_subtitle_new": "Mulai perjalananmu sekarang",
+    "login_check_all": "Centang Semua",
+    "login_trust_badge": "Data Anda aman & terenkripsi",
+    "login_marketing_short": "Email promosi (opsional)",
+    "login_version_brand": "Versi",
+    "login_powered_by": "Didukung oleh"
   }
 }
