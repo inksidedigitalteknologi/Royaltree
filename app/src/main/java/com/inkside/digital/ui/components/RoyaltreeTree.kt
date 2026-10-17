@@ -102,21 +102,59 @@ fun RoyaltreeTree(
             center = Offset(cx, h * 0.40f)
         )
 
-        // ============ 2. Akar menyebar + taper ============
+        // ============ 2a. Ground shadow (elips tanah) ============
+        // Nutupin akar biar gak keliatan aneh + grounding natural
+        val groundRx = w * 0.32f * (1f + 0.04f * level)
+        val groundRy = w * 0.045f * (1f + 0.04f * level)
+        drawOval(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color(0xFF0F172A).copy(alpha = 0.55f * growthProgress),
+                    Color(0xFF0F172A).copy(alpha = 0.25f * growthProgress),
+                    Color.Transparent
+                ),
+                center = Offset(cx, baseY + groundRy * 0.3f),
+                radius = groundRx
+            ),
+            topLeft = Offset(cx - groundRx, baseY - groundRy * 0.6f),
+            size = Size(groundRx * 2f, groundRy * 2f)
+        )
+        // Ring tipis emas di tanah (glow subtle)
+        drawOval(
+            color = RootGold.copy(alpha = 0.12f * growthProgress),
+            topLeft = Offset(cx - groundRx * 0.92f, baseY - groundRy * 0.5f),
+            size = Size(groundRx * 1.84f, groundRy * 1.7f),
+            style = Stroke(width = 1.2f)
+        )
+
+        // ============ 2b. Akar menyebar + taper ============
         drawRoots(cx, baseY, w, level, growthProgress, rand)
 
         // ============ 3. Batang: tinggi, taper, lekuk natural ============
         // Batang lebih tinggi (25-32% tinggi canvas)
-        // Level 1-2 (sprout): batang pendek + tebal
-        // Level 3+ (tree): batang tinggi + taper
-        val isSprout = level <= 2
-        val trunkHeightFactor = if (isSprout) 0.10f + 0.03f * level else 0.24f + 0.025f * level
+        // 3 tahap: Sprout (L1) → Sapling (L2) → Tree (L3+)
+        val isSprout = level == 1
+        val isSapling = level == 2
+        val isTree = level >= 3
+        val trunkHeightFactor = when {
+            isSprout -> 0.13f
+            isSapling -> 0.18f
+            else -> 0.24f + 0.025f * level
+        }
         val trunkHeight = h * trunkHeightFactor * growthProgress
         val trunkTopY = baseY - trunkHeight
 
-        // Lebar pangkal & ujung — TAPER (mengecil ke atas)
-        val trunkBaseWidth = if (isSprout) w * (0.055f + 0.008f * level) else w * (0.048f + 0.006f * level)
-        val trunkTopWidth = if (isSprout) trunkBaseWidth * 0.55f else trunkBaseWidth * 0.35f
+        // Lebar pangkal & ujung — TAPER
+        val trunkBaseWidth = when {
+            isSprout -> w * 0.063f
+            isSapling -> w * 0.058f
+            else -> w * (0.048f + 0.006f * level)
+        }
+        val trunkTopWidth = when {
+            isSprout -> trunkBaseWidth * 0.55f
+            isSapling -> trunkBaseWidth * 0.40f
+            else -> trunkBaseWidth * 0.35f
+        }
 
         // Lekukan batang — 2 control points untuk S-curve
         val bend1 = w * 0.018f * (rand.nextFloat() - 0.5f) * 2f
@@ -140,12 +178,29 @@ fun RoyaltreeTree(
         drawBarkLines(cx, baseY, trunkTopY, trunkBaseWidth, growthProgress, rand)
 
         // ============ 5. Dahan fractal ============
-        // Level 1-2: sedikit dahan tapi daun banyak (rimbun mini)
-        // Level 3+: dahan banyak, daun penuh
-        val branchCount = if (isSprout) 3 else 2 + level
-        val branchLength = if (isSprout) trunkHeight * 1.4f else trunkHeight * (0.75f + 0.10f * level)
-        val maxDepth = if (isSprout) 3 else 4 + (level / 2)
-        val baseAngleStep = if (isSprout) 35f else 22f + level * 2.5f
+        // Sprout: 3 dahan, spread lebar, daun rimbun mini
+        // Sapling: 4 dahan, spread sedang, daun bertingkat
+        // Tree: dahan banyak, daun penuh
+        val branchCount = when {
+            isSprout -> 3
+            isSapling -> 4
+            else -> 2 + level
+        }
+        val branchLength = when {
+            isSprout -> trunkHeight * 1.4f
+            isSapling -> trunkHeight * 1.15f
+            else -> trunkHeight * (0.75f + 0.10f * level)
+        }
+        val maxDepth = when {
+            isSprout -> 3
+            isSapling -> 4
+            else -> 4 + (level / 2)
+        }
+        val baseAngleStep = when {
+            isSprout -> 35f
+            isSapling -> 30f
+            else -> 22f + level * 2.5f
+        }
 
         for (i in 0 until branchCount) {
             // Sudut tidak simetris — pakai random offset
@@ -179,6 +234,45 @@ fun RoyaltreeTree(
                     radius = 2.5f + rand.nextFloat() * 1.5f,
                     center = Offset(fx, fy)
                 )
+            }
+        }
+
+        // ============ 7. Daun jatuh (partikel melayang) ============
+        if (level >= 2 && growthProgress > 0.5f) {
+            val leafCount = if (level >= 5) 8 else if (level >= 3) 5 else 3
+            val canvasW = w
+            val canvasH = h
+            for (i in 0 until leafCount) {
+                val seed = rand.nextFloat() * 100f + i * 7.3f
+                // Phase bergerak pakai sway + seed
+                val t = ((sway * 0.3f + seed) % 1f + 1f) % 1f  // 0..1 loop
+                // Posisi X: melayang dari kiri ke kanan
+                val leafX = cx + (seed % 2f - 1f) * canvasW * 0.35f +
+                        sin(t * 2f * PI.toFloat() + seed) * canvasW * 0.08f
+                // Posisi Y: turun dari atas pohon ke bawah
+                val startY = canvasH * 0.25f
+                val endY = baseY + canvasH * 0.08f
+                val leafY = startY + (endY - startY) * t
+                // Rotasi daun
+                val leafRot = t * 360f + seed * 30f
+                val leafSize = 3.5f + (seed % 1f) * 2.5f
+                val leafAlpha = (1f - t) * 0.85f * growthProgress
+
+                rotate(leafRot, pivot = Offset(leafX, leafY)) {
+                    // Bentuk daun: elips
+                    drawOval(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                LeafMid.copy(alpha = leafAlpha),
+                                LeafGold.copy(alpha = leafAlpha * 0.7f)
+                            ),
+                            start = Offset(leafX - leafSize, leafY - leafSize * 0.5f),
+                            end = Offset(leafX + leafSize, leafY + leafSize * 0.5f)
+                        ),
+                        topLeft = Offset(leafX - leafSize * 1.4f, leafY - leafSize * 0.6f),
+                        size = Size(leafSize * 2.8f, leafSize * 1.2f)
+                    )
+                }
             }
         }
     }
@@ -431,10 +525,19 @@ private fun DrawScope.drawRoots(
     growth: Float,
     rand: Random
 ) {
-    // Level 1-2: akar MINI (tanam di tanah, tidak menggantung)
-    val isSprout = level <= 2
-    val rootCount = if (isSprout) 3 else 3 + level / 2
-    val rootLen = if (isSprout) w * 0.04f * growth else w * 0.08f * (1f + level * 0.15f) * growth
+    // 3 tahap akar: sprout / sapling / tree
+    val isSprout = level == 1
+    val isSapling = level == 2
+    val rootCount = when {
+        isSprout -> 3
+        isSapling -> 4
+        else -> 3 + level / 2
+    }
+    val rootLen = when {
+        isSprout -> w * 0.04f * growth
+        isSapling -> w * 0.06f * growth
+        else -> w * 0.08f * (1f + level * 0.15f) * growth
+    }
 
     for (i in 0 until rootCount) {
         val offset = (i - (rootCount - 1) / 2f) * (w * 0.05f)
@@ -444,12 +547,16 @@ private fun DrawScope.drawRoots(
         val baseThickness = w * 0.016f
         val tipThickness = w * 0.004f
 
-        // Bezier — level 1-2 akar horizontal (tanam), level 3+ turun & keluar
-        val endX = cx + offset * (if (isSprout) 1.6f else 1f)
-        val endY = if (isSprout) {
-            baseY + rootLen * 0.15f  // hanya sedikit turun — tanam di tanah
-        } else {
-            baseY + rootLen * (0.85f + rand.nextFloat() * 0.3f)
+        // 3 tahap: sprout horizontal, sapling setengah, tree natural
+        val endX = when {
+            isSprout -> cx + offset * 1.6f
+            isSapling -> cx + offset * 1.3f
+            else -> cx + offset
+        }
+        val endY = when {
+            isSprout -> baseY + rootLen * 0.15f
+            isSapling -> baseY + rootLen * 0.50f
+            else -> baseY + rootLen * (0.85f + rand.nextFloat() * 0.3f)
         }
 
         // Draw sebagai polygon (taper)
