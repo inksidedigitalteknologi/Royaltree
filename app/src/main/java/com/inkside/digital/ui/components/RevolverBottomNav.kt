@@ -1,21 +1,23 @@
 package com.inkside.digital.ui.components
 
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -26,18 +28,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.SportsEsports
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,29 +45,34 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.inkside.digital.R
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.viewmodel.AppScreen
 
-// ==== DESIGN SYSTEM ====
-private val SurfaceDark = Color(0xFF0F172A)
-private val SurfaceDeep = Color(0xFF020617)
+// ─────────────────────────────────────────────────────────────
+// Palette
+// ─────────────────────────────────────────────────────────────
+private val BgDeep = Color(0xFF0B1220)
+private val BgPill = Color(0xFF0F172A)
 private val EmeraldPrimary = Color(0xFF10B981)
 private val EmeraldLight = Color(0xFF34D399)
 private val EmeraldDeep = Color(0xFF064E3B)
 private val GoldVip = Color(0xFFFBBF24)
-private val TextPrimary = Color(0xFFFFFFFF)
-private val TextSecondary = Color(0xFFCBD5E1)
-private val TextMuted = Color(0xFF64748B)
+private val GoldBright = Color(0xFFFFD700)
+private val GoldDeep = Color(0xFFB45309)
+private val TextMuted = Color(0xFF94A3B8)
+private val PurpleAccent = Color(0xFFA855F7)
 
 data class CommandItem(
     val screen: AppScreen,
-    val label: String,
+    val labelKey: String,
+    val fallbackLabel: String,
     val icon: ImageVector
 )
 
@@ -81,339 +85,248 @@ fun RevolverBottomNav(
     isAdminMode: Boolean = false
 ) {
     val haptic = LocalHapticFeedback.current
-    var isExpanded by remember { mutableStateOf(false) }
 
-    // Pulse animation
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val pulseAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.6f,
-        targetValue = 1.0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1200),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulseAlpha"
-    )
-
-    // 5 menu
-    val items = remember(isAdminMode) {
+    // Pilih menu items
+    val items: List<CommandItem> = remember(isAdminMode) {
         if (isAdminMode) {
             listOf(
-                CommandItem(AppScreen.ADMIN, "Admin", Icons.Filled.Home),
-                CommandItem(AppScreen.MISSIONS, "Misi", Icons.Filled.Flag),
-                CommandItem(AppScreen.GAME_ROOM, "Game", Icons.Filled.SportsEsports),
-                CommandItem(AppScreen.PROFILE, "Profil", Icons.Filled.AccountCircle)
+                CommandItem(AppScreen.ADMIN, "nav_admin", "Admin", Icons.Filled.AdminPanelSettings),
+                CommandItem(AppScreen.HOME, "nav_home", "Home", Icons.Filled.Home),
+                CommandItem(AppScreen.MISSIONS, "nav_missions", "Misi", Icons.Filled.Flag),
+                CommandItem(AppScreen.PROFILE, "nav_profile", "Profil", Icons.Filled.AccountCircle)
             )
         } else {
             listOf(
-                CommandItem(AppScreen.HOME, "Home", Icons.Filled.Home),
-                CommandItem(AppScreen.MISSIONS, "Misi", Icons.Filled.Flag),
-                CommandItem(AppScreen.GAME_ROOM, "Game", Icons.Filled.SportsEsports),
-                CommandItem(AppScreen.PROFILE, "Profil", Icons.Filled.AccountCircle)
+                CommandItem(AppScreen.HOME, "nav_home", "Home", Icons.Filled.Home),
+                CommandItem(AppScreen.MISSIONS, "nav_missions", "Misi", Icons.Filled.Flag),
+                CommandItem(AppScreen.GAME_ROOM, "nav_game", "Game", Icons.Filled.SportsEsports),
+                CommandItem(AppScreen.PROFILE, "nav_profile", "Profil", Icons.Filled.AccountCircle)
             )
         }
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        // ==== OVERLAY GELAP ====
-        if (isExpanded) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.45f))
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onTap = {
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                isExpanded = false
-                            }
-                        )
-                    }
-            )
-        }
+    // Pulse animation untuk coin center
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.45f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseAlpha"
+    )
+    val coinScale by infiniteTransition.animateFloat(
+        initialValue = 1.0f,
+        targetValue = 1.06f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1800),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "coinScale"
+    )
 
-        // ==== BOTTOM BAR ====
-        Box(
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
+        // ═══════════════════════════════════════════
+        // FLOATING PILL
+        // ═══════════════════════════════════════════
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .height(72.dp)
+                .clip(RoundedCornerShape(36.dp))
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            BgPill.copy(alpha = 0.96f),
+                            BgDeep.copy(alpha = 0.98f)
+                        )
+                    )
+                )
+                .border(
+                    width = 1.dp,
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            EmeraldPrimary.copy(alpha = 0.35f),
+                            GoldVip.copy(alpha = 0.25f),
+                            EmeraldPrimary.copy(alpha = 0.35f)
+                        )
+                    ),
+                    shape = RoundedCornerShape(36.dp)
+                )
+                .padding(horizontal = 6.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            if (!isExpanded) {
-                // ==== COLLAPSED: Coin RTP ====
+            // 2 tab kiri
+            items.take(2).forEach { item ->
+                PillTab(
+                    item = item,
+                    isSelected = currentScreen == item.screen,
+                    currentLanguage = currentLanguage,
+                    haptic = haptic,
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onNavigate(item.screen)
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            // ═══════════════════════════════════════════
+            // RTP COIN CENTER (tap → Daily Check-In)
+            // ═══════════════════════════════════════════
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.width(80.dp)
+            ) {
+                // Glow pulse
                 Box(
-                    modifier = Modifier.align(Alignment.Center),
+                    modifier = Modifier
+                        .size(76.dp)
+                        .background(
+                            brush = Brush.radialGradient(
+                                colors = listOf(
+                                    GoldVip.copy(alpha = 0.5f * pulseAlpha),
+                                    GoldVip.copy(alpha = 0.15f * pulseAlpha),
+                                    Color.Transparent
+                                )
+                            ),
+                            shape = CircleShape
+                        )
+                )
+
+                // Coin
+                Box(
+                    modifier = Modifier
+                        .size(62.dp)
+                        .scale(coinScale)
+                        .clip(CircleShape)
+                        .background(
+                            Brush.radialGradient(
+                                colors = listOf(
+                                    Color(0xFFFEF3C7),
+                                    GoldBright,
+                                    GoldVip,
+                                    Color(0xFFF59E0B)
+                                )
+                            )
+                        )
+                        .border(2.dp, GoldDeep, CircleShape)
+                        .clickable {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            onNavigate(AppScreen.DAILY_CHECK_IN)
+                        },
                     contentAlignment = Alignment.Center
                 ) {
-                    // Glow
-                    Box(
-                        modifier = Modifier
-                            .size(72.dp)
-                            .background(
-                                Brush.radialGradient(
-                                    listOf(
-                                        GoldVip.copy(alpha = 0.5f),
-                                        GoldVip.copy(alpha = 0.2f),
-                                        Color.Transparent
-                                    )
-                                ),
-                                CircleShape
-                            )
+                    Image(
+                        painter = painterResource(id = R.drawable.rtp_coin),
+                        contentDescription = LanguageManager.translate("cd_rtp", currentLanguage, "RTP"),
+                        modifier = Modifier.size(36.dp)
                     )
-                    // Coin
-                    Box(
-                        modifier = Modifier
-                            .size(60.dp)
-                            .clip(CircleShape)
-                            .background(
-                                Brush.radialGradient(
-                                    listOf(
-                                        Color(0xFFFDE68A),
-                                        GoldVip,
-                                        Color(0xFFF59E0B)
-                                    )
-                                )
-                            )
-                            .border(2.dp, Color(0xFFB45309), CircleShape)
-                            .clickable {
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                isExpanded = true
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        androidx.compose.foundation.Image(
-                            painter = androidx.compose.ui.res.painterResource(
-                                id = com.inkside.digital.R.drawable.rtp_coin
-                            ),
-                            contentDescription = LanguageManager.translate("cd_rtp", currentLanguage, "RTP"),
-                            modifier = Modifier.size(34.dp)
-                        )
-                    }
                 }
-            } else {
-                // ==== EXPANDED: Command Bar ====
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                listOf(
-                                    Color(0xFF0F172A).copy(alpha = 0.98f),
-                                    Color(0xFF020617).copy(alpha = 0.98f)
-                                )
-                            )
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = EmeraldPrimary.copy(alpha = 0.4f),
-                            shape = RoundedCornerShape(18.dp)
-                        )
-                        .padding(horizontal = 12.dp, vertical = 10.dp)
-                ) {
-                    // ==== CORNER BRACKETS + HEADER ====
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "┌─",
-                            fontSize = 10.sp,
-                            color = EmeraldPrimary.copy(alpha = 0.6f),
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "ROYALTREE COMMAND",
-                            fontSize = 8.sp,
-                            color = TextMuted,
-                            letterSpacing = 1.5.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "─┐",
-                            fontSize = 10.sp,
-                            color = EmeraldPrimary.copy(alpha = 0.6f),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+            }
 
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    // ==== ROW ICON ====
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        items.forEachIndexed { index, item ->
-                            // Insert coin di tengah (index 2)
-                            if (index == 2) {
-                                // ==== CENTER COIN ====
-                                Box(
-                                    modifier = Modifier
-                                        .size(52.dp)
-                                        .clip(CircleShape)
-                                        .background(
-                                            Brush.radialGradient(
-                                                listOf(
-                                                    Color(0xFFFDE68A),
-                                                    GoldVip,
-                                                    Color(0xFFF59E0B)
-                                                )
-                                            )
-                                        )
-                                        .border(2.dp, Color(0xFFB45309), CircleShape)
-                                        .clickable {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            isExpanded = false
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    androidx.compose.foundation.Image(
-                                        painter = androidx.compose.ui.res.painterResource(
-                                            id = com.inkside.digital.R.drawable.rtp_coin
-                                        ),
-                                        contentDescription = LanguageManager.translate("cd_rtp", currentLanguage, "RTP"),
-                                        modifier = Modifier.size(28.dp)
-                                    )
-                                }
-                            }
-
-                            // ==== ICON ITEM ====
-                            val isSelected = currentScreen == item.screen
-                            CommandIcon(
-                                item = item,
-                                isSelected = isSelected,
-                                pulseAlpha = pulseAlpha,
-                                onClick = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    onNavigate(item.screen)
-                                    isExpanded = false
-                                }
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    // ==== DIVIDER MEKANIKAL ====
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "└",
-                            fontSize = 10.sp,
-                            color = EmeraldPrimary.copy(alpha = 0.6f),
-                            fontWeight = FontWeight.Bold
-                        )
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(0.5.dp)
-                                .background(EmeraldPrimary.copy(alpha = 0.3f))
-                        )
-                        Text(
-                            text = " 0x4E 0x4F 0x44 0x45 0x53 ",
-                            fontSize = 7.sp,
-                            color = TextMuted,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.5.sp
-                        )
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(0.5.dp)
-                                .background(EmeraldPrimary.copy(alpha = 0.3f))
-                        )
-                        Text(
-                            text = "┘",
-                            fontSize = 10.sp,
-                            color = EmeraldPrimary.copy(alpha = 0.6f),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
+            // 2 tab kanan
+            items.drop(2).take(2).forEach { item ->
+                PillTab(
+                    item = item,
+                    isSelected = currentScreen == item.screen,
+                    currentLanguage = currentLanguage,
+                    haptic = haptic,
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onNavigate(item.screen)
+                    },
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
     }
 }
 
+// ─────────────────────────────────────────────────────────────
+// PILL TAB — item premium
+// ─────────────────────────────────────────────────────────────
 @Composable
-private fun CommandIcon(
+private fun PillTab(
     item: CommandItem,
     isSelected: Boolean,
-    pulseAlpha: Float,
-    onClick: () -> Unit
+    currentLanguage: AppLanguage,
+    haptic: androidx.compose.ui.hapticfeedback.HapticFeedback,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val iconTint = if (isSelected) EmeraldPrimary else TextMuted
-    val labelColor = if (isSelected) EmeraldPrimary else TextMuted
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) 0.9f else if (isSelected) 1.05f else 1f,
+        animationSpec = spring(dampingRatio = 0.5f, stiffness = 400f),
+        label = "tabScale"
+    )
+
+    val accentColor = if (item.screen == AppScreen.ADMIN) PurpleAccent else EmeraldPrimary
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .width(54.dp)
-            .clickable(onClick = onClick)
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .scale(scale)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
+            )
             .padding(vertical = 4.dp)
     ) {
+        // Icon circle
         Box(
-            modifier = Modifier.size(38.dp),
+            modifier = Modifier
+                .size(32.dp)
+                .clip(CircleShape)
+                .background(
+                    if (isSelected) {
+                        Brush.linearGradient(
+                            colors = listOf(
+                                GoldBright.copy(alpha = 0.9f),
+                                GoldVip.copy(alpha = 0.85f)
+                            )
+                        )
+                    } else {
+                        Brush.linearGradient(
+                            colors = listOf(
+                                Color.White.copy(alpha = 0.06f),
+                                Color.White.copy(alpha = 0.04f)
+                            )
+                        )
+                    }
+                ),
             contentAlignment = Alignment.Center
         ) {
-            // Glow untuk selected
-            if (isSelected) {
-                Box(
-                    modifier = Modifier
-                        .size(38.dp)
-                        .background(
-                            Brush.radialGradient(
-                                listOf(
-                                    EmeraldPrimary.copy(alpha = 0.3f * pulseAlpha),
-                                    Color.Transparent
-                                )
-                            ),
-                            CircleShape
-                        )
-                )
-            }
-
-            // Border circle
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (isSelected) EmeraldDeep.copy(alpha = 0.5f)
-                        else SurfaceDark.copy(alpha = 0.6f)
-                    )
-                    .border(
-                        width = if (isSelected) 1.5.dp else 1.dp,
-                        color = if (isSelected) EmeraldPrimary else Color(0xFF334155),
-                        shape = CircleShape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = item.icon,
-                    contentDescription = item.label,
-                    tint = iconTint,
-                    modifier = Modifier.size(if (isSelected) 18.dp else 16.dp)
-                )
-            }
+            Icon(
+                imageVector = item.icon,
+                contentDescription = item.fallbackLabel,
+                tint = if (isSelected) Color(0xFF1F2937) else TextMuted,
+                modifier = Modifier.size(if (isSelected) 18.dp else 16.dp)
+            )
         }
 
-        Spacer(modifier = Modifier.height(3.dp))
+        Spacer(Modifier.height(3.dp))
 
         // Label
         Text(
-            text = item.label,
+            text = LanguageManager.translate(item.labelKey, currentLanguage, item.fallbackLabel),
             fontSize = 9.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-            color = labelColor,
-            maxLines = 1
+            color = if (isSelected) GoldBright else TextMuted,
+            maxLines = 1,
+            letterSpacing = 0.3.sp
         )
     }
 }
