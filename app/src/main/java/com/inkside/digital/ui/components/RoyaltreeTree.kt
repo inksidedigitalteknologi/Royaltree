@@ -107,12 +107,16 @@ fun RoyaltreeTree(
 
         // ============ 3. Batang: tinggi, taper, lekuk natural ============
         // Batang lebih tinggi (25-32% tinggi canvas)
-        val trunkHeight = h * (0.24f + 0.025f * level) * growthProgress
+        // Level 1-2 (sprout): batang pendek + tebal
+        // Level 3+ (tree): batang tinggi + taper
+        val isSprout = level <= 2
+        val trunkHeightFactor = if (isSprout) 0.10f + 0.03f * level else 0.24f + 0.025f * level
+        val trunkHeight = h * trunkHeightFactor * growthProgress
         val trunkTopY = baseY - trunkHeight
 
         // Lebar pangkal & ujung — TAPER (mengecil ke atas)
-        val trunkBaseWidth = w * (0.048f + 0.006f * level)
-        val trunkTopWidth = trunkBaseWidth * 0.35f
+        val trunkBaseWidth = if (isSprout) w * (0.055f + 0.008f * level) else w * (0.048f + 0.006f * level)
+        val trunkTopWidth = if (isSprout) trunkBaseWidth * 0.55f else trunkBaseWidth * 0.35f
 
         // Lekukan batang — 2 control points untuk S-curve
         val bend1 = w * 0.018f * (rand.nextFloat() - 0.5f) * 2f
@@ -135,11 +139,13 @@ fun RoyaltreeTree(
         // ============ 4. Texture alur batang (bark lines) ============
         drawBarkLines(cx, baseY, trunkTopY, trunkBaseWidth, growthProgress, rand)
 
-        // ============ 5. Dahan fractal (rekursif lebih dalam) ============
-        val branchCount = 2 + level              // 3..7
-        val branchLength = trunkHeight * (0.75f + 0.10f * level)
-        val maxDepth = 4 + (level / 2)           // 4..6
-        val baseAngleStep = 22f + level * 2.5f   // spread
+        // ============ 5. Dahan fractal ============
+        // Level 1-2: sedikit dahan tapi daun banyak (rimbun mini)
+        // Level 3+: dahan banyak, daun penuh
+        val branchCount = if (isSprout) 3 else 2 + level
+        val branchLength = if (isSprout) trunkHeight * 1.4f else trunkHeight * (0.75f + 0.10f * level)
+        val maxDepth = if (isSprout) 3 else 4 + (level / 2)
+        val baseAngleStep = if (isSprout) 35f else 22f + level * 2.5f
 
         for (i in 0 until branchCount) {
             // Sudut tidak simetris — pakai random offset
@@ -425,8 +431,10 @@ private fun DrawScope.drawRoots(
     growth: Float,
     rand: Random
 ) {
-    val rootCount = 3 + level / 2
-    val rootLen = w * 0.08f * (1f + level * 0.15f) * growth
+    // Level 1-2: akar MINI (tanam di tanah, tidak menggantung)
+    val isSprout = level <= 2
+    val rootCount = if (isSprout) 3 else 3 + level / 2
+    val rootLen = if (isSprout) w * 0.04f * growth else w * 0.08f * (1f + level * 0.15f) * growth
 
     for (i in 0 until rootCount) {
         val offset = (i - (rootCount - 1) / 2f) * (w * 0.05f)
@@ -436,9 +444,13 @@ private fun DrawScope.drawRoots(
         val baseThickness = w * 0.016f
         val tipThickness = w * 0.004f
 
-        // Bezier — akar melengkung turun & keluar
-        val endX = cx + offset
-        val endY = baseY + rootLen * (0.85f + rand.nextFloat() * 0.3f)
+        // Bezier — level 1-2 akar horizontal (tanam), level 3+ turun & keluar
+        val endX = cx + offset * (if (isSprout) 1.6f else 1f)
+        val endY = if (isSprout) {
+            baseY + rootLen * 0.15f  // hanya sedikit turun — tanam di tanah
+        } else {
+            baseY + rootLen * (0.85f + rand.nextFloat() * 0.3f)
+        }
 
         // Draw sebagai polygon (taper)
         val path = Path().apply {
