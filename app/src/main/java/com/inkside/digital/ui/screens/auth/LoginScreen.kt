@@ -383,8 +383,33 @@ fun LoginScreen(
             )
         }
 
-        // ===== TERMS & CONDITIONS DIALOG =====
+        // ===== TERMS & CONDITIONS DIALOG (baca file per bahasa) =====
         if (showTermsDialog) {
+            val langCode = when (currentLanguage) {
+                AppLanguage.ID -> "id"
+                AppLanguage.EN -> "en"
+                AppLanguage.ES -> "es"
+                AppLanguage.ZH -> "zh"
+                AppLanguage.AR -> "ar"
+                AppLanguage.JA -> "ja"
+            }
+            var legalContent by remember { mutableStateOf("Memuat...") }
+            LaunchedEffect(langCode) {
+                legalContent = try {
+                    context.assets.open("legal/terms_${langCode}.md")
+                        .bufferedReader()
+                        .use { it.readText() }
+                } catch (e: Exception) {
+                    try {
+                        context.assets.open("legal/terms_en.md")
+                            .bufferedReader()
+                            .use { it.readText() }
+                    } catch (e2: Exception) {
+                        "Failed to load Terms: ${e2.message}"
+                    }
+                }
+            }
+
             androidx.compose.material3.AlertDialog(
                 onDismissRequest = { showTermsDialog = false },
                 title = {
@@ -398,18 +423,8 @@ fun LoginScreen(
                         modifier = Modifier.verticalScroll(androidx.compose.foundation.rememberScrollState())
                     ) {
                         Text(
-                            text = LanguageManager.translate(
-                                "login_terms_content",
-                                currentLanguage,
-                                "Dengan menggunakan Royaltree, Anda menyetujui:\n\n" +
-                                    "1. Data yang Anda berikan (email, nama) digunakan untuk keperluan akun.\n\n" +
-                                    "2. Kami tidak menjual data Anda ke pihak ketiga.\n\n" +
-                                    "3. Anda dapat menghapus akun kapan saja melalui pengaturan.\n\n" +
-                                    "4. Reward RTP dapat berubah sesuai kebijakan.\n\n" +
-                                    "5. Konten iklan disediakan oleh AdMob (Google).\n\n" +
-                                    "Dengan mencentang, Anda menyetujui pemrosesan data sesuai kebijakan privasi."
-                            ),
-                            fontSize = 13.sp,
+                            text = legalContent,
+                            fontSize = 12.sp,
                             lineHeight = 18.sp
                         )
                     }
