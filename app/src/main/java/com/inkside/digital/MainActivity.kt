@@ -340,14 +340,19 @@ fun RootNav(
         }
 
         AuthScreen.LOGIN -> {
+            val prefs = context.getSharedPreferences("royaltree_prefs", android.content.Context.MODE_PRIVATE)
+            val isReturningUser = prefs.getBoolean("has_logged_in_before", false)
+
             LoginScreen(
                 isLoading = isLoading,
                 errorMessage = errorMessage,
                 currentLanguage = currentLanguage,
+                isReturningUser = isReturningUser,
                 onLanguageChange = { lang ->
                     affiliateViewModel.setLanguage(lang)
                 },
                 onLoginGoogle = { idToken, marketingOptIn ->
+                    prefs.edit().putBoolean("has_logged_in_before", true).apply()
                     authViewModel.loginWithGoogle(idToken, marketingOptIn)
                 }
             )
