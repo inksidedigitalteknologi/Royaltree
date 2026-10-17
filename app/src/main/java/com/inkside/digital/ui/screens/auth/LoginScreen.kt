@@ -94,6 +94,7 @@ fun LoginScreen(
     var googleLoading by remember { mutableStateOf(false) }
     var agreementChecked by remember { mutableStateOf(false) }
     var showTermsDialog by remember { mutableStateOf(false) }
+    var showPrivacyDialog by remember { mutableStateOf(false) }
     var contentVisible by remember { mutableStateOf(false) }
     var showLanguageModal by remember { mutableStateOf(false) }
 
@@ -248,24 +249,45 @@ fun LoginScreen(
                                             "login_agree_prefix",
                                             currentLanguage,
                                             "Saya menyetujui"
-                                        ) + " ",
+                                        ),
                                         fontSize = 11.sp,
                                         color = Color.White.copy(alpha = 0.7f),
                                         lineHeight = 14.sp
                                     )
-                                    Text(
-                                        text = LanguageManager.translate(
-                                            "login_terms_link",
-                                            currentLanguage,
-                                            "Syarat & Ketentuan serta Kebijakan Privasi"
-                                        ),
-                                        fontSize = 11.sp,
-                                        color = Color(0xFF34D399),
-                                        fontWeight = FontWeight.SemiBold,
-                                        textDecoration = TextDecoration.Underline,
-                                        modifier = Modifier.clickable { showTermsDialog = true },
-                                        lineHeight = 14.sp
-                                    )
+                                    Row {
+                                        Text(
+                                            text = LanguageManager.translate(
+                                                "login_terms_link",
+                                                currentLanguage,
+                                                "Syarat & Ketentuan"
+                                            ),
+                                            fontSize = 11.sp,
+                                            color = Color(0xFF34D399),
+                                            fontWeight = FontWeight.SemiBold,
+                                            textDecoration = TextDecoration.Underline,
+                                            modifier = Modifier.clickable { showTermsDialog = true },
+                                            lineHeight = 14.sp
+                                        )
+                                        Text(
+                                            text = " & ",
+                                            fontSize = 11.sp,
+                                            color = Color.White.copy(alpha = 0.7f),
+                                            lineHeight = 14.sp
+                                        )
+                                        Text(
+                                            text = LanguageManager.translate(
+                                                "login_privacy_link",
+                                                currentLanguage,
+                                                "Kebijakan Privasi"
+                                            ),
+                                            fontSize = 11.sp,
+                                            color = Color(0xFF34D399),
+                                            fontWeight = FontWeight.SemiBold,
+                                            textDecoration = TextDecoration.Underline,
+                                            modifier = Modifier.clickable { showPrivacyDialog = true },
+                                            lineHeight = 14.sp
+                                        )
+                                    }
                                 }
                             }
 
@@ -432,6 +454,66 @@ fun LoginScreen(
                 confirmButton = {
                     androidx.compose.material3.TextButton(
                         onClick = { showTermsDialog = false }
+                    ) {
+                        Text(
+                            text = LanguageManager.translate("common_close", currentLanguage, "Tutup"),
+                            color = Color(0xFF34D399),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            )
+        }
+
+        // ===== PRIVACY POLICY DIALOG (baca file per bahasa) =====
+        if (showPrivacyDialog) {
+            val langCode = when (currentLanguage) {
+                AppLanguage.ID -> "id"
+                AppLanguage.EN -> "en"
+                AppLanguage.ES -> "es"
+                AppLanguage.ZH -> "zh"
+                AppLanguage.AR -> "ar"
+                AppLanguage.JA -> "ja"
+            }
+            var privacyContent by remember { mutableStateOf("Memuat...") }
+            LaunchedEffect(langCode) {
+                privacyContent = try {
+                    context.assets.open("legal/privacy_${langCode}.md")
+                        .bufferedReader()
+                        .use { it.readText() }
+                } catch (e: Exception) {
+                    try {
+                        context.assets.open("legal/privacy_en.md")
+                            .bufferedReader()
+                            .use { it.readText() }
+                    } catch (e2: Exception) {
+                        "Failed to load Privacy Policy: ${e2.message}"
+                    }
+                }
+            }
+
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { showPrivacyDialog = false },
+                title = {
+                    Text(
+                        text = LanguageManager.translate("login_privacy_title", currentLanguage, "Kebijakan Privasi"),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    androidx.compose.foundation.layout.Column(
+                        modifier = Modifier.verticalScroll(androidx.compose.foundation.rememberScrollState())
+                    ) {
+                        Text(
+                            text = privacyContent,
+                            fontSize = 12.sp,
+                            lineHeight = 18.sp
+                        )
+                    }
+                },
+                confirmButton = {
+                    androidx.compose.material3.TextButton(
+                        onClick = { showPrivacyDialog = false }
                     ) {
                         Text(
                             text = LanguageManager.translate("common_close", currentLanguage, "Tutup"),
