@@ -714,9 +714,9 @@
     "faq_last_update": "最后更新：2026 年 10 月 15 日",
     "splash_tagline": "联盟奖励平台",
     "loading_growing_tree": "正在培育您的树...",
-    "login_google_only_info": "仅使用 Google 帐户登录。无需密码。",
     "login_terms": "登录即表示您同意我们的条款和条件。",
     "splash_presented_by": "由...呈现",
-    "splash_in_collaboration": "合作"
+    "splash_in_collaboration": "合作",
+    "login_loading": "加载中..."
   }
 }

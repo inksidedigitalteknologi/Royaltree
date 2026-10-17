@@ -75,6 +75,7 @@ import kotlinx.coroutines.launch
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.components.LanguageSelectionModal
+import androidx.compose.ui.res.painterResource
 
 @Composable
 fun LoginScreen(
@@ -217,36 +218,6 @@ fun LoginScreen(
 
                             Spacer(modifier = Modifier.height(24.dp))
 
-                            // Info: Login pakai Google
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(
-                                        Color.White.copy(alpha = 0.08f),
-                                        RoundedCornerShape(12.dp)
-                                    )
-                                    .padding(14.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text("ℹ️", fontSize = 16.sp)
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = LanguageManager.translate(
-                                            "login_google_only_info",
-                                            currentLanguage,
-                                            "Masuk hanya dengan akun Google. Tidak perlu password."
-                                        ),
-                                        fontSize = 11.sp,
-                                        color = Color.White.copy(alpha = 0.75f)
-                                    )
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(20.dp))
-
                             // Tombol Google
                             Button(
                                 onClick = {
@@ -285,16 +256,39 @@ fun LoginScreen(
                                 enabled = !googleLoading,
                                 shape = RoundedCornerShape(14.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.White.copy(alpha = 0.2f),
-                                    contentColor = Color.White
+                                    containerColor = Color.White,
+                                    contentColor = Color(0xFF1F2937),
+                                    disabledContainerColor = Color.White.copy(alpha = 0.5f)
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(52.dp)
                             ) {
-                                Text("G", fontWeight = FontWeight.Black, fontSize = 18.sp, color = Color.White)
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Text(LanguageManager.translate("login_google", currentLanguage, "Masuk dengan Google"), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                                if (googleLoading) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(20.dp),
+                                        color = Color(0xFF1F2937),
+                                        strokeWidth = 2.dp
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text(
+                                        text = LanguageManager.translate("login_loading", currentLanguage, "Memuat..."),
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 14.sp
+                                    )
+                                } else {
+                                    androidx.compose.foundation.Image(
+                                        painter = androidx.compose.ui.res.painterResource(id = com.inkside.digital.R.drawable.ic_google_logo),
+                                        contentDescription = "Google",
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text(
+                                        text = LanguageManager.translate("login_google", currentLanguage, "Masuk dengan Google"),
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 15.sp
+                                    )
+                                }
                             }
 
                             Spacer(modifier = Modifier.height(24.dp))

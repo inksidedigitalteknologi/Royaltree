@@ -714,9 +714,9 @@
     "faq_last_update": "آخر تحديث: 15 أكتوبر 2026",
     "splash_tagline": "منصة مكافآت التسويق بالعمولة",
     "loading_growing_tree": "نمو شجرتك...",
-    "login_google_only_info": "تسجيل الدخول فقط بحساب Google. لا حاجة لكلمة المرور.",
     "login_terms": "بتسجيل الدخول، فإنك توافق على الشروط والأحكام الخاصة بنا.",
     "splash_presented_by": "مقدم من",
-    "splash_in_collaboration": "بالتعاون مع"
+    "splash_in_collaboration": "بالتعاون مع",
+    "login_loading": "جار التحميل..."
   }
 }
