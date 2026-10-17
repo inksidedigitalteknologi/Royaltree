@@ -734,6 +734,12 @@
     "login_trust_badge": "بياناتك آمنة ومشفرة",
     "login_marketing_short": "البريد الترويجي (اختياري)",
     "login_version_brand": "الإصدار",
-    "login_powered_by": "مدعوم من"
+    "login_powered_by": "مدعوم من",
+    "menu_utama": "القائمة الرئيسية",
+    "menu_komunitas": "المجتمع",
+    "menu_akun": "الحساب",
+    "drawer_balance": "الرصيد",
+    "drawer_rtp": "RTP",
+    "achievement_title": "الإنجازات"
   }
 }
