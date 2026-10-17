@@ -443,12 +443,12 @@ fun LoginScreen(
         // ===== TERMS & CONDITIONS DIALOG (baca file per bahasa) =====
         if (showTermsDialog) {
             val langCode = when (currentLanguage) {
-                AppLanguage.ID -> "id"
-                AppLanguage.EN -> "en"
-                AppLanguage.ES -> "es"
-                AppLanguage.ZH -> "zh"
-                AppLanguage.AR -> "ar"
-                AppLanguage.JA -> "ja"
+                AppLanguage.INDONESIAN -> "id"
+                AppLanguage.ENGLISH -> "en"
+                AppLanguage.SPANISH -> "es"
+                AppLanguage.CHINESE -> "zh"
+                AppLanguage.ARABIC -> "ar"
+                AppLanguage.JAPANESE -> "ja"
             }
             var legalContent by remember { mutableStateOf("Memuat...") }
             LaunchedEffect(langCode) {
@@ -503,12 +503,12 @@ fun LoginScreen(
         // ===== PRIVACY POLICY DIALOG (baca file per bahasa) =====
         if (showPrivacyDialog) {
             val langCode = when (currentLanguage) {
-                AppLanguage.ID -> "id"
-                AppLanguage.EN -> "en"
-                AppLanguage.ES -> "es"
-                AppLanguage.ZH -> "zh"
-                AppLanguage.AR -> "ar"
-                AppLanguage.JA -> "ja"
+                AppLanguage.INDONESIAN -> "id"
+                AppLanguage.ENGLISH -> "en"
+                AppLanguage.SPANISH -> "es"
+                AppLanguage.CHINESE -> "zh"
+                AppLanguage.ARABIC -> "ar"
+                AppLanguage.JAPANESE -> "ja"
             }
             var privacyContent by remember { mutableStateOf("Memuat...") }
             LaunchedEffect(langCode) {
