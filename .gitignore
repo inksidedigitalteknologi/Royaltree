@@ -46,3 +46,8 @@ drawable_backup/
 # Env backup files (jangan commit)
 *.env.bak
 .env.bak
+
+# Signing (JANGAN COMMIT)
+keystore.properties
+*.jks
+*.keystore
