@@ -141,7 +141,7 @@ fun RoyaltreeTree(
             isSprout -> 0.13f
             isSapling -> 0.18f
             isYoungTree -> 0.24f
-            else -> 0.28f + 0.012f * level   // L4=0.328, L5=0.34 (lebih pendek dari 0.365)
+            else -> 0.20f + 0.010f * level   // L4=0.24, L5=0.25 (pendek, rimbun)
         }
         val trunkHeight = h * trunkHeightFactor * growthProgress
         val trunkTopY = baseY - trunkHeight
