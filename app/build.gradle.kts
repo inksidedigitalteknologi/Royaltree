@@ -46,10 +46,6 @@ android {
       "\"${localProperties["royaltree.api.key"] ?: ""}\""
     )
 
-    // ✅ ABI Split — pisahkan per arsitektur (hemat ~10-15 MB)
-    ndk {
-      abiFilters += listOf("arm64-v8a", "armeabi-v7a")
-    }
   }
 
   // ✅ ABI Split config
