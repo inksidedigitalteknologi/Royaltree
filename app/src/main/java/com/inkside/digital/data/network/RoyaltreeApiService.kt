@@ -195,6 +195,11 @@ interface RoyaltreeApiService {
         @Body body: RequestBody
     ): ResponseBody
 
+    @POST("auth/marketing-optin")
+    suspend fun postMarketingOptIn(
+        @Body body: RequestBody
+    ): ResponseBody
+
     @GET("auth/me")
     suspend fun getMyProfile(): ResponseBody
 

@@ -86,7 +86,7 @@ fun LoginScreen(
     errorMessage: String?,
     currentLanguage: AppLanguage,
     onLanguageChange: (AppLanguage) -> Unit,
-    onLoginGoogle: (idToken: String) -> Unit
+    onLoginGoogle: (idToken: String, marketingOptIn: Boolean) -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -364,7 +364,7 @@ fun LoginScreen(
                                                 credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
                                             ) {
                                                 val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                                                onLoginGoogle(googleIdTokenCredential.idToken)
+                                                onLoginGoogle(googleIdTokenCredential.idToken, marketingOptIn)
                                             } else {
                                                 Log.e("LoginScreen", "Credential bukan Google ID Token")
                                             }

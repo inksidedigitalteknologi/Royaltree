@@ -96,7 +96,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     // ============ LOGIN ============
 
-    fun loginWithGoogle(idToken: String) {
+    fun loginWithGoogle(idToken: String, marketingOptIn: Boolean = false) {
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
@@ -105,6 +105,14 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             if (result.isSuccess) {
                 val user = result.getOrThrow()
                 _currentUser.value = user
+
+                // Simpan marketing opt-in ke backend (non-blocking)
+                viewModelScope.launch {
+                    val marketingResult = authRepository.updateMarketingOptIn(marketingOptIn)
+                    if (marketingResult.isFailure) {
+                        Log.w(TAG, "Marketing opt-in save failed (non-fatal): ${marketingResult.exceptionOrNull()?.message}")
+                    }
+                }
 
                 // Google selalu email verified
                 syncUserAndNavigate()
