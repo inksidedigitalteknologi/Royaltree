@@ -132,13 +132,15 @@ fun RoyaltreeTree(
 
         // ============ 3. Batang: tinggi, taper, lekuk natural ============
         // Batang lebih tinggi (25-32% tinggi canvas)
-        // 3 tahap: Sprout (L1) → Sapling (L2) → Tree (L3+)
+        // 4 tahap: Sprout (L1) → Sapling (L2) → YoungTree (L3) → Tree (L4+)
         val isSprout = level == 1
         val isSapling = level == 2
+        val isYoungTree = level == 3
         val isTree = level >= 3
         val trunkHeightFactor = when {
             isSprout -> 0.13f
             isSapling -> 0.18f
+            isYoungTree -> 0.24f       // ← transisi smooth (bukan 0.315)
             else -> 0.24f + 0.025f * level
         }
         val trunkHeight = h * trunkHeightFactor * growthProgress
@@ -148,11 +150,13 @@ fun RoyaltreeTree(
         val trunkBaseWidth = when {
             isSprout -> w * 0.063f
             isSapling -> w * 0.058f
+            isYoungTree -> w * 0.054f   // ← lebih ramping dari L2
             else -> w * (0.048f + 0.006f * level)
         }
         val trunkTopWidth = when {
             isSprout -> trunkBaseWidth * 0.55f
             isSapling -> trunkBaseWidth * 0.40f
+            isYoungTree -> trunkBaseWidth * 0.37f
             else -> trunkBaseWidth * 0.35f
         }
 
@@ -180,25 +184,30 @@ fun RoyaltreeTree(
         // ============ 5. Dahan fractal ============
         // Sprout: 3 dahan, spread lebar, daun rimbun mini
         // Sapling: 4 dahan, spread sedang, daun bertingkat
+        // YoungTree: 5 dahan, spread natural, daun rimbun
         // Tree: dahan banyak, daun penuh
         val branchCount = when {
             isSprout -> 3
             isSapling -> 4
+            isYoungTree -> 5
             else -> 2 + level
         }
         val branchLength = when {
             isSprout -> trunkHeight * 1.4f
             isSapling -> trunkHeight * 1.15f
+            isYoungTree -> trunkHeight * 1.05f
             else -> trunkHeight * (0.75f + 0.10f * level)
         }
         val maxDepth = when {
             isSprout -> 3
             isSapling -> 4
+            isYoungTree -> 4
             else -> 4 + (level / 2)
         }
         val baseAngleStep = when {
             isSprout -> 35f
             isSapling -> 30f
+            isYoungTree -> 28f
             else -> 22f + level * 2.5f
         }
 
@@ -528,14 +537,17 @@ private fun DrawScope.drawRoots(
     // 3 tahap akar: sprout / sapling / tree
     val isSprout = level == 1
     val isSapling = level == 2
+    val isYoungTree = level == 3
     val rootCount = when {
         isSprout -> 3
         isSapling -> 4
+        isYoungTree -> 5
         else -> 3 + level / 2
     }
     val rootLen = when {
         isSprout -> w * 0.04f * growth
         isSapling -> w * 0.06f * growth
+        isYoungTree -> w * 0.07f * growth
         else -> w * 0.08f * (1f + level * 0.15f) * growth
     }
 
@@ -547,15 +559,17 @@ private fun DrawScope.drawRoots(
         val baseThickness = w * 0.016f
         val tipThickness = w * 0.004f
 
-        // 3 tahap: sprout horizontal, sapling setengah, tree natural
+        // 4 tahap: sprout horizontal → sapling ½ → youngtree ¾ → tree natural
         val endX = when {
             isSprout -> cx + offset * 1.6f
             isSapling -> cx + offset * 1.3f
+            isYoungTree -> cx + offset * 1.15f
             else -> cx + offset
         }
         val endY = when {
             isSprout -> baseY + rootLen * 0.15f
             isSapling -> baseY + rootLen * 0.50f
+            isYoungTree -> baseY + rootLen * 0.75f
             else -> baseY + rootLen * (0.85f + rand.nextFloat() * 0.3f)
         }
 
