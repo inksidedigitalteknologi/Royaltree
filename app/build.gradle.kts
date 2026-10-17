@@ -9,6 +9,14 @@ val localProperties = Properties().apply {
     }
 }
 
+// Load keystore.properties untuk signing config (jangan commit!)
+val keystoreProperties = Properties().apply {
+    val keystoreFile = rootProject.file("keystore.properties")
+    if (keystoreFile.exists()) {
+        keystoreFile.inputStream().use { load(it) }
+    }
+}
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.compose)
@@ -60,11 +68,16 @@ android {
 
   signingConfigs {
     create("release") {
-      val keystorePath = System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks"
+      val keystorePath = keystoreProperties.getProperty("storeFile")
+        ?: System.getenv("KEYSTORE_PATH")
+        ?: "${rootDir}/my-upload-key.jks"
       storeFile = file(keystorePath)
-      storePassword = System.getenv("STORE_PASSWORD")
-      keyAlias = "upload"
-      keyPassword = System.getenv("KEY_PASSWORD")
+      storePassword = keystoreProperties.getProperty("storePassword")
+        ?: System.getenv("STORE_PASSWORD")
+      keyAlias = keystoreProperties.getProperty("keyAlias")
+        ?: "upload"
+      keyPassword = keystoreProperties.getProperty("keyPassword")
+        ?: System.getenv("KEY_PASSWORD")
     }
     create("debugConfig") {
       storeFile = file(System.getProperty("user.home") + "/.android/debug.keystore")
