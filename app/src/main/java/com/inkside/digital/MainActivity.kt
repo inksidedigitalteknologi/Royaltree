@@ -171,14 +171,6 @@ class MainActivity : ComponentActivity() {
         //     android.util.Log.e("IAP", "connect failed: ${e.message}", e)
         // }
 
-        // DEBUG: Force skip onboarding
-        try {
-            com.inkside.digital.data.preferences.AppThemePreferences.setOnboarded(this, true)
-            android.util.Log.d("DEBUG_FORCE_ONBOARDED", "✅ Onboarded = true")
-        } catch (e: Exception) {
-            android.util.Log.e("DEBUG_FORCE_ONBOARDED", "failed: ${e.message}")
-        }
-
         setContent {
             MyApplicationTheme(
                 darkTheme = true  // Force dark mode
@@ -339,7 +331,11 @@ fun RootNav(
             val loadingState by affiliateViewModel.loadingState.collectAsState()
             SplashSequenceScreen(
                 loadingState = loadingState,
-                currentLanguage = currentLanguage
+                currentLanguage = currentLanguage,
+                onComplete = {
+                    // Navigate ke HOME setelah splash selesai
+                    authViewModel.navigateTo(AuthScreen.HOME)
+                }
             )
         }
 

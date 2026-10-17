@@ -78,7 +78,8 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val result = authRepository.getMyProfile()
                 if (result.isSuccess) {
-                    _currentScreen.value = AuthScreen.HOME
+                    // Tampil splash dulu, baru HOME setelah selesai
+                    _currentScreen.value = AuthScreen.SPLASH
                 } else {
                     // Profil belum ada -> minta setup
                     _needsProfileSetup.value = true
