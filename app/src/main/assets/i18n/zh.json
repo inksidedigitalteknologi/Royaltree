@@ -734,6 +734,12 @@
     "login_trust_badge": "您的数据安全且加密",
     "login_marketing_short": "促销邮件（可选）",
     "login_version_brand": "版本",
-    "login_powered_by": "由...提供支持"
+    "login_powered_by": "由...提供支持",
+    "menu_utama": "主菜单",
+    "menu_komunitas": "社区",
+    "menu_akun": "账户",
+    "drawer_balance": "余额",
+    "drawer_rtp": "RTP",
+    "achievement_title": "成就"
   }
 }

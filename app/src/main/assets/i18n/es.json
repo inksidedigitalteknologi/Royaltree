@@ -734,6 +734,12 @@
     "login_trust_badge": "Tus datos están seguros y cifrados",
     "login_marketing_short": "Correo promocional (opcional)",
     "login_version_brand": "Versión",
-    "login_powered_by": "Desarrollado por"
+    "login_powered_by": "Desarrollado por",
+    "menu_utama": "MENÚ PRINCIPAL",
+    "menu_komunitas": "COMUNIDAD",
+    "menu_akun": "CUENTA",
+    "drawer_balance": "Saldo",
+    "drawer_rtp": "RTP",
+    "achievement_title": "Logros"
   }
 }

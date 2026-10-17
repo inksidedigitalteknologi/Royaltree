@@ -734,6 +734,12 @@
     "login_trust_badge": "Data Anda aman & terenkripsi",
     "login_marketing_short": "Email promosi (opsional)",
     "login_version_brand": "Versi",
-    "login_powered_by": "Didukung oleh"
+    "login_powered_by": "Didukung oleh",
+    "menu_utama": "MENU UTAMA",
+    "menu_komunitas": "KOMUNITAS",
+    "menu_akun": "AKUN",
+    "drawer_balance": "Saldo",
+    "drawer_rtp": "RTP",
+    "achievement_title": "Achievement"
   }
 }

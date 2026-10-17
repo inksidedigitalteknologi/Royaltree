@@ -734,6 +734,12 @@
     "login_trust_badge": "あなたのデータは安全で暗号化されています",
     "login_marketing_short": "プロモーションメール（オプション）",
     "login_version_brand": "バージョン",
-    "login_powered_by": "提供"
+    "login_powered_by": "提供",
+    "menu_utama": "メインメニュー",
+    "menu_komunitas": "コミュニティ",
+    "menu_akun": "アカウント",
+    "drawer_balance": "残高",
+    "drawer_rtp": "RTP",
+    "achievement_title": "実績"
   }
 }

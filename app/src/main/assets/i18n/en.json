@@ -734,6 +734,12 @@
     "login_trust_badge": "Your data is safe & encrypted",
     "login_marketing_short": "Promotional email (optional)",
     "login_version_brand": "Version",
-    "login_powered_by": "Powered by"
+    "login_powered_by": "Powered by",
+    "menu_utama": "MAIN MENU",
+    "menu_komunitas": "COMMUNITY",
+    "menu_akun": "ACCOUNT",
+    "drawer_balance": "Balance",
+    "drawer_rtp": "RTP",
+    "achievement_title": "Achievements"
   }
 }
