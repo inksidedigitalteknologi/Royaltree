@@ -268,6 +268,7 @@ private fun PillTab(
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
+                transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0.5f, 0.5f)
             }
             .clickable(
                 interactionSource = interactionSource,
@@ -317,6 +318,7 @@ private fun PillTab(
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
             color = if (isSelected) GoldBright else TextMuted,
             maxLines = 1,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
             letterSpacing = 0.3.sp
         )
     }
