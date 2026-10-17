@@ -44,7 +44,6 @@ import com.inkside.digital.ui.components.MaintenanceBanner
 import com.inkside.digital.data.network.ApiClient
 import com.inkside.digital.ui.components.AdRewardModal
 import com.inkside.digital.ui.components.AdminReviewModal
-import com.inkside.digital.ui.components.AppBottomNavigationBar
 import com.inkside.digital.ui.components.AppTopBar
 import com.inkside.digital.ui.components.BuyCouponModal
 import com.inkside.digital.ui.components.DailyCheckInModal
@@ -72,7 +71,6 @@ import com.inkside.digital.ui.screens.AchievementScreen
 import com.inkside.digital.ui.screens.PurchaseScreen
 import com.inkside.digital.util.IapManager
 import kotlinx.coroutines.launch
-import com.inkside.digital.ui.screens.AdminScreen
 import com.inkside.digital.ui.screens.InboxScreen
 import com.inkside.digital.ui.screens.OnboardingScreen
 import com.inkside.digital.ui.screens.DailyCheckInScreen
@@ -437,7 +435,6 @@ fun MainAffiliateApp(
     val isSyncingWithPortal by viewModel.isSyncingWithPortal.collectAsState()
 
     val currentScreen by viewModel.currentScreen.collectAsState()
-    val isAdminMode by viewModel.isAdminMode.collectAsState()
     val adButtonState by viewModel.adButtonState.collectAsState()
 
     // Preload ad + refresh state saat HomeScreen dibuka
@@ -551,7 +548,6 @@ fun MainAffiliateApp(
         portalStatusMessage = portalStatusMessage,
         isSyncingWithPortal = isSyncingWithPortal,
         currentScreen = currentScreen,
-        isAdminMode = isAdminMode,
         currentLanguage = currentLanguage,
         adButtonState = adButtonState,
         onRetryAdLoad = { viewModel.retryAdLoad() },
@@ -597,7 +593,6 @@ fun MainAffiliateApp(
         placedMiners = placedMiners,
         roomState = roomState,
         onNavigate = { viewModel.navigateTo(it) },
-        onSetAdminMode = { viewModel.setAdminMode(it) },
         onDismissSnackbar = { viewModel.dismissSnackbar() },
         onWithdrawSubmit = { amount, currency, channel, provider, accountDest, accountHolder ->
             viewModel.requestWithdrawal(amount, currency, channel, provider, accountDest, accountHolder)
@@ -728,7 +723,6 @@ fun MainAffiliateAppContent(
     portalStatusMessage: String,
     isSyncingWithPortal: Boolean,
     currentScreen: AppScreen,
-    isAdminMode: Boolean,
     currentLanguage: AppLanguage,
     adButtonState: com.inkside.digital.viewmodel.AdButtonState = com.inkside.digital.viewmodel.AdButtonState.LOADING,
     onRetryAdLoad: () -> Unit = {},
@@ -767,7 +761,6 @@ fun MainAffiliateAppContent(
     placedMiners: List<GameMinerItemEntity>,
     roomState: GameRoomStateEntity?,
     onNavigate: (AppScreen) -> Unit,
-    onSetAdminMode: (Boolean) -> Unit,
     onDismissSnackbar: () -> Unit,
     onWithdrawSubmit: (Double, String, String, String, String, String) -> Unit,
     onWithdrawDismiss: () -> Unit,
@@ -860,11 +853,9 @@ fun MainAffiliateAppContent(
             ModalDrawerSheet {
                 AppDrawer(
                     user = user,
-                    isAdminMode = isAdminMode,
                     currentScreen = currentScreen,
                     currentLanguage = currentLanguage,
                     onNavigate = { screen -> onNavigate(screen) },
-                    onToggleRole = { onSetAdminMode(!isAdminMode) },
                     onCloseDrawer = { coroutineScope.launch { drawerState.close() } },
                     onLogout = onLogout
                 )
@@ -964,29 +955,6 @@ fun MainAffiliateAppContent(
                     HistoryScreen(
                         transactions = transactions,
                         currentLanguage = currentLanguage
-                    )
-                }
-
-                AppScreen.ADMIN -> {
-                    AdminScreen(
-                        user = user,
-                        allUsers = allUsers,
-                        pendingWithdrawals = pendingWithdrawals,
-                        allWithdrawals = withdrawals,
-                        locationLogs = locationLogs,
-                        systemSettings = systemSettings,
-                        portalBaseUrl = portalBaseUrl,
-                        portalApiKey = portalApiKey,
-                        portalStatus = portalStatus,
-                        portalStatusMessage = portalStatusMessage,
-                        isSyncingWithPortal = isSyncingWithPortal,
-                        onReviewWithdrawal = { onSetAdminReviewModalVisible(it) },
-                        onSaveSystemSettings = { onSaveSystemSettings(it) },
-                        onAddSimulatedPin = onAddSimulatedPin,
-                        onTestConnection = onTestConnection,
-                        onSavePortalConfig = onSavePortalConfig,
-                        onSyncPortal = onSyncPortal,
-                        onBackToUserMode = { onSetAdminMode(false) }
                     )
                 }
 
@@ -1204,7 +1172,6 @@ fun MainAffiliateAppContent(
             com.inkside.digital.ui.components.RevolverBottomNav(
                 currentScreen = currentScreen,
                 onNavigate = { onNavigate(it) },
-                isAdminMode = isAdminMode,
                 currentLanguage = currentLanguage,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -1451,7 +1418,6 @@ fun MainAffiliateAppPreview() {
             portalStatusMessage = "Preview Mode",
             isSyncingWithPortal = false,
             currentScreen = AppScreen.HOME,
-            isAdminMode = false,
             currentLanguage = AppLanguage.INDONESIAN,
             onLanguageChange = { },
             snackbarMsg = null,
@@ -1475,7 +1441,6 @@ fun MainAffiliateAppPreview() {
             placedMiners = emptyList(),
             roomState = null,
             onNavigate = {},
-            onSetAdminMode = {},
             onDismissSnackbar = {},
             onWithdrawSubmit = { _, _, _, _, _, _ -> },
             onWithdrawDismiss = {},

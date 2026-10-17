@@ -31,7 +31,6 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.SportsEsports
-import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -67,7 +67,6 @@ private val GoldVip = Color(0xFFFBBF24)
 private val GoldBright = Color(0xFFFFD700)
 private val GoldDeep = Color(0xFFB45309)
 private val TextMuted = Color(0xFF94A3B8)
-private val PurpleAccent = Color(0xFFA855F7)
 
 data class CommandItem(
     val screen: AppScreen,
@@ -81,28 +80,18 @@ fun RevolverBottomNav(
     currentScreen: AppScreen,
     onNavigate: (AppScreen) -> Unit,
     currentLanguage: AppLanguage = AppLanguage.INDONESIAN,
-    modifier: Modifier = Modifier,
-    isAdminMode: Boolean = false
+    modifier: Modifier = Modifier
 ) {
     val haptic = LocalHapticFeedback.current
 
-    // Pilih menu items
-    val items: List<CommandItem> = remember(isAdminMode) {
-        if (isAdminMode) {
-            listOf(
-                CommandItem(AppScreen.ADMIN, "nav_admin", "Admin", Icons.Filled.AdminPanelSettings),
-                CommandItem(AppScreen.HOME, "nav_home", "Home", Icons.Filled.Home),
-                CommandItem(AppScreen.MISSIONS, "nav_missions", "Misi", Icons.Filled.Flag),
-                CommandItem(AppScreen.PROFILE, "nav_profile", "Profil", Icons.Filled.AccountCircle)
-            )
-        } else {
-            listOf(
-                CommandItem(AppScreen.HOME, "nav_home", "Home", Icons.Filled.Home),
-                CommandItem(AppScreen.MISSIONS, "nav_missions", "Misi", Icons.Filled.Flag),
-                CommandItem(AppScreen.GAME_ROOM, "nav_game", "Game", Icons.Filled.SportsEsports),
-                CommandItem(AppScreen.PROFILE, "nav_profile", "Profil", Icons.Filled.AccountCircle)
-            )
-        }
+    // Menu items (4 tab + coin center)
+    val items = remember {
+        listOf(
+            CommandItem(AppScreen.HOME, "nav_home", "Home", Icons.Filled.Home),
+            CommandItem(AppScreen.MISSIONS, "nav_missions", "Misi", Icons.Filled.Flag),
+            CommandItem(AppScreen.GAME_ROOM, "nav_game", "Game", Icons.Filled.SportsEsports),
+            CommandItem(AppScreen.PROFILE, "nav_profile", "Profil", Icons.Filled.AccountCircle)
+        )
     }
 
     // Pulse animation untuk coin center
@@ -163,28 +152,28 @@ fun RevolverBottomNav(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 2 tab kiri
+            // USER MODE: 2 kiri + coin + 2 kanan
             items.take(2).forEach { item ->
-                PillTab(
-                    item = item,
-                    isSelected = currentScreen == item.screen,
-                    currentLanguage = currentLanguage,
-                    haptic = haptic,
-                    onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        onNavigate(item.screen)
-                    },
-                    modifier = Modifier.weight(1f)
-                )
-            }
+                    PillTab(
+                        item = item,
+                        isSelected = currentScreen == item.screen,
+                        currentLanguage = currentLanguage,
+                        haptic = haptic,
+                        onClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            onNavigate(item.screen)
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
-            // ═══════════════════════════════════════════
-            // RTP COIN CENTER (tap → Daily Check-In)
-            // ═══════════════════════════════════════════
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.width(80.dp)
-            ) {
+                // ═══════════════════════════════════════════
+                // RTP COIN CENTER (tap → Daily Check-In)
+                // ═══════════════════════════════════════════
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.width(80.dp)
+                ) {
                 // Glow pulse
                 Box(
                     modifier = Modifier
@@ -271,13 +260,15 @@ private fun PillTab(
         label = "tabScale"
     )
 
-    val accentColor = if (item.screen == AppScreen.ADMIN) PurpleAccent else EmeraldPrimary
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = modifier
-            .scale(scale)
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
