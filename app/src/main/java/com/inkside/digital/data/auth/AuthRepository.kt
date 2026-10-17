@@ -53,6 +53,28 @@ class AuthRepository {
     }
 
     /**
+     * Update marketing opt-in consent ke backend.
+     * Dipanggil setelah login Google, sebelum profile sync.
+     */
+    suspend fun updateMarketingOptIn(
+        optIn: Boolean,
+        version: String = "1.0"
+    ): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val result = ApiClient.postMarketingOptIn(optIn, version)
+            if (result.isSuccess) {
+                Log.d(TAG, "Marketing opt-in: $optIn (v$version)")
+                Result.success(result.getOrThrow())
+            } else {
+                Result.failure(result.exceptionOrNull() ?: Exception("Marketing opt-in gagal"))
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "updateMarketingOptIn error: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    /**
      * Ambil data user dari backend.
      */
     suspend fun getMyProfile(): Result<JSONObject> = withContext(Dispatchers.IO) {

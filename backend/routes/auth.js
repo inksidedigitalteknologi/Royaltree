@@ -205,6 +205,42 @@ router.post('/sync', verifyFirebaseToken, validate(loginSchema), async (req, res
             data: { id: uid, ...newUser }
         });
 
+// -------------------------------------------------------------
+// POST /api/v1/auth/marketing-optin
+// Simpan consent marketing (opt-in email promosi)
+// Body: { optIn: boolean, version?: string }
+// -------------------------------------------------------------
+router.post('/marketing-optin', verifyFirebaseToken, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+        const { optIn, version = '1.0' } = req.body;
+
+        if (typeof optIn !== 'boolean') {
+            return res.status(400).json({ success: false, message: 'optIn harus boolean' });
+        }
+
+        const userRef = db.collection('users').doc(uid);
+        const userDoc = await userRef.get();
+
+        if (!userDoc.exists) {
+            return res.status(404).json({ success: false, message: 'User tidak ditemukan' });
+        }
+
+        await userRef.update({
+            marketingOptIn: optIn,
+            marketingOptInAt: admin.firestore.FieldValue.serverTimestamp(),
+            marketingOptInVersion: version
+        });
+
+        console.log(`[MARKETING] User ${uid} opt-in: ${optIn} (v${version})`);
+        res.json({ success: true, marketingOptIn: optIn });
+    } catch (err) {
+        console.error('Error /auth/marketing-optin:', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+
     } catch (error) {
         console.error('Error in /auth/sync:', error);
         return res.status(500).json({

@@ -402,6 +402,21 @@ object ApiClient {
         }
     }
 
+    suspend fun postMarketingOptIn(optIn: Boolean, version: String = "1.0"): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val body = JSONObject().apply {
+                put("optIn", optIn)
+                put("version", version)
+            }
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
+            val response: ResponseBody = apiService.postMarketingOptIn(requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun getMyProfile(): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
             val response: ResponseBody = apiService.getMyProfile()

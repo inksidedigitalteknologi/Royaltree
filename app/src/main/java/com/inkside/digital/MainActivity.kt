@@ -347,8 +347,8 @@ fun RootNav(
                 onLanguageChange = { lang ->
                     affiliateViewModel.setLanguage(lang)
                 },
-                onLoginGoogle = { idToken ->
-                    authViewModel.loginWithGoogle(idToken)
+                onLoginGoogle = { idToken, marketingOptIn ->
+                    authViewModel.loginWithGoogle(idToken, marketingOptIn)
                 }
             )
         }
