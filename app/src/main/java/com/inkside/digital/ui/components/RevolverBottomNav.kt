@@ -177,7 +177,7 @@ fun RevolverBottomNav(
                 // Glow pulse
                 Box(
                     modifier = Modifier
-                        .size(76.dp)
+                        .size(80.dp)
                         .background(
                             brush = Brush.radialGradient(
                                 colors = listOf(
@@ -193,7 +193,7 @@ fun RevolverBottomNav(
                 // Coin
                 Box(
                     modifier = Modifier
-                        .size(62.dp)
+                        .size(70.dp)
                         .scale(coinScale)
                         .clip(CircleShape)
                         .background(
@@ -216,7 +216,7 @@ fun RevolverBottomNav(
                     Image(
                         painter = painterResource(id = R.drawable.rtp_coin),
                         contentDescription = LanguageManager.translate("cd_rtp", currentLanguage, "RTP"),
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(48.dp)
                     )
                 }
             }

@@ -257,16 +257,10 @@ fun AppDrawer(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "🔒 ${LanguageManager.translate("login_trust_badge", currentLanguage, "Data aman")} · v$versionName",
+                    text = "v$versionName · © 2026 Inkside Digital",
                     fontSize = 10.sp,
                     color = TextFaint,
                     letterSpacing = 0.5.sp
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = "© 2026 Inkside Digital",
-                    fontSize = 9.sp,
-                    color = TextFaint.copy(alpha = 0.6f)
                 )
             }
 
@@ -365,104 +359,138 @@ private fun PremiumDrawerHeader(user: UserEntity?, currentLanguage: AppLanguage)
         )
 
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
             // ═══════════════════════════════════════
-            // AVATAR 96dp + frame + glow ring
+            // ROW: Avatar (80dp) + Info (nama, tier, email)
             // ═══════════════════════════════════════
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.size(120.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                // Ring emas glow
+                // Avatar 80dp + glow
                 Box(
-                    modifier = Modifier
-                        .size(116.dp)
-                        .background(
-                            brush = Brush.radialGradient(
-                                colors = listOf(
-                                    GoldAccent.copy(alpha = 0.35f * glowAlpha),
-                                    EmeraldLight.copy(alpha = 0.15f * glowAlpha),
-                                    Color.Transparent
-                                )
-                            ),
-                            shape = CircleShape
-                        )
-                )
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.size(96.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(92.dp)
+                            .background(
+                                brush = Brush.radialGradient(
+                                    colors = listOf(
+                                        GoldAccent.copy(alpha = 0.35f * glowAlpha),
+                                        EmeraldLight.copy(alpha = 0.15f * glowAlpha),
+                                        Color.Transparent
+                                    )
+                                ),
+                                shape = CircleShape
+                            )
+                    )
+                    ProfileAvatarWithFrame(
+                        userName = user?.name,
+                        tier = user?.tier ?: "FREE",
+                        size = 80.dp,
+                        photoUrl = user?.photoUrl
+                    )
+                }
 
-                // Avatar dengan frame tier
-                ProfileAvatarWithFrame(
-                    userName = user?.name,
-                    tier = user?.tier ?: "FREE",
-                    size = 96.dp,
-                    photoUrl = user?.photoUrl
-                )
+                Spacer(Modifier.width(14.dp))
+
+                // Info column
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = user?.name ?: "User",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        letterSpacing = 0.3.sp,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    TierBadge(tier = user?.tier ?: "FREE")
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = user?.email ?: "-",
+                        fontSize = 10.sp,
+                        color = TextMuted,
+                        letterSpacing = 0.2.sp,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    )
+                }
             }
 
-            Spacer(Modifier.height(12.dp))
-
-            // Nama
-            Text(
-                text = user?.name ?: "User",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                letterSpacing = 0.3.sp
-            )
-
-            Spacer(Modifier.height(6.dp))
-
-            // Tier badge (pill emas)
-            TierBadge(tier = user?.tier ?: "FREE")
-
-            Spacer(Modifier.height(4.dp))
-
-            // Email
-            Text(
-                text = user?.email ?: "-",
-                fontSize = 11.sp,
-                color = TextMuted,
-                letterSpacing = 0.2.sp
-            )
-
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(14.dp))
 
             // ═══════════════════════════════════════
-            // INFO CHIP VERTICAL: Saldo + RTP
+            // HORIZONTAL: Saldo | RTP
             // ═══════════════════════════════════════
-            Column(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(14.dp))
                     .background(Color.White.copy(alpha = 0.06f))
                     .padding(vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(1.dp)
             ) {
-                InfoRow(
-                    emoji = "💰",
-                    label = LanguageManager.translate("drawer_balance", currentLanguage, "Saldo"),
-                    value = GlobalPointsManager.formatBalanceIdr(
-                        user?.balance ?: 0.0,
-                        currentLanguage.code
-                    ),
-                    valueColor = GoldAccent
-                )
+                // Saldo
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("💰", fontSize = 11.sp)
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = LanguageManager.translate("drawer_balance", currentLanguage, "Saldo"),
+                            fontSize = 10.sp,
+                            color = TextMuted
+                        )
+                    }
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = GlobalPointsManager.formatBalanceIdr(
+                            user?.balance ?: 0.0,
+                            currentLanguage.code
+                        ),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = GoldAccent
+                    )
+                }
 
+                // Divider vertical
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp)
-                        .height(1.dp)
-                        .background(Color.White.copy(alpha = 0.06f))
+                        .width(1.dp)
+                        .height(36.dp)
+                        .background(Color.White.copy(alpha = 0.08f))
                 )
 
-                InfoRow(
-                    emoji = "🪙",
-                    label = LanguageManager.translate("drawer_rtp", currentLanguage, "RTP"),
-                    value = GlobalPointsManager.formatRtp(user?.points ?: 0.0),
-                    valueColor = EmeraldLight
-                )
+                // RTP
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("🪙", fontSize = 11.sp)
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = LanguageManager.translate("drawer_rtp", currentLanguage, "RTP"),
+                            fontSize = 10.sp,
+                            color = TextMuted
+                        )
+                    }
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = GlobalPointsManager.formatRtp(user?.points ?: 0.0),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = EmeraldLight
+                    )
+                }
             }
         }
     }
