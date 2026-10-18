@@ -1518,7 +1518,11 @@ class AffiliateRepository(private val dao: AppDao) {
                         iconEmoji = m.optString("iconEmoji", "⛏️"),
                         tokenCost = m.optInt("tokenCost", 0),
                         catalogId = m.optString("id", ""),
-                        powerGhs = m.optDouble("powerGhs", 0.0),
+                        powerGhs = m.optDouble("powerGhs", 0.0).also {
+                            if (it <= 0.0) {
+                                AppLogger.w("AffiliateRepository", "⚠️ Miner '${m.optString("name", "?")}' powerGhs = 0 (raw: ${m.opt("powerGhs")})")
+                            }
+                        },
                         pointsPerMinute = m.optDouble("pointsPerMinute", 0.0),  // M43 FIX: fix dari pointsPerDay
                         isOwned = false,  // Catalog != owned. Instance dari /game/state yang owned.
                         isPlacedInRoom = false,

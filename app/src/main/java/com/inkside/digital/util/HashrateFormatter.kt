@@ -37,7 +37,7 @@ object HashrateFormatter {
      * - 1500   → "1.50 TH/s"
      */
     fun format(powerGhs: Double): String {
-        if (powerGhs <= 0) return "0 H/s"
+        if (powerGhs <= 0) return "—"
 
         val hps = toHashPerSec(powerGhs)
 
