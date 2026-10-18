@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.first
 import com.inkside.digital.sensor.BatteryTempHelper
 import com.inkside.digital.util.AnalyticsHelper
 import com.inkside.digital.sensor.LocationHelper
+import com.inkside.digital.util.AppLogger
 
 enum class AppScreen {
     HOME,
@@ -102,9 +103,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 .collect { currentUser ->
                     try {
                         WidgetUpdater.refreshFromRoom(getApplication(), currentUser.id)
-                        android.util.Log.d("AffiliateViewModel", "✅ Widget auto-sync (points=${currentUser.points}, balance=${currentUser.balance})")
+                        AppLogger.d("AffiliateViewModel", "✅ Widget auto-sync (points=${currentUser.points}, balance=${currentUser.balance})")
                     } catch (e: Exception) {
-                        android.util.Log.w("AffiliateViewModel", "Widget auto-sync gagal: ${e.message}")
+                        AppLogger.w("AffiliateViewModel", "Widget auto-sync gagal: ${e.message}")
                     }
                 }
         }
@@ -134,7 +135,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 .first()  // tunggu user ready
             kotlinx.coroutines.delay(500L)  // defer sikit
             loadMinerCatalog()
-            android.util.Log.d("AffiliateViewModel", "✅ Auto-load miner catalog (user ready)")
+            AppLogger.d("AffiliateViewModel", "✅ Auto-load miner catalog (user ready)")
         }
     }
 
@@ -382,7 +383,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun setLanguage(lang: AppLanguage) {
-        android.util.Log.e("LANG_DEBUG", "🔵 setLanguage dipanggil: ${lang.code} (${lang.displayName})")
+        AppLogger.e("LANG_DEBUG", "🔵 setLanguage dipanggil: ${lang.code} (${lang.displayName})")
         _currentLanguage.value = lang
         // Simpan ke SharedPreferences biar persist
         val ctx = getApplication<android.app.Application>()
@@ -623,7 +624,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 val fbUser = FirebaseAuth.getInstance().currentUser
                 _loadingState.value = _loadingState.value.copy(firebaseAuth = fbUser != null)
-                android.util.Log.d("Preload", "1/7 Firebase Auth: ${fbUser?.uid?.take(8)}")
+                AppLogger.d("Preload", "1/7 Firebase Auth: ${fbUser?.uid?.take(8)}")
             } catch (e: Exception) {
                 _loadingState.value = _loadingState.value.copy(firebaseAuth = true)
             }
@@ -633,7 +634,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 loadUserFromBackend()
                 delay(300)
                 _loadingState.value = _loadingState.value.copy(userProfile = true)
-                android.util.Log.d("Preload", "2/7 User Profile ✅")
+                AppLogger.d("Preload", "2/7 User Profile ✅")
             } catch (e: Exception) {
                 _loadingState.value = _loadingState.value.copy(userProfile = true)
             }
@@ -643,7 +644,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 loadMinerCatalog()
                 delay(300)
                 _loadingState.value = _loadingState.value.copy(minerCatalog = true)
-                android.util.Log.d("Preload", "3/7 Miner Catalog ✅")
+                AppLogger.d("Preload", "3/7 Miner Catalog ✅")
             } catch (e: Exception) {
                 _loadingState.value = _loadingState.value.copy(minerCatalog = true)
             }
@@ -653,7 +654,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 loadGameState()
                 delay(300)
                 _loadingState.value = _loadingState.value.copy(gameState = true)
-                android.util.Log.d("Preload", "4/7 Game State ✅")
+                AppLogger.d("Preload", "4/7 Game State ✅")
             } catch (e: Exception) {
                 _loadingState.value = _loadingState.value.copy(gameState = true)
             }
@@ -663,7 +664,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 loadAffiliateBalance()
                 delay(300)
                 _loadingState.value = _loadingState.value.copy(affiliateBalance = true)
-                android.util.Log.d("Preload", "5/7 Affiliate Balance ✅")
+                AppLogger.d("Preload", "5/7 Affiliate Balance ✅")
             } catch (e: Exception) {
                 _loadingState.value = _loadingState.value.copy(affiliateBalance = true)
             }
@@ -679,7 +680,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 // Tandai ready lepas 500ms
                 delay(500)
                 _loadingState.value = _loadingState.value.copy(adMobReady = true)
-                android.util.Log.d("Preload", "6/7 AdMob ✅")
+                AppLogger.d("Preload", "6/7 AdMob ✅")
             } catch (e: Exception) {
                 _loadingState.value = _loadingState.value.copy(adMobReady = true)
             }
@@ -691,18 +692,18 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         if (task.isSuccessful) {
                             registerFcmToken(task.result)
                             _loadingState.value = _loadingState.value.copy(fcmToken = true)
-                            android.util.Log.d("Preload", "7/7 FCM ✅")
+                            AppLogger.d("Preload", "7/7 FCM ✅")
                         } else {
                             _loadingState.value = _loadingState.value.copy(fcmToken = true)
-                            android.util.Log.w("Preload", "FCM gagal: ${task.exception?.message}")
+                            AppLogger.w("Preload", "FCM gagal: ${task.exception?.message}")
                         }
                     }
             } catch (e: Exception) {
                 _loadingState.value = _loadingState.value.copy(fcmToken = true)
-                android.util.Log.w("Preload", "FCM gagal: ${e.message}")
+                AppLogger.w("Preload", "FCM gagal: ${e.message}")
             }
 
-            android.util.Log.d("Preload", "🎉 PRELOAD COMPLETE")
+            AppLogger.d("Preload", "🎉 PRELOAD COMPLETE")
         }
     }
 
@@ -721,11 +722,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             arr.optJSONObject(i)?.let { list.add(it) }
                         }
                         _tiers.value = list
-                        android.util.Log.d("AffiliateViewModel", "✅ Tiers loaded: ${list.size}")
+                        AppLogger.d("AffiliateViewModel", "✅ Tiers loaded: ${list.size}")
                     }
                 }
                 .onFailure {
-                    android.util.Log.w("AffiliateViewModel", "Gagal load tiers: ${it.message}")
+                    AppLogger.w("AffiliateViewModel", "Gagal load tiers: ${it.message}")
                 }
         }
     }
@@ -760,7 +761,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                 }
                 .onFailure {
-                    android.util.Log.w("AffiliateViewModel", "Gagal load affiliate balance: ${it.message}")
+                    AppLogger.w("AffiliateViewModel", "Gagal load affiliate balance: ${it.message}")
                 }
             _affiliateLoading.value = false
         }
@@ -780,7 +781,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                 }
                 .onFailure {
-                    android.util.Log.w("AffiliateViewModel", "Gagal load affiliate transactions: ${it.message}")
+                    AppLogger.w("AffiliateViewModel", "Gagal load affiliate transactions: ${it.message}")
                 }
         }
     }
@@ -819,7 +820,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                 }
                 .onFailure {
-                    android.util.Log.w("AffiliateViewModel", "Gagal load withdrawals: ${it.message}")
+                    AppLogger.w("AffiliateViewModel", "Gagal load withdrawals: ${it.message}")
                 }
         }
     }
@@ -828,10 +829,10 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             ApiClient.registerFcmToken(token, deviceId)
                 .onSuccess {
-                    android.util.Log.d("AffiliateViewModel", "✅ FCM token registered")
+                    AppLogger.d("AffiliateViewModel", "✅ FCM token registered")
                 }
                 .onFailure {
-                    android.util.Log.w("AffiliateViewModel", "Gagal register FCM: ${it.message}")
+                    AppLogger.w("AffiliateViewModel", "Gagal register FCM: ${it.message}")
                 }
         }
     }
@@ -934,12 +935,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     fun buyGameMinerItem(itemId: String) {
         viewModelScope.launch {
             try {
-                android.util.Log.d("BuyMiner", "🛒 buyGameMinerItem START: $itemId")
+                AppLogger.d("BuyMiner", "🛒 buyGameMinerItem START: $itemId")
                 
                 // 1. Beli lokal (Room DB)
                 val result = repository.buyGameMinerItem(itemId)
                 result.onSuccess { msg ->
-                    android.util.Log.d("BuyMiner", "✅ Lokal OK: $msg")
+                    AppLogger.d("BuyMiner", "✅ Lokal OK: $msg")
                     showSnackbar(msg)
 
                     // 2. Sync ke backend
@@ -956,11 +957,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                                 put("pointsPerMinute", item.pointsPerMinute)
                                 put("iconEmoji", item.iconEmoji)
                             }
-                            android.util.Log.d("BuyMiner", "📡 Sync backend: catalogId=${item.catalogId}")
+                            AppLogger.d("BuyMiner", "📡 Sync backend: catalogId=${item.catalogId}")
                             ApiClient.buyMiner(body)
                                 .onSuccess { resp ->
                                     val success = resp.optBoolean("success", false)
-                                    android.util.Log.d("BuyMiner", "✅ Sync response: $resp")
+                                    AppLogger.d("BuyMiner", "✅ Sync response: $resp")
                                     if (success) {
                                         loadGameState()
                                     } else {
@@ -968,23 +969,23 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                                     }
                                 }
                                 .onFailure { err ->
-                                    android.util.Log.e("BuyMiner", "❌ Sync failed: ${err.message}", err)
+                                    AppLogger.e("BuyMiner", "❌ Sync failed: ${err.message}", err)
                                     showSnackbar("⚠️ Gagal sync ke server: ${err.message}")
                                 }
                         } else {
-                            android.util.Log.e("BuyMiner", "❌ Item null selepas beli!")
+                            AppLogger.e("BuyMiner", "❌ Item null selepas beli!")
                             showSnackbar("⚠️ Item tak jumpa")
                         }
                     } catch (e: Exception) {
-                        android.util.Log.e("BuyMiner", "❌ Sync exception: ${e.message}", e)
+                        AppLogger.e("BuyMiner", "❌ Sync exception: ${e.message}", e)
                         showSnackbar("⚠️ Sync error: ${e.message}")
                     }
                 }.onFailure { error ->
-                    android.util.Log.e("BuyMiner", "❌ Lokal fail: ${error.message}", error)
+                    AppLogger.e("BuyMiner", "❌ Lokal fail: ${error.message}", error)
                     showSnackbar(error.message ?: LanguageManager.translate("vm_miner_buy_failed", _currentLanguage.value, "Gagal membeli item penambang"))
                 }
             } catch (e: Exception) {
-                android.util.Log.e("BuyMiner", "❌ Fatal error: ${e.message}", e)
+                AppLogger.e("BuyMiner", "❌ Fatal error: ${e.message}", e)
                 showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             }
         }
@@ -997,17 +998,17 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     fun buyAndPlaceGameMinerItem(itemId: String) {
         viewModelScope.launch {
             try {
-                android.util.Log.d("BuyMiner", "🛒 buyAndPlaceGameMinerItem START: $itemId")
+                AppLogger.d("BuyMiner", "🛒 buyAndPlaceGameMinerItem START: $itemId")
 
                 val result = repository.buyGameMinerItem(itemId)
                 result.onSuccess { msg ->
-                    android.util.Log.d("BuyMiner", "✅ Lokal OK: $msg")
+                    AppLogger.d("BuyMiner", "✅ Lokal OK: $msg")
                     showSnackbar(msg)
 
                     try {
                         val item = repository.getGameMinerItemByIdSync(itemId)
                         if (item != null) {
-                            android.util.Log.d("BuyMiner", "📡 Sync backend: catalogId=${item.catalogId}")
+                            AppLogger.d("BuyMiner", "📡 Sync backend: catalogId=${item.catalogId}")
                             val body = org.json.JSONObject().apply {
                                 put("catalogId", item.catalogId)
                                 put("instanceId", item.id)
@@ -1021,7 +1022,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             ApiClient.buyMiner(body)
                                 .onSuccess { resp ->
                                     val success = resp.optBoolean("success", false)
-                                    android.util.Log.d("BuyMiner", "✅ Sync response: $resp")
+                                    AppLogger.d("BuyMiner", "✅ Sync response: $resp")
                                     if (!success) {
                                         showSnackbar(LanguageManager.translate("vm_backend_reject_prefix", _currentLanguage.value, "Backend reject: ") + resp.optString("message"))
                                         return@onSuccess
@@ -1050,23 +1051,23 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                                     loadGameState()
                                 }
                                 .onFailure { err ->
-                                    android.util.Log.e("BuyMiner", "❌ Sync failed: ${err.message}", err)
+                                    AppLogger.e("BuyMiner", "❌ Sync failed: ${err.message}", err)
                                     showSnackbar("⚠️ Gagal sync ke server: ${err.message}")
                                 }
                         } else {
-                            android.util.Log.e("BuyMiner", "❌ Item null selepas beli!")
+                            AppLogger.e("BuyMiner", "❌ Item null selepas beli!")
                             showSnackbar("⚠️ Item tak jumpa")
                         }
                     } catch (e: Exception) {
-                        android.util.Log.e("BuyMiner", "❌ Sync exception: ${e.message}", e)
+                        AppLogger.e("BuyMiner", "❌ Sync exception: ${e.message}", e)
                         showSnackbar("⚠️ Sync error: ${e.message}")
                     }
                 }.onFailure { error ->
-                    android.util.Log.e("BuyMiner", "❌ Lokal fail: ${error.message}", error)
+                    AppLogger.e("BuyMiner", "❌ Lokal fail: ${error.message}", error)
                     showSnackbar(error.message ?: LanguageManager.translate("vm_miner_buy_failed", _currentLanguage.value, "Gagal membeli item penambang"))
                 }
             } catch (e: Exception) {
-                android.util.Log.e("BuyMiner", "❌ Fatal error: ${e.message}", e)
+                AppLogger.e("BuyMiner", "❌ Fatal error: ${e.message}", e)
                 showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             }
         }
@@ -1091,12 +1092,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                     ApiClient.unplaceMiner(body)
                         .onSuccess {
-                            android.util.Log.d("UnplaceMiner", "✅ Unplace synced to backend")
+                            AppLogger.d("UnplaceMiner", "✅ Unplace synced to backend")
                             kotlinx.coroutines.delay(300L)  // defer sync
                             loadGameState()
                         }
                         .onFailure { err ->
-                            android.util.Log.e("UnplaceMiner", "❌ Sync failed: ${err.message}")
+                            AppLogger.e("UnplaceMiner", "❌ Sync failed: ${err.message}")
                         }
                 } else {
                     // PLACE — guna endpoint /mining/place
@@ -1106,12 +1107,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                     ApiClient.placeMiner(body)
                         .onSuccess {
-                            android.util.Log.d("PlaceMiner", "✅ Place synced to backend")
+                            AppLogger.d("PlaceMiner", "✅ Place synced to backend")
                             kotlinx.coroutines.delay(300L)  // defer sync
                             loadGameState()
                         }
                         .onFailure { err ->
-                            android.util.Log.e("PlaceMiner", "❌ Sync failed: ${err.message}")
+                            AppLogger.e("PlaceMiner", "❌ Sync failed: ${err.message}")
                         }
                 }
             }.onFailure { error ->
@@ -1130,11 +1131,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 // 2. Sync ke backend (CRITICAL FIX)
                 ApiClient.finishMiniGame(score, durationMs, gameNonce)
                     .onSuccess {
-                        android.util.Log.d("MiniGame", "✅ MiniGame reward synced to backend")
+                        AppLogger.d("MiniGame", "✅ MiniGame reward synced to backend")
                         loadGameState()
                     }
                     .onFailure { err ->
-                        android.util.Log.e("MiniGame", "❌ Sync failed: ${err.message}")
+                        AppLogger.e("MiniGame", "❌ Sync failed: ${err.message}")
                     }
             }.onFailure { error ->
                 showSnackbar(error.message ?: LanguageManager.translate("vm_game_reward_failed", _currentLanguage.value, "Gagal memproses reward game"))
@@ -1156,7 +1157,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         val pricePaid = dataObj?.optInt("pricePaid", 0) ?: 0
 
                         showSnackbar("🔓 Slot ${slotIndex + 1} terbuka! (-${pricePaid} RTP)")
-                        android.util.Log.d("UnlockSlot", "✅ Slot ${slotIndex + 1} unlocked")
+                        AppLogger.d("UnlockSlot", "✅ Slot ${slotIndex + 1} unlocked")
 
                         // Refresh game state
                         loadGameState()
@@ -1164,12 +1165,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     } else {
                         val msg = json.optString("message", LanguageManager.translate("vm_open_slot_failed", _currentLanguage.value, "Gagal membuka slot"))
                         val httpCode = json.optInt("httpCode", 0)
-                        android.util.Log.w("UnlockSlot", "Failed: HTTP $httpCode — $msg")
+                        AppLogger.w("UnlockSlot", "Failed: HTTP $httpCode — $msg")
                         showSnackbar("⚠️ $msg")
                     }
                 }
                 .onFailure { err ->
-                    android.util.Log.e("UnlockSlot", "❌ Error: ${err.message}")
+                    AppLogger.e("UnlockSlot", "❌ Error: ${err.message}")
                     showSnackbar(String.format(LanguageManager.translate("snackbar_network_error", _currentLanguage.value, "Error: %s"), err.message ?: LanguageManager.translate("vm_network_error", _currentLanguage.value, "Network error")))
                 }
         }
@@ -1330,23 +1331,23 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     if (json.optBoolean("success", false)) {
                         repository.syncMinerCatalogFromBackend(json)
                         minerCatalogRetryCount = 0  // reset retry
-                        android.util.Log.d("AffiliateViewModel", "✅ Miner catalog loaded")
+                        AppLogger.d("AffiliateViewModel", "✅ Miner catalog loaded")
                     }
                 }.onFailure { error ->
                     val msg = error.message ?: ""
-                    android.util.Log.w("AffiliateViewModel", "Gagal load catalog: $msg")
+                    AppLogger.w("AffiliateViewModel", "Gagal load catalog: $msg")
                     
                     // Retry bila 401 (token belum ready) — max 5x dengan exponential backoff
                     if (msg.contains("401") && minerCatalogRetryCount < MINER_CATALOG_MAX_RETRY) {
                         minerCatalogRetryCount++
                         val delayMs = 1000L * minerCatalogRetryCount  // 1s, 2s, 3s, 4s, 5s
-                        android.util.Log.d("AffiliateViewModel", "🔄 Retry loadMinerCatalog ($minerCatalogRetryCount/$MINER_CATALOG_MAX_RETRY) dalam ${delayMs}ms")
+                        AppLogger.d("AffiliateViewModel", "🔄 Retry loadMinerCatalog ($minerCatalogRetryCount/$MINER_CATALOG_MAX_RETRY) dalam ${delayMs}ms")
                         kotlinx.coroutines.delay(delayMs)
                         loadMinerCatalog()
                     }
                 }
             } catch (e: Exception) {
-                android.util.Log.e("AffiliateViewModel", "loadMinerCatalog error: ${e.message}")
+                AppLogger.e("AffiliateViewModel", "loadMinerCatalog error: ${e.message}")
             }
         }
     }
@@ -1417,18 +1418,18 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 ApiClient.getGameState().onSuccess { json ->
                     if (json.optBoolean("success", false)) {
                         repository.syncGameStateFromBackend(json)
-                        android.util.Log.d("AffiliateViewModel", "✅ Game state loaded")
+                        AppLogger.d("AffiliateViewModel", "✅ Game state loaded")
                     }
                 }.onFailure { error ->
-                    android.util.Log.w("AffiliateViewModel", "Gagal load game state: ${error.message}")
+                    AppLogger.w("AffiliateViewModel", "Gagal load game state: ${error.message}")
                     // AdGuard detection sudah di-set dalam ApiClient
                     if (error is java.net.UnknownHostException ||
                         error is java.net.SocketTimeoutException) {
-                        android.util.Log.w("AffiliateViewModel", "⚠️ Kemungkinan AdGuard block!")
+                        AppLogger.w("AffiliateViewModel", "⚠️ Kemungkinan AdGuard block!")
                     }
                 }
             } catch (e: Exception) {
-                android.util.Log.e("AffiliateViewModel", "loadGameState error: ${e.message}")
+                AppLogger.e("AffiliateViewModel", "loadGameState error: ${e.message}")
             }
         }
     }
@@ -1519,7 +1520,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 val remaining = (next - System.currentTimeMillis()).coerceAtLeast(0L)
                 _miningCooldownRemainingMs.value = remaining
             } catch (e: Exception) {
-                android.util.Log.w("AffiliateViewModel", "refreshMiningCooldown error: ${e.message}")
+                AppLogger.w("AffiliateViewModel", "refreshMiningCooldown error: ${e.message}")
             }
         }
     }
@@ -1586,7 +1587,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                 }
             } catch (e: Exception) {
-                android.util.Log.e("Achievement", "load error: ${e.message}", e)
+                AppLogger.e("Achievement", "load error: ${e.message}", e)
             } finally {
                 _achievementLoading.value = false
             }
@@ -1658,7 +1659,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                 }
             } catch (e: Exception) {
-                android.util.Log.e("Purchase", "load error: ${e.message}", e)
+                AppLogger.e("Purchase", "load error: ${e.message}", e)
             } finally {
                 _purchaseLoading.value = false
             }
@@ -1774,7 +1775,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     startMinerCountdownTicker()
                 }
             } catch (e: Exception) {
-                android.util.Log.w("AffiliateViewModel", "refreshMinerActiveState error: ${e.message}")
+                AppLogger.w("AffiliateViewModel", "refreshMinerActiveState error: ${e.message}")
             }
         }
     }
@@ -1820,7 +1821,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             }
                 .filterNotNull()
                 .collect { event ->
-                    android.util.Log.d("ViewModel", "Config refresh: ${event.configType}")
+                    AppLogger.d("ViewModel", "Config refresh: ${event.configType}")
 
                     when (event.configType) {
                         "game" -> loadGameState()
@@ -1995,12 +1996,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 result.getOrNull()?.let {
                     // Sync sukses — record ke backend untuk analytics
                     // Hashrate factor + pause state DIHITUNG LOCAL, tidak dari backend
-                    android.util.Log.d("Thermal", "Sync OK: temp=$temp, level=$level, charging=$charging")
+                    AppLogger.d("Thermal", "Sync OK: temp=$temp, level=$level, charging=$charging")
                 } ?: run {
-                    android.util.Log.w("Thermal", "Sync failed: ${result.exceptionOrNull()?.message}")
+                    AppLogger.w("Thermal", "Sync failed: ${result.exceptionOrNull()?.message}")
                 }
             } catch (e: Exception) {
-                android.util.Log.w("Thermal", "Sync error: ${e.message}")
+                AppLogger.w("Thermal", "Sync error: ${e.message}")
             }
         }
     }
@@ -2013,7 +2014,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     ?: LocationHelper.getCurrentLocation(getApplication())
                 val summary = LocationHelper.getLocationSummary(location)
                 _userRegion.value = summary.region
-                android.util.Log.d("Location", "Region: ${summary.region}, Lat: ${summary.latitude}, Lon: ${summary.longitude}")
+                AppLogger.d("Location", "Region: ${summary.region}, Lat: ${summary.latitude}, Lon: ${summary.longitude}")
 
                 // Kirim ke backend
                 val body = org.json.JSONObject().apply {
@@ -2023,7 +2024,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 }
                 ApiClient.updateLocation(body)
             } catch (e: Exception) {
-                android.util.Log.w("Location", "Error: ${e.message}")
+                AppLogger.w("Location", "Error: ${e.message}")
             }
         }
     }
@@ -2038,13 +2039,13 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         if (autoClaimJob?.isActive == true) return
         _autoClaimActive.value = true
         autoClaimJob = viewModelScope.launch {
-            android.util.Log.d("AffiliateViewModel", "▶️ Auto-claim started (60s interval)")
+            AppLogger.d("AffiliateViewModel", "▶️ Auto-claim started (60s interval)")
             while (isActive) {
                 delay(60_000L)
                 try {
                     // Check miner active dulu — skip kalau tamat
                     if (!isMinerActive()) {
-                        android.util.Log.d("AffiliateViewModel", "⏸️ Miner inactive — auto-claim skip")
+                        AppLogger.d("AffiliateViewModel", "⏸️ Miner inactive — auto-claim skip")
                         refreshMinerActiveState()
                         continue
                     }
@@ -2053,17 +2054,17 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         if (json.optBoolean("success", false)) {
                             val points = json.optDouble("points", 0.0)
                             if (points > 0) {
-                                android.util.Log.d("AffiliateViewModel", "✅ Auto-claim: +$points RTP")
+                                AppLogger.d("AffiliateViewModel", "✅ Auto-claim: +$points RTP")
                                 loadUserFromBackend()
                                 loadGameState()
                             }
                         } else if (json.optString("code") == "MINER_INACTIVE") {
-                            android.util.Log.d("AffiliateViewModel", "⏸️ Miner inactive (backend)")
+                            AppLogger.d("AffiliateViewModel", "⏸️ Miner inactive (backend)")
                             refreshMinerActiveState()
                         }
                     }
                 } catch (e: Exception) {
-                    android.util.Log.w("AffiliateViewModel", "Auto-claim error: ${e.message}")
+                    AppLogger.w("AffiliateViewModel", "Auto-claim error: ${e.message}")
                 }
             }
         }
@@ -2073,7 +2074,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         autoClaimJob?.cancel()
         autoClaimJob = null
         _autoClaimActive.value = false
-        android.util.Log.d("AffiliateViewModel", "⏸️ Auto-claim stopped")
+        AppLogger.d("AffiliateViewModel", "⏸️ Auto-claim stopped")
     }
 
     fun claimMiningWithAd(transactionId: String, vendor: String) {
@@ -2101,7 +2102,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     val remaining = json.optLong("cooldownRemainingMs", 0L)
                     val httpCode = json.optInt("httpCode", 0)
                     
-                    android.util.Log.w("ClaimMining", "Failed: HTTP $httpCode — $msg")
+                    AppLogger.w("ClaimMining", "Failed: HTTP $httpCode — $msg")
                     
                     if (remaining > 0) {
                         _miningCooldownRemainingMs.value = remaining
@@ -2110,7 +2111,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     showSnackbar("⚠️ $msg")
                 }
             }.onFailure {
-                android.util.Log.e("ClaimMining", "Network error: ${it.message}")
+                AppLogger.e("ClaimMining", "Network error: ${it.message}")
                 showSnackbar("Error: ${it.message ?: LanguageManager.translate("vm_network_error", _currentLanguage.value, "Network error")}")
             }
 
@@ -2308,9 +2309,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             try {
                 repository.updateUserPhotoAndProfile(photoUrl, name, email)
-                android.util.Log.d("AffiliateViewModel", "✅ User synced from Firebase: photoUrl=$photoUrl")
+                AppLogger.d("AffiliateViewModel", "✅ User synced from Firebase: photoUrl=$photoUrl")
             } catch (e: Exception) {
-                android.util.Log.e("AffiliateViewModel", "syncUserFromFirebase error: ${e.message}", e)
+                AppLogger.e("AffiliateViewModel", "syncUserFromFirebase error: ${e.message}", e)
             }
         }
     }
@@ -2384,9 +2385,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             )
                         }
                         repository.insertTransactions(entityList)
-                        android.util.Log.d("History", "Synced ${'$'}{entityList.size} transactions to Room DB")
+                        AppLogger.d("History", "Synced ${'$'}{entityList.size} transactions to Room DB")
                     } catch (e: Exception) {
-                        android.util.Log.w("History", "Failed to sync to Room DB: ${'$'}{e.message}")
+                        AppLogger.w("History", "Failed to sync to Room DB: ${'$'}{e.message}")
                     }
                 }
             }.onFailure { /* offline, pakai data lokal */ }
@@ -2413,9 +2414,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             )
                         }
                         repository.insertNotifications(entityList)
-                        android.util.Log.d("Notifications", "Synced ${'$'}{entityList.size} notifications to Room DB")
+                        AppLogger.d("Notifications", "Synced ${'$'}{entityList.size} notifications to Room DB")
                     } catch (e: Exception) {
-                        android.util.Log.w("Notifications", "Failed to sync: ${'$'}{e.message}")
+                        AppLogger.w("Notifications", "Failed to sync: ${'$'}{e.message}")
                     }
                 }
             }.onFailure { /* offline */ }
@@ -2582,7 +2583,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 val firebaseUid = FirebaseAuth.getInstance().currentUser?.uid
                 if (firebaseUid == null) {
-                    android.util.Log.w("AffiliateViewModel", "Firebase UID null — belum login")
+                    AppLogger.w("AffiliateViewModel", "Firebase UID null — belum login")
                     return@launch
                 }
 
@@ -2594,7 +2595,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 result.onSuccess { json ->
                     try {
                         if (!json.optBoolean("success", false)) {
-                            android.util.Log.w("AffiliateViewModel", "Backend: user tidak ditemukan")
+                            AppLogger.w("AffiliateViewModel", "Backend: user tidak ditemukan")
                             return@onSuccess
                         }
                         val data = json.optJSONObject("data") ?: return@onSuccess
@@ -2628,20 +2629,20 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             commissionRateMultiplier = data.optDouble("commissionRateMultiplier", 1.0),
                             convertedStepsToday = data.optInt("convertedStepsToday", 0)
                         )
-                        android.util.Log.d("AffiliateViewModel", "✅ User loaded from backend")
+                        AppLogger.d("AffiliateViewModel", "✅ User loaded from backend")
 
                         // Update widget setelah user sync
                         user.value?.let { u ->
                             WidgetUpdater.refreshFromRoom(getApplication(), u.id)
                         }
                     } catch (e: Exception) {
-                        android.util.Log.e("AffiliateViewModel", "Parse user error: ${e.message}")
+                        AppLogger.e("AffiliateViewModel", "Parse user error: ${e.message}")
                     }
                 }.onFailure {
-                    android.util.Log.w("AffiliateViewModel", "Gagal load user: ${it.message}")
+                    AppLogger.w("AffiliateViewModel", "Gagal load user: ${it.message}")
                 }
             } catch (e: Exception) {
-                android.util.Log.e("AffiliateViewModel", "loadUserFromBackend error: ${e.message}")
+                AppLogger.e("AffiliateViewModel", "loadUserFromBackend error: ${e.message}")
             }
         }
     }
@@ -2657,11 +2658,11 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                     put("name", firebaseUser.displayName ?: LanguageManager.translate("vm_new_user", _currentLanguage.value, "User Baru"))
                 }
                 ApiClient.syncFirebaseUser(body).onSuccess {
-                    android.util.Log.d("AffiliateViewModel", "✅ User synced to backend")
+                    AppLogger.d("AffiliateViewModel", "✅ User synced to backend")
                     loadUserFromBackend()
                 }
             } catch (e: Exception) {
-                android.util.Log.e("AffiliateViewModel", "syncUserToBackend error: ${e.message}")
+                AppLogger.e("AffiliateViewModel", "syncUserToBackend error: ${e.message}")
             }
         }
     }

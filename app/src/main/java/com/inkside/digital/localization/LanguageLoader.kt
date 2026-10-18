@@ -3,6 +3,7 @@ package com.inkside.digital.localization
 import android.content.Context
 import org.json.JSONObject
 import java.util.concurrent.ConcurrentHashMap
+import com.inkside.digital.util.AppLogger
 
 /**
  * LanguageLoader — Load translations dari assets/i18n (JSON files)
@@ -40,11 +41,11 @@ object LanguageLoader {
                 map[key] = translationsObj.getString(key)
             }
 
-            android.util.Log.d(TAG, "✅ Loaded $lang: ${map.size} keys")
+            AppLogger.d(TAG, "✅ Loaded $lang: ${map.size} keys")
             map
 
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "❌ Failed to load $lang: ${e.message}", e)
+            AppLogger.e(TAG, "❌ Failed to load $lang: ${e.message}", e)
             emptyMap()
         }
 

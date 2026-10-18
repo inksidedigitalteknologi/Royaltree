@@ -1,12 +1,12 @@
 package com.inkside.digital.ui.screens.auth
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
 import com.inkside.digital.data.auth.AuthManager
 import com.inkside.digital.data.auth.AuthRepository
+import com.inkside.digital.util.AppLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -86,7 +86,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     _currentScreen.value = AuthScreen.PROFILE_SETUP
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "checkInitialAuthState error: ${e.message}")
+                AppLogger.e(TAG, "checkInitialAuthState error: ${e.message}")
                 _currentScreen.value = AuthScreen.LOGIN
             } finally {
                 _isLoading.value = false
@@ -110,7 +110,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 viewModelScope.launch {
                     val marketingResult = authRepository.updateMarketingOptIn(marketingOptIn)
                     if (marketingResult.isFailure) {
-                        Log.w(TAG, "Marketing opt-in save failed (non-fatal): ${marketingResult.exceptionOrNull()?.message}")
+                        AppLogger.w(TAG, "Marketing opt-in save failed (non-fatal): ${marketingResult.exceptionOrNull()?.message}")
                     }
                 }
 
@@ -182,7 +182,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 _currentScreen.value = AuthScreen.PROFILE_SETUP
             }
         } catch (e: Exception) {
-            Log.e(TAG, "syncUserAndNavigate error: ${e.message}")
+            AppLogger.e(TAG, "syncUserAndNavigate error: ${e.message}")
             _currentScreen.value = AuthScreen.LOGIN
         }
     }

@@ -66,6 +66,7 @@ import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.components.AnimatedBackground
 import com.inkside.digital.ui.components.LanguageSelectionModal
 import com.inkside.digital.ui.components.RoyaltreeTree
+import com.inkside.digital.util.AppLogger
 import kotlinx.coroutines.launch
 
 // ─────────────────────────────────────────────────────────────
@@ -417,10 +418,10 @@ fun LoginScreen(
                                         com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.createFrom(credential.data)
                                     onLoginGoogle(googleIdTokenCredential.idToken, marketingOptIn)
                                 } else {
-                                    android.util.Log.e("LoginScreen", "Credential bukan Google ID Token")
+                                    AppLogger.e("LoginScreen", "Credential bukan Google ID Token")
                                 }
                             } catch (e: Exception) {
-                                android.util.Log.e("LoginScreen", "Google Sign-In error: ${e.message}")
+                                AppLogger.e("LoginScreen", "Google Sign-In error: ${e.message}")
                             } finally {
                                 googleLoading = false
                             }

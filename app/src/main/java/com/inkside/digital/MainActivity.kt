@@ -113,6 +113,7 @@ import com.inkside.digital.worker.MiningWorker
 import java.util.concurrent.TimeUnit
 import com.inkside.digital.ui.screens.WhitepaperScreen
 import com.inkside.digital.ui.screens.GlobalChatScreen
+import com.inkside.digital.util.AppLogger
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -158,15 +159,15 @@ class MainActivity : ComponentActivity() {
                 ExistingPeriodicWorkPolicy.KEEP,
                 miningWorkRequest
             )
-            android.util.Log.d("MainActivity", "✅ MiningWorker scheduled (15 min)")
+            AppLogger.d("MainActivity", "✅ MiningWorker scheduled (15 min)")
         } catch (e: Exception) {
-            android.util.Log.e("MainActivity", "❌ Failed to schedule MiningWorker: ${e.message}")
+            AppLogger.e("MainActivity", "❌ Failed to schedule MiningWorker: ${e.message}")
         }
         // Init IapManager — DISABLED untuk debug blank screen
         // try {
         //     com.inkside.digital.util.IapManager.connect(this, this)
         // } catch (e: Exception) {
-        //     android.util.Log.e("IAP", "connect failed: ${e.message}", e)
+        //     AppLogger.e("IAP", "connect failed: ${e.message}", e)
         // }
 
         setContent {
@@ -215,7 +216,7 @@ fun RootNav(
             affiliateViewModel.handlePurchaseSuccess(productId, token, packageName)
         }
         com.inkside.digital.util.IapManager.onPurchaseError = { msg ->
-            android.util.Log.w("IAP", "Purchase error: $msg")
+            AppLogger.w("IAP", "Purchase error: $msg")
         }
     }
 
@@ -253,14 +254,14 @@ fun RootNav(
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val token = task.result
-                        android.util.Log.d("RootNav", "FCM token: ${token.take(20)}...")
+                        AppLogger.d("RootNav", "FCM token: ${token.take(20)}...")
                         affiliateViewModel.registerFcmToken(token)
                     } else {
-                        android.util.Log.w("RootNav", "Gagal ambil FCM token: ${task.exception?.message}")
+                        AppLogger.w("RootNav", "Gagal ambil FCM token: ${task.exception?.message}")
                     }
                 }
         } catch (e: Exception) {
-            android.util.Log.w("RootNav", "Error: ${e.message}")
+            AppLogger.w("RootNav", "Error: ${e.message}")
         }
     }
 
@@ -279,7 +280,7 @@ fun RootNav(
     // THERMAL + LOCATION MONITORING (seluruh app, bukan cuma Game Room)
     // ============================================================
     androidx.compose.runtime.LaunchedEffect(Unit) {
-        android.util.Log.d("RootNav", "🔥 Start thermal + location monitoring (app-wide)")
+        AppLogger.d("RootNav", "🔥 Start thermal + location monitoring (app-wide)")
         affiliateViewModel.startThermalMonitoring()
         affiliateViewModel.fetchUserRegion()
         affiliateViewModel.startConfigRefreshObserver()
@@ -289,7 +290,7 @@ fun RootNav(
     // Stop saat app close / navigate away
     androidx.compose.runtime.DisposableEffect(Unit) {
         onDispose {
-            android.util.Log.d("RootNav", "🛑 Stop thermal monitoring")
+            AppLogger.d("RootNav", "🛑 Stop thermal monitoring")
             affiliateViewModel.stopThermalMonitoring()
             affiliateViewModel.stopConfigRefreshObserver()
             affiliateViewModel.stopMaintenanceCheck()
@@ -406,7 +407,7 @@ fun MainAffiliateApp(
 
             // Kalau user ada tapi photoUrl kosong/berbeza → sync
             if (user != null && !fbPhotoUrl.isNullOrBlank() && user?.photoUrl != fbPhotoUrl) {
-                android.util.Log.d("MainActivity", "📷 Sync photoUrl: $fbPhotoUrl")
+                AppLogger.d("MainActivity", "📷 Sync photoUrl: $fbPhotoUrl")
                 viewModel.syncUserFromFirebase(
                     photoUrl = fbPhotoUrl,
                     name = fbName,
@@ -455,7 +456,7 @@ fun MainAffiliateApp(
             }
             AnalyticsHelper.logScreen(screenName, "MainActivity")
         } catch (e: Exception) {
-            android.util.Log.w("Analytics", "logScreen error: ${e.message}")
+            AppLogger.w("Analytics", "logScreen error: ${e.message}")
         }
 
         if (currentScreen == AppScreen.HOME) {
@@ -499,7 +500,7 @@ fun MainAffiliateApp(
         androidx.compose.runtime.snapshotFlow<Boolean> { com.inkside.digital.data.network.ApiClient.adBlockDetected }
             .collect { detected: Boolean ->
                 if (detected) {
-                    android.util.Log.w("MainActivity", "⚠️ AdGuard detected - trigger dialog")
+                    AppLogger.w("MainActivity", "⚠️ AdGuard detected - trigger dialog")
                     adBlockedReason = "NO_FILL"
                 }
             }
@@ -519,7 +520,7 @@ fun MainAffiliateApp(
         androidx.compose.runtime.snapshotFlow { ApiClient.bannedState }
             .collect { info: ApiClient.BannedInfo ->
                 if (info.banned) {
-                    android.util.Log.w("MainActivity", "🚫 User banned: ${info.reason}")
+                    AppLogger.w("MainActivity", "🚫 User banned: ${info.reason}")
                     bannedInfo = info
                 }
             }
@@ -1216,7 +1217,7 @@ fun MainAffiliateAppContent(
             currentLanguage = currentLanguage,
             onDismiss = onUpgradeDismiss,
             onUpgrade = { tier ->
-                android.util.Log.d("MainActivity", "Upgrade tier: $tier")
+                AppLogger.d("MainActivity", "Upgrade tier: $tier")
                 onUpgradeConfirm()
             }
         )
@@ -1307,7 +1308,7 @@ fun MainAffiliateAppContent(
                         onAdRewardDismiss()
                     }
                 } catch (e: Exception) {
-                    android.util.Log.e("AdReward", "Launch error: ${e.message}", e)
+                    AppLogger.e("AdReward", "Launch error: ${e.message}", e)
                     onAdRewardDismiss()
                 }
             }
@@ -1330,7 +1331,7 @@ fun MainAffiliateAppContent(
         BannedDialog(
             bannedInfo = currentBanned,
             onLogout = {
-                android.util.Log.d("MainActivity", "🚫 User logout due to banned")
+                AppLogger.d("MainActivity", "🚫 User logout due to banned")
                 com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
                 ApiClient.resetBanned()
                 onLogout()
@@ -1356,9 +1357,9 @@ fun MainAffiliateAppContent(
             currentLanguage = currentLanguage,
             onDismiss = { showLanguageModal = false },
             onSelectLanguage = { lang ->
-                android.util.Log.e("LANG_DEBUG", "🔵 onSelectLanguage: ${lang.code}")
+                AppLogger.e("LANG_DEBUG", "🔵 onSelectLanguage: ${lang.code}")
                 onLanguageChange(lang)
-                android.util.Log.e("LANG_DEBUG", "🔵 onLanguageChange selesai")
+                AppLogger.e("LANG_DEBUG", "🔵 onLanguageChange selesai")
             }
         )
     }

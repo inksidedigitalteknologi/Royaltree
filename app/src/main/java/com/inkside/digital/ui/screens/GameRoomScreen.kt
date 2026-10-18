@@ -96,6 +96,7 @@ import java.util.Locale
 import kotlin.random.Random
 import com.inkside.digital.util.HashrateFormatter
 import com.inkside.digital.util.GlobalPointsManager
+import com.inkside.digital.util.AppLogger
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.draw.scale
@@ -729,7 +730,7 @@ fun GameRoomScreenContent(
                                     onBuyGameMinerItem(item.id)
                                 }
                             } catch (e: Exception) {
-                                android.util.Log.e("GameRoomBuy", "❌ Error onClick: " + e.message, e)
+                                AppLogger.e("GameRoomBuy", "❌ Error onClick: " + e.message, e)
                                 isBuying = false
                             }
                         },

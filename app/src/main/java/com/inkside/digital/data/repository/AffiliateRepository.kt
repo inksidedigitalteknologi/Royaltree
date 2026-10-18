@@ -26,6 +26,7 @@ import kotlinx.coroutines.withContext
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.data.preferences.AppThemePreferences
+import com.inkside.digital.util.AppLogger
 import java.util.UUID
 
 data class PeerContact(
@@ -1166,7 +1167,7 @@ class AffiliateRepository(private val dao: AppDao) {
             )
             dao.insertGameRoomState(updated)
         } catch (e: Exception) {
-            android.util.Log.w("AffiliateRepository", "resetMiningAfterClaim error: ${e.message}")
+            AppLogger.w("AffiliateRepository", "resetMiningAfterClaim error: ${e.message}")
         }
     }
 
@@ -1528,7 +1529,7 @@ class AffiliateRepository(private val dao: AppDao) {
             }
             dao.insertGameMinerItems(items)
         } catch (e: Exception) {
-            android.util.Log.e("AffiliateRepository", "syncMinerCatalog error: ${e.message}")
+            AppLogger.e("AffiliateRepository", "syncMinerCatalog error: ${e.message}")
         }
     }
 
@@ -1595,7 +1596,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 dao.insertGameMinerItems(miners)
             }
         } catch (e: Exception) {
-            android.util.Log.e("AffiliateRepository", "syncGameStateFromBackend error: ${e.message}")
+            AppLogger.e("AffiliateRepository", "syncGameStateFromBackend error: ${e.message}")
         }
     }
 }

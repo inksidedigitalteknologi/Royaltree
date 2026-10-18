@@ -2,9 +2,9 @@ package com.inkside.digital.util
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.FirebaseApp
+import com.inkside.digital.util.AppLogger
 
 /**
  * AnalyticsHelper — central helper untuk Firebase Analytics events.
@@ -26,16 +26,16 @@ object AnalyticsHelper {
             if (analytics == null) {
                 FirebaseApp.initializeApp(context)
                 analytics = FirebaseAnalytics.getInstance(context)
-                Log.d(TAG, "✅ AnalyticsHelper initialized")
+                AppLogger.d(TAG, "✅ AnalyticsHelper initialized")
             }
         } catch (e: Exception) {
-            Log.e(TAG, "❌ Init error: ${e.message}", e)
+            AppLogger.e(TAG, "❌ Init error: ${e.message}", e)
         }
     }
 
     private fun getAnalytics(): FirebaseAnalytics? {
         if (analytics == null) {
-            Log.w(TAG, "⚠️ Analytics belum init — call AnalyticsHelper.init(context)")
+            AppLogger.w(TAG, "⚠️ Analytics belum init — call AnalyticsHelper.init(context)")
         }
         return analytics
     }
@@ -50,9 +50,9 @@ object AnalyticsHelper {
                 }
             }
             getAnalytics()?.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
-            Log.d(TAG, "Screen: $screenName")
+            AppLogger.d(TAG, "Screen: $screenName")
         } catch (e: Exception) {
-            Log.w(TAG, "logScreen error: ${e.message}")
+            AppLogger.w(TAG, "logScreen error: ${e.message}")
         }
     }
 
@@ -60,9 +60,9 @@ object AnalyticsHelper {
     fun setUserId(userId: String) {
         try {
             getAnalytics()?.setUserId(userId)
-            Log.d(TAG, "setUserId: $userId")
+            AppLogger.d(TAG, "setUserId: $userId")
         } catch (e: Exception) {
-            Log.w(TAG, "setUserId error: ${e.message}")
+            AppLogger.w(TAG, "setUserId error: ${e.message}")
         }
     }
 
@@ -98,7 +98,7 @@ object AnalyticsHelper {
                 if (tier.isNotBlank()) putString("tier", tier)
             }
             getAnalytics()?.logEvent("mining_claim", bundle)
-            Log.d(TAG, "Mining claim: $amount")
+            AppLogger.d(TAG, "Mining claim: $amount")
         } catch (e: Exception) {}
     }
 

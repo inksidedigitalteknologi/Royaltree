@@ -1,7 +1,7 @@
 package com.inkside.digital.data.auth
 
-import android.util.Log
 import com.inkside.digital.data.network.ApiClient
+import com.inkside.digital.util.AppLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -47,7 +47,7 @@ class AuthRepository {
                 Result.failure(result.exceptionOrNull() ?: Exception("Sync gagal"))
             }
         } catch (e: Exception) {
-            Log.e(TAG, "syncUserToBackend error: ${e.message}")
+            AppLogger.e(TAG, "syncUserToBackend error: ${e.message}")
             Result.failure(e)
         }
     }
@@ -63,13 +63,13 @@ class AuthRepository {
         try {
             val result = ApiClient.postMarketingOptIn(optIn, version)
             if (result.isSuccess) {
-                Log.d(TAG, "Marketing opt-in: $optIn (v$version)")
+                AppLogger.d(TAG, "Marketing opt-in: $optIn (v$version)")
                 Result.success(result.getOrThrow())
             } else {
                 Result.failure(result.exceptionOrNull() ?: Exception("Marketing opt-in gagal"))
             }
         } catch (e: Exception) {
-            Log.e(TAG, "updateMarketingOptIn error: ${e.message}")
+            AppLogger.e(TAG, "updateMarketingOptIn error: ${e.message}")
             Result.failure(e)
         }
     }
@@ -86,7 +86,7 @@ class AuthRepository {
                 Result.failure(result.exceptionOrNull() ?: Exception("Gagal ambil profil"))
             }
         } catch (e: Exception) {
-            Log.e(TAG, "getMyProfile error: ${e.message}")
+            AppLogger.e(TAG, "getMyProfile error: ${e.message}")
             Result.failure(e)
         }
     }
@@ -106,7 +106,7 @@ class AuthRepository {
                 Result.failure(result.exceptionOrNull() ?: Exception("Link referral gagal"))
             }
         } catch (e: Exception) {
-            Log.e(TAG, "linkReferral error: ${e.message}")
+            AppLogger.e(TAG, "linkReferral error: ${e.message}")
             Result.failure(e)
         }
     }

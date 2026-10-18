@@ -5,6 +5,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.appwidget.updateAll
 import com.inkside.digital.data.database.AppDatabase
+import com.inkside.digital.util.AppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -59,9 +60,9 @@ object WidgetUpdater {
                 }
 
                 RoyaltreeWidget().updateAll(context)
-                android.util.Log.d("WidgetUpdater", "✅ Widget updated for user: ${user.name}")
+                AppLogger.d("WidgetUpdater", "✅ Widget updated for user: ${user.name}")
             } catch (e: Exception) {
-                android.util.Log.e("WidgetUpdater", "Gagal update widget: ${e.message}")
+                AppLogger.e("WidgetUpdater", "Gagal update widget: ${e.message}")
             }
         }
     }
@@ -103,7 +104,7 @@ object WidgetUpdater {
 
             RoyaltreeWidget().updateAll(context)
         } catch (e: Exception) {
-            android.util.Log.e("WidgetUpdater", "Gagal update widget: ${e.message}")
+            AppLogger.e("WidgetUpdater", "Gagal update widget: ${e.message}")
         }
     }
 

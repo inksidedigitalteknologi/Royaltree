@@ -2,7 +2,6 @@ package com.inkside.digital.data.ads
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -21,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import com.inkside.digital.util.AppLogger
 
 /**
  * AdMobProvider: wrapper untuk load & show Rewarded Video dari AdMob.
@@ -63,7 +63,7 @@ object AdMobProvider {
     fun init(context: Context) {
         if (isInitialized) return
         MobileAds.initialize(context) { status ->
-            Log.d(TAG, "AdMob initialized: $status")
+            AppLogger.d(TAG, "AdMob initialized: $status")
             isInitialized = true
         }
     }
@@ -91,7 +91,7 @@ object AdMobProvider {
                 adRequest,
                 object : RewardedAdLoadCallback() {
                     override fun onAdLoaded(ad: RewardedAd) {
-                        Log.d(TAG, "Rewarded ad loaded")
+                        AppLogger.d(TAG, "Rewarded ad loaded")
 
                         // Set SSV options (kalau userId tersedia)
                         if (userId != null) {
@@ -107,7 +107,7 @@ object AdMobProvider {
                     }
 
                     override fun onAdFailedToLoad(error: LoadAdError) {
-                        Log.e(TAG, "Ad failed to load: code=${error.code}, msg=${error.message}")
+                        AppLogger.e(TAG, "Ad failed to load: code=${error.code}, msg=${error.message}")
                         rewardedAd = null
                         _adState.value = false  // no ad
 
@@ -148,31 +148,31 @@ object AdMobProvider {
     ) {
         val ad = rewardedAd
         if (ad == null) {
-            Log.e(TAG, "Rewarded ad belum di-load")
+            AppLogger.e(TAG, "Rewarded ad belum di-load")
             onAdFailed("Iklan belum siap. Tunggu beberapa detik lalu coba lagi.")
             return
         }
 
         ad.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdDismissedFullScreenContent() {
-                Log.d(TAG, "Ad dismissed")
+                AppLogger.d(TAG, "Ad dismissed")
                 rewardedAd = null
                 onAdDismissed()
             }
 
             override fun onAdFailedToShowFullScreenContent(error: AdError) {
-                Log.e(TAG, "Ad failed to show: code=${error.code}, msg=${error.message}")
+                AppLogger.e(TAG, "Ad failed to show: code=${error.code}, msg=${error.message}")
                 rewardedAd = null
                 onAdFailed("Iklan gagal tampil. Coba lagi nanti.")
             }
 
             override fun onAdShowedFullScreenContent() {
-                Log.d(TAG, "Ad showed")
+                AppLogger.d(TAG, "Ad showed")
             }
         }
 
         ad.show(activity) { rewardItem ->
-            Log.d(TAG, "User earned reward: ${rewardItem.amount} ${rewardItem.type}")
+            AppLogger.d(TAG, "User earned reward: ${rewardItem.amount} ${rewardItem.type}")
             onRewardEarned(rewardItem.amount, rewardItem.type)
         }
     }
@@ -195,13 +195,13 @@ object AdMobProvider {
                 adRequest,
                 object : InterstitialAdLoadCallback() {
                     override fun onAdLoaded(ad: InterstitialAd) {
-                        Log.d(TAG, "Interstitial loaded")
+                        AppLogger.d(TAG, "Interstitial loaded")
                         interstitialAd = ad
                         if (continuation.isActive) continuation.resume(Result.success(Unit))
                     }
 
                     override fun onAdFailedToLoad(error: LoadAdError) {
-                        Log.e(TAG, "Interstitial failed: code=${error.code}, msg=${error.message}")
+                        AppLogger.e(TAG, "Interstitial failed: code=${error.code}, msg=${error.message}")
                         interstitialAd = null
                         if (continuation.isActive) {
                             continuation.resume(Result.failure(Exception(error.message)))
@@ -219,26 +219,26 @@ object AdMobProvider {
     ) {
         val ad = interstitialAd
         if (ad == null) {
-            Log.e(TAG, "Interstitial belum di-load")
+            AppLogger.e(TAG, "Interstitial belum di-load")
             onFailed("Interstitial belum siap")
             return
         }
 
         ad.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdDismissedFullScreenContent() {
-                Log.d(TAG, "Interstitial dismissed")
+                AppLogger.d(TAG, "Interstitial dismissed")
                 interstitialAd = null
                 onDismissed()
             }
 
             override fun onAdFailedToShowFullScreenContent(error: AdError) {
-                Log.e(TAG, "Interstitial show failed: code=${error.code}, msg=${error.message}")
+                AppLogger.e(TAG, "Interstitial show failed: code=${error.code}, msg=${error.message}")
                 interstitialAd = null
                 onFailed(error.message)
             }
 
             override fun onAdShowedFullScreenContent() {
-                Log.d(TAG, "Interstitial showed")
+                AppLogger.d(TAG, "Interstitial showed")
             }
         }
 
@@ -270,10 +270,10 @@ object AdMobProvider {
 
         adView.adListener = object : AdListener() {
             override fun onAdLoaded() {
-                Log.d(TAG, "Banner ad loaded")
+                AppLogger.d(TAG, "Banner ad loaded")
             }
             override fun onAdFailedToLoad(error: LoadAdError) {
-                Log.e(TAG, "Banner failed: code=${error.code}, msg=${error.message}")
+                AppLogger.e(TAG, "Banner failed: code=${error.code}, msg=${error.message}")
                 try { onFailed() } catch (_: Exception) { }
             }
         }

@@ -98,6 +98,7 @@ import com.inkside.digital.ui.theme.EmeraldPrimary
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.ui.theme.PurpleSecondary
 import com.inkside.digital.util.GlobalPointsManager
+import com.inkside.digital.util.AppLogger
 import kotlinx.coroutines.delay
 
 @Composable
@@ -2484,7 +2485,7 @@ fun LanguageModal(
                             .background(if (isSel) EmeraldPrimary.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceVariant)
                             .border(1.dp, if (isSel) EmeraldPrimary else Color.Transparent, RoundedCornerShape(10.dp))
                             .clickable {
-                                android.util.Log.e("LANG_DEBUG", "🔵 LanguageModal clickable: ${lang.code}")
+                                AppLogger.e("LANG_DEBUG", "🔵 LanguageModal clickable: ${lang.code}")
                                 onSelectLanguage(lang)
                                 onDismiss()
                             }

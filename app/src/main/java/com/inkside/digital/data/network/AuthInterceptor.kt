@@ -1,11 +1,11 @@
 package com.inkside.digital.data.network
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import okhttp3.Interceptor
 import okhttp3.Response
+import com.inkside.digital.util.AppLogger
 
 /**
  * AuthInterceptor: otomatis tambahkan Firebase ID Token
@@ -31,15 +31,15 @@ class AuthInterceptor : Interceptor {
                 val user = FirebaseAuth.getInstance().currentUser
                 user?.getIdToken(false)?.await()?.token
             } catch (e: Exception) {
-                Log.e("AuthInterceptor", "Gagal ambil token: ${e.message}")
+                AppLogger.e("AuthInterceptor", "Gagal ambil token: ${e.message}")
                 null
             }
         }
 
         if (token != null) {
-            Log.d("AuthInterceptor", "Token length: ${token.length}, prefix: ${token.take(20)}")
+            AppLogger.d("AuthInterceptor", "Token length: ${token.length}, prefix: ${token.take(20)}")
         } else {
-            Log.w("AuthInterceptor", "Token NULL — user mungkin belum login Firebase")
+            AppLogger.w("AuthInterceptor", "Token NULL — user mungkin belum login Firebase")
         }
 
         val newRequest = if (token != null) {

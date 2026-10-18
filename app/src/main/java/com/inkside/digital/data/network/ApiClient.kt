@@ -17,6 +17,7 @@ import com.inkside.digital.data.network.model.ApiWithdrawalListResponse
 import com.inkside.digital.data.network.model.ApiWithdrawalRequest
 import com.inkside.digital.data.network.model.ApiCampaignListResponse
 import com.inkside.digital.data.network.model.ApiMissionListResponse
+import com.inkside.digital.util.AppLogger
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
@@ -76,7 +77,7 @@ object ApiClient {
 
     fun triggerConfigRefresh(configType: String) {
         _configRefreshEvent.value = ConfigRefreshEvent(configType, System.currentTimeMillis())
-        android.util.Log.d("ApiClient", "Config refresh triggered: $configType")
+        AppLogger.d("ApiClient", "Config refresh triggered: $configType")
     }
 
     fun consumeConfigRefresh() {
@@ -459,7 +460,7 @@ object ApiClient {
             val json = JSONObject(resp.string())
             Result.success(json)
         } catch (e: Exception) {
-            android.util.Log.e("ApiClient", "getPurchaseTiersPublic error: ${e.message}", e)
+            AppLogger.e("ApiClient", "getPurchaseTiersPublic error: ${e.message}", e)
             Result.failure(e)
         }
     }
@@ -473,7 +474,7 @@ object ApiClient {
             val json = JSONObject(resp.string())
             Result.success(json)
         } catch (e: Exception) {
-            android.util.Log.e("ApiClient", "getMyAchievements error: ${e.message}", e)
+            AppLogger.e("ApiClient", "getMyAchievements error: ${e.message}", e)
             Result.failure(e)
         }
     }
@@ -484,7 +485,7 @@ object ApiClient {
             val json = JSONObject(resp.string())
             Result.success(json)
         } catch (e: Exception) {
-            android.util.Log.e("ApiClient", "claimAchievement error: ${e.message}", e)
+            AppLogger.e("ApiClient", "claimAchievement error: ${e.message}", e)
             Result.failure(e)
         }
     }

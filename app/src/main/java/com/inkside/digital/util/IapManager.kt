@@ -2,11 +2,11 @@ package com.inkside.digital.util
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import com.android.billingclient.api.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import com.inkside.digital.util.AppLogger
 
 /**
  * IapManager — wrapper Google Play Billing dengan mock fallback.
@@ -62,29 +62,29 @@ object IapManager {
             billingClient?.startConnection(object : BillingClientStateListener {
                 override fun onBillingSetupFinished(result: BillingResult) {
                     if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                        Log.d(TAG, "✅ Play Billing connected")
+                        AppLogger.d(TAG, "✅ Play Billing connected")
                         _isReady.value = true
                         _isMockMode.value = false
                         queryProducts()
                     } else {
-                        Log.w(TAG, "⚠️ Play Billing gagal connect: ${result.debugMessage}")
+                        AppLogger.w(TAG, "⚠️ Play Billing gagal connect: ${result.debugMessage}")
                         fallbackToMock()
                     }
                 }
 
                 override fun onBillingServiceDisconnected() {
-                    Log.w(TAG, "❌ Play Billing disconnected")
+                    AppLogger.w(TAG, "❌ Play Billing disconnected")
                     _isReady.value = false
                 }
             })
         } catch (e: Exception) {
-            Log.e(TAG, "❌ Connect error: ${e.message}", e)
+            AppLogger.e(TAG, "❌ Connect error: ${e.message}", e)
             fallbackToMock()
         }
     }
 
     private fun fallbackToMock() {
-        Log.w(TAG, "⚠️ Fallback ke MOCK MODE")
+        AppLogger.w(TAG, "⚠️ Fallback ke MOCK MODE")
         _isReady.value = true
         _isMockMode.value = true
     }
@@ -110,12 +110,12 @@ object IapManager {
                 val map = mutableMapOf<String, ProductDetails>()
                 productDetailsList.forEach { pd ->
                     map[pd.productId] = pd
-                    Log.d(TAG, "Product: ${pd.productId} — ${pd.oneTimePurchaseOfferDetails?.formattedPrice}")
+                    AppLogger.d(TAG, "Product: ${pd.productId} — ${pd.oneTimePurchaseOfferDetails?.formattedPrice}")
                 }
                 _productDetails.value = map
-                Log.d(TAG, "✅ ${map.size} produk loaded")
+                AppLogger.d(TAG, "✅ ${map.size} produk loaded")
             } else {
-                Log.w(TAG, "⚠️ Query products gagal: ${result.debugMessage}")
+                AppLogger.w(TAG, "⚠️ Query products gagal: ${result.debugMessage}")
                 fallbackToMock()
             }
         }
@@ -127,7 +127,7 @@ object IapManager {
     fun purchase(productId: String) {
         if (_isMockMode.value) {
             // Mock mode — callback langsung dengan mock token
-            Log.d(TAG, "🟡 MOCK PURCHASE: $productId")
+            AppLogger.d(TAG, "🟡 MOCK PURCHASE: $productId")
             val mockToken = "mock_${System.currentTimeMillis()}_${productId}"
             onPurchaseSuccess?.invoke(productId, mockToken, currentActivity?.packageName ?: "com.inkside.digital")
             return
@@ -169,23 +169,23 @@ object IapManager {
                 handlePurchase(purchase)
             }
         } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
-            Log.d(TAG, "User cancelled purchase")
+            AppLogger.d(TAG, "User cancelled purchase")
         } else {
-            Log.w(TAG, "Purchase error: ${billingResult.debugMessage}")
+            AppLogger.w(TAG, "Purchase error: ${billingResult.debugMessage}")
             onPurchaseError?.invoke("Pembelian gagal: ${billingResult.debugMessage}")
         }
     }
 
     private fun handlePurchase(purchase: Purchase) {
         if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
-            Log.d(TAG, "✅ Purchase success: ${purchase.products}")
+            AppLogger.d(TAG, "✅ Purchase success: ${purchase.products}")
             purchase.products.forEach { productId ->
                 onPurchaseSuccess?.invoke(productId, purchase.purchaseToken, purchase.packageName)
             }
             // Acknowledge
             acknowledgePurchase(purchase)
         } else if (purchase.purchaseState == Purchase.PurchaseState.PENDING) {
-            Log.d(TAG, "⏳ Purchase pending")
+            AppLogger.d(TAG, "⏳ Purchase pending")
         }
     }
 
@@ -199,9 +199,9 @@ object IapManager {
 
         client.acknowledgePurchase(params) { result ->
             if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                Log.d(TAG, "✅ Purchase acknowledged")
+                AppLogger.d(TAG, "✅ Purchase acknowledged")
             } else {
-                Log.w(TAG, "⚠️ Acknowledge failed: ${result.debugMessage}")
+                AppLogger.w(TAG, "⚠️ Acknowledge failed: ${result.debugMessage}")
             }
         }
     }

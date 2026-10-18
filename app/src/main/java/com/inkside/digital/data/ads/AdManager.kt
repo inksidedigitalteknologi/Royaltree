@@ -2,8 +2,8 @@ package com.inkside.digital.data.ads
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import com.inkside.digital.data.network.ApiClient
+import com.inkside.digital.util.AppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,11 +46,11 @@ object AdManager {
         AdMobProvider.showRewardedAd(
             activity = activity,
             onRewardEarned = { rewardAmount, rewardType ->
-                Log.d(TAG, "Reward earned: $rewardAmount $rewardType (mode=$mode)")
+                AppLogger.d(TAG, "Reward earned: $rewardAmount $rewardType (mode=$mode)")
 
                 // ✅ FIX: Kalau MINER_ACTIVATE, SKIP /ads/reward
                 if (mode == AdMode.MINER_ACTIVATE) {
-                    Log.d(TAG, "⛏️ Miner activate mode — skip /ads/reward, langsung onSuccess")
+                    AppLogger.d(TAG, "⛏️ Miner activate mode — skip /ads/reward, langsung onSuccess")
                     CoroutineScope(Dispatchers.Main).launch {
                         onSuccess(0)   // points = 0 (tidak ada reward)
                     }
@@ -76,13 +76,13 @@ object AdManager {
                             result.onSuccess { json ->
                                 if (json.optBoolean("success", false)) {
                                     val points = json.optInt("points", AdConfig.DEFAULT_REWARD_POINTS)
-                                    Log.d(TAG, "Backend reward OK: +$points poin")
+                                    AppLogger.d(TAG, "Backend reward OK: +$points poin")
                                     onSuccess(points)
                                 } else {
                                     onFailure(AdFailureReason.UNKNOWN, json.optString("message", "Gagal klaim reward"))
                                 }
                             }.onFailure { error ->
-                                Log.e(TAG, "Backend reward error: ${error.message}")
+                                AppLogger.e(TAG, "Backend reward error: ${error.message}")
                                 onFailure(AdFailureReason.UNKNOWN, "Gagal klaim reward: ${error.message}")
                             }
                         }
@@ -94,7 +94,7 @@ object AdManager {
                 }
             },
             onAdDismissed = {
-                Log.d(TAG, "Ad dismissed")
+                AppLogger.d(TAG, "Ad dismissed")
             },
             onAdFailed = { error ->
                 onFailure(AdFailureReason.SHOW_FAILED, error)
@@ -122,18 +122,18 @@ object AdManager {
 
         // Cek boleh tampil?
         if (!AdStrategy.canShowInterstitial(context)) {
-            Log.d(TAG, "Interstitial skip — strategy not eligible ($actionName)")
+            AppLogger.d(TAG, "Interstitial skip — strategy not eligible ($actionName)")
             onComplete()
             return
         }
 
-        Log.d(TAG, "Interstitial eligible for $actionName")
+        AppLogger.d(TAG, "Interstitial eligible for $actionName")
 
         CoroutineScope(Dispatchers.Main).launch {
             val result = AdMobProvider.loadInterstitial(context)
 
             if (result.isFailure) {
-                Log.w(TAG, "Interstitial load failed: ${result.exceptionOrNull()?.message}")
+                AppLogger.w(TAG, "Interstitial load failed: ${result.exceptionOrNull()?.message}")
                 onComplete()
                 return@launch
             }
@@ -142,11 +142,11 @@ object AdManager {
                 activity = activity,
                 onDismissed = {
                     AdStrategy.recordInterstitial(context)
-                    Log.d(TAG, "Interstitial shown & recorded ($actionName)")
+                    AppLogger.d(TAG, "Interstitial shown & recorded ($actionName)")
                     onComplete()
                 },
                 onFailed = { err ->
-                    Log.e(TAG, "Interstitial show failed: $err")
+                    AppLogger.e(TAG, "Interstitial show failed: $err")
                     onComplete()
                 }
             )

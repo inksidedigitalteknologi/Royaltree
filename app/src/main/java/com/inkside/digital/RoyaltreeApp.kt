@@ -2,11 +2,11 @@ package com.inkside.digital
 
 import android.app.Application
 import android.os.Build
-import android.util.Log
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.inkside.digital.data.network.ApiClient
 import com.inkside.digital.util.AnalyticsHelper
+import com.inkside.digital.util.AppLogger
 
 /**
  * RoyaltreeApp — Application class.
@@ -24,7 +24,7 @@ class RoyaltreeApp : Application() {
         try {
             // 1. Firebase
             FirebaseApp.initializeApp(this)
-            Log.d(TAG, "✅ Firebase initialized")
+            AppLogger.d(TAG, "✅ Firebase initialized")
 
             // 2. Crashlytics
             val crashlytics = FirebaseCrashlytics.getInstance()
@@ -40,23 +40,23 @@ class RoyaltreeApp : Application() {
             crashlytics.setCustomKey("build_type", if (BuildConfig.DEBUG) "debug" else "release")
 
             if (BuildConfig.DEBUG) {
-                Log.d(TAG, "🔧 Crashlytics DISABLED (debug build)")
+                AppLogger.d(TAG, "🔧 Crashlytics DISABLED (debug build)")
             } else {
-                Log.d(TAG, "✅ Crashlytics ENABLED (release build)")
+                AppLogger.d(TAG, "✅ Crashlytics ENABLED (release build)")
             }
 
             // 3. ApiClient
             ApiClient.init(this)
-            Log.d(TAG, "✅ ApiClient initialized")
+            AppLogger.d(TAG, "✅ ApiClient initialized")
 
             // Analytics — init helper + enabled (release only)
             AnalyticsHelper.init(this)
             val analytics = com.google.firebase.analytics.FirebaseAnalytics.getInstance(this)
             analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG)
-            Log.d(TAG, "✅ Analytics: ${if (BuildConfig.DEBUG) "OFF (debug)" else "ON (release)"}")
+            AppLogger.d(TAG, "✅ Analytics: ${if (BuildConfig.DEBUG) "OFF (debug)" else "ON (release)"}")
 
         } catch (e: Exception) {
-            Log.e(TAG, "❌ Init error: ${e.message}", e)
+            AppLogger.e(TAG, "❌ Init error: ${e.message}", e)
             // Jangan crash — biar app tetap jalan kalau init gagal
         }
     }

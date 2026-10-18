@@ -6,6 +6,7 @@ import androidx.work.WorkerParameters
 import com.google.firebase.auth.FirebaseAuth
 import com.inkside.digital.data.database.AppDatabase
 import com.inkside.digital.data.repository.AffiliateRepository
+import com.inkside.digital.util.AppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -67,14 +68,14 @@ class MiningWorker(
             // 5. Claim via repository
             val result = repository.claimGameMiningPoints()
             if (result.isSuccess) {
-                android.util.Log.d("MiningWorker", "✅ Auto-claim sukses: ${result.getOrNull()}")
+                AppLogger.d("MiningWorker", "✅ Auto-claim sukses: ${result.getOrNull()}")
                 Result.success()
             } else {
-                android.util.Log.w("MiningWorker", "❌ Auto-claim gagal: ${result.exceptionOrNull()?.message}")
+                AppLogger.w("MiningWorker", "❌ Auto-claim gagal: ${result.exceptionOrNull()?.message}")
                 Result.retry()
             }
         } catch (e: Exception) {
-            android.util.Log.e("MiningWorker", "❌ Exception: ${e.message}", e)
+            AppLogger.e("MiningWorker", "❌ Exception: ${e.message}", e)
             Result.retry()
         }
     }

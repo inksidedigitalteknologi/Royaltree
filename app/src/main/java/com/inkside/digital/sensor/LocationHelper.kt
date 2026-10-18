@@ -5,13 +5,13 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
-import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import com.inkside.digital.util.AppLogger
 
 /**
  * LocationHelper — deteksi wilayah user.
@@ -55,7 +55,7 @@ object LocationHelper {
      */
     suspend fun getLastLocation(context: Context): Location? {
         if (!hasLocationPermission(context)) {
-            Log.w(TAG, "No location permission")
+            AppLogger.w(TAG, "No location permission")
             return null
         }
 
@@ -69,11 +69,11 @@ object LocationHelper {
                         cont.resume(location)
                     }
                     .addOnFailureListener { e ->
-                        Log.e(TAG, "Failed to get location: ${e.message}")
+                        AppLogger.e(TAG, "Failed to get location: ${e.message}")
                         cont.resume(null)
                     }
             } catch (e: SecurityException) {
-                Log.e(TAG, "Security exception: ${e.message}")
+                AppLogger.e(TAG, "Security exception: ${e.message}")
                 cont.resume(null)
             }
         }
@@ -95,11 +95,11 @@ object LocationHelper {
                         cont.resume(location)
                     }
                     .addOnFailureListener { e ->
-                        Log.e(TAG, "Failed to get current location: ${e.message}")
+                        AppLogger.e(TAG, "Failed to get current location: ${e.message}")
                         cont.resume(null)
                     }
             } catch (e: SecurityException) {
-                Log.e(TAG, "Security exception: ${e.message}")
+                AppLogger.e(TAG, "Security exception: ${e.message}")
                 cont.resume(null)
             }
         }
