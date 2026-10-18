@@ -26,7 +26,7 @@ const MINER_CATALOG = [
         tier: 'COMMON',
         iconEmoji: '⛏️',
         tokenCost: 10,
-        powerGhs: 1,
+        powerGhs: 0.000001,
         pointsPerDay: 0.144,
         pointsPerMinute: 0.0001,
         bonusPermanentPct: 0,
@@ -38,7 +38,7 @@ const MINER_CATALOG = [
         tier: 'RARE',
         iconEmoji: '🔧',
         tokenCost: 50,
-        powerGhs: 5,
+        powerGhs: 0.000005,
         pointsPerDay: 0.72,
         pointsPerMinute: 0.0005,
         bonusPermanentPct: 0.10,
@@ -50,7 +50,7 @@ const MINER_CATALOG = [
         tier: 'EPIC',
         iconEmoji: '⚡',
         tokenCost: 200,
-        powerGhs: 20,
+        powerGhs: 0.00002,
         pointsPerDay: 2.88,
         pointsPerMinute: 0.002,
         bonusPermanentPct: 0.23,
@@ -62,7 +62,7 @@ const MINER_CATALOG = [
         tier: 'LEGENDARY',
         iconEmoji: '💎',
         tokenCost: 1000,
-        powerGhs: 100,
+        powerGhs: 0.0001,
         pointsPerDay: 14.4,
         pointsPerMinute: 0.01,
         bonusPermanentPct: 1.20,
@@ -74,7 +74,7 @@ const MINER_CATALOG = [
         tier: 'MYTHIC',
         iconEmoji: '🌌',
         tokenCost: 5000,
-        powerGhs: 500,
+        powerGhs: 0.0005,
         pointsPerDay: 72,
         pointsPerMinute: 0.05,
         bonusPermanentPct: 3.00,
@@ -1329,7 +1329,7 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
 
         // Hitung reward (sama dengan formula Android)
         const bonusPoints = Math.min(Math.max(Math.floor(score / 10), 15), 60);
-        const boostGhs = 80.0;
+        const boostGhs = 0.00008;
         const boostExpiry = now + 7200000;  // 2 jam
 
         // M43: Random speed bonus drop (0.01% - 0.03%)
