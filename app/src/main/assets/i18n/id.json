@@ -740,6 +740,19 @@
     "menu_akun": "AKUN",
     "drawer_balance": "Saldo",
     "drawer_rtp": "RTP",
-    "achievement_title": "Achievement"
+    "achievement_title": "Achievement",
+    "empty_no_data": "Belum ada data",
+    "empty_data_will_appear": "Data akan muncul di sini",
+    "error_generic": "Terjadi kesalahan",
+    "leaderboard_error": "Gagal memuat leaderboard",
+    "network_error": "Kesalahan jaringan",
+    "leaderboard_empty_desc": "Leaderboard akan muncul setelah ada aktivitas",
+    "step_healthy_tagline": "Jalan kaki sehat, kumpulkan koin & rupiah setiap hari",
+    "step_exchange_now": "Tukar Langkah Jadi Koin Sekarang",
+    "step_collect_min": "Kumpulkan Min. 100 Langkah",
+    "step_manual_desc": "Tekan tombol untuk menambah langkah secara instan dan melihat konversi koin berjalan riil:",
+    "analytics_desc": "Pantau konversi, EPC, sumber traffic, dan performa ROI setiap link",
+    "analytics_industry_std": "Standar industri: 4.5%",
+    "analytics_value_per_click": "Nilai per klik"
   }
 }

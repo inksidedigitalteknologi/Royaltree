@@ -66,8 +66,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.TransactionEntity
 import com.inkside.digital.data.model.UserEntity
+import com.inkside.digital.data.preferences.AppThemePreferences
 import com.inkside.digital.sensor.StepSensorHelper
 import com.inkside.digital.viewmodel.AffiliateViewModel
+import com.inkside.digital.localization.LanguageManager
 
 @Composable
 fun StepCounterScreen(
@@ -151,7 +153,7 @@ fun StepCounterScreenContent(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Jalan kaki sehat, kumpulkan koin & rupiah setiap hari",
+                        text = LanguageManager.translate("step_healthy_tagline", AppThemePreferences.currentLanguage, "Jalan kaki sehat, kumpulkan koin & rupiah setiap hari"),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -398,7 +400,7 @@ fun StepCounterScreenContent(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = if (unclaimedSteps >= 100) "Tukar Langkah Jadi Koin Sekarang" else "Kumpulkan Min. 100 Langkah",
+                            text = if (unclaimedSteps >= 100) LanguageManager.translate("step_exchange_now", AppThemePreferences.currentLanguage, "Tukar Langkah Jadi Koin Sekarang") else LanguageManager.translate("step_collect_min", AppThemePreferences.currentLanguage, "Kumpulkan Min. 100 Langkah"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp
                         )
@@ -434,7 +436,7 @@ fun StepCounterScreenContent(
                     }
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Tekan tombol untuk menambah langkah secara instan dan melihat konversi koin berjalan riil:",
+                        text = LanguageManager.translate("step_manual_desc", AppThemePreferences.currentLanguage, "Tekan tombol untuk menambah langkah secara instan dan melihat konversi koin berjalan riil:"),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

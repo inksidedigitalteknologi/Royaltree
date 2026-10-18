@@ -84,7 +84,7 @@ fun AnalyticsScreen(
                     )
                 )
                 Text(
-                    text = "Pantau konversi, EPC, sumber traffic, dan performa ROI setiap link",
+                    text = LanguageManager.translate("analytics_desc", currentLanguage, "Pantau konversi, EPC, sumber traffic, dan performa ROI setiap link"),
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -145,7 +145,7 @@ fun AnalyticsScreen(
                     KpiCard(
                         title = "Conversion Rate (CR)",
                         value = String.format("%.2f%%", overallCr),
-                        subtext = "Standar industri: 4.5%",
+                        subtext = LanguageManager.translate("analytics_industry_std", currentLanguage, "Standar industri: 4.5%"),
                         isPositive = true,
                         accentColor = GoldVip,
                         modifier = Modifier.weight(1f)
@@ -153,7 +153,7 @@ fun AnalyticsScreen(
                     KpiCard(
                         title = "Earnings Per Click (EPC)",
                         value = GlobalPointsManager.formatBalanceIdr(averageEpc, currentLanguage.code),
-                        subtext = "Nilai per klik",
+                        subtext = LanguageManager.translate("analytics_value_per_click", currentLanguage, "Nilai per klik"),
                         isPositive = true,
                         accentColor = PurpleSecondary,
                         modifier = Modifier.weight(1f)

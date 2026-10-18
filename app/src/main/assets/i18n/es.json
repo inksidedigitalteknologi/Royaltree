@@ -740,6 +740,19 @@
     "menu_akun": "CUENTA",
     "drawer_balance": "Saldo",
     "drawer_rtp": "RTP",
-    "achievement_title": "Logros"
+    "achievement_title": "Logros",
+    "empty_no_data": "Sin datos aún",
+    "empty_data_will_appear": "Los datos aparecerán aquí",
+    "error_generic": "Ocurrió un error",
+    "leaderboard_error": "Error al cargar clasificación",
+    "network_error": "Error de red",
+    "leaderboard_empty_desc": "La clasificación aparecerá tras la actividad",
+    "step_healthy_tagline": "Caminata saludable, recoge monedas y rupias cada día",
+    "step_exchange_now": "Cambiar Pasos por Monedas Ahora",
+    "step_collect_min": "Recoge Mín. 100 Pasos",
+    "step_manual_desc": "Presiona el botón para añadir pasos al instante y ver la conversión real:",
+    "analytics_desc": "Rastrea conversiones, EPC, fuentes de tráfico y ROI por enlace",
+    "analytics_industry_std": "Estándar de la industria: 4.5%",
+    "analytics_value_per_click": "Valor por clic"
   }
 }

@@ -740,6 +740,19 @@
     "menu_akun": "ACCOUNT",
     "drawer_balance": "Balance",
     "drawer_rtp": "RTP",
-    "achievement_title": "Achievements"
+    "achievement_title": "Achievements",
+    "empty_no_data": "No data yet",
+    "empty_data_will_appear": "Data will appear here",
+    "error_generic": "An error occurred",
+    "leaderboard_error": "Failed to load leaderboard",
+    "network_error": "Network error",
+    "leaderboard_empty_desc": "Leaderboard will appear after activity",
+    "step_healthy_tagline": "Healthy walking, collect coins & rupiah every day",
+    "step_exchange_now": "Exchange Steps for Coins Now",
+    "step_collect_min": "Collect Min. 100 Steps",
+    "step_manual_desc": "Press button to add steps instantly and see real coin conversion:",
+    "analytics_desc": "Track conversions, EPC, traffic sources, and ROI performance per link",
+    "analytics_industry_std": "Industry standard: 4.5%",
+    "analytics_value_per_click": "Value per click"
   }
 }

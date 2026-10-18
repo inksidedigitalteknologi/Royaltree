@@ -33,6 +33,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.inkside.digital.localization.LanguageManager
+import com.inkside.digital.data.preferences.AppThemePreferences
 
 // ============ APP CARD ============
 @Composable
@@ -79,8 +81,8 @@ fun AppLoading(
 // ============ APP EMPTY STATE ============
 @Composable
 fun AppEmptyState(
-    title: String = "Belum ada data",
-    subtitle: String = "Data akan muncul di sini",
+    title: String = LanguageManager.translate("empty_no_data", AppThemePreferences.currentLanguage, "Belum ada data"),
+    subtitle: String = LanguageManager.translate("empty_data_will_appear", AppThemePreferences.currentLanguage, "Data akan muncul di sini"),
     icon: ImageVector = Icons.Default.Inbox,
     modifier: Modifier = Modifier
 ) {
@@ -128,7 +130,7 @@ fun AppEmptyState(
 // ============ APP ERROR STATE ============
 @Composable
 fun AppErrorState(
-    message: String = "Terjadi kesalahan",
+    message: String = LanguageManager.translate("error_generic", AppThemePreferences.currentLanguage, "Terjadi kesalahan"),
     onRetry: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {

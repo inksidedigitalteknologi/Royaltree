@@ -740,6 +740,19 @@
     "menu_akun": "アカウント",
     "drawer_balance": "残高",
     "drawer_rtp": "RTP",
-    "achievement_title": "実績"
+    "achievement_title": "実績",
+    "empty_no_data": "データなし",
+    "empty_data_will_appear": "データはここに表示されます",
+    "error_generic": "エラーが発生しました",
+    "leaderboard_error": "ランキングの読み込みに失敗しました",
+    "network_error": "ネットワークエラー",
+    "leaderboard_empty_desc": "アクティビティ後にランキングが表示されます",
+    "step_healthy_tagline": "健康的なウォーキング、毎日コインとルピアを集めましょう",
+    "step_exchange_now": "今すぐステップをコインに交換",
+    "step_collect_min": "最低100ステップを集める",
+    "step_manual_desc": "ボタンを押して即座にステップを追加し、コイン変換を確認：",
+    "analytics_desc": "コンバージョン、EPC、トラフィックソース、リンクごとのROIを追跡",
+    "analytics_industry_std": "業界標準：4.5%",
+    "analytics_value_per_click": "クリックあたりの価値"
   }
 }

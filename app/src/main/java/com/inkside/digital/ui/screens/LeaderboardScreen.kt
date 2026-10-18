@@ -51,6 +51,7 @@ import androidx.compose.foundation.border
 import androidx.compose.ui.text.style.TextOverflow
 import com.inkside.digital.ui.theme.EmeraldPrimary
 import com.inkside.digital.R
+import com.inkside.digital.localization.LanguageManager
 
 data class LeaderboardEntry(
     val rank: Int,
@@ -95,11 +96,11 @@ fun LeaderboardScreen(
                         }
                         entries = list
                     } else {
-                        errorMsg = json.optString("message", "Gagal memuat leaderboard")
+                        errorMsg = json.optString("message", LanguageManager.translate("leaderboard_error", currentLanguage, "Gagal memuat leaderboard"))
                     }
                 }
                 .onFailure {
-                    errorMsg = it.message ?: "Network error"
+                    errorMsg = it.message ?: LanguageManager.translate("network_error", currentLanguage, "Kesalahan jaringan")
                 }
         } catch (e: Exception) {
             errorMsg = e.message ?: "Error"
@@ -204,12 +205,12 @@ fun LeaderboardScreen(
                             Text("🏆", fontSize = 40.sp)
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                "Belum ada data",
+                                LanguageManager.translate("leaderboard_empty", currentLanguage, "Belum ada data"),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                "Leaderboard akan muncul setelah ada aktivitas",
+                                LanguageManager.translate("leaderboard_empty_desc", currentLanguage, "Leaderboard akan muncul setelah ada aktivitas"),
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

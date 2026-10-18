@@ -740,6 +740,19 @@
     "menu_akun": "账户",
     "drawer_balance": "余额",
     "drawer_rtp": "RTP",
-    "achievement_title": "成就"
+    "achievement_title": "成就",
+    "empty_no_data": "暂无数据",
+    "empty_data_will_appear": "数据将显示在此处",
+    "error_generic": "发生错误",
+    "leaderboard_error": "加载排行榜失败",
+    "network_error": "网络错误",
+    "leaderboard_empty_desc": "活动后排行榜将显示",
+    "step_healthy_tagline": "健康步行，每天收集金币和印尼盾",
+    "step_exchange_now": "立即兑换步数为金币",
+    "step_collect_min": "收集至少100步",
+    "step_manual_desc": "按下按钮即时添加步数并查看金币兑换：",
+    "analytics_desc": "追踪转化、EPC、流量来源和每个链接的ROI表现",
+    "analytics_industry_std": "行业标准：4.5%",
+    "analytics_value_per_click": "每次点击价值"
   }
 }
