@@ -108,6 +108,9 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 
 // ==== Retro Pixel Palette ====
 private val RetroGold = Color(0xFFFFD700)
@@ -1690,15 +1693,17 @@ private fun ItemShopTab(
     onUnlockMiner: (String) -> Unit = {},
     onNavigateToMissions: () -> Unit
 ) {
-    LazyColumn(
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+            .padding(horizontal = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(vertical = 14.dp)
     ) {
-        // Banner info Toko Item
-        item {
+        // Banner info Toko Item (full-width)
+        item(span = { GridItemSpan(2) }) {
             Card(
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
@@ -1746,8 +1751,8 @@ private fun ItemShopTab(
             }
         }
 
-        // Fast earn points CTA banner
-        item {
+        // Fast earn points CTA banner (full-width)
+        item(span = { GridItemSpan(2) }) {
             Surface(
                 color = Color(0xFF1E293B),
                 shape = RoundedCornerShape(12.dp),
@@ -1805,188 +1810,155 @@ private fun ShopMinerCard(
             .fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
             .background(RetroCard)
-            .border(2.dp, rarityColor.copy(alpha = 0.6f), RoundedCornerShape(14.dp))
+            .border(1.5.dp, rarityColor.copy(alpha = 0.6f), RoundedCornerShape(14.dp))
     ) {
         Column(
-            modifier = Modifier.padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            // ==== Header: Icon + Name + Tier ====
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFF0F0805))
+                    .border(1.5.dp, rarityColor.copy(alpha = 0.5f), RoundedCornerShape(12.dp)),
+                contentAlignment = Alignment.Center
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color(0xFF0F0805))
-                        .border(1.dp, rarityColor.copy(alpha = 0.5f), RoundedCornerShape(10.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.micro_chip),
-                        contentDescription = item.name,
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = item.name,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            color = Color.White
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Surface(
-                            color = rarityColor.copy(alpha = 0.2f),
-                            shape = RoundedCornerShape(4.dp)
-                        ) {
-                            Text(
-                                text = item.tier,
-                                fontSize = 8.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = rarityColor,
-                                modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
-                            )
-                        }
-                    }
-                    Text(
-                        text = item.description,
-                        fontSize = 11.sp,
-                        color = Color.White.copy(alpha = 0.6f),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                Image(
+                    painter = painterResource(R.drawable.micro_chip),
+                    contentDescription = item.name,
+                    modifier = Modifier.size(40.dp)
+                )
             }
-
-            // ==== Specs ====
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            Text(
+                text = item.name,
+                fontWeight = FontWeight.Bold,
+                fontSize = 11.sp,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                lineHeight = 13.sp
+            )
+            Surface(
+                color = rarityColor.copy(alpha = 0.2f),
+                shape = RoundedCornerShape(4.dp)
             ) {
-                Surface(
-                    color = RetroAmber.copy(alpha = 0.12f),
-                    shape = RoundedCornerShape(6.dp),
-                    modifier = Modifier
-                        .weight(1f)
-                        .border(1.dp, RetroAmber.copy(alpha = 0.3f), RoundedCornerShape(6.dp))
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text("⚡", fontSize = 11.sp)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "+${HashrateFormatter.format(item.powerGhs)}",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = RetroAmber
-                        )
-                    }
-                }
-
-                Surface(
-                    color = EmeraldLight.copy(alpha = 0.12f),
-                    shape = RoundedCornerShape(6.dp),
-                    modifier = Modifier
-                        .weight(1f)
-                        .border(1.dp, EmeraldLight.copy(alpha = 0.3f), RoundedCornerShape(6.dp))
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text("💰", fontSize = 11.sp)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "+${String.format(Locale.US, "%.4f", item.pointsPerMinute)} RTP/mnt",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = EmeraldLight
-                        )
-                    }
-                }
+                Text(
+                    text = item.tier,
+                    fontSize = 7.sp,
+                    fontWeight = FontWeight.Black,
+                    color = rarityColor,
+                    letterSpacing = 0.5.sp,
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                )
             }
-
-            // ==== Price & Action ====
-            Row(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalArrangement = Arrangement.spacedBy(3.dp)
             ) {
-                Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("⚡", fontSize = 9.sp)
+                    Spacer(Modifier.width(3.dp))
                     Text(
-                        text = "HARGA",
+                        text = HashrateFormatter.format(item.powerGhs),
                         fontSize = 9.sp,
-                        color = Color.White.copy(alpha = 0.5f),
-                        letterSpacing = 1.sp
+                        fontWeight = FontWeight.Bold,
+                        color = RetroAmber,
+                        maxLines = 1
                     )
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("💰", fontSize = 14.sp)
-                        Spacer(modifier = Modifier.width(4.dp))
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("💰", fontSize = 9.sp)
+                    Spacer(Modifier.width(3.dp))
+                    Text(
+                        text = "${String.format(Locale.US, "%.4f", item.pointsPerMinute)}/mnt",
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = EmeraldLight,
+                        maxLines = 1
+                    )
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color.White.copy(alpha = 0.08f))
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text("💰", fontSize = 11.sp)
+                Spacer(Modifier.width(3.dp))
+                Text(
+                    text = item.tokenCost.toString(),
+                    fontWeight = FontWeight.Black,
+                    fontSize = 13.sp,
+                    color = RetroGold
+                )
+                Text(
+                    text = " RTP",
+                    fontSize = 9.sp,
+                    color = RetroGold.copy(alpha = 0.7f)
+                )
+            }
+            if (item.isOwned) {
+                Surface(
+                    color = EmeraldLight.copy(alpha = 0.15f),
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.4f)),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text("✅", fontSize = 10.sp)
+                        Spacer(Modifier.width(3.dp))
                         Text(
-                            text = item.tokenCost.toString(),
-                            fontWeight = FontWeight.Black,
-                            fontSize = 16.sp,
-                            color = RetroGold
-                        )
-                        Text(
-                            text = " RTP",
-                            fontSize = 11.sp,
-                            color = RetroGold.copy(alpha = 0.7f)
+                            text = if (item.isPlacedInRoom) "Terpasang" else "Dimiliki",
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = EmeraldLight,
+                            maxLines = 1
                         )
                     }
                 }
-
-                if (item.isOwned) {
-                    Surface(
-                        color = EmeraldLight.copy(alpha = 0.15f),
-                        shape = RoundedCornerShape(8.dp),
-                        border = BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.4f))
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("✅", fontSize = 12.sp)
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = if (item.isPlacedInRoom) "Terpasang" else "Di Inventaris",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = EmeraldLight
-                            )
-                        }
-                    }
-                } else {
-                    Surface(
-                        color = if (canAfford) RetroGold else Color.Gray.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.clickable(enabled = canAfford) { onBuy() }
-                    ) {
-                        Text(
-                            text = if (canAfford) "BELI" else "KURANG ${String.format(Locale.US, "%.2f", item.tokenCost - userPoints)}",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Black,
-                            color = if (canAfford) Color.Black else Color.White.copy(alpha = 0.7f),
-                            letterSpacing = 1.sp,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 9.dp)
-                        )
-                    }
+            } else {
+                Surface(
+                    color = if (canAfford) RetroGold else Color.Gray.copy(alpha = 0.3f),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(enabled = canAfford) { onBuy() }
+                ) {
+                    Text(
+                        text = if (canAfford) "BELI" else "KURANG",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Black,
+                        color = if (canAfford) Color.Black else Color.White.copy(alpha = 0.7f),
+                        letterSpacing = 1.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(vertical = 7.dp)
+                    )
                 }
             }
         }
     }
 }
+
 
 @Composable
 private fun MiniGameArcadeTab(
