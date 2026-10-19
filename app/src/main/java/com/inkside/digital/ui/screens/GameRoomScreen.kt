@@ -434,6 +434,7 @@ fun GameRoomScreenContent(
         var agreeChecked by remember { mutableStateOf(false) }
         var isBuying by remember { mutableStateOf(false) }
         
+        val infiniteTransition = rememberInfiniteTransition(label = "miner_pulse")
 
         val pulseScale by infiniteTransition.animateFloat(
             initialValue = 0.95f,
