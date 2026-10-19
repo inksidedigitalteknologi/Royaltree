@@ -5,6 +5,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.google.firebase.auth.FirebaseAuth
 import com.inkside.digital.data.database.AppDatabase
+import com.inkside.digital.data.network.ApiClient
 import com.inkside.digital.data.repository.AffiliateRepository
 import com.inkside.digital.util.AppLogger
 import kotlinx.coroutines.CoroutineScope
@@ -58,8 +59,24 @@ class MiningWorker(
                 return@withContext Result.success()
             }
 
-            // 4. Cek unclaimed
-            val unclaimed = room.unclaimedMiningPoints
+            // 4. SYNC dari backend dulu (unclaimed fresh)
+            ApiClient.getGameState().onSuccess { json ->
+                if (json.optBoolean("success", false)) {
+                    repository.syncGameStateFromBackend(json)
+                }
+            }.onFailure { error ->
+                AppLogger.w("MiningWorker", "⚠️ Sync gagal: ${error.message}")
+                return@withContext Result.retry()
+            }
+
+            // 5. Baca room state fresh (setelah sync)
+            val freshRoom = dao.getGameRoomStateSync()
+            if (freshRoom == null) {
+                return@withContext Result.success()
+            }
+
+            // 6. Cek unclaimed (fresh)
+            val unclaimed = freshRoom.unclaimedMiningPoints
             if (unclaimed < MIN_CLAIM_THRESHOLD) {
                 // Unclaimed kecil — skip
                 return@withContext Result.success()

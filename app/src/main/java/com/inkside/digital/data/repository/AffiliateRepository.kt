@@ -1178,16 +1178,20 @@ class AffiliateRepository(private val dao: AppDao) {
         val placedMiners = dao.getPlacedMinerItemsSync()
 
         val now = System.currentTimeMillis()
-        val elapsedMinutes = ((now - roomState.lastClaimTimestamp) / 60000.0).coerceAtLeast(0.0)
-        val ratePerMinute = placedMiners.sumOf { it.pointsPerMinute }
+        // ✅ FIX: pakai lastMiningUpdateTimestamp (bukan lastClaimTimestamp)
+        val lastUpdate = roomState.lastMiningUpdateTimestamp.coerceAtLeast(roomState.lastClaimTimestamp)
+        val elapsedMinutes = ((now - lastUpdate) / 60000.0).coerceAtLeast(0.0)
+        // ✅ FIX: pakai ratePerMin dari server (include bonus)
+        val ratePerMinute = if (roomState.ratePerMin > 0) roomState.ratePerMin else placedMiners.sumOf { it.pointsPerMinute }
         val generatedSinceLast = elapsedMinutes * ratePerMinute
         val totalPending = roomState.unclaimedMiningPoints + generatedSinceLast
 
-        if (totalPending < 0.1 && placedMiners.isEmpty()) {
+        if (totalPending < 0.01) {
             return@withContext Result.failure(Exception("Belum ada hasil mining. Pasang item miner di rak untuk mulai menghasilkan poin!"))
         }
 
-        val pointsAwarded = if (totalPending < 1.0) 1 else kotlin.math.round(totalPending).toInt().coerceAtLeast(1)
+        // ✅ FIX: hapus rounding 1 RTP (pakai totalPending apa adanya)
+        val pointsAwarded = totalPending
 
         val updatedUser = user.copy(points = user.points + pointsAwarded)
         dao.updateUser(updatedUser)
@@ -1195,6 +1199,7 @@ class AffiliateRepository(private val dao: AppDao) {
         val updatedRoomState = roomState.copy(
             unclaimedMiningPoints = 0.0,
             lastClaimTimestamp = now,
+            lastMiningUpdateTimestamp = now,   // ✅ FIX: sync timestamp
             totalMinedPointsClaimed = roomState.totalMinedPointsClaimed + pointsAwarded
         )
         dao.insertGameRoomState(updatedRoomState)
