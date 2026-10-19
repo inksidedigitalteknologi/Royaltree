@@ -19,6 +19,16 @@ const db = admin.firestore();
 // ============================================================
 // KATALOG MINER DEFAULT
 // ============================================================
+// powerGhs = hash rate dalam GH/s (Giga Hash/s)
+// Nilai kecil = KH/s / MH/s:
+//   0.000001 = 1 KH/s
+//   0.000005 = 5 KH/s
+//   0.00002  = 20 KH/s
+//   0.0001   = 100 KH/s
+//   0.0005   = 500 KH/s
+//   0.001    = 1 MH/s (auto-scale)
+//   0.005    = 5 MH/s
+// Format tampilan pakai HashrateFormatter (Android) — auto-scale.
 const MINER_CATALOG = [
     {
         id: 'miner_common',
