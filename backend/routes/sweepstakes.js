@@ -43,7 +43,9 @@ const SWEEPSTAKES_CONFIG = {
   ],
   
   // Minimum kupon untuk draw
-  minTickets: 6624,
+  // Dynamic: 50% dari reward pool / ticketPrice
+  // 255,000 / 50 * 0.5 = 2,550
+  minTickets: 2550,
   
   // Rule
   oneWinPerAccount: true,
@@ -326,6 +328,9 @@ router.get('/history', verifyFirebaseToken, async (req, res) => {
       );
       history.push({
         id: data.id,
+        status: data.status || 'ended',
+        refundedAt: data.refundedAt || null,
+        minTickets: SWEEPSTAKES_CONFIG.minTickets,
         startTime: data.startTime,
         endTime: data.endTime,
         totalTickets: data.totalTickets,

@@ -70,6 +70,9 @@ class SweepstakesViewModel(application: Application) : AndroidViewModel(applicat
     )
     data class HistoryItem(
         val id: String,
+        val status: String = "ended",
+        val refundedAt: Long? = null,
+        val minTickets: Int = 0,
         val endTime: Long,
         val totalTickets: Int,
         val totalPool: Int,
@@ -181,6 +184,12 @@ class SweepstakesViewModel(application: Application) : AndroidViewModel(applicat
                             list.add(
                                 HistoryItem(
                                     id = h.optString("id", ""),
+                                    status = h.optString("status", "ended"),
+                                    refundedAt = if (h.has("refundedAt") && !h.isNull("refundedAt")) {
+                                        h.optJSONObject("refundedAt")?.optLong("_seconds", 0L)?.times(1000)
+                                            ?: h.optLong("refundedAt", 0L)
+                                    } else null,
+                                    minTickets = h.optInt("minTickets", 0),
                                     endTime = h.optLong("endTime", 0L),
                                     totalTickets = h.optInt("totalTickets", 0),
                                     totalPool = h.optInt("totalPool", 0),

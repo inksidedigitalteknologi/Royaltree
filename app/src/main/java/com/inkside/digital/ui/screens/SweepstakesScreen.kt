@@ -204,8 +204,24 @@ fun SweepstakesScreen(
             }
 
             // ============ PODIUM WINNERS (M49) ============
-            val lastWinners = history.firstOrNull()?.topWinners ?: emptyList()
-            if (lastWinners.isNotEmpty()) {
+            val lastHistory = history.firstOrNull()
+            val lastWinners = lastHistory?.topWinners ?: emptyList()
+            val isLastRefunded = lastHistory?.status == "refunded"
+
+            if (isLastRefunded && lastHistory != null) {
+                // ==== REFUNDED CARD ====
+                item {
+                    Text(
+                        "🏆 Pemenang Periode Lalu",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+                item {
+                    RefundedCard(historyItem = lastHistory)
+                }
+            } else if (lastWinners.isNotEmpty()) {
                 item {
                     Text(
                         "🏆 Pemenang Periode Lalu",
@@ -323,12 +339,21 @@ fun SweepstakesScreen(
                             Spacer(modifier = Modifier.width(10.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    if (h.userWon) "🎉 Anda menang!" else "Selesai",
+                                    when {
+                                        h.status == "refunded" -> "🔄 Dibatalkan — Refund"
+                                        h.userWon -> "🎉 Anda menang!"
+                                        else -> "Selesai"
+                                    },
                                     fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (h.status == "refunded") Color(0xFFFF9800) else MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    "${h.totalTickets} kupon • ${h.winnerCount} pemenang",
+                                    if (h.status == "refunded") {
+                                        "${h.totalTickets} kupon • RTP sudah dikembalikan"
+                                    } else {
+                                        "${h.totalTickets} kupon • ${h.winnerCount} pemenang"
+                                    },
                                     fontSize = 10.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -473,6 +498,70 @@ fun BuyTicketModal(
 }
 
 // ============ HELPER: Podium Winners ============
+@Composable
+@Composable
+fun RefundedCard(historyItem: SweepstakesViewModel.HistoryItem) {
+    Card(
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFF9800).copy(alpha = 0.1f)),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("🔄", fontSize = 36.sp)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                "Sweepstakes Dibatalkan",
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                color = Color(0xFFFF9800)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                "Minimal ${historyItem.minTickets} kupon tidak terpenuhi",
+                fontSize = 11.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                "(hanya ${historyItem.totalTickets} dari ${historyItem.minTickets})",
+                fontSize = 10.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Surface(
+                color = EmeraldLight.copy(alpha = 0.15f),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("💰", fontSize = 12.sp)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        "${historyItem.totalPool} RTP sudah dikembalikan",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = EmeraldLight
+                    )
+                }
+            }
+            if (historyItem.refundedAt != null) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    "Refund: ${java.text.SimpleDateFormat("dd MMM yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date(historyItem.refundedAt))}",
+                    fontSize = 9.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun PodiumRow(winners: List<SweepstakesViewModel.TopWinner>) {
     val rank1 = winners.firstOrNull { it.rank == 1 }
