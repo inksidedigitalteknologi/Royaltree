@@ -14,6 +14,7 @@ const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 // Validation
 const { validate } = require('../middleware/validate');
 const { adminLoginSchema } = require('../schemas');
+const AppLogger = require('../utils/AppLogger');
 
 const db = admin.firestore();
 
@@ -1607,7 +1608,6 @@ router.get('/firestore-usage', checkAdmin, async (req, res) => {
         let liveBuffer = { reads: 0, writes: 0, deletes: 0 };
         try {
             const { buffer } = require('../middleware/usageTracker');
-const AppLogger = require('../utils/AppLogger');
             liveBuffer = {
                 reads: buffer.reads || 0,
                 writes: buffer.writes || 0,
