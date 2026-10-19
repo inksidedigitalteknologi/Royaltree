@@ -73,125 +73,50 @@ private val EmeraldLight = Color(0xFF10B981)
 private val ElectricBlue = Color(0xFF3B82F6)
 
 @Composable
+@Composable
 private fun HomeBalanceWithSwitch(
     user: UserEntity?,
     currentLanguage: AppLanguage,
     onOpenWithdraw: () -> Unit
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
-    var displayMode by remember {
-        mutableStateOf(HomeDisplayMode.RTP)
-    }
+    var displayMode by remember { mutableStateOf(HomeDisplayMode.RTP) }
     var rtpBalance by remember { mutableDoubleStateOf(user?.points ?: 0.0) }
     var commissionBalance by remember { mutableDoubleStateOf(0.0) }
 
-    // Load preference
     LaunchedEffect(Unit) {
         HomePreferences.getDisplayMode(context).collect { mode ->
             displayMode = mode
         }
     }
 
-    // Sync from user
     LaunchedEffect(user) {
         rtpBalance = user?.points ?: 0.0
     }
 
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        contentAlignment = Alignment.Center
     ) {
-        // ═══ Dual Switch (RTP ↔ Commission) ═══
-        Row(
-            modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
-                .padding(4.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            // RTP button
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(
-                        if (displayMode == HomeDisplayMode.RTP)
-                            EmeraldLight else Color.Transparent
-                    )
-                    .clickable {
-                        displayMode = HomeDisplayMode.RTP
-                        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
-                            HomePreferences.setDisplayMode(context, HomeDisplayMode.RTP)
-                        }
-                    }
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
-            ) {
-                Text(
-                    text = "RTP",
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (displayMode == HomeDisplayMode.RTP) Color.Black else MaterialTheme.colorScheme.onSurface
-                )
-            }
-            // Commission button
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(
-                        if (displayMode == HomeDisplayMode.COMMISSION)
-                            EmeraldLight else Color.Transparent
-                    )
-                    .clickable {
-                        displayMode = HomeDisplayMode.COMMISSION
-                        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
-                            HomePreferences.setDisplayMode(context, HomeDisplayMode.COMMISSION)
-                        }
-                    }
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
-            ) {
-                Text(
-                    text = "Commission",
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (displayMode == HomeDisplayMode.COMMISSION) Color.Black else MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // ═══ Saldo (sesuai switch) ═══
-        when (displayMode) {
-            HomeDisplayMode.RTP -> {
-                Text(
-                    text = "${GlobalPointsManager.formatRtp(rtpBalance)} RTP",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = GoldAccent
-                )
-            }
-            HomeDisplayMode.COMMISSION -> {
-                Text(
-                    text = GlobalPointsManager.formatBalanceIdr(commissionBalance, currentLanguage.code),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = EmeraldLight
-                )
-            }
-            HomeDisplayMode.BOTH -> {
-                Text(
-                    text = "${GlobalPointsManager.formatRtp(rtpBalance)} RTP",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = GoldAccent
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = GlobalPointsManager.formatBalanceIdr(commissionBalance, currentLanguage.code),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = EmeraldLight
-                )
-            }
+        if (displayMode == HomeDisplayMode.COMMISSION) {
+            Text(
+                text = GlobalPointsManager.formatBalanceIdr(
+                    commissionBalance,
+                    currentLanguage.code
+                ),
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                color = EmeraldLight
+            )
+        } else {
+            Text(
+                text = "${GlobalPointsManager.formatRtp(rtpBalance)} RTP",
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                color = GoldAccent
+            )
         }
     }
 }

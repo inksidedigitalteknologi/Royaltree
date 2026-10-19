@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 private val Context.homeDataStore by preferencesDataStore(name = "home_prefs")
 
 enum class HomeDisplayMode {
-    RTP, COMMISSION, BOTH
+    RTP, COMMISSION
 }
 
 object HomePreferences {

@@ -137,7 +137,6 @@ fun SettingsScreen(
                             text = when (mode) {
                                 HomeDisplayMode.RTP -> LanguageManager.translate("home_display_rtp", currentLanguage, "Saldo RTP")
                                 HomeDisplayMode.COMMISSION -> LanguageManager.translate("home_display_commission", currentLanguage, "Commission")
-                                HomeDisplayMode.BOTH -> LanguageManager.translate("home_display_both", currentLanguage, "Keduanya")
                             },
                             fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.onSurface
