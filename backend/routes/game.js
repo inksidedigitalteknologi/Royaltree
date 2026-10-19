@@ -970,14 +970,16 @@ router.post('/mining/place', verifyFirebaseToken, validate(placeMinerSchema), as
             return res.status(400).json({ success: false, message: 'Slot tidak valid' });
         }
 
-        // Cek slot kosong
-        const slotCheck = await db.collection('game_miners')
-            .where('userId', '==', uid)
-            .where('isPlacedInRoom', '==', true)
-            .where('placedSlotIndex', '==', slotIndex)
-            .get();
+        // ✅ FIX: Cek slot kosong dari users.minersOwned (bukan game_miners)
+        const userDoc = await db.collection('users').doc(uid).get();
+        const userData = userDoc.data() || {};
+        const minersOwned = userData.minersOwned || {};
 
-        if (!slotCheck.empty) {
+        const slotOccupied = Object.values(minersOwned).some(m =>
+            m.isPlacedInRoom === true && m.placedSlotIndex === slotIndex
+        );
+
+        if (slotOccupied) {
             return res.status(400).json({
                 success: false,
                 message: 'Slot sudah terisi.'
@@ -991,12 +993,7 @@ router.post('/mining/place', verifyFirebaseToken, validate(placeMinerSchema), as
             [`minersOwned.${minerId}.placedSlotIndex`]: slotIndex
         });
 
-        // Dual-write ke game_miners
-        await db.collection('game_miners').doc(minerId).update({
-            isPlacedInRoom: true,
-            placedSlotIndex: slotIndex,
-            placedAt: admin.firestore.FieldValue.serverTimestamp()
-        });
+        // ✅ FIX: Hapus dual-write ke game_miners (sudah migrasi ke users.minersOwned)
 
         return res.json({ success: true, message: 'Miner dipasang.' });
     } catch (error) {
@@ -1134,10 +1131,7 @@ router.post('/mining/unplace', verifyFirebaseToken, async (req, res) => {
             [`minersOwned.${minerId}.placedSlotIndex`]: -1
         });
 
-        await db.collection('game_miners').doc(minerId).update({
-            isPlacedInRoom: false,
-            placedSlotIndex: -1
-        });
+        // ✅ FIX: Hapus dual-write ke game_miners (sudah migrasi ke users.minersOwned)
 
         return res.json({ success: true, message: 'Miner dilepas.' });
     } catch (error) {
