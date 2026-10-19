@@ -732,11 +732,8 @@ fun GameRoomScreenContent(
                             if (isBuying) return@Button
                             try {
                                 isBuying = true
-                                if (hasEmptySlot) {
-                                    onBuyAndPlaceGameMinerItem(item.id)
-                                } else {
-                                    onBuyGameMinerItem(item.id)
-                                }
+                                // ✅ FIX: Selalu beli saja (masuk ke Rak/Inventory). User yang pasang manual.
+                                onBuyGameMinerItem(item.id)
                             } catch (e: Exception) {
                                 AppLogger.e("GameRoomBuy", "❌ Error onClick: " + e.message, e)
                                 isBuying = false
