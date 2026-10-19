@@ -86,14 +86,16 @@ fun LoginScreen(
     currentLanguage: AppLanguage,
     isReturningUser: Boolean = false,
     onLanguageChange: (AppLanguage) -> Unit,
-    onLoginGoogle: (idToken: String, marketingOptIn: Boolean) -> Unit
+    onLoginGoogle: (idToken: String, marketingChecked: Boolean) -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     var googleLoading by remember { mutableStateOf(false) }
-    var agreementChecked by remember { mutableStateOf(false) }
-    var marketingOptIn by remember { mutableStateOf(false) }
+    var termsChecked by remember { mutableStateOf(false) }
+    var privacyChecked by remember { mutableStateOf(false) }
+    var marketingChecked by remember { mutableStateOf(false) }
+    
     var showTermsDialog by remember { mutableStateOf(false) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
     var contentVisible by remember { mutableStateOf(false) }
@@ -102,8 +104,6 @@ fun LoginScreen(
     LaunchedEffect(Unit) { contentVisible = true }
 
     // "Centang Semua" = terms + privacy saja (marketing tetap opsional)
-    val masterChecked = agreementChecked
-    val masterIndeterminate = false
 
     // Animasi masuk
     val contentAlpha by animateFloatAsState(
@@ -111,10 +111,6 @@ fun LoginScreen(
         animationSpec = tween(800),
         label = "contentAlpha"
     )
-    val contentOffsetY by animateFloatAsState(
-        targetValue = if (contentVisible) 0f else 40f,
-        animationSpec = tween(800, easing = androidx.compose.animation.core.FastOutSlowInEasing),
-        label = "contentOffsetY"
     )
 
     AnimatedBackground(
@@ -161,7 +157,7 @@ fun LoginScreen(
                     .fillMaxSize()
                     .padding(horizontal = 24.dp)
                     .alpha(contentAlpha)
-                    .padding(top = contentOffsetY.dp),
+                    
                 verticalArrangement = Arrangement.Center
             ) {
                 Spacer(Modifier.height(40.dp))
@@ -171,7 +167,7 @@ fun LoginScreen(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxWidth(0.45f)
-                        .height(180.dp)
+                        .aspectRatio(1f) // ✅ Kotak persegi, bukan tinggi paksa
                 ) {
                     Box(
                         modifier = Modifier
@@ -190,7 +186,7 @@ fun LoginScreen(
                     RoyaltreeTree(
                         level = 5,
                         growthProgress = 1f,
-                        modifier = Modifier.fillMaxWidth(0.9f)
+                        modifier = Modifier.fillMaxSize(0.85f) // ✅ Proporsional
                     )
                 }
 
@@ -249,16 +245,15 @@ fun LoginScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .clickable { onMasterChange(!allChecked) }
                                 .clickable {
-                                    agreementChecked = !agreementChecked
                                 }
                                 .padding(vertical = 4.dp)
                         ) {
                             PremiumCheckbox(
-                                checked = masterChecked,
-                                indeterminate = masterIndeterminate,
-                                onCheckedChange = { agreementChecked = it },
+                                checked = allChecked,
+                                onCheckedChange = { onMasterChange(it) },
+                                indeterminate = false,
                                 size = 26.dp,
                                 accentColor = GoldAccent
                             )
@@ -280,18 +275,25 @@ fun LoginScreen(
                         )
                         Spacer(Modifier.height(12.dp))
 
+                        val allChecked = termsChecked && privacyChecked && marketingChecked
+    val onMasterChange = { checked: Boolean ->
+        termsChecked = checked
+        privacyChecked = checked
+        marketingChecked = checked
+    }
+
                         // Terms + Privacy checkbox
                         Row(
                             verticalAlignment = Alignment.Top,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { agreementChecked = !agreementChecked }
+                                .clickable { termsChecked = !termsChecked; privacyChecked = !privacyChecked }
                                 .padding(vertical = 4.dp)
                         ) {
                             PremiumCheckbox(
-                                checked = agreementChecked,
+                                checked = termsChecked && privacyChecked,
+                                onCheckedChange = { termsChecked = it; privacyChecked = it },
                                 indeterminate = false,
-                                onCheckedChange = { agreementChecked = it },
                                 size = 22.dp,
                                 accentColor = EmeraldLight
                             )
@@ -336,13 +338,13 @@ fun LoginScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { marketingOptIn = !marketingOptIn }
+                                .clickable { marketingChecked = !marketingChecked }
                                 .padding(vertical = 4.dp)
                         ) {
                             PremiumCheckbox(
-                                checked = marketingOptIn,
+                                checked = marketingChecked,
+                                onCheckedChange = { marketingChecked = it },
                                 indeterminate = false,
-                                onCheckedChange = { marketingOptIn = it },
                                 size = 22.dp,
                                 accentColor = EmeraldLight
                             )
@@ -383,7 +385,7 @@ fun LoginScreen(
                 // Google button
                 Button(
                     onClick = {
-                        if (!agreementChecked) {
+                        if (!termsChecked || !privacyChecked) {
                             android.widget.Toast.makeText(
                                 context,
                                 LanguageManager.translate("login_must_agree", currentLanguage, "Centang Syarat & Ketentuan dulu"),
@@ -416,7 +418,7 @@ fun LoginScreen(
                                 ) {
                                     val googleIdTokenCredential =
                                         com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.createFrom(credential.data)
-                                    onLoginGoogle(googleIdTokenCredential.idToken, marketingOptIn)
+                                    onLoginGoogle(googleIdTokenCredential.idToken, marketingChecked)
                                 } else {
                                     AppLogger.e("LoginScreen", "Credential bukan Google ID Token")
                                 }
@@ -427,7 +429,7 @@ fun LoginScreen(
                             }
                         }
                     },
-                    enabled = !googleLoading && agreementChecked,
+                    enabled = !googleLoading && termsChecked && privacyChecked,
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
