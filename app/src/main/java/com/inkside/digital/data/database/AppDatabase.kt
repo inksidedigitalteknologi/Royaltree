@@ -155,7 +155,33 @@ abstract class AppDatabase : RoomDatabase() {
         // UserEntity: tambah photoUrl (untuk Google profile picture)
         val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(db: SupportSQLiteDatabase) {
+                // 1. Fix users table (tambah photoUrl)
                 db.execSQL("ALTER TABLE users ADD COLUMN photoUrl TEXT")
+
+                // 2. Fix game_miner_items table (pastikan skema sesuai Kotlin terbaru)
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS game_miner_items_new (
+                        id TEXT NOT NULL PRIMARY KEY,
+                        catalogId TEXT NOT NULL DEFAULT '',
+                        name TEXT NOT NULL DEFAULT '',
+                        tier TEXT NOT NULL DEFAULT 'COMMON',
+                        iconEmoji TEXT NOT NULL DEFAULT '',
+                        tokenCost INTEGER NOT NULL DEFAULT 0,
+                        powerGhs REAL NOT NULL DEFAULT 0.0,
+                        pointsPerMinute REAL NOT NULL DEFAULT 0.0,
+                        isOwned INTEGER NOT NULL DEFAULT 0,
+                        isPlacedInRoom INTEGER NOT NULL DEFAULT 0,
+                        placedSlotIndex INTEGER NOT NULL DEFAULT -1,
+                        description TEXT NOT NULL DEFAULT ''
+                    )
+                """)
+                db.execSQL("""
+                    INSERT INTO game_miner_items_new (id, catalogId, name, tier, iconEmoji, tokenCost, powerGhs, pointsPerMinute, isOwned, isPlacedInRoom, placedSlotIndex, description)
+                    SELECT id, catalogId, name, tier, iconEmoji, tokenCost, powerGhs, pointsPerMinute, isOwned, isPlacedInRoom, placedSlotIndex, description
+                    FROM game_miner_items
+                """)
+                db.execSQL("DROP TABLE IF EXISTS game_miner_items")
+                db.execSQL("ALTER TABLE game_miner_items_new RENAME TO game_miner_items")
             }
         }
 
