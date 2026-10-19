@@ -92,6 +92,7 @@ import com.inkside.digital.ui.theme.PurpleSecondary
 import com.inkside.digital.viewmodel.AffiliateViewModel
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import java.util.Locale
 import kotlin.random.Random
 import com.inkside.digital.util.HashrateFormatter
@@ -243,22 +244,32 @@ fun GameRoomScreenContent(
 
     // (minerBreakdown dipindah ke MiningRoomTab)
 
+    // Local timer — sync dari server unclaimed + elapsed dari sync
     LaunchedEffect(roomState, placedMiners, minerActiveUntil) {
+        val serverUnclaimed = roomState?.unclaimedMiningPoints ?: 0.0
+        val syncTime = System.currentTimeMillis()
+
         while (true) {
             val now = System.currentTimeMillis()
-            
-            // ✅ CHECK: Kalau miner tak aktif, RTP = 0 (freeze)
-            if (minerActiveUntil <= now) {
-                liveUnclaimedPoints = 0.0
-                delay(1000.milliseconds)
-                continue
+
+            if (minerActiveUntil > now) {
+                val elapsedSec = (now - syncTime) / 1000.0
+                val generated = (elapsedSec / 60.0) * generationRatePerMin
+                liveUnclaimedPoints = serverUnclaimed + generated
+            } else {
+                liveUnclaimedPoints = serverUnclaimed
             }
-            
-            val lastClaim = roomState?.lastClaimTimestamp ?: now
-            val elapsedMinutes = ((now - lastClaim) / 60000.0).coerceAtLeast(0.0)
-            val generated = elapsedMinutes * generationRatePerMin
-            liveUnclaimedPoints = (roomState?.unclaimedMiningPoints ?: 0.0) + generated
             delay(1000.milliseconds)
+        }
+    }
+
+    // Polling server — sync unclaimedMiningPoints setiap 10 detik
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(10.seconds)
+            if (minerActiveUntil > System.currentTimeMillis()) {
+                viewModel.loadGameState()
+            }
         }
     }
 
