@@ -1247,32 +1247,28 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun performDailyCheckIn() {
         viewModelScope.launch {
-            val res = repository.performDailyCheckIn()
-            res.onSuccess { (reward, streak) ->
-                showDailyCheckInModal.value = false
-                showSnackbar(LanguageManager.translate("vm_checkin_success", _currentLanguage.value, "Check-in Hari ke-$streak Berhasil! +$reward RTP 🌟"))
-
-                // Update widget
-                user.value?.let { u ->
-                    WidgetUpdater.refreshFromRoom(getApplication(), u.id)
-                }
-
-                // Kirim ke backend
-                ApiClient.dailyCheckIn()
-                    .onSuccess { json ->
-                        if (json.optBoolean("success", false)) {
-                            val serverPoints = json.optDouble("points", reward)
-                            showSnackbar(LanguageManager.translate("vm_checkin_saved", _currentLanguage.value, "Check-in tersimpan! +$serverPoints RTP"))
-                            // Refresh user + update widget
+            // ✅ FIX: Panggil server DULU, baru update lokal
+            ApiClient.dailyCheckIn()
+                .onSuccess { json ->
+                    if (json.optBoolean("success", true)) {
+                        // Server setuju — baru update lokal
+                        val res = repository.performDailyCheckIn()
+                        res.onSuccess { (reward, streak) ->
+                            showDailyCheckInModal.value = false
+                            showSnackbar(LanguageManager.translate("vm_checkin_success", _currentLanguage.value, "Check-in Hari ke-$streak Berhasil! +$reward RTP 🌟"))
+                            user.value?.let { u -> WidgetUpdater.refreshFromRoom(getApplication(), u.id) }
                             loadUserFromBackend()
+                        }.onFailure {
+                            showSnackbar(it.message ?: LanguageManager.translate("vm_checkin_failed", _currentLanguage.value, "Gagal update lokal"))
                         }
+                    } else {
+                        // Server menolak (misal: sudah check-in hari ini)
+                        showSnackbar(json.optString("message", "Anda sudah check-in hari ini."))
                     }
-                    .onFailure { error ->
-                        showSnackbar(String.format(LanguageManager.translate("snackbar_backend_error", _currentLanguage.value, "Backend error: %s"), error.message ?: LanguageManager.translate("vm_network_error", _currentLanguage.value, "Network error")))
-                    }
-            }.onFailure {
-                showSnackbar(it.message ?: LanguageManager.translate("vm_checkin_failed", _currentLanguage.value, "Gagal check-in"))
-            }
+                }
+                .onFailure { error ->
+                    showSnackbar(String.format(LanguageManager.translate("snackbar_backend_error", _currentLanguage.value, "Backend error: %s"), error.message ?: "Network error"))
+                }
         }
     }
 

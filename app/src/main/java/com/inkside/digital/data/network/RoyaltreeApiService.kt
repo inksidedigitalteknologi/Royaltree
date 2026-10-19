@@ -212,7 +212,7 @@ interface RoyaltreeApiService {
     @GET("daily/status")
     suspend fun getDailyStatus(): ResponseBody
 
-    @POST("daily/check-in")
+    @POST("daily-check-in")
     suspend fun dailyCheckIn(): ResponseBody
 
     @POST("daily/check-in-with-ad")
