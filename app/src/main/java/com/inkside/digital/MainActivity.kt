@@ -582,7 +582,7 @@ fun MainAffiliateApp(
         affiliateLoading = affiliateLoading,
         showWithdrawAffiliateModal = showWithdrawAffiliateModal,
         onOpenWithdraw = { showWithdrawAffiliateModal = true },
-        onOpenWithdrawHistory = { onNavigate(AppScreen.HISTORY) },
+        onOpenWithdrawHistory = { viewModel.navigateTo(AppScreen.HISTORY) },
         onWithdrawAffiliateDismiss = { showWithdrawAffiliateModal = false },
         onWithdrawAffiliateSubmit = { amount, dest ->
             viewModel.requestAffiliateWithdraw(amount, dest, "PAYPAL")

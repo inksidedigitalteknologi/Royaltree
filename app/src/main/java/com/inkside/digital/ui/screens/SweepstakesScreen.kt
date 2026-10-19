@@ -499,7 +499,6 @@ fun BuyTicketModal(
 
 // ============ HELPER: Podium Winners ============
 @Composable
-@Composable
 fun RefundedCard(historyItem: SweepstakesViewModel.HistoryItem) {
     Card(
         shape = RoundedCornerShape(14.dp),
