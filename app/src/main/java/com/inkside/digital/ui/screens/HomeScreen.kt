@@ -73,7 +73,6 @@ private val EmeraldLight = Color(0xFF10B981)
 private val ElectricBlue = Color(0xFF3B82F6)
 
 @Composable
-@Composable
 private fun HomeBalanceWithSwitch(
     user: UserEntity?,
     currentLanguage: AppLanguage,
