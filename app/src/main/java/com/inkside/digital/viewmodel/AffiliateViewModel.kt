@@ -2122,26 +2122,26 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     fun claimMiningFromBackend() {
         viewModelScope.launch {
             try {
-                // 1. Claim lokal (Room)
-                val localResult = repository.claimGameMiningPoints()
-                localResult.onSuccess { points ->
-                    showSnackbar(String.format(LanguageManager.translate("snackbar_mining_claim_success", _currentLanguage.value, "Berhasil klaim %s RTP! ⛏️"), points.toInt()))
-                }.onFailure {
-                    showSnackbar(it.message ?: LanguageManager.translate("vm_claim_failed", _currentLanguage.value, "Gagal claim"))
-                    return@launch
-                }
-
-                // 2. Sync ke backend
+                // ✅ FIX: HANYA backend claim (bukan local)
+                // Backend hitung fresh dari unclaimedMiningPoints + elapsed
                 ApiClient.claimMining().onSuccess { json ->
                     if (json.optBoolean("success", false)) {
-                        // CRITICAL FIX: Reset Room DB state SEBELUM loadGameState
+                        // 1. Reset Room DB state (unclaimed = 0)
                         val nextClaimAt = json.optLong("nextClaimAt", System.currentTimeMillis() + 3600000L)
                         repository.resetMiningAfterClaim(nextClaimAt)
-
-                        // Kemudian refresh dari backend
+                        
+                        // 2. Sync user + game state dari backend
                         loadGameState()
                         loadUserFromBackend()
+                        
+                        // 3. Snackbar sukses
+                        val points = json.optDouble("pointsAwarded", 0.0)
+                        showSnackbar(String.format(LanguageManager.translate("snackbar_mining_claim_success", _currentLanguage.value, "Berhasil klaim %s RTP! ⛏️"), points.toInt()))
+                    } else {
+                        showSnackbar(json.optString("message", LanguageManager.translate("vm_claim_failed", _currentLanguage.value, "Gagal claim")))
                     }
+                }.onFailure {
+                    showSnackbar(it.message ?: LanguageManager.translate("vm_claim_failed", _currentLanguage.value, "Gagal claim"))
                 }
             } catch (e: Exception) {
                 showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)

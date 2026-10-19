@@ -1178,6 +1178,14 @@ class AffiliateRepository(private val dao: AppDao) {
         val placedMiners = dao.getPlacedMinerItemsSync()
 
         val now = System.currentTimeMillis()
+        
+        // ✅ FIX: Cooldown 15 menit (cegah spam claim)
+        val COOLDOWN_MS = 15 * 60 * 1000L
+        if (roomState.lastMiningClaimAt > 0 && now - roomState.lastMiningClaimAt < COOLDOWN_MS) {
+            val remainingMin = ((COOLDOWN_MS - (now - roomState.lastMiningClaimAt)) / 60000).coerceAtLeast(1)
+            return@withContext Result.failure(Exception("Cooldown $remainingMin menit lagi"))
+        }
+        
         // ✅ FIX: pakai lastMiningUpdateTimestamp (bukan lastClaimTimestamp)
         val lastUpdate = roomState.lastMiningUpdateTimestamp.coerceAtLeast(roomState.lastClaimTimestamp)
         val elapsedMinutes = ((now - lastUpdate) / 60000.0).coerceAtLeast(0.0)
@@ -1199,7 +1207,8 @@ class AffiliateRepository(private val dao: AppDao) {
         val updatedRoomState = roomState.copy(
             unclaimedMiningPoints = 0.0,
             lastClaimTimestamp = now,
-            lastMiningUpdateTimestamp = now,   // ✅ FIX: sync timestamp
+            lastMiningUpdateTimestamp = now,
+            lastMiningClaimAt = now,   // ✅ FIX: cooldown marker
             totalMinedPointsClaimed = roomState.totalMinedPointsClaimed + pointsAwarded
         )
         dao.insertGameRoomState(updatedRoomState)

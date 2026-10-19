@@ -75,7 +75,17 @@ class MiningWorker(
                 return@withContext Result.success()
             }
 
-            // 6. Cek unclaimed (fresh)
+            // 6. Cek cooldown (15 menit) — cegah claim terlalu sering
+            val nowFresh = System.currentTimeMillis()  // refresh setelah sync
+            val lastClaim = freshRoom.lastMiningClaimAt
+            val cooldownMs = 15 * 60 * 1000L
+            if (lastClaim > 0 && nowFresh - lastClaim < cooldownMs) {
+                val remainingMin = (cooldownMs - (nowFresh - lastClaim)) / 60000
+                AppLogger.d("MiningWorker", "⏸️ Cooldown $remainingMin menit lagi — skip")
+                return@withContext Result.success()
+            }
+
+            // 7. Cek unclaimed (fresh)
             val unclaimed = freshRoom.unclaimedMiningPoints
             if (unclaimed < MIN_CLAIM_THRESHOLD) {
                 // Unclaimed kecil — skip
