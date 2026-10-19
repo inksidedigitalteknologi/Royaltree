@@ -219,6 +219,62 @@ app.post('/api/v1/withdrawals', authenticateToken, async (req, res) => {
         }
         newWd.requestedAt = Date.now();
         await db.collection('withdrawals').doc(newWd.id).set(newWd);
+    // ==================== DAILY CHECK-IN (SERVER-SIDE) ====================
+    app.post('/api/v1/daily-check-in', authenticateToken, async (req, res) => {
+        try {
+            const userId = req.user.uid || req.body.userId;
+
+            const userRef = db.collection('users').doc(userId);
+            const userDoc = await userRef.get();
+
+            const user = userDoc.data();
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0]; // Format: YYYY-MM-DD (Waktu Server)
+
+            const lastCheckIn = user.lastCheckInDate || '';
+            if (lastCheckIn === todayStr) {
+                return res.status(429).json({ success: false, message: 'Anda sudah check-in hari ini. Coba lagi besok.' });
+            }
+
+            // Hitung streak
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toISOString().split('T')[0];
+            
+            let newStreak = 1;
+            if (lastCheckIn === yesterdayStr) {
+                newStreak = (user.checkInStreak || 0) % 7 + 1;
+            }
+
+            // Hadiah (bisa disesuaikan, contoh: 10 RTP per hari, bonus di hari ke-7)
+            const baseReward = 10;
+            const bonus7Day = 50;
+            const reward = newStreak === 7 ? baseReward + bonus7Day : baseReward;
+
+            // Simpan ke Firebase (Server-side, aman dari manipulasi klien)
+            await userRef.update({
+                lastCheckInDate: todayStr,
+                checkInStreak: newStreak,
+                points: admin.firestore.FieldValue.increment(reward),
+                updatedAt: now.toISOString()
+            });
+
+            logger.info();
+            return res.status(200).json({ 
+                success: true, 
+                message: 'Check-in berhasil!', 
+                reward: reward, 
+                streak: newStreak,
+                nextCheckIn: 'Besok' 
+            });
+
+        } catch (error) {
+            logger.error('Daily check-in error: ' + error.message);
+            return res.status(500).json({ success: false, message: 'Terjadi kesalahan server.' });
+        }
+    });
+    // ==================== END DAILY CHECK-IN ====================
+
         res.status(201).json({
             success: true,
             message: "Permintaan penarikan dana berhasil diterima portal.",
@@ -297,6 +353,13 @@ app.get('/api/v1/missions', async (req, res) => {
 
 // 7. Postback Webhook
 app.get('/api/v1/postback', async (req, res) => {
+    // ✅ SECURITY FIX: Validasi secret dari provider iklan
+    const POSTBACK_SECRET = process.env.POSTBACK_SECRET || 'ubah-secret-ini-di-env';
+    if (req.query.secret !== POSTBACK_SECRET) {
+        logger.warn(`[POSTBACK] Akses ditolak: secret tidak valid dari IP ${req.ip}`);
+        return res.status(403).json({ success: false, message: 'Akses ditolak' });
+    }
+
     try {
         const { user_id, reward_points, tx_id, secret } = req.query;
         logger.info(`[POSTBACK WEBHOOK] User ${user_id} mendapat ${reward_points} poin. TxId: ${tx_id}`);
@@ -483,6 +546,13 @@ app.post('/api/v1/missions/:id/complete', authenticateToken, async (req, res) =>
 // User klaim hadiah misi — tambah poin
 // ============================================================
 app.post('/api/v1/missions/:id/claim', authenticateToken, async (req, res) => {
+    // ✅ SECURITY FIX: Cek apakah user sudah pernah klaim misi ini
+    const progressRef = db.collection('user_missions').doc(`${req.body.userId}_${req.params.id}`);
+    const progressDoc = await progressRef.get();
+    if (progressDoc.exists && progressDoc.data().isClaimed) {
+        return res.status(429).json({ success: false, message: 'Hadiah misi ini sudah pernah Anda klaim.' });
+    }
+
     try {
         const { userId } = req.body;
         const missionId = req.params.id;
