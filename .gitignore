@@ -53,3 +53,10 @@ keystore.properties
 *.keystore
 
 backend/backup-miners-*.json
+
+# Security: jangan pernah commit file ini!
+backend/.env
+backend/service-account.json
+backend/backup-miners-*.json
+backend/logs/
+*.log
