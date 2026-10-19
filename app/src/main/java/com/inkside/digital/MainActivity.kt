@@ -195,6 +195,11 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    override fun onDestroy() {
+        super.onDestroy()
+        com.inkside.digital.data.ads.AdManager.cancelAll()  // ✅ FIX memory leak
+    }
+
 }
 
 @Composable

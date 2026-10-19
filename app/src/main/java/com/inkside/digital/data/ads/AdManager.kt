@@ -5,6 +5,8 @@ import android.content.Context
 import com.inkside.digital.data.network.ApiClient
 import com.inkside.digital.util.AppLogger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -15,6 +17,8 @@ import java.util.UUID
  * AdManager: high-level manager untuk reward video ads.
  */
 object AdManager {
+    private val managerScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private const val TAG = "AdManager"
 
@@ -51,14 +55,14 @@ object AdManager {
                 // ✅ FIX: Kalau MINER_ACTIVATE, SKIP /ads/reward
                 if (mode == AdMode.MINER_ACTIVATE) {
                     AppLogger.d(TAG, "⛏️ Miner activate mode — skip /ads/reward, langsung onSuccess")
-                    CoroutineScope(Dispatchers.Main).launch {
+                    managerScope.launch {
                         onSuccess(0)   // points = 0 (tidak ada reward)
                     }
                     return@showRewardedAd
                 }
 
                 // 3. Kirim ke backend (background) — untuk REWARD mode
-                CoroutineScope(Dispatchers.IO).launch {
+                ioScope.launch {
                     try {
                         withContext(Dispatchers.Main) {
                             // Placeholder — akan di-replace oleh callback sebenarnya
@@ -129,7 +133,7 @@ object AdManager {
 
         AppLogger.d(TAG, "Interstitial eligible for $actionName")
 
-        CoroutineScope(Dispatchers.Main).launch {
+        managerScope.launch {
             val result = AdMobProvider.loadInterstitial(context)
 
             if (result.isFailure) {
@@ -155,5 +159,14 @@ object AdManager {
 
     fun init(context: Context) {
         AdMobProvider.init(context)
+    }
+
+    /**
+     * Cancel semua coroutine scope (panggil di onDestroy).
+     */
+    fun cancelAll() {
+        managerScope.cancel()
+        ioScope.cancel()
+        AppLogger.d(TAG, "🛑 AdManager scopes cancelled")
     }
 }
