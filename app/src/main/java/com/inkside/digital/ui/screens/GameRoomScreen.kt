@@ -435,14 +435,6 @@ fun GameRoomScreenContent(
         var isBuying by remember { mutableStateOf(false) }
         
 
-            // ✅ FIX: Countdown dihapus
-            if (countdownSec <= 0) {
-                selectedItemToBuy = null
-            }
-        }
-
-        // Animasi pulse untuk icon miner
-        val infiniteTransition = rememberInfiniteTransition(label = "miner_pulse")
         val pulseScale by infiniteTransition.animateFloat(
             initialValue = 0.95f,
             targetValue = 1.05f,
@@ -732,7 +724,6 @@ fun GameRoomScreenContent(
                             if (isBuying) return@Button
                             try {
                                 isBuying = true
-                                // ✅ FIX: Selalu beli saja (masuk ke Rak/Inventory). User yang pasang manual.
                                 onBuyGameMinerItem(item.id)
                             } catch (e: Exception) {
                                 AppLogger.e("GameRoomBuy", "❌ Error onClick: " + e.message, e)
