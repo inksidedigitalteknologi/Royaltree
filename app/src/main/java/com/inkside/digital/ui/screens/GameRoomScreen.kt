@@ -433,15 +433,9 @@ fun GameRoomScreenContent(
         // State untuk checkbox & countdown
         var agreeChecked by remember { mutableStateOf(false) }
         var isBuying by remember { mutableStateOf(false) }
-        var countdownSec by remember { mutableStateOf(30) }
+        
 
-        // Countdown timer
-        LaunchedEffect(selectedItemToBuy) {
-            countdownSec = 30
-            while (countdownSec > 0 && selectedItemToBuy != null) {
-                kotlinx.coroutines.delay(1000L)
-                countdownSec--
-            }
+            // ✅ FIX: Countdown dihapus
             if (countdownSec <= 0) {
                 selectedItemToBuy = null
             }
@@ -517,7 +511,7 @@ fun GameRoomScreenContent(
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = "${countdownSec}s",
+                                    text = "",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = rarityColor
