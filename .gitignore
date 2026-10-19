@@ -51,3 +51,5 @@ drawable_backup/
 keystore.properties
 *.jks
 *.keystore
+
+backend/backup-miners-*.json
