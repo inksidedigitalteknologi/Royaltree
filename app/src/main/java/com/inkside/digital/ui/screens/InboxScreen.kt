@@ -226,7 +226,7 @@ private fun InboxItem(message: InboxMessage) {
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* TODO: open message detail */ }
+            .clickable { /* TODO: open message detail — nanti */ }
     ) {
         Row(
             modifier = Modifier

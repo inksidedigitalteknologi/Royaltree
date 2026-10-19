@@ -268,7 +268,7 @@ fun NotificationCard(notification: NotificationEntity, currentLanguage: AppLangu
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* TODO: navigate by actionDeepLink */ }
+            .clickable { /* TODO: navigate by actionDeepLink — nanti */ }
     ) {
         Row(
             modifier = Modifier

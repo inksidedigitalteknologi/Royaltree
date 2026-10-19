@@ -291,7 +291,7 @@ fun ProfileScreen(
         item {
             ReferralStatsCard(
                 referredCount = user?.referredCount ?: 0,
-                commissionIdr = (user?.referredCount ?: 0) * 0.0,  // TODO: guna komisi dari backend nanti
+                commissionIdr = (user?.referredCount ?: 0) * 0.0,  // komisi belum diimplementasi
                 currentLanguage = currentLanguage
             )
         }

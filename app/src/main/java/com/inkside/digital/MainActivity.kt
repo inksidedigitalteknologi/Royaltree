@@ -582,7 +582,7 @@ fun MainAffiliateApp(
         affiliateLoading = affiliateLoading,
         showWithdrawAffiliateModal = showWithdrawAffiliateModal,
         onOpenWithdraw = { showWithdrawAffiliateModal = true },
-        onOpenWithdrawHistory = { /* TODO: navigasi ke history */ },
+        onOpenWithdrawHistory = { onNavigate(AppScreen.HISTORY) },
         onWithdrawAffiliateDismiss = { showWithdrawAffiliateModal = false },
         onWithdrawAffiliateSubmit = { amount, dest ->
             viewModel.requestAffiliateWithdraw(amount, dest, "PAYPAL")
@@ -1068,8 +1068,8 @@ fun MainAffiliateAppContent(
                         onWatchAdAndClaim = { txId, vendor ->
                             onDailyCheckInWithAd(txId, vendor)
                         },
-                        onWatchAdForRecovery = { /* TODO */ },
-                        onPayPointsForRecovery = { /* TODO */ },
+                        onWatchAdForRecovery = { /* nanti */ },
+                        onPayPointsForRecovery = { /* nanti */ },
                         streak = user?.checkInStreak ?: 0,
                         checkedInToday = isCheckedInToday,
                         lastCheckInDate = user?.lastCheckInDate ?: "",
