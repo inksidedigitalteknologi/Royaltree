@@ -197,7 +197,7 @@ private fun HomeBalanceWithSwitch(
 }
 
 @Composable
-private fun HomeScreen(r: UserEntity?,
+fun HomeScreen(user: UserEntity?,
     links: List<AffiliateLinkEntity>,
     recentTransactions: List<TransactionEntity>,
     currentLanguage: AppLanguage,

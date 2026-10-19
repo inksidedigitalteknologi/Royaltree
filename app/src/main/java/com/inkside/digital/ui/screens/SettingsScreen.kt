@@ -50,6 +50,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.RadioButton
+import com.inkside.digital.ui.theme.EmeraldLight
 
 @Composable
 fun SettingsScreen(
