@@ -13,6 +13,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -111,7 +112,6 @@ fun LoginScreen(
         animationSpec = tween(800),
         label = "contentAlpha"
     )
-    )
 
     AnimatedBackground(
         accentColor = EmeraldLight,
@@ -156,8 +156,7 @@ fun LoginScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 24.dp)
-                    .alpha(contentAlpha)
-                    
+                    .alpha(contentAlpha),
                 verticalArrangement = Arrangement.Center
             ) {
                 Spacer(Modifier.height(40.dp))
@@ -241,6 +240,12 @@ fun LoginScreen(
                         .padding(horizontal = 20.dp, vertical = 18.dp)
                 ) {
                     Column {
+                        val allChecked = termsChecked && privacyChecked && marketingChecked
+    val onMasterChange = { checked: Boolean ->
+        termsChecked = checked
+        privacyChecked = checked
+        marketingChecked = checked
+    }
                         // MASTER checkbox
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -275,12 +280,6 @@ fun LoginScreen(
                         )
                         Spacer(Modifier.height(12.dp))
 
-                        val allChecked = termsChecked && privacyChecked && marketingChecked
-    val onMasterChange = { checked: Boolean ->
-        termsChecked = checked
-        privacyChecked = checked
-        marketingChecked = checked
-    }
 
                         // Terms + Privacy checkbox
                         Row(
@@ -709,3 +708,5 @@ private fun LegalDialog(
         }
     )
 }
+
+
