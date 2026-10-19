@@ -30,6 +30,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -61,6 +62,7 @@ fun SettingsScreen(
     val context = androidx.compose.ui.platform.LocalContext.current
     var notifEnabled by remember { mutableStateOf(true) }
     var homeDisplayMode by remember { mutableStateOf(HomeDisplayMode.RTP) }
+    val scope = rememberCoroutineScope()
     
     // Load Home Display Mode preference
     LaunchedEffect(Unit) {
@@ -113,7 +115,7 @@ fun SettingsScreen(
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(10.dp))
                             .clickable {
-                                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+                                scope.launch {
                                     HomePreferences.setDisplayMode(context, mode)
                                 }
                             }
@@ -123,7 +125,7 @@ fun SettingsScreen(
                         RadioButton(
                             selected = homeDisplayMode == mode,
                             onClick = {
-                                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+                                scope.launch {
                                     HomePreferences.setDisplayMode(context, mode)
                                 }
                             },
