@@ -785,7 +785,9 @@ fun GameRoomScreenContent(
 
     // Modal: Pilih Item dari Inventaris untuk dipasang di Slot Kosong
     slotToAssignItem?.let { targetSlot ->
-        val unplacedOwnedMiners = minerItems.filter { it.isOwned && !it.isPlacedInRoom }
+        val unplacedOwnedMiners = minerItems.filter { 
+            it.isOwned && !it.isPlacedInRoom && it.powerGhs > 0 
+        }
 
         AlertDialog(
             onDismissRequest = { slotToAssignItem = null },
@@ -816,47 +818,52 @@ fun GameRoomScreenContent(
                         )
                     }
                 } else {
+                    // Group by tier
+                    val tierOrder = listOf("COMMON", "RARE", "EPIC", "LEGENDARY", "MYTHIC")
+                    val grouped = unplacedOwnedMiners.groupBy { it.tier }
+                    val sortedTiers = grouped.keys.sortedBy { tierOrder.indexOf(it) }
+
                     LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        items(unplacedOwnedMiners) { miner ->
-                            Card(
-                                shape = RoundedCornerShape(10.dp),
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
+                        sortedTiers.forEach { tier ->
+                            val tierColor = tierColor(tier)
+                            
+                            // Section header
+                            item {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 8.dp, bottom = 2.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = tier,
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 11.sp,
+                                        color = tierColor,
+                                        letterSpacing = 1.sp
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = "(${grouped[tier]!!.size})",
+                                        fontSize = 10.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                            
+                            // Items per tier
+                            items(grouped[tier]!!) { miner ->
+                                SlotMinerCard(
+                                    miner = miner,
+                                    tierColor = tierColor,
+                                    onInstall = {
                                         onToggleMinerSlot(miner.id, targetSlot)
                                         slotToAssignItem = null
                                     }
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(10.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Image(
-                                        painter = painterResource(R.drawable.micro_chip),
-                                        contentDescription = miner.name,
-                                        modifier = Modifier.size(26.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(10.dp))
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        Text(miner.name, fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                                        Text("+${HashrateFormatter.format(miner.powerGhs)} • +${String.format(Locale.US, "%.4f", miner.pointsPerMinute)} RTP/mnt", fontSize = 10.sp, color = EmeraldLight)
-                                    }
-                                    Button(
-                                        onClick = {
-                                            onToggleMinerSlot(miner.id, targetSlot)
-                                            slotToAssignItem = null
-                                        },
-                                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
-                                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                                        modifier = Modifier.height(30.dp)
-                                    ) {
-                                        Text(LanguageManager.translate("game_install", AppThemePreferences.currentLanguage, "Pasang"), fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                                    }
-                                }
+                                )
                             }
                         }
                     }
@@ -1792,6 +1799,79 @@ private fun ItemShopTab(
                 userPoints = userPoints,
                 onBuy = { onBuyItem(item) }
             )
+        }
+    }
+}
+
+@Composable
+private fun SlotMinerCard(
+    miner: GameMinerItemEntity,
+    tierColor: Color,
+    onInstall: () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(containerColor = tierColor.copy(alpha = 0.08f)),
+        border = BorderStroke(1.dp, tierColor.copy(alpha = 0.4f)),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onInstall() }
+    ) {
+        Row(
+            modifier = Modifier.padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Icon 40dp
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(tierColor.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.micro_chip),
+                    contentDescription = miner.name,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+            Spacer(Modifier.width(10.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = miner.name,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "+${HashrateFormatter.format(miner.powerGhs)} · ${miner.tier}",
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = tierColor,
+                    maxLines = 1
+                )
+                Text(
+                    text = "+${String.format(Locale.US, "%.4f", miner.pointsPerMinute)} RTP/mnt",
+                    fontSize = 9.sp,
+                    color = EmeraldLight,
+                    maxLines = 1
+                )
+            }
+            Button(
+                onClick = onInstall,
+                colors = ButtonDefaults.buttonColors(containerColor = tierColor),
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                modifier = Modifier.height(30.dp)
+            ) {
+                Text(
+                    text = LanguageManager.translate("game_install", AppThemePreferences.currentLanguage, "Pasang"),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+            }
         }
     }
 }
