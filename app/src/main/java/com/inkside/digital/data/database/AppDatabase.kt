@@ -168,7 +168,7 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                     .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)  // MIGRATION PROPER
                     .addCallback(DatabaseCallback(scope))
-                    .fallbackToDestructiveMigration(dropAllTables = true)
+                    // .fallbackToDestructiveMigration(dropAllTables = true)  // ✅ FIX: hapus (data persist)
                     .build()
                 INSTANCE = instance
                 instance
