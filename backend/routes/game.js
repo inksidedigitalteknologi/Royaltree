@@ -491,6 +491,7 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
             unclaimedMiningPoints: unclaimed - claimAmount,
             lastClaimTimestamp: now,
             lastMiningClaimAt: now,
+            lastMiningUpdateTimestamp: now,  // ✅ FIX: sync timestamp
             totalMinedPointsClaimed: totalClaimed,
             tempPowerBonusGhs: room.tempPowerBonusGhs || 0,
             bonusExpiryTimestamp: room.bonusExpiryTimestamp || 0,

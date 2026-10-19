@@ -2039,9 +2039,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         if (autoClaimJob?.isActive == true) return
         _autoClaimActive.value = true
         autoClaimJob = viewModelScope.launch {
-            AppLogger.d("AffiliateViewModel", "▶️ Auto-claim started (60s interval)")
+            AppLogger.d("AffiliateViewModel", "▶️ Auto-claim started (3h interval)")
             while (isActive) {
-                delay(60_000L)
+                delay(3 * 60 * 60 * 1000L)  // 3 jam
                 try {
                     // Check miner active dulu — skip kalau tamat
                     if (!isMinerActive()) {

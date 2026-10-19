@@ -1179,8 +1179,8 @@ class AffiliateRepository(private val dao: AppDao) {
 
         val now = System.currentTimeMillis()
         
-        // ✅ FIX: Cooldown 15 menit (cegah spam claim)
-        val COOLDOWN_MS = 15 * 60 * 1000L
+        // ✅ FIX: Cooldown 3 jam (match backend)
+        val COOLDOWN_MS = 3 * 60 * 60 * 1000L
         if (roomState.lastMiningClaimAt > 0 && now - roomState.lastMiningClaimAt < COOLDOWN_MS) {
             val remainingMin = ((COOLDOWN_MS - (now - roomState.lastMiningClaimAt)) / 60000).coerceAtLeast(1)
             return@withContext Result.failure(Exception("Cooldown $remainingMin menit lagi"))

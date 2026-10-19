@@ -75,10 +75,10 @@ class MiningWorker(
                 return@withContext Result.success()
             }
 
-            // 6. Cek cooldown (15 menit) — cegah claim terlalu sering
-            val nowFresh = System.currentTimeMillis()  // refresh setelah sync
+            // 6. Cek cooldown (3 jam) — match backend
+            val nowFresh = System.currentTimeMillis()
             val lastClaim = freshRoom.lastMiningClaimAt
-            val cooldownMs = 15 * 60 * 1000L
+            val cooldownMs = 3 * 60 * 60 * 1000L
             if (lastClaim > 0 && nowFresh - lastClaim < cooldownMs) {
                 val remainingMin = (cooldownMs - (nowFresh - lastClaim)) / 60000
                 AppLogger.d("MiningWorker", "⏸️ Cooldown $remainingMin menit lagi — skip")
@@ -110,6 +110,6 @@ class MiningWorker(
     companion object {
         const val WORK_NAME = "mining_auto_claim"
         const val MIN_CLAIM_THRESHOLD = 0.01
-        const val INTERVAL_MINUTES = 15L
+        const val INTERVAL_MINUTES = 180L  // 3 jam
     }
 }
