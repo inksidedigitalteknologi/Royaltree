@@ -40,6 +40,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
+import com.inkside.digital.data.preferences.HomePreferences
+import com.inkside.digital.data.preferences.HomeDisplayMode
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.RadioButton
 
 @Composable
 fun SettingsScreen(
@@ -49,6 +59,14 @@ fun SettingsScreen(
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     var notifEnabled by remember { mutableStateOf(true) }
+    var homeDisplayMode by remember { mutableStateOf(HomeDisplayMode.RTP) }
+    
+    // Load Home Display Mode preference
+    LaunchedEffect(Unit) {
+        HomePreferences.getDisplayMode(context).collect { mode ->
+            homeDisplayMode = mode
+        }
+    }
     var locationEnabled by remember { mutableStateOf(true) }
     var showLogoutDialog by remember { mutableStateOf(false) }
 
@@ -68,6 +86,65 @@ fun SettingsScreen(
         item { SectionHeader("Preferensi") }
 
         item { SettingRow(Icons.Default.Language, LanguageManager.translate("settings_language", currentLanguage, "Language"), "Pilih bahasa aplikasi", onOpenLanguage) }
+
+        // ═══ Tampilan Beranda (Home Display Mode) ═══
+        item {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(
+                    text = LanguageManager.translate("settings_home_display", currentLanguage, "Tampilan Beranda"),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = LanguageManager.translate("settings_home_display_desc", currentLanguage, "Pilih info yang tampil di kartu saldo beranda"),
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                HomeDisplayMode.values().forEach { mode ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(10.dp))
+                            .clickable {
+                                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+                                    HomePreferences.setDisplayMode(context, mode)
+                                }
+                            }
+                            .padding(horizontal = 12.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = homeDisplayMode == mode,
+                            onClick = {
+                                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+                                    HomePreferences.setDisplayMode(context, mode)
+                                }
+                            },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = EmeraldLight,
+                                unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = when (mode) {
+                                HomeDisplayMode.RTP -> LanguageManager.translate("home_display_rtp", currentLanguage, "Saldo RTP")
+                                HomeDisplayMode.COMMISSION -> LanguageManager.translate("home_display_commission", currentLanguage, "Commission")
+                                HomeDisplayMode.BOTH -> LanguageManager.translate("home_display_both", currentLanguage, "Keduanya")
+                            },
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
+        }
         item { SettingSwitch(Icons.Default.Notifications, LanguageManager.translate("settings_notifications", currentLanguage, "Notifications"), "Aktifkan notifikasi push", notifEnabled) { notifEnabled = it } }
         item { SettingSwitch(Icons.Default.LocationOn, LanguageManager.translate("settings_location", currentLanguage, "Location"), "Izinkan akses lokasi", locationEnabled) { locationEnabled = it } }
 

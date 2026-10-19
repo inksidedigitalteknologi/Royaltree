@@ -55,6 +55,17 @@ import com.inkside.digital.viewmodel.AppScreen
 import com.inkside.digital.viewmodel.AdButtonState
 import com.inkside.digital.ui.components.BannerAdView
 import androidx.compose.ui.text.style.TextOverflow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
+import com.inkside.digital.data.preferences.HomePreferences
+import com.inkside.digital.data.preferences.HomeDisplayMode
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.LaunchedEffect
 
 // ==== Accent Colors (tetap sama light/dark) ====
 private val GoldAccent = Color(0xFFFFD700)
@@ -62,8 +73,131 @@ private val EmeraldLight = Color(0xFF10B981)
 private val ElectricBlue = Color(0xFF3B82F6)
 
 @Composable
-fun HomeScreen(
+private fun HomeBalanceWithSwitch(
     user: UserEntity?,
+    currentLanguage: AppLanguage,
+    onOpenWithdraw: () -> Unit
+) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var displayMode by remember {
+        mutableStateOf(HomeDisplayMode.RTP)
+    }
+    var rtpBalance by remember { mutableDoubleStateOf(user?.points ?: 0.0) }
+    var commissionBalance by remember { mutableDoubleStateOf(0.0) }
+
+    // Load preference
+    LaunchedEffect(Unit) {
+        HomePreferences.getDisplayMode(context).collect { mode ->
+            displayMode = mode
+        }
+    }
+
+    // Sync from user
+    LaunchedEffect(user) {
+        rtpBalance = user?.points ?: 0.0
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // ═══ Dual Switch (RTP ↔ Commission) ═══
+        Row(
+            modifier = Modifier
+                .clip(RoundedCornerShape(20.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+                .padding(4.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            // RTP button
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(
+                        if (displayMode == HomeDisplayMode.RTP)
+                            EmeraldLight else Color.Transparent
+                    )
+                    .clickable {
+                        displayMode = HomeDisplayMode.RTP
+                        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+                            HomePreferences.setDisplayMode(context, HomeDisplayMode.RTP)
+                        }
+                    }
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+            ) {
+                Text(
+                    text = "RTP",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (displayMode == HomeDisplayMode.RTP) Color.Black else MaterialTheme.colorScheme.onSurface
+                )
+            }
+            // Commission button
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(
+                        if (displayMode == HomeDisplayMode.COMMISSION)
+                            EmeraldLight else Color.Transparent
+                    )
+                    .clickable {
+                        displayMode = HomeDisplayMode.COMMISSION
+                        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+                            HomePreferences.setDisplayMode(context, HomeDisplayMode.COMMISSION)
+                        }
+                    }
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+            ) {
+                Text(
+                    text = "Commission",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (displayMode == HomeDisplayMode.COMMISSION) Color.Black else MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // ═══ Saldo (sesuai switch) ═══
+        when (displayMode) {
+            HomeDisplayMode.RTP -> {
+                Text(
+                    text = "${GlobalPointsManager.formatRtp(rtpBalance)} RTP",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = GoldAccent
+                )
+            }
+            HomeDisplayMode.COMMISSION -> {
+                Text(
+                    text = GlobalPointsManager.formatBalanceIdr(commissionBalance, currentLanguage.code),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = EmeraldLight
+                )
+            }
+            HomeDisplayMode.BOTH -> {
+                Text(
+                    text = "${GlobalPointsManager.formatRtp(rtpBalance)} RTP",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = GoldAccent
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = GlobalPointsManager.formatBalanceIdr(commissionBalance, currentLanguage.code),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = EmeraldLight
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeScreen(r: UserEntity?,
     links: List<AffiliateLinkEntity>,
     recentTransactions: List<TransactionEntity>,
     currentLanguage: AppLanguage,
@@ -166,42 +300,13 @@ fun HomeScreen(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(3.dp))
-                        Text(
-                            text = GlobalPointsManager.formatBalanceIdr(user?.balance ?: 0.0, currentLanguage.code),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = GoldAccent
+                        // ✅ FIX: Hapus tombol "Tarik Dana" (hanya tampil saldo)
+                        // Dual switch + saldo
+                        HomeBalanceWithSwitch(
+                            user = user,
+                            currentLanguage = currentLanguage,
+                            onOpenWithdraw = onOpenWithdraw
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Surface(
-                            color = EmeraldLight,
-                            shape = RoundedCornerShape(14.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onOpenWithdraw() }
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.ArrowUpward,
-                                    contentDescription = null,
-                                    tint = Color.White,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = LanguageManager.translate("btn_withdraw", currentLanguage, "Tarik Dana"),
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                        }
                     }
                 }
             }
@@ -273,13 +378,7 @@ fun HomeScreen(
                         onClick = { onNavigate(AppScreen.DAILY_CHECK_IN) },
                         modifier = Modifier.weight(1f)
                     )
-                    QuickActionButton(
-                        icon = Icons.Filled.ArrowUpward,
-                        label = LanguageManager.translate("nav_withdraw", currentLanguage, "Tarik"),
-                        color = ElectricBlue,
-                        onClick = { onOpenWithdraw() },
-                        modifier = Modifier.weight(1f)
-                    )
+                    // ✅ FIX: hapus QuickAction "Tarik" (sudah tidak perlu)
                 }
             }
         }
