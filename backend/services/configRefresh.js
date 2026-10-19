@@ -3,6 +3,7 @@
 // Trigger: admin ubah config di portal
 
 const { admin } = require('../config/firebase');
+const AppLogger = require('../utils/AppLogger');
 const db = admin.firestore();
 
 /**
@@ -27,7 +28,7 @@ async function broadcastConfigRefresh(configType) {
         });
 
         if (tokens.length === 0) {
-            console.log('[CONFIG-REFRESH] No FCM tokens to send');
+            AppLogger.d('[CONFIG-REFRESH] No FCM tokens to send');
             return { sent: 0, failed: 0 };
         }
 
@@ -43,7 +44,7 @@ async function broadcastConfigRefresh(configType) {
 
         const response = await admin.messaging().sendEachForMulticast(message);
 
-        console.log(`[CONFIG-REFRESH] Sent ${configType} refresh to ${response.successCount}/${tokens.length} users`);
+        AppLogger.d(`[CONFIG-REFRESH] Sent ${configType} refresh to ${response.successCount}/${tokens.length} users`);
 
         return {
             sent: response.successCount,

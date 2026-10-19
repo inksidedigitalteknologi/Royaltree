@@ -11,6 +11,7 @@ const { creditAffiliateCommission } = require('../services/affiliate');
 // Validation
 const { validate } = require('../middleware/validate');
 const { purchaseSchema } = require('../schemas');
+const AppLogger = require('../utils/AppLogger');
 
 // ============================================================
 // KATALOG TIER (lifetime) — 5 TIER
@@ -154,7 +155,7 @@ router.post('/verify', verifyFirebaseToken, validate(purchaseSchema), async (req
                     message: 'Mock purchase tidak diizinkan di production'
                 });
             }
-            console.log('[PURCHASE] 🧪 MOCK verification for', productId);
+            AppLogger.d('[PURCHASE] 🧪 MOCK verification for', productId);
             verification = {
                 valid: true,
                 data: {
@@ -233,7 +234,7 @@ router.post('/verify', verifyFirebaseToken, validate(purchaseSchema), async (req
                 tierConfig.priceUsd,
                 req
             );
-            console.log(`[PURCHASE] Affiliate commission:`, affiliateResult);
+            AppLogger.d(`[PURCHASE] Affiliate commission:`, affiliateResult);
         } catch (affError) {
             console.error('[PURCHASE] Affiliate commission error:', affError.message);
         }
@@ -242,7 +243,7 @@ router.post('/verify', verifyFirebaseToken, validate(purchaseSchema), async (req
             .then(success => {
                 if (success) {
                     purchaseRef.update({ acknowledged: true });
-                    console.log(`✅ Purchase ${purchaseRef.id} acknowledged`);
+                    AppLogger.d(`✅ Purchase ${purchaseRef.id} acknowledged`);
                 }
             });
 

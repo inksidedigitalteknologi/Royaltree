@@ -12,6 +12,7 @@ const anomaly = require('../services/anomaly');
 // Validation
 const { validate } = require('../middleware/validate');
 const { adRewardSchema } = require('../schemas');
+const AppLogger = require('../utils/AppLogger');
 
 const db = admin.firestore();
 
@@ -227,7 +228,7 @@ const ADMOB_SSV_KEYS = {};
 // Load dari environment variable (kalau ada)
 if (process.env.ADMOB_SSV_KEY_ID && process.env.ADMOB_SSV_PUBLIC_KEY) {
     ADMOB_SSV_KEYS[process.env.ADMOB_SSV_KEY_ID] = process.env.ADMOB_SSV_PUBLIC_KEY;
-    console.log('[SSV] ✅ Public key loaded:', process.env.ADMOB_SSV_KEY_ID);
+    AppLogger.d('[SSV] ✅ Public key loaded:', process.env.ADMOB_SSV_KEY_ID);
 } else {
     console.warn('[SSV] ⚠️  TESTING MODE — SSV verification disabled (no public key in .env)');
     console.warn('[SSV] ⚠️  Set ADMOB_SSV_KEY_ID + ADMOB_SSV_PUBLIC_KEY untuk production');
@@ -257,7 +258,7 @@ function verifyAdMobSignature({ key_id, signature, transaction_id, custom_data, 
         const verifier = crypto.createVerify('SHA256');
         verifier.update(message);
         const isValid = verifier.verify(publicKey, signature, 'base64');
-        console.log('[SSV] Verification result:', isValid ? '✅ valid' : '❌ invalid');
+        AppLogger.d('[SSV] Verification result:', isValid ? '✅ valid' : '❌ invalid');
         return isValid;
     } catch (e) {
         console.error('[SSV] Verify error:', e.message);
@@ -323,7 +324,7 @@ router.get('/admob-ssv', async (req, res) => {
             ip: req.ip || 'unknown'
         });
 
-        console.log('[SSV] ✅ Verified:', transaction_id, '| user:', custom_data);
+        AppLogger.d('[SSV] ✅ Verified:', transaction_id, '| user:', custom_data);
         return res.status(200).send('OK');
 
     } catch (error) {

@@ -4,6 +4,7 @@
 
 const admin = require('firebase-admin');
 const { db } = require('../config/firebase');
+const AppLogger = require('../utils/AppLogger');
 
 // ============ BUFFER DI MEMORY ============
 const buffer = {
@@ -102,7 +103,7 @@ setInterval(async () => {
 
         await ref.set(updateData, { merge: true });
 
-        console.log(`[USAGE] Flushed R=${buffer.reads} W=${buffer.writes} D=${buffer.deletes} | endpoints: ${Object.keys(buffer.endpoints).length}`);
+        AppLogger.d(`[USAGE] Flushed R=${buffer.reads} W=${buffer.writes} D=${buffer.deletes} | endpoints: ${Object.keys(buffer.endpoints).length}`);
 
         // Reset buffer
         buffer.reads = 0;

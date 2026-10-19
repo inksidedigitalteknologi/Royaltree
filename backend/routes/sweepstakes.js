@@ -19,6 +19,7 @@ const { createNotification } = require('../utils/notifications');
 // Validation
 const { validate } = require('../middleware/validate');
 const { buyTicketSchema } = require('../schemas');
+const AppLogger = require('../utils/AppLogger');
 
 const db = admin.firestore();
 
@@ -478,7 +479,7 @@ async function drawSweepstakes(sweepstakesId = null) {
   // 2. Cek minimum kupon
   if (sweep.totalTickets < SWEEPSTAKES_CONFIG.minTickets) {
     // Refund semua
-    console.log(`[SWEEPSTAKES] ${sweep.id} — kupon kurang (${sweep.totalTickets} < ${SWEEPSTAKES_CONFIG.minTickets}), refund`);
+    AppLogger.d(`[SWEEPSTAKES] ${sweep.id} — kupon kurang (${sweep.totalTickets} < ${SWEEPSTAKES_CONFIG.minTickets}), refund`);
     await refundSweepstakes(sweep.id);
     return { refunded: true, reason: 'min_tickets_not_met' };
   }
@@ -626,7 +627,7 @@ async function refundSweepstakes(sweepstakesId) {
   });
   
   await batch.commit();
-  console.log(`[SWEEPSTAKES] Refunded ${userRefundMap.size} users`);
+  AppLogger.d(`[SWEEPSTAKES] Refunded ${userRefundMap.size} users`);
 }
 
 module.exports = router;

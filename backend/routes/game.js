@@ -148,7 +148,7 @@ async function getGameConfig() {
 // Reset cache (dipanggil bila admin update config)
 global.__resetGameConfigCache = () => {
     gameConfigCache = { data: null, timestamp: 0 };
-    console.log('[CONFIG] Cache reset');
+    AppLogger.d('[CONFIG] Cache reset');
 };
 
 // ============================================================
@@ -258,7 +258,7 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
             }, { merge: true });
             room.tempPowerBonusGhs = 0;
             room.bonusExpiryTimestamp = 0;
-            console.log(`[MINING] Bonus expired untuk ${uid}`);
+            AppLogger.d(`[MINING] Bonus expired untuk ${uid}`);
         }
 
         // Ambil miner items — baca dari users.minersOwned (primary)
@@ -306,7 +306,7 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
         if (!isMinerActive) {
             // Miner tak aktif — freeze unclaimed (jangan accumulate)
             unclaimedMiningPoints = parseFloat(storedUnclaimed.toFixed(8));
-            console.log(`[MINING] Miner TIDAK aktif — freeze unclaimed=${unclaimedMiningPoints}`);
+            AppLogger.d(`[MINING] Miner TIDAK aktif — freeze unclaimed=${unclaimedMiningPoints}`);
         } else {
             // Miner aktif — accumulate seperti biasa
             const computedUnclaimed = elapsedMin * ratePerMin;
@@ -320,7 +320,7 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
             lastClaimTimestamp: room.lastClaimTimestamp || Date.now()
         }, { merge: true });
         
-        console.log(`[MINING] User ${uid}: unclaimed=${unclaimedMiningPoints}, rate=${ratePerMin}/min, elapsed=${elapsedMin.toFixed(2)}min`);
+        AppLogger.d(`[MINING] User ${uid}: unclaimed=${unclaimedMiningPoints}, rate=${ratePerMin}/min, elapsed=${elapsedMin.toFixed(2)}min`);
 
         return res.json({
             success: true,
@@ -452,7 +452,7 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
         const computedUnclaimedFresh = elapsedMinFresh * ratePerMinFresh;
         const unclaimed = parseFloat((storedUnclaimedFresh + computedUnclaimedFresh).toFixed(8));
         
-        console.log(`[CLAIM-AD] User ${uid}: unclaimed=${unclaimed}, base=${rateCalcFresh.baseRate}, perm=${rateCalcFresh.permanentBonusPct}%, mini=${rateCalcFresh.miniGameBonusPct}%, final=${ratePerMinFresh}/min`);
+        AppLogger.d(`[CLAIM-AD] User ${uid}: unclaimed=${unclaimed}, base=${rateCalcFresh.baseRate}, perm=${rateCalcFresh.permanentBonusPct}%, mini=${rateCalcFresh.miniGameBonusPct}%, final=${ratePerMinFresh}/min`);
         
         if (unclaimed < MIN_CLAIM_RTP) {
             return res.status(400).json({
@@ -579,7 +579,7 @@ router.post('/mining/activate', verifyFirebaseToken, checkFraud, async (req, res
             timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
 
-        console.log(`[ACTIVATE] User ${uid}: miner aktif sampai ${new Date(activeUntil).toISOString()}`);
+        AppLogger.d(`[ACTIVATE] User ${uid}: miner aktif sampai ${new Date(activeUntil).toISOString()}`);
 
         return res.json({
             success: true,
@@ -657,7 +657,7 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
         const computedUnclaimed = elapsedMin * ratePerMin;
         const unclaimed = parseFloat((storedUnclaimed + computedUnclaimed).toFixed(8));
         
-        console.log(`[CLAIM] User ${uid}: unclaimed=${unclaimed}, base=${rateCalc.baseRate}, perm=${rateCalc.permanentBonusPct}%, mini=${rateCalc.miniGameBonusPct}%, final=${ratePerMin}/min`);
+        AppLogger.d(`[CLAIM] User ${uid}: unclaimed=${unclaimed}, base=${rateCalc.baseRate}, perm=${rateCalc.permanentBonusPct}%, mini=${rateCalc.miniGameBonusPct}%, final=${ratePerMin}/min`);
 
         // ============ CHECK MINER ACTIVE (6 jam) ============
         const minerActiveUntil = room.minerActiveUntil || 0;
@@ -770,7 +770,7 @@ router.post('/mining/buy', verifyFirebaseToken, validate(purchaseMinerSchema), c
         // Compute pointsPerMinute dari catalog (bukan dari request)
         const pointsPerMinute = parseFloat((pointsPerDay / (24 * 60)).toFixed(8));
 
-        console.log(`[BUY] User ${uid} beli ${lookupId} — rate=${pointsPerMinute}/min, tokenCost=${catalogItem.tokenCost}`);
+        AppLogger.d(`[BUY] User ${uid} beli ${lookupId} — rate=${pointsPerMinute}/min, tokenCost=${catalogItem.tokenCost}`);
 
         const userRef = db.collection('users').doc(uid);
         const userDoc = await userRef.get();
@@ -1405,7 +1405,7 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
         // Check achievement async
         checkAchievements(uid).catch(e => console.error('[ACH]', e.message));
 
-        console.log(`[MINIGAME] User ${uid}: score=${score}, +${speedBonusDropped}% bonus, total=${newMiniBonus}%, today=${miniGameToday + 1}/${MINIGAME_DAILY_LIMIT}, expiry=${new Date(newExpiry).toISOString()}`);
+        AppLogger.d(`[MINIGAME] User ${uid}: score=${score}, +${speedBonusDropped}% bonus, total=${newMiniBonus}%, today=${miniGameToday + 1}/${MINIGAME_DAILY_LIMIT}, expiry=${new Date(newExpiry).toISOString()}`);
 
         return res.json({
             success: true,
@@ -1925,7 +1925,7 @@ router.post('/thermal', verifyFirebaseToken, validate(thermalSchema), async (req
                 }
 
                 pauseChanged = true;
-                console.log('[THERMAL-PAUSE] Mining paused for', uid, 'temp:', temp);
+                AppLogger.d('[THERMAL-PAUSE] Mining paused for', uid, 'temp:', temp);
             }
 
             miningPaused = true;
@@ -1952,7 +1952,7 @@ router.post('/thermal', verifyFirebaseToken, validate(thermalSchema), async (req
                 } catch (e) {}
 
                 pauseChanged = true;
-                console.log('[THERMAL-RESUME] Mining resumed for', uid, 'temp:', temp);
+                AppLogger.d('[THERMAL-RESUME] Mining resumed for', uid, 'temp:', temp);
             }
 
             miningPaused = false;
@@ -1991,13 +1991,14 @@ router.post('/thermal', verifyFirebaseToken, validate(thermalSchema), async (req
                     if (userData.fcmToken) {
                         try {
                             const fcmService = require('../services/fcm');
+const AppLogger = require('../utils/AppLogger');
                             await fcmService.sendBatchPush(
                                 [userData.fcmToken],
                                 isCritical ? '🚨 HP Sangat Panas!' : '⚠️ HP Panas',
                                 `Suhu ${temp.toFixed(1)}°C — mining speed ${(hashrateFactor * 100).toFixed(0)}%`,
                                 { type: 'THERMAL_ALERT', severity: isCritical ? 'CRITICAL' : 'HIGH' }
                             );
-                            console.log('[THERMAL-ALERT] FCM sent to', uid, 'temp:', temp);
+                            AppLogger.d('[THERMAL-ALERT] FCM sent to', uid, 'temp:', temp);
                         } catch (fcmErr) {
                             console.error('[THERMAL-ALERT] FCM error:', fcmErr.message);
                         }
@@ -2009,7 +2010,7 @@ router.post('/thermal', verifyFirebaseToken, validate(thermalSchema), async (req
                     }, { merge: true });
 
                     alertSent = true;
-                    console.log('[THERMAL-ALERT] Sent to', uid, 'temp:', temp, 'hashrate:', hashrateFactor);
+                    AppLogger.d('[THERMAL-ALERT] Sent to', uid, 'temp:', temp, 'hashrate:', hashrateFactor);
                 }
             } catch (alertErr) {
                 console.error('[THERMAL-ALERT] Error:', alertErr.message);

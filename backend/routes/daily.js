@@ -12,6 +12,7 @@ const { createNotification } = require('../utils/notifications');
 const { validate } = require('../middleware/validate');
 const { checkInSchema } = require('../schemas');
 const { checkAchievements } = require('../services/achievements');
+const AppLogger = require('../utils/AppLogger');
 
 const db = admin.firestore();
 
@@ -445,7 +446,7 @@ router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, re
         }
 
         if (isTestMode) {
-            console.log('[SSV] ⚠️  TEST MODE — skipping SSV verification for txn:', transactionId);
+            AppLogger.d('[SSV] ⚠️  TEST MODE — skipping SSV verification for txn:', transactionId);
         } else {
         // Cek apakah transaksi sudah terverifikasi via AdMob SSV callback
         const ssvRef = db.collection('admob_ssv_txns').doc(transactionId);
@@ -454,7 +455,7 @@ router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, re
         // Retry 3x dengan delay 2 detik (SSV callback mungkin delay)
         let ssvRetries = 0;
         while (!ssvDoc.exists && ssvRetries < 3) {
-            console.log(`[SSV] Retry ${ssvRetries + 1}/3 untuk txn:`, transactionId);
+            AppLogger.d(`[SSV] Retry ${ssvRetries + 1}/3 untuk txn:`, transactionId);
             await new Promise(r => setTimeout(r, 2000));
             ssvDoc = await ssvRef.get();
             ssvRetries++;
@@ -480,7 +481,7 @@ router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, re
             });
         }
         
-        console.log('[SSV] ✅ Verified:', transactionId, '| user:', uid);
+        AppLogger.d('[SSV] ✅ Verified:', transactionId, '| user:', uid);
 
         // 5. Hapus SSV txn (anti-replay — tidak bisa dipakai 2x)
         await ssvRef.delete();

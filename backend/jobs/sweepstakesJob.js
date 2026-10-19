@@ -5,23 +5,24 @@
 // ============================================================
 
 const { drawSweepstakes } = require('../routes/sweepstakes');
+const AppLogger = require('../utils/AppLogger');
 
 const CHECK_INTERVAL = 60 * 60 * 1000;  // 1 jam
 
 async function checkAndDraw() {
   try {
-    console.log('[SWEEPSTAKES-JOB] Checking for expired sweepstakes...');
+    AppLogger.d('[SWEEPSTAKES-JOB] Checking for expired sweepstakes...');
     const result = await drawSweepstakes();
     
     if (result.refunded) {
-      console.log(`[SWEEPSTAKES-JOB] Refunded: ${result.reason}`);
+      AppLogger.d(`[SWEEPSTAKES-JOB] Refunded: ${result.reason}`);
     } else if (result.drawn) {
-      console.log(`[SWEEPSTAKES-JOB] Drawn: ${result.sweepstakesId}`);
-      console.log(`  - Winners: ${result.totalWinners}`);
-      console.log(`  - Reward paid: ${result.totalRewardPaid} RTP`);
-      console.log(`  - Platform cut: ${result.platformCut} RTP`);
-      console.log(`  - Treasury: ${result.treasuryCut} RTP`);
-      console.log(`  - New sweepstakes: ${result.newSweepstakesId}`);
+      AppLogger.d(`[SWEEPSTAKES-JOB] Drawn: ${result.sweepstakesId}`);
+      AppLogger.d(`  - Winners: ${result.totalWinners}`);
+      AppLogger.d(`  - Reward paid: ${result.totalRewardPaid} RTP`);
+      AppLogger.d(`  - Platform cut: ${result.platformCut} RTP`);
+      AppLogger.d(`  - Treasury: ${result.treasuryCut} RTP`);
+      AppLogger.d(`  - New sweepstakes: ${result.newSweepstakesId}`);
     }
   } catch (error) {
     // Ignore Firestore SDK internal index error (cosmetic, tak block fungsi)
@@ -35,7 +36,7 @@ async function checkAndDraw() {
 }
 
 function start() {
-  console.log('[SWEEPSTAKES-JOB] Started - checking every 1 hour');
+  AppLogger.d('[SWEEPSTAKES-JOB] Started - checking every 1 hour');
   setTimeout(checkAndDraw, 30 * 1000);
   setInterval(checkAndDraw, CHECK_INTERVAL);
 }

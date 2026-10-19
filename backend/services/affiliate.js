@@ -3,6 +3,7 @@
 
 const { admin, db } = require('../config/firebase');
 const { sendPushNotification } = require('./fcm');
+const AppLogger = require('../utils/AppLogger');
 
 const HOLD_MS = 24 * 60 * 60 * 1000;        // 24 jam
 const DAILY_LIMIT_USD = 50.00;               // $50/hari
@@ -33,13 +34,13 @@ async function creditAffiliateCommission(referredUserId, tierGranted, priceUsd, 
         const affiliateId = referredData.referredBy;
 
         if (!affiliateId) {
-            console.log(`[AFF] User ${referredUserId} tiada referredBy, skip.`);
+            AppLogger.d(`[AFF] User ${referredUserId} tiada referredBy, skip.`);
             return { success: false, reason: 'NO_REFERRER' };
         }
 
         // 2. Cek self-referral
         if (affiliateId === referredUserId) {
-            console.log(`[AFF] Self-referral detected: ${affiliateId}`);
+            AppLogger.d(`[AFF] Self-referral detected: ${affiliateId}`);
             return { success: false, reason: 'SELF_REFERRAL' };
         }
 
@@ -55,13 +56,13 @@ async function creditAffiliateCommission(referredUserId, tierGranted, priceUsd, 
 
         // Cek IP sama (self-referral via IP)
         if (affiliateData.lastLoginIp && affiliateData.lastLoginIp === currentIp) {
-            console.log(`[AFF] Same IP: ${currentIp} — flag for review`);
+            AppLogger.d(`[AFF] Same IP: ${currentIp} — flag for review`);
             // Flag tapi masih lanjut (mungkin WiFi sama)
         }
 
         // Cek device sama
         if (currentDevice && affiliateData.lastDeviceId === currentDevice) {
-            console.log(`[AFF] Same device — BLOCK`);
+            AppLogger.d(`[AFF] Same device — BLOCK`);
             await db.collection('audit_logs').add({
                 action: 'AFFILIATE_SAME_DEVICE',
                 affiliateId,
@@ -79,7 +80,7 @@ async function creditAffiliateCommission(referredUserId, tierGranted, priceUsd, 
         const todayTotal = dailyDoc.exists ? (dailyDoc.data().totalUsd || 0) : 0;
 
         if (todayTotal >= DAILY_LIMIT_USD) {
-            console.log(`[AFF] Daily limit reached: $${todayTotal}`);
+            AppLogger.d(`[AFF] Daily limit reached: $${todayTotal}`);
             return { success: false, reason: 'DAILY_LIMIT' };
         }
 
@@ -92,7 +93,7 @@ async function creditAffiliateCommission(referredUserId, tierGranted, priceUsd, 
         let actualCommission = commission;
         if (todayTotal + commission > DAILY_LIMIT_USD) {
             actualCommission = parseFloat((DAILY_LIMIT_USD - todayTotal).toFixed(4));
-            console.log(`[AFF] Partial commission (daily cap): $${actualCommission}`);
+            AppLogger.d(`[AFF] Partial commission (daily cap): $${actualCommission}`);
         }
 
         // 8. Simpan transaksi (status PENDING)
@@ -150,7 +151,7 @@ async function creditAffiliateCommission(referredUserId, tierGranted, priceUsd, 
             );
         }
 
-        console.log(`[AFF] ✅ Commission $${actualCommission} (rate ${rate*100}%) credited PENDING for ${affiliateId}`);
+        AppLogger.d(`[AFF] ✅ Commission $${actualCommission} (rate ${rate*100}%) credited PENDING for ${affiliateId}`);
         return { success: true, commission: actualCommission, txId: txRef.id };
 
     } catch (error) {
@@ -172,7 +173,7 @@ async function releasePendingCommission() {
             .get();
 
         if (snapshot.empty) {
-            console.log('[AFF CRON] Tiada komisi pending untuk dicair.');
+            AppLogger.d('[AFF CRON] Tiada komisi pending untuk dicair.');
             return { success: true, released: 0 };
         }
 
@@ -217,7 +218,7 @@ async function releasePendingCommission() {
             }
         }
 
-        console.log(`[AFF CRON] ✅ Released ${releasedCount} commissions.`);
+        AppLogger.d(`[AFF CRON] ✅ Released ${releasedCount} commissions.`);
         return { success: true, released: releasedCount };
 
     } catch (error) {

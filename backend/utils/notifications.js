@@ -4,6 +4,7 @@
 // ============================================================
 
 const admin = require('firebase-admin');
+const AppLogger = require('../utils/AppLogger');
 
 async function createNotification(userId, title, message, type = 'INFO', referenceId = null) {
     try {
@@ -18,7 +19,7 @@ async function createNotification(userId, title, message, type = 'INFO', referen
             timestamp: Date.now(),
             createdAt: new Date().toISOString()
         });
-        console.log(`[NOTIF] Created for ${userId}: ${title}`);
+        AppLogger.d(`[NOTIF] Created for ${userId}: ${title}`);
     } catch (e) {
         console.error('[NOTIF] Error:', e.message);
     }

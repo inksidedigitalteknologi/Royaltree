@@ -2,6 +2,7 @@
 // Helper kirim Firebase Cloud Messaging (push notification)
 
 const { admin } = require('../config/firebase');
+const AppLogger = require('../utils/AppLogger');
 
 /**
  * Kirim push notification ke 1 user via FCM token
@@ -12,7 +13,7 @@ const { admin } = require('../config/firebase');
  */
 async function sendPushNotification(fcmToken, title, body, data = {}) {
     if (!fcmToken) {
-        console.log('[FCM] Token kosong, skip.');
+        AppLogger.d('[FCM] Token kosong, skip.');
         return { success: false, reason: 'NO_TOKEN' };
     }
 
@@ -35,7 +36,7 @@ async function sendPushNotification(fcmToken, title, body, data = {}) {
         };
 
         const response = await admin.messaging().send(message);
-        console.log('[FCM] Sent:', response);
+        AppLogger.d('[FCM] Sent:', response);
         return { success: true, messageId: response };
     } catch (error) {
         console.error('[FCM] Error:', error.message);

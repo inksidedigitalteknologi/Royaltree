@@ -9,6 +9,7 @@ const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 // Validation
 const { validate } = require('../middleware/validate');
 const { loginSchema } = require('../schemas');
+const AppLogger = require('../utils/AppLogger');
 
 // -------------------------------------------------------------
 // POST /api/v1/auth/sync
@@ -232,7 +233,7 @@ router.post('/marketing-optin', verifyFirebaseToken, async (req, res) => {
             marketingOptInVersion: version
         });
 
-        console.log(`[MARKETING] User ${uid} opt-in: ${optIn} (v${version})`);
+        AppLogger.d(`[MARKETING] User ${uid} opt-in: ${optIn} (v${version})`);
         res.json({ success: true, marketingOptIn: optIn });
     } catch (err) {
         console.error('Error /auth/marketing-optin:', err);

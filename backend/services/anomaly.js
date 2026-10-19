@@ -2,6 +2,7 @@
 // Anomaly detection untuk user
 
 const admin = require('firebase-admin');
+const AppLogger = require('../utils/AppLogger');
 const db = admin.firestore();
 
 // In-memory cache
@@ -167,7 +168,7 @@ function addAnomaly(uid, type, severity, message, data = {}) {
   flag.lastUpdate = Date.now();
   userFlags.set(uid, flag);
   
-  console.log(`[ANOMALY/${severity}] ${type}: ${message}`);
+  AppLogger.d(`[ANOMALY/${severity}] ${type}: ${message}`);
   
   // Simpan ke Firestore
   db.collection('user_anomalies').add({
@@ -232,7 +233,7 @@ function updateAnomalyStatus(id, status) {
   const anomaly = anomalies.find(a => a.id === id);
   if (anomaly) {
     anomaly.status = status;
-    console.log(`[ANOMALY] ${id} → ${status}`);
+    AppLogger.d(`[ANOMALY] ${id} → ${status}`);
   }
   return anomaly;
 }
@@ -305,7 +306,7 @@ async function loadUserFlags() {
       }
     });
     
-    console.log(`[ANOMALY/LOAD] Loaded ${count} user flags from Firestore`);
+    AppLogger.d(`[ANOMALY/LOAD] Loaded ${count} user flags from Firestore`);
     return count;
   } catch (e) {
     console.error('[ANOMALY/LOAD] Error:', e.message);
@@ -320,7 +321,7 @@ async function saveAllFlags() {
       if (flag.score > 0) promises.push(saveUserFlag(uid));
     }
     await Promise.all(promises);
-    console.log(`[ANOMALY/SAVE-ALL] Saved ${promises.length} flags`);
+    AppLogger.d(`[ANOMALY/SAVE-ALL] Saved ${promises.length} flags`);
     return promises.length;
   } catch (e) {
     console.error('[ANOMALY/SAVE-ALL] Error:', e.message);

@@ -33,24 +33,24 @@ async function checkAdmin(req, res, next) {
         const adminToken = req.headers['x-admin-token'];
         
         // DEBUG LOG
-        if (DEBUG_ADMIN_LOG) console.log(`[checkAdmin] token prefix=${adminToken ? adminToken.substring(0, 12) : 'NULL'}, mapSize=${global.__adminTokens ? global.__adminTokens.size : 'NO_MAP'}`);
+        if (DEBUG_ADMIN_LOG) AppLogger.d(`[checkAdmin] token prefix=${adminToken ? adminToken.substring(0, 12) : 'NULL'}, mapSize=${global.__adminTokens ? global.__adminTokens.size : 'NO_MAP'}`);
         if (global.__adminTokens) {
             const keys = [...global.__adminTokens.keys()].map(k => k.substring(0, 12));
-            if (DEBUG_ADMIN_LOG) console.log(`[checkAdmin] keys in map: ${JSON.stringify(keys)}`);
+            if (DEBUG_ADMIN_LOG) AppLogger.d(`[checkAdmin] keys in map: ${JSON.stringify(keys)}`);
         }
         
         if (adminToken && global.__adminTokens && global.__adminTokens.has(adminToken)) {
             const tokenData = global.__adminTokens.get(adminToken);
             if (tokenData.expiresAt > Date.now()) {
-                if (DEBUG_ADMIN_LOG) console.log(`[checkAdmin] ✅ token match`);
+                if (DEBUG_ADMIN_LOG) AppLogger.d(`[checkAdmin] ✅ token match`);
                 req.adminUser = { source: 'web', token: adminToken };
                 return next();
             } else {
-                if (DEBUG_ADMIN_LOG) console.log(`[checkAdmin] ⚠️ token expired`);
+                if (DEBUG_ADMIN_LOG) AppLogger.d(`[checkAdmin] ⚠️ token expired`);
                 global.__adminTokens.delete(adminToken);
             }
         } else {
-            if (DEBUG_ADMIN_LOG) console.log(`[checkAdmin] ❌ token NOT in map`);
+            if (DEBUG_ADMIN_LOG) AppLogger.d(`[checkAdmin] ❌ token NOT in map`);
         }
 
         // Opsyen 2: Firebase ID token
@@ -895,7 +895,7 @@ router.post('/notifications/broadcast', checkAdmin, async (req, res) => {
             try {
                 const fcmService = require('../services/fcm');
                 fcmResult = await fcmService.sendBatchPush(fcmTokens, title, message, { type: type || 'BROADCAST' });
-                console.log('[BROADCAST] FCM sent to ' + fcmTokens.length + ' tokens');
+                AppLogger.d('[BROADCAST] FCM sent to ' + fcmTokens.length + ' tokens');
             } catch (fcmErr) {
                 console.error('[BROADCAST] FCM error:', fcmErr.message);
             }
@@ -1054,7 +1054,7 @@ router.post('/login', validate(adminLoginSchema), async (req, res) => {
         const expiresAt = Date.now() + (24 * 60 * 60 * 1000);
         global.__adminTokens.set(token, { expiresAt });
 
-        console.log('[ADMIN] Login sukses');
+        AppLogger.d('[ADMIN] Login sukses');
         res.json({
             success: true,
             token,
@@ -1607,6 +1607,7 @@ router.get('/firestore-usage', checkAdmin, async (req, res) => {
         let liveBuffer = { reads: 0, writes: 0, deletes: 0 };
         try {
             const { buffer } = require('../middleware/usageTracker');
+const AppLogger = require('../utils/AppLogger');
             liveBuffer = {
                 reads: buffer.reads || 0,
                 writes: buffer.writes || 0,

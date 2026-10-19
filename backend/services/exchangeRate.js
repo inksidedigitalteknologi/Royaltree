@@ -4,6 +4,7 @@
 
 const admin = require('firebase-admin');
 const { db } = require('../config/firebase');
+const AppLogger = require('../utils/AppLogger');
 
 const CACHE_DURATION_MS = 60 * 60 * 1000; // 1 jam
 
@@ -74,7 +75,7 @@ async function fetchExchangeRate(force = false) {
     
     // Fallback ke er-api
     if (!result) {
-        console.log('[EXCHANGE] Yahoo failed, fallback to er-api...');
+        AppLogger.d('[EXCHANGE] Yahoo failed, fallback to er-api...');
         result = await fetchFromErApi();
     }
     
@@ -83,18 +84,18 @@ async function fetchExchangeRate(force = false) {
         cachedRate = result.rate;
         cachedSource = result.source;
         lastFetch = now;
-        console.log(`[EXCHANGE] ✅ Rate: ${result.rate} IDR/USD (${result.source})`);
+        AppLogger.d(`[EXCHANGE] ✅ Rate: ${result.rate} IDR/USD (${result.source})`);
         return { ...result, cached: false };
     }
     
     // Kalau semua gagal, pakai cache lama
     if (cachedRate) {
-        console.log('[EXCHANGE] ⚠️ All failed, using cache:', cachedRate);
+        AppLogger.d('[EXCHANGE] ⚠️ All failed, using cache:', cachedRate);
         return { rate: cachedRate, source: cachedSource, cached: true };
     }
     
     // Tidak ada cache → return null
-    console.log('[EXCHANGE] ❌ No rate available');
+    AppLogger.d('[EXCHANGE] ❌ No rate available');
     return null;
 }
 
@@ -105,7 +106,7 @@ async function syncExchangeRateToFirestore() {
     try {
         const result = await fetchExchangeRate(true);
         if (!result) {
-            console.log('[EXCHANGE] Sync skip — no rate');
+            AppLogger.d('[EXCHANGE] Sync skip — no rate');
             return;
         }
         
@@ -119,7 +120,7 @@ async function syncExchangeRateToFirestore() {
             exchange_rate_raw: result.rate
         });
         
-        console.log(`[EXCHANGE] ✅ Synced: ${rounded} IDR/USD (${result.source})`);
+        AppLogger.d(`[EXCHANGE] ✅ Synced: ${rounded} IDR/USD (${result.source})`);
     } catch (e) {
         console.error('[EXCHANGE] Sync error:', e.message);
     }
@@ -135,7 +136,7 @@ function startAutoSync() {
     // Sync tiap 1 jam
     setInterval(syncExchangeRateToFirestore, CACHE_DURATION_MS);
     
-    console.log('[EXCHANGE] Auto-sync started (1 jam)');
+    AppLogger.d('[EXCHANGE] Auto-sync started (1 jam)');
 }
 
 module.exports = { 

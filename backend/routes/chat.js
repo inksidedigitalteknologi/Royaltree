@@ -13,6 +13,7 @@ const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 const { validate } = require('../middleware/validate');
 const { chatSchema } = require('../schemas');
 const { checkAchievements } = require('../services/achievements');
+const AppLogger = require('../utils/AppLogger');
 
 const router = express.Router();
 
@@ -142,7 +143,7 @@ router.post('/send', verifyFirebaseToken, validate(chatSchema), async (req, res)
             });
             if (!oldMessages.empty) {
                 await batch.commit();
-                console.log(`[CHAT] Deleted ${oldMessages.size} old messages`);
+                AppLogger.d(`[CHAT] Deleted ${oldMessages.size} old messages`);
             }
         } catch (deleteError) {
             console.error('[CHAT] Auto-delete error:', deleteError);
