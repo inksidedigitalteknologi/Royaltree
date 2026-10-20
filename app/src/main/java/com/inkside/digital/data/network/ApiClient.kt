@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 
-import android.content.Context
 import com.inkside.digital.data.network.model.ApiHealthResponse
 import com.inkside.digital.data.network.model.ApiUserSyncRequest
 import com.inkside.digital.data.network.model.ApiUserSyncResponse
