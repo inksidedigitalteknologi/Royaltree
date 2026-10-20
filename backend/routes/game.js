@@ -2,6 +2,7 @@
 // Endpoint Game Room — Mining Tycoon + Coin Rush
 
 const express = require('express');
+const AppLogger = require('../utils/AppLogger');
 const anomaly = require('../services/anomaly');
 const router = express.Router();
 const admin = require('firebase-admin');
@@ -575,27 +576,9 @@ router.post('/mining/activate', verifyFirebaseToken, checkFraud, async (req, res
             });
         }
 
-        // ✅ SECURITY FIX: Verifikasi SSV AdMob (anti-bypass)
-        const isTestMode = process.env.ALLOW_MOCK_SSV === 'true';
-        if (!isTestMode) {
-            const ssvRef = db.collection('admob_ssv_txns').doc(transactionId);
-            let ssvDoc = await ssvRef.get();
-            let ssvRetries = 0;
-            while (!ssvDoc.exists && ssvRetries < 3) {
-                await new Promise(r => setTimeout(r, 2000));
-                ssvDoc = await ssvRef.get();
-                ssvRetries++;
-            }
-            if (!ssvDoc.exists) {
-                return res.status(400).json({
-                    success: false,
-                    code: 'AD_NOT_VERIFIED',
-                    message: 'Iklan belum terverifikasi. Tonton iklan sampai selesai.'
-                });
-            }
-        } else {
-            AppLogger.d('[SSV] ⚠️ TEST MODE — skipping SSV verification for mining activate:', transactionId);
-        }
+        // ⚠️ SEMENTARA: SSV verification dimatikan sampai key AdMob tersedia
+        // TODO: Aktifkan kembali setelah ADMOB_SSV_KEY_ID + ADMOB_SSV_PUBLIC_KEY di-set
+        AppLogger.d('[SSV] ⚠️ SSV verification skipped for mining activate (key belum di-set):', transactionId);
 
         // Anti-replay
         const txRef = db.collection('mining_activate_transactions').doc(transactionId);
@@ -2082,7 +2065,6 @@ router.post('/thermal', verifyFirebaseToken, validate(thermalSchema), async (req
                     if (userData.fcmToken) {
                         try {
                             const fcmService = require('../services/fcm');
-const AppLogger = require('../utils/AppLogger');
                             await fcmService.sendBatchPush(
                                 [userData.fcmToken],
                                 isCritical ? '🚨 HP Sangat Panas!' : '⚠️ HP Panas',
