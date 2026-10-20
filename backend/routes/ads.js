@@ -145,6 +145,14 @@ router.post('/reward', verifyFirebaseToken, validate(adRewardSchema), checkFraud
             });
         }
 
+        // ✅ SECURITY FIX: Validasi format transactionId (harus UUID atau timestamp-based)
+        if (!/^[a-zA-Z0-9_\-]{10,64}$/.test(transactionId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Format transactionId tidak valid.'
+            });
+        }
+
         // Cek transaksi unik (cegah replay)
         const txRef = db.collection('ad_transactions').doc(transactionId);
         const txDoc = await txRef.get();

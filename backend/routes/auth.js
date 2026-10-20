@@ -25,11 +25,28 @@ router.post('/sync', verifyFirebaseToken, validate(loginSchema), async (req, res
         const normalizedEmail = (email || '').trim().toLowerCase();
         const normalizedPhone = (phone || '').trim().replace(/[\s\-]/g, '');
 
-        // ==== Validasi HP wajib ====
-        if (!normalizedPhone || normalizedPhone.length < 9) {
+        // ==== Validasi format email (jika ada) ====
+        if (normalizedEmail) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(normalizedEmail)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Format email tidak valid.'
+                });
+            }
+        }
+
+        // ==== Validasi format HP (hanya angka, 9-15 digit) ====
+        if (!normalizedPhone || normalizedPhone.length < 9 || normalizedPhone.length > 15) {
             return res.status(400).json({
                 success: false,
-                message: 'Nomor HP wajib diisi (minimal 9 digit).'
+                message: 'Nomor HP wajib diisi (9-15 digit angka).'
+            });
+        }
+        if (!/^\d+$/.test(normalizedPhone)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nomor HP hanya boleh berisi angka.'
             });
         }
 
