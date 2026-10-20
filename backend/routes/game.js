@@ -1181,8 +1181,20 @@ router.post('/mining/unplace', verifyFirebaseToken, async (req, res) => {
             return res.status(400).json({ success: false, message: 'Miner ID wajib' });
         }
 
-        // Dual-write
+        // ✅ SECURITY FIX: Cek apakah miner milik user
         const userRef = db.collection('users').doc(uid);
+        const userDoc = await userRef.get();
+        const userData = userDoc.exists ? userDoc.data() : {};
+        const minersOwned = userData.minersOwned || {};
+
+        if (!minersOwned[minerId]) {
+            return res.status(404).json({
+                success: false,
+                message: 'Miner tidak ditemukan di inventory Anda.'
+            });
+        }
+
+        // Dual-write
         await userRef.update({
             [`minersOwned.${minerId}.isPlacedInRoom`]: false,
             [`minersOwned.${minerId}.placedSlotIndex`]: -1
