@@ -218,8 +218,16 @@ fun HomeScreen(user: UserEntity?,
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        // ✅ Label dinamis: ikut displayMode (RTP / Balance)
+                        val context = androidx.compose.ui.platform.LocalContext.current
+                        var displayModeLabel by remember { mutableStateOf(HomeDisplayMode.RTP) }
+                        LaunchedEffect(Unit) {
+                            HomePreferences.getDisplayMode(context).collect { mode ->
+                                displayModeLabel = mode
+                            }
+                        }
                         Text(
-                            text = LanguageManager.translate("total_commission", currentLanguage, "Saldo Tersedia"),
+                            text = if (displayModeLabel == HomeDisplayMode.RTP) "RTP" else "Balance",
                             fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
