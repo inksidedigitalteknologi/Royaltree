@@ -425,6 +425,7 @@ fun MainAffiliateApp(
         viewModel.loadMissionsFromBackendV2()
     }
     val user by viewModel.user.collectAsState()
+    val gameRoomState by viewModel.gameRoomState.collectAsState()
 
     // Sync photoUrl dari Firebase ke UserEntity (Room DB)
     androidx.compose.runtime.LaunchedEffect(user?.id, user?.photoUrl) {
@@ -951,6 +952,7 @@ fun MainAffiliateAppContent(
                         links = links,
                         recentTransactions = transactions,
                         currentLanguage = currentLanguage,
+                        roomState = gameRoomState,
                         onNavigate = { onNavigate(it) },
                         onOpenWithdraw = { onSetWithdrawModalVisible(true) },
                         onOpenNewLink = { onSetNewLinkModalVisible(true) },

@@ -75,6 +75,7 @@ private val ElectricBlue = Color(0xFF3B82F6)
 @Composable
 private fun HomeBalanceWithSwitch(
     user: UserEntity?,
+    roomState: com.inkside.digital.data.model.GameRoomStateEntity?,
     currentLanguage: AppLanguage,
     onOpenWithdraw: () -> Unit
 ) {
@@ -89,8 +90,11 @@ private fun HomeBalanceWithSwitch(
         }
     }
 
-    LaunchedEffect(user) {
-        rtpBalance = user?.points ?: 0.0
+    LaunchedEffect(user, roomState) {
+        // ✅ FIX: Total = points + unclaimedMiningPoints
+        val points = user?.points ?: 0.0
+        val unclaimed = roomState?.unclaimedMiningPoints ?: 0.0
+        rtpBalance = points + unclaimed
     }
 
     Box(
@@ -125,6 +129,7 @@ fun HomeScreen(user: UserEntity?,
     links: List<AffiliateLinkEntity>,
     recentTransactions: List<TransactionEntity>,
     currentLanguage: AppLanguage,
+    roomState: com.inkside.digital.data.model.GameRoomStateEntity? = null,
     onNavigate: (AppScreen) -> Unit,
     onOpenWithdraw: () -> Unit,
     onOpenNewLink: () -> Unit,
@@ -236,6 +241,7 @@ fun HomeScreen(user: UserEntity?,
                         // Dual switch + saldo
                         HomeBalanceWithSwitch(
                             user = user,
+                            roomState = roomState,
                             currentLanguage = currentLanguage,
                             onOpenWithdraw = onOpenWithdraw
                         )
