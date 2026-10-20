@@ -220,60 +220,6 @@ app.post('/api/v1/withdrawals', authenticateToken, async (req, res) => {
         newWd.requestedAt = Date.now();
         await db.collection('withdrawals').doc(newWd.id).set(newWd);
     // ==================== DAILY CHECK-IN (SERVER-SIDE) ====================
-    app.post('/api/v1/daily-check-in', authenticateToken, async (req, res) => {
-        try {
-            const userId = req.user.uid || req.body.userId;
-
-            const userRef = db.collection('users').doc(userId);
-            const userDoc = await userRef.get();
-
-            const user = userDoc.data();
-            const now = new Date();
-            const todayStr = now.toISOString().split('T')[0]; // Format: YYYY-MM-DD (Waktu Server)
-
-            const lastCheckIn = user.lastCheckInDate || '';
-            if (lastCheckIn === todayStr) {
-                return res.status(429).json({ success: false, message: 'Anda sudah check-in hari ini. Coba lagi besok.' });
-            }
-
-            // Hitung streak
-            const yesterday = new Date(now);
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayStr = yesterday.toISOString().split('T')[0];
-            
-            let newStreak = 1;
-            if (lastCheckIn === yesterdayStr) {
-                newStreak = (user.checkInStreak || 0) % 7 + 1;
-            }
-
-            // Hadiah (bisa disesuaikan, contoh: 10 RTP per hari, bonus di hari ke-7)
-            const baseReward = 10;
-            const bonus7Day = 50;
-            const reward = newStreak === 7 ? baseReward + bonus7Day : baseReward;
-
-            // Simpan ke Firebase (Server-side, aman dari manipulasi klien)
-            await userRef.update({
-                lastCheckInDate: todayStr,
-                checkInStreak: newStreak,
-                points: admin.firestore.FieldValue.increment(reward),
-                updatedAt: now.toISOString()
-            });
-
-            logger.info();
-            return res.status(200).json({ 
-                success: true, 
-                message: 'Check-in berhasil!', 
-                reward: reward, 
-                streak: newStreak,
-                nextCheckIn: 'Besok' 
-            });
-
-        } catch (error) {
-            logger.error('Daily check-in error: ' + error.message);
-            return res.status(500).json({ success: false, message: 'Terjadi kesalahan server.' });
-        }
-    });
-    // ==================== END DAILY CHECK-IN ====================
 
         res.status(201).json({
             success: true,
@@ -284,6 +230,7 @@ app.post('/api/v1/withdrawals', authenticateToken, async (req, res) => {
         res.status(500).json({ success: false, message: err.message });
     }
 });
+    // ==================== END DAILY CHECK-IN ====================
 
 app.put('/api/v1/withdrawals/:id/status', authenticateToken, async (req, res) => {
     try {
@@ -546,15 +493,17 @@ app.post('/api/v1/missions/:id/complete', authenticateToken, async (req, res) =>
 // User klaim hadiah misi — tambah poin
 // ============================================================
 app.post('/api/v1/missions/:id/claim', authenticateToken, async (req, res) => {
-    // ✅ SECURITY FIX: Cek apakah user sudah pernah klaim misi ini
-    const progressRef = db.collection('user_missions').doc(`${req.body.userId}_${req.params.id}`);
-    const progressDoc = await progressRef.get();
-    if (progressDoc.exists && progressDoc.data().isClaimed) {
-        return res.status(429).json({ success: false, message: 'Hadiah misi ini sudah pernah Anda klaim.' });
-    }
-
     try {
-        const { userId } = req.body;
+        // ✅ SECURITY FIX: Ambil userId dari token, bukan dari body
+        const userId = req.user.uid;
+        
+        // Cek apakah user sudah pernah klaim misi ini
+        const progressRef = db.collection('user_missions').doc(`${userId}_${req.params.id}`);
+        const progressDoc = await progressRef.get();
+        if (progressDoc.exists && progressDoc.data().isClaimed) {
+            return res.status(429).json({ success: false, message: 'Hadiah misi ini sudah pernah Anda klaim.' });
+        }
+
         const missionId = req.params.id;
 
         if (!userId) {
@@ -771,6 +720,12 @@ app.post('/api/v1/point-transactions', authenticateToken, async (req, res) => {
         const userRef = db.collection('users').doc(userId);
         const userDoc = await userRef.get();
         if (userDoc.exists) {
+            // ✅ SECURITY FIX: Cek cooldown spin (1x per hari, waktu server)
+            const user = userDoc.data();
+            const today = new Date().toISOString().split('T')[0];
+            if (user.lastSpinDate === today) {
+                return res.status(429).json({ success: false, message: 'Anda sudah spin hari ini. Coba lagi besok.' });
+            }
             const currentPoints = userDoc.data().points || 0;
             await userRef.update({ points: currentPoints + parseInt(points), updatedAt: new Date().toISOString() });
         }
@@ -921,9 +876,11 @@ app.get('/api/v1/notifications/:userId/unread', verifyFirebaseToken, async (req,
 
 app.post('/api/v1/notifications', verifyFirebaseToken, async (req, res) => {
     try {
-        const { userId, title, message, type, referenceId } = req.body;
-        if (!userId || !title) {
-            return res.status(400).json({ success: false, message: 'userId dan title wajib diisi.' });
+        // ✅ SECURITY FIX: Ambil userId dari token, bukan dari body (mencegah spam)
+        const userId = req.firebaseUser.uid;
+        const { title, message, type, referenceId } = req.body;
+        if (!title) {
+            return res.status(400).json({ success: false, message: 'title wajib diisi.' });
         }
         const newNotif = {
             userId, title, message: message || '', type: type || 'INFO',
@@ -978,6 +935,8 @@ app.post('/api/v1/games/spin', authenticateToken, async (req, res) => {
     try {
         const { userId } = req.body;
         if (!userId) return res.status(400).json({ success: false, message: 'userId wajib diisi.' });
+        
+
         const prizes = [
             { label: '10 Poin', points: 10, weight: 40 },
             { label: '25 Poin', points: 25, weight: 30 },
@@ -1003,7 +962,11 @@ app.post('/api/v1/games/spin', authenticateToken, async (req, res) => {
         const userDoc = await userRef.get();
         if (userDoc.exists) {
             const currentPoints = userDoc.data().points || 0;
-            await userRef.update({ points: currentPoints + selected.points, updatedAt: new Date().toISOString() });
+            await userRef.update({ 
+                points: currentPoints + selected.points, 
+                lastSpinDate: new Date().toISOString().split('T')[0],
+                updatedAt: new Date().toISOString() 
+            });
         }
         res.json({ success: true, message: `Selamat! Anda mendapat ${selected.label}`, data: { id: docRef.id, ...gameLog } });
     } catch (err) { res.status(500).json({ success: false, message: err.message }); }
@@ -1057,6 +1020,10 @@ app.get('/api/v1/games/leaderboard', authenticateToken, async (req, res) => {
 
 app.get('/api/v1/profile/:userId', authenticateToken, async (req, res) => {
     try {
+        // ✅ SECURITY FIX: Validasi kepemilikan
+        if (req.params.userId !== req.user.uid) {
+            return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+        }
         const doc = await db.collection('users').doc(req.params.userId).get();
         if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan.' });
         const u = doc.data();
@@ -1067,6 +1034,10 @@ app.get('/api/v1/profile/:userId', authenticateToken, async (req, res) => {
 
 app.put('/api/v1/profile/:userId/update', authenticateToken, async (req, res) => {
     try {
+        // ✅ SECURITY FIX: Validasi kepemilikan
+        if (req.params.userId !== req.user.uid) {
+            return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+        }
         const docRef = db.collection('users').doc(req.params.userId);
         const doc = await docRef.get();
         if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan.' });
@@ -1082,6 +1053,10 @@ app.put('/api/v1/profile/:userId/update', authenticateToken, async (req, res) =>
 
 app.put('/api/v1/profile/:userId/change-pin', authenticateToken, async (req, res) => {
     try {
+        // ✅ SECURITY FIX: Validasi kepemilikan
+        if (req.params.userId !== req.user.uid) {
+            return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+        }
         const { oldPin, newPin } = req.body;
         if (!newPin || newPin.length < 4) return res.status(400).json({ success: false, message: 'PIN baru minimal 4 digit.' });
         const docRef = db.collection('users').doc(req.params.userId);
@@ -1102,6 +1077,10 @@ app.put('/api/v1/profile/:userId/change-pin', authenticateToken, async (req, res
 
 app.post('/api/v1/profile/:userId/verify-pin', authenticateToken, async (req, res) => {
     try {
+        // ✅ SECURITY FIX: Validasi kepemilikan
+        if (req.params.userId !== req.user.uid) {
+            return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+        }
         const { pin } = req.body;
         const doc = await db.collection('users').doc(req.params.userId).get();
         if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan.' });
@@ -1117,6 +1096,10 @@ app.post('/api/v1/profile/:userId/verify-pin', authenticateToken, async (req, re
 
 app.get('/api/v1/profile/:userId/security-log', authenticateToken, async (req, res) => {
     try {
+        // ✅ SECURITY FIX: Validasi kepemilikan
+        if (req.params.userId !== req.user.uid) {
+            return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+        }
         const limit = parseInt(req.query.limit) || 30;
         const snapshot = await db.collection('security_logs')
             .where('userId', '==', req.params.userId)
