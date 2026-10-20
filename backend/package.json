@@ -11,6 +11,6 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "name": "royaltree-backend",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "Royaltree backend API"
 }
