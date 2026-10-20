@@ -115,6 +115,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.foundation.layout.fillMaxHeight
 
 // ==== Retro Pixel Palette ====
 private val RetroGold = Color(0xFFFFD700)

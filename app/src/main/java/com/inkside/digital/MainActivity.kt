@@ -952,7 +952,7 @@ fun MainAffiliateAppContent(
                         links = links,
                         recentTransactions = transactions,
                         currentLanguage = currentLanguage,
-                        roomState = gameRoomState,
+                        roomState = roomState,
                         onNavigate = { onNavigate(it) },
                         onOpenWithdraw = { onSetWithdrawModalVisible(true) },
                         onOpenNewLink = { onSetNewLinkModalVisible(true) },
