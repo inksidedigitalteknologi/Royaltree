@@ -18,6 +18,7 @@ const authRoutes = require('./routes/auth');
 const dailyRoutes = require('./routes/daily');
 const adsRoutes = require('./routes/ads');
 const adminRoutes = require('./routes/admin');
+const { checkAdmin } = require('./middleware/checkAdmin');
 const gameRoutes = require('./routes/game');
 const purchaseRoutes = require('./routes/purchase');
 const affiliateRoutes = require('./routes/affiliate');
@@ -166,7 +167,7 @@ app.get('/api/v1/config', async (req, res) => {
     }
 });
 
-app.put('/api/v1/config', authenticateToken, async (req, res) => {
+app.put('/api/v1/config', authenticateToken, checkAdmin, async (req, res) => {
     try {
         await db.collection('system').doc('config').set(req.body, { merge: true });
         const doc = await db.collection('system').doc('config').get();
@@ -211,6 +212,8 @@ app.get('/api/v1/withdrawals', authenticateToken, async (req, res) => {
     try {
         const statusFilter = req.query.status;
         let query = db.collection('withdrawals');
+        // ✅ SECURITY FIX: filter by user (kecuali admin)
+        query = query.where('userId', '==', req.user.uid);
         if (statusFilter) {
             query = query.where('status', '==', statusFilter);
         }
@@ -243,7 +246,7 @@ app.post('/api/v1/withdrawals', authenticateToken, async (req, res) => {
 });
     // ==================== END DAILY CHECK-IN ====================
 
-app.put('/api/v1/withdrawals/:id/status', authenticateToken, async (req, res) => {
+app.put('/api/v1/withdrawals/:id/status', authenticateToken, checkAdmin, async (req, res) => {
     try {
         const { id } = req.params;
         const { status, adminNotes } = req.body;
@@ -281,7 +284,7 @@ app.get('/api/v1/campaigns', async (req, res) => {
     }
 });
 
-app.post('/api/v1/campaigns', authenticateToken, async (req, res) => {
+app.post('/api/v1/campaigns', authenticateToken, checkAdmin, async (req, res) => {
     try {
         const newCamp = req.body;
         if (!newCamp.id) {
@@ -359,7 +362,7 @@ app.get('/api/v1/users', authenticateToken, async (req, res) => {
 });
 
 // 9. POST Missions (Tambah Misi)
-app.post('/api/v1/missions', authenticateToken, async (req, res) => {
+app.post('/api/v1/missions', authenticateToken, checkAdmin, async (req, res) => {
     try {
         const newMission = req.body;
         if (!newMission.id) {
@@ -426,7 +429,7 @@ app.delete('/api/v1/users/:id', authenticateToken, async (req, res) => {
 });
 
 // PUT Campaign
-app.put('/api/v1/campaigns/:id', authenticateToken, async (req, res) => {
+app.put('/api/v1/campaigns/:id', authenticateToken, checkAdmin, async (req, res) => {
     try {
         const docRef = db.collection('campaigns').doc(req.params.id);
         const doc = await docRef.get();
@@ -438,7 +441,7 @@ app.put('/api/v1/campaigns/:id', authenticateToken, async (req, res) => {
 });
 
 // DELETE Campaign
-app.delete('/api/v1/campaigns/:id', authenticateToken, async (req, res) => {
+app.delete('/api/v1/campaigns/:id', authenticateToken, checkAdmin, async (req, res) => {
     try {
         const docRef = db.collection('campaigns').doc(req.params.id);
         const doc = await docRef.get();
@@ -449,7 +452,7 @@ app.delete('/api/v1/campaigns/:id', authenticateToken, async (req, res) => {
 });
 
 // PUT Mission
-app.put('/api/v1/missions/:id', authenticateToken, async (req, res) => {
+app.put('/api/v1/missions/:id', authenticateToken, checkAdmin, async (req, res) => {
     try {
         const docRef = db.collection('missions').doc(req.params.id);
         const doc = await docRef.get();
@@ -461,7 +464,7 @@ app.put('/api/v1/missions/:id', authenticateToken, async (req, res) => {
 });
 
 // DELETE Mission
-app.delete('/api/v1/missions/:id', authenticateToken, async (req, res) => {
+app.delete('/api/v1/missions/:id', authenticateToken, checkAdmin, async (req, res) => {
     try {
         const docRef = db.collection('missions').doc(req.params.id);
         const doc = await docRef.get();
@@ -960,6 +963,10 @@ app.put('/api/v1/notifications/:id/read', verifyFirebaseToken, async (req, res) 
         const docRef = db.collection('notifications').doc(req.params.id);
         const doc = await docRef.get();
         if (!doc.exists) return res.status(404).json({ success: false, message: 'Notifikasi tidak ditemukan.' });
+        // ✅ SECURITY FIX: validasi kepemilikan
+        if (doc.data().userId !== req.firebaseUser.uid) {
+            return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+        }
         await docRef.update({ read: true, readAt: new Date().toISOString() });
         const updated = await docRef.get();
         res.json({ success: true, message: 'Notifikasi ditandai sudah dibaca.', data: { id: updated.id, ...updated.data() } });
@@ -991,6 +998,10 @@ app.delete('/api/v1/notifications/:id', verifyFirebaseToken, async (req, res) =>
         const docRef = db.collection('notifications').doc(req.params.id);
         const doc = await docRef.get();
         if (!doc.exists) return res.status(404).json({ success: false, message: 'Notifikasi tidak ditemukan.' });
+        // ✅ SECURITY FIX: validasi kepemilikan
+        if (doc.data().userId !== req.firebaseUser.uid) {
+            return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+        }
         await docRef.delete();
         res.json({ success: true, message: 'Notifikasi dihapus.' });
     } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
