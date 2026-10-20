@@ -112,6 +112,13 @@ router.get('/status', verifyFirebaseToken, async (req, res) => {
 // ============================================================
 router.post('/reward', verifyFirebaseToken, validate(adRewardSchema), checkFraud, async (req, res) => {
     try {
+        // ⚠️ SEMENTARA: SSV key belum di-set, matikan endpoint
+        if (Object.keys(ADMOB_SSV_KEYS).length === 0) {
+            return res.status(503).json({
+                success: false,
+                message: 'Fitur iklan sedang maintenance. Coba lagi nanti.'
+            });
+        }
         const { uid } = req.firebaseUser;
         anomaly.trackActivity(uid, 'AD_WATCH');
         const { vendor, transactionId } = req.body;
@@ -249,10 +256,10 @@ if (process.env.ADMOB_SSV_KEY_ID && process.env.ADMOB_SSV_PUBLIC_KEY) {
 function verifyAdMobSignature({ key_id, signature, transaction_id, custom_data, reward_amount }) {
     const publicKey = ADMOB_SSV_KEYS[key_id];
     
-    // === TESTING MODE: skip verifikasi signature ===
+    // === TESTING MODE: TOLAK verifikasi signature jika tidak ada key ===
     if (Object.keys(ADMOB_SSV_KEYS).length === 0) {
-        console.warn('[SSV] ⚠️  TESTING: skipping signature verification for txn:', transaction_id);
-        return true;  // ← Terima semua (HANYA untuk testing!)
+        console.error('[SSV] ❌ SSV key tidak di-set — menolak reward untuk txn:', transaction_id);
+        return false;  // ← Tolak (production-safe)
     }
     
     // === PRODUCTION MODE: verifikasi ===
