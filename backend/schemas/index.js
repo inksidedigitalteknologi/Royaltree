@@ -56,7 +56,9 @@ const purchaseMinerSchema = Joi.object({
     tier: Joi.string().valid('COMMON', 'RARE', 'EPIC', 'LEGENDARY', 'MYTHIC').required()
 });
 
-const claimSchema = Joi.object({}).unknown(true);
+const claimSchema = Joi.object({
+    missionId: Joi.string().trim().max(100).optional()
+}).unknown(false);
 
 // ============================================================
 // ADS
