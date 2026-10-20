@@ -112,6 +112,9 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.font.FontFamily
 
 // ==== Retro Pixel Palette ====
 private val RetroGold = Color(0xFFFFD700)
@@ -1188,39 +1191,149 @@ private fun MiningRoomTab(
                                 val isMinerActive = minerActiveUntil > System.currentTimeMillis()
 
                                 if (isMinerActive) {
-                                    // Miner sedang aktif — KOTAK ABU-ABU dengan status + countdown
-                                    Surface(
-                                        color = Color(0xFF334155),
-                                        shape = RoundedCornerShape(12.dp),
-                                        modifier = Modifier.fillMaxWidth()
+                                    // ✅ MINER ACTIVE — CARD CANGGIH dengan animasi
+                                    val pulseTransition = rememberInfiniteTransition(label = "miner_pulse")
+                                    val pulseAlpha by pulseTransition.animateFloat(
+                                        initialValue = 0.6f,
+                                        targetValue = 1f,
+                                        animationSpec = infiniteRepeatable(
+                                            animation = tween(1500, easing = FastOutSlowInEasing),
+                                            repeatMode = RepeatMode.Reverse
+                                        ),
+                                        label = "pulse_alpha"
+                                    )
+                                    val pulseScale by pulseTransition.animateFloat(
+                                        initialValue = 1f,
+                                        targetValue = 1.15f,
+                                        animationSpec = infiniteRepeatable(
+                                            animation = tween(1500, easing = FastOutSlowInEasing),
+                                            repeatMode = RepeatMode.Reverse
+                                        ),
+                                        label = "pulse_scale"
+                                    )
+
+                                    // Progress: sisa waktu / 6 jam
+                                    val totalDurationMs = 6 * 60 * 60 * 1000L
+                                    val progress = (minerActiveRemainingMs.toFloat() / totalDurationMs).coerceIn(0f, 1f)
+
+                                    // Gradien background
+                                    val gradientBrush = Brush.linearGradient(
+                                        colors = listOf(
+                                            Color(0xFF064E3B),
+                                            Color(0xFF065F46),
+                                            Color(0xFF047857)
+                                        )
+                                    )
+
+                                    Card(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .shadow(
+                                                elevation = 12.dp,
+                                                shape = RoundedCornerShape(16.dp),
+                                                ambientColor = EmeraldLight.copy(alpha = 0.3f),
+                                                spotColor = EmeraldLight.copy(alpha = 0.5f)
+                                            ),
+                                        shape = RoundedCornerShape(16.dp),
+                                        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                                     ) {
-                                        Row(
+                                        Box(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .padding(horizontal = 16.dp, vertical = 14.dp),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
+                                                .background(gradientBrush)
+                                                .padding(16.dp)
                                         ) {
-                                            Column {
-                                                Text(
-                                                    text = "⛏️ ${LanguageManager.translate("game_miner_active", AppThemePreferences.currentLanguage, "MINER SEDANG AKTIF")}",
-                                                    fontSize = 11.sp,
-                                                    fontWeight = FontWeight.Bold,
-                                                    color = EmeraldLight
-                                                )
-                                                Text(
-                                                    text = formatMinerCountdown(minerActiveRemainingMs),
-                                                    fontSize = 24.sp,
-                                                    fontWeight = FontWeight.ExtraBold,
-                                                    color = Color.White
-                                                )
+                                            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                                // Header: icon + label + timer
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                                        // Icon berdenyut
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .size(40.dp)
+                                                                .alpha(pulseAlpha)
+                                                                .scale(pulseScale)
+                                                                .background(
+                                                                    brush = Brush.radialGradient(
+                                                                        colors = listOf(
+                                                                            GoldVip.copy(alpha = 0.5f),
+                                                                            Color.Transparent
+                                                                        )
+                                                                    ),
+                                                                    shape = CircleShape
+                                                                ),
+                                                            contentAlignment = Alignment.Center
+                                                        ) {
+                                                            Text("⛏️", fontSize = 24.sp)
+                                                        }
+                                                        Spacer(modifier = Modifier.width(12.dp))
+                                                        Column {
+                                                            Text(
+                                                                text = LanguageManager.translate("game_miner_active", AppThemePreferences.currentLanguage, "MINER SEDANG AKTIF"),
+                                                                fontSize = 11.sp,
+                                                                fontWeight = FontWeight.Bold,
+                                                                color = EmeraldLight
+                                                            )
+                                                            Text(
+                                                                text = "Mining berjalan...",
+                                                                fontSize = 10.sp,
+                                                                color = Color.White.copy(alpha = 0.6f)
+                                                            )
+                                                        }
+                                                    }
+                                                    // Timer dengan format HH:MM:SS
+                                                    Text(
+                                                        text = formatMinerCountdownHHMMSS(minerActiveRemainingMs),
+                                                        fontSize = 20.sp,
+                                                        fontWeight = FontWeight.ExtraBold,
+                                                        color = Color.White,
+                                                        fontFamily = FontFamily.Monospace
+                                                    )
+                                                }
+
+                                                // Progress bar
+                                                Column {
+                                                    Row(
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        horizontalArrangement = Arrangement.SpaceBetween
+                                                    ) {
+                                                        Text(
+                                                            text = "Sisa waktu",
+                                                            fontSize = 9.sp,
+                                                            color = Color.White.copy(alpha = 0.7f)
+                                                        )
+                                                        Text(
+                                                            text = "${(progress * 100).toInt()}%",
+                                                            fontSize = 9.sp,
+                                                            fontWeight = FontWeight.Bold,
+                                                            color = GoldVip
+                                                        )
+                                                    }
+                                                    Spacer(modifier = Modifier.height(4.dp))
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .height(6.dp)
+                                                            .clip(RoundedCornerShape(3.dp))
+                                                            .background(Color.White.copy(alpha = 0.15f))
+                                                    ) {
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .fillMaxWidth(progress)
+                                                                .fillMaxHeight()
+                                                                .background(
+                                                                    brush = Brush.horizontalGradient(
+                                                                        colors = listOf(GoldVip, EmeraldLight)
+                                                                    )
+                                                                )
+                                                        )
+                                                    }
+                                                }
                                             }
-                                            Icon(
-                                                imageVector = Icons.Filled.Bolt,
-                                                contentDescription = LanguageManager.translate("cd_active", AppThemePreferences.currentLanguage, "Active"),
-                                                tint = GoldVip,
-                                                modifier = Modifier.size(32.dp)
-                                            )
                                         }
                                     }
                                 } else {
@@ -2304,6 +2417,18 @@ private fun formatMinerCountdown(ms: Long): String {
         minutes > 0 -> "${minutes}m ${seconds}s"
         else -> "${seconds}s"
     }
+}
+
+/**
+ * Format countdown dengan detik: HH:MM:SS
+ */
+private fun formatMinerCountdownHHMMSS(ms: Long): String {
+    if (ms <= 0L) return "00:00:00"
+    val totalSeconds = ms / 1000
+    val hours = totalSeconds / 3600
+    val minutes = (totalSeconds % 3600) / 60
+    val seconds = totalSeconds % 60
+    return String.format("%02d:%02d:%02d", hours, minutes, seconds)
 }
 
 @Composable
