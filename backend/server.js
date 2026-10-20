@@ -379,6 +379,10 @@ app.post('/api/v1/missions', authenticateToken, async (req, res) => {
 // 10. GET Single User
 app.get('/api/v1/users/:id', authenticateToken, async (req, res) => {
     try {
+        // ✅ SECURITY FIX: Validasi kepemilikan (kecuali admin)
+        if (req.params.id !== req.user.uid) {
+            return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+        }
         const doc = await db.collection('users').doc(req.params.id).get();
         if (!doc.exists) {
             return res.status(404).json({ success: false, message: "User tidak ditemukan." });
@@ -393,6 +397,10 @@ app.get('/api/v1/users/:id', authenticateToken, async (req, res) => {
 // PUT User
 app.put('/api/v1/users/:id', authenticateToken, async (req, res) => {
     try {
+        // ✅ SECURITY FIX: Validasi kepemilikan
+        if (req.params.id !== req.user.uid) {
+            return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+        }
         const docRef = db.collection('users').doc(req.params.id);
         const doc = await docRef.get();
         if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan.' });
@@ -405,6 +413,10 @@ app.put('/api/v1/users/:id', authenticateToken, async (req, res) => {
 // DELETE User
 app.delete('/api/v1/users/:id', authenticateToken, async (req, res) => {
     try {
+        // ✅ SECURITY FIX: Validasi kepemilikan
+        if (req.params.id !== req.user.uid) {
+            return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+        }
         const docRef = db.collection('users').doc(req.params.id);
         const doc = await docRef.get();
         if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan.' });
@@ -616,6 +628,10 @@ app.post('/api/v1/steps/sync', authenticateToken, async (req, res) => {
 });
 
 app.get('/api/v1/steps/today/:userId', authenticateToken, async (req, res) => {
+    // ✅ SECURITY FIX: Validasi kepemilikan
+    if (req.params.userId !== req.user.uid) {
+        return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+    }
     try {
         const { userId } = req.params;
         const today = new Date().toISOString().split('T')[0];
@@ -629,6 +645,10 @@ app.get('/api/v1/steps/today/:userId', authenticateToken, async (req, res) => {
 });
 
 app.get('/api/v1/steps/history/:userId', authenticateToken, async (req, res) => {
+    // ✅ SECURITY FIX: Validasi kepemilikan
+    if (req.params.userId !== req.user.uid) {
+        return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+    }
     try {
         const { userId } = req.params;
         const limit = parseInt(req.query.limit) || 30;
@@ -658,6 +678,10 @@ app.get('/api/v1/steps/leaderboard', authenticateToken, async (req, res) => {
 // ============ HISTORY ============
 
 app.get('/api/v1/history/:userId', authenticateToken, async (req, res) => {
+    // ✅ SECURITY FIX: Validasi kepemilikan
+    if (req.params.userId !== req.user.uid) {
+        return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+    }
     try {
         const { userId } = req.params;
         const limit = parseInt(req.query.limit) || 50;
@@ -672,6 +696,10 @@ app.get('/api/v1/history/:userId', authenticateToken, async (req, res) => {
 });
 
 app.get('/api/v1/history/:userId/type/:type', authenticateToken, async (req, res) => {
+    // ✅ SECURITY FIX: Validasi kepemilikan
+    if (req.params.userId !== req.user.uid) {
+        return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+    }
     try {
         const { userId, type } = req.params;
         const limit = parseInt(req.query.limit) || 50;
@@ -703,6 +731,10 @@ app.post('/api/v1/history', authenticateToken, async (req, res) => {
 });
 
 app.get('/api/v1/point-transactions/:userId', authenticateToken, async (req, res) => {
+    // ✅ SECURITY FIX: Validasi kepemilikan
+    if (req.params.userId !== req.user.uid) {
+        return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+    }
     try {
         const { userId } = req.params;
         const limit = parseInt(req.query.limit) || 50;
@@ -747,6 +779,10 @@ app.post('/api/v1/point-transactions', authenticateToken, async (req, res) => {
 // ============ ANALYTICS ============
 
 app.get('/api/v1/analytics/:userId/summary', authenticateToken, async (req, res) => {
+    // ✅ SECURITY FIX: Validasi kepemilikan
+    if (req.params.userId !== req.user.uid) {
+        return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+    }
     try {
         const { userId } = req.params;
         const userDoc = await db.collection('users').doc(userId).get();
@@ -781,6 +817,10 @@ app.get('/api/v1/analytics/:userId/summary', authenticateToken, async (req, res)
 });
 
 app.get('/api/v1/analytics/:userId/earnings', authenticateToken, async (req, res) => {
+    // ✅ SECURITY FIX: Validasi kepemilikan
+    if (req.params.userId !== req.user.uid) {
+        return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+    }
     try {
         const { userId } = req.params;
         const days = parseInt(req.query.days) || 30;
@@ -804,6 +844,10 @@ app.get('/api/v1/analytics/:userId/earnings', authenticateToken, async (req, res
 });
 
 app.get('/api/v1/analytics/:userId/referrals', authenticateToken, async (req, res) => {
+    // ✅ SECURITY FIX: Validasi kepemilikan
+    if (req.params.userId !== req.user.uid) {
+        return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+    }
     try {
         const { userId } = req.params;
         const snapshot = await db.collection('users')
@@ -861,6 +905,10 @@ app.get('/api/v1/analytics/global', authenticateToken, async (req, res) => {
 // ============ NOTIFICATIONS ============
 
 app.get('/api/v1/notifications/:userId', verifyFirebaseToken, async (req, res) => {
+    // ✅ SECURITY FIX: Validasi kepemilikan
+    if (req.params.userId !== req.firebaseUser.uid) {
+        return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+    }
     try {
         const userId = req.firebaseUser.uid;  // ← UID dari token, bukan URL
         const limit = parseInt(req.query.limit) || 50;
@@ -875,6 +923,10 @@ app.get('/api/v1/notifications/:userId', verifyFirebaseToken, async (req, res) =
 });
 
 app.get('/api/v1/notifications/:userId/unread', verifyFirebaseToken, async (req, res) => {
+    // ✅ SECURITY FIX: Validasi kepemilikan
+    if (req.params.userId !== req.firebaseUser.uid) {
+        return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+    }
     try {
         const userId = req.firebaseUser.uid;  // ← UID dari token
         const snapshot = await db.collection('notifications')
@@ -915,6 +967,10 @@ app.put('/api/v1/notifications/:id/read', verifyFirebaseToken, async (req, res) 
 });
 
 app.put('/api/v1/notifications/:userId/read-all', verifyFirebaseToken, async (req, res) => {
+    // ✅ SECURITY FIX: Validasi kepemilikan
+    if (req.params.userId !== req.firebaseUser.uid) {
+        return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+    }
     try {
         const userId = req.firebaseUser.uid;  // ← UID dari token
         const snapshot = await db.collection('notifications')
@@ -1006,6 +1062,10 @@ app.post('/api/v1/games/quiz/submit', authenticateToken, async (req, res) => {
 });
 
 app.get('/api/v1/games/history/:userId', authenticateToken, async (req, res) => {
+    // ✅ SECURITY FIX: Validasi kepemilikan
+    if (req.params.userId !== req.user.uid) {
+        return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+    }
     try {
         const { userId } = req.params;
         const limit = parseInt(req.query.limit) || 30;
