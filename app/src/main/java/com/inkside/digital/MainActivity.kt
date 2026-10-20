@@ -120,6 +120,8 @@ import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.compose.ui.unit.dp
+import com.scottyab.rootbeer.RootBeer
+import android.app.AlertDialog
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -195,6 +197,28 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    
+    private fun checkRootStatus() {
+        try {
+            val rootBeer = RootBeer(this)
+            if (rootBeer.isRooted) {
+                AlertDialog.Builder(this)
+                    .setTitle("🚫 Aplikasi Tidak Dapat Berjalan")
+                    .setMessage("Aplikasi ini mendeteksi bahwa perangkat Anda telah di-root. " +
+                            "Demi keamanan akun dan data Anda, aplikasi tidak dapat dijalankan di perangkat root. " +
+                            "Silakan gunakan perangkat tanpa root.")
+                    .setPositiveButton("Keluar") { _, _ ->
+                        finishAffinity()
+                        android.os.Process.killProcess(android.os.Process.myPid())
+                    }
+                    .setCancelable(false)
+                    .show()
+            }
+        } catch (e: Exception) {
+            // Abaikan jika error (misal library tidak tersedia)
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         com.inkside.digital.data.ads.AdManager.cancelAll()  // ✅ FIX memory leak

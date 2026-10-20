@@ -1,6 +1,11 @@
 package com.inkside.digital.data.network
 
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
+
+import android.content.Context
 import com.inkside.digital.data.network.model.ApiHealthResponse
 import com.inkside.digital.data.network.model.ApiUserSyncRequest
 import com.inkside.digital.data.network.model.ApiUserSyncResponse
@@ -40,6 +45,20 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 object ApiClient {
+
+    private fun getEncryptedPrefs(context: Context): SharedPreferences {
+        val masterKey = MasterKey.Builder(context)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+        return EncryptedSharedPreferences.create(
+            context,
+            PREFS_NAME,
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+    }
+
     // ============ AdGuard Detection Flag ============
     // Set true bila UnknownHostException / SocketTimeoutException (DNS block)
     // Global observable — trigger AdBlockedDialog di MainActivity
@@ -170,19 +189,19 @@ object ApiClient {
     var apiService: RoyaltreeApiService = retrofit.create(RoyaltreeApiService::class.java)
 
     fun init(context: Context) {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val prefs = getEncryptedPrefs(context)
         currentBaseUrl = prefs.getString(KEY_BASE_URL, DEFAULT_BASE_URL) ?: DEFAULT_BASE_URL
         currentApiKey = prefs.getString(KEY_API_KEY, DEFAULT_API_KEY) ?: DEFAULT_API_KEY
         updateBaseUrl(context, currentBaseUrl, currentApiKey)
     }
 
     fun getStoredBaseUrl(context: Context): String {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val prefs = getEncryptedPrefs(context)
         return prefs.getString(KEY_BASE_URL, DEFAULT_BASE_URL) ?: DEFAULT_BASE_URL
     }
 
     fun getStoredApiKey(context: Context): String {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val prefs = getEncryptedPrefs(context)
         return prefs.getString(KEY_API_KEY, DEFAULT_API_KEY) ?: DEFAULT_API_KEY
     }
 
@@ -194,7 +213,7 @@ object ApiClient {
         currentBaseUrl = formattedUrl
         currentApiKey = newApiKey.trim()
 
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val prefs = getEncryptedPrefs(context)
         prefs.edit()
             .putString(KEY_BASE_URL, currentBaseUrl)
             .putString(KEY_API_KEY, currentApiKey)
