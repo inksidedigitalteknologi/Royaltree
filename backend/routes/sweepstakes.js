@@ -368,8 +368,10 @@ router.get('/winners/:id', verifyFirebaseToken, async (req, res) => {
     const winnersWithNames = await Promise.all(
       winners.map(async (w) => {
         const userDoc = await db.collection('users').doc(w.uid).get();
+        // ✅ SECURITY FIX: hapus uid dari response (cegah data exposure)
         return {
-          ...w,
+          ticketNumber: w.ticketNumber || null,
+          prize: w.prize || null,
           name: userDoc.exists ? (userDoc.data().name || 'Anonim') : 'Anonim'
         };
       })

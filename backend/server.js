@@ -185,16 +185,27 @@ app.put('/api/v1/config', authenticateToken, checkAdmin, async (req, res) => {
 app.post('/api/v1/users/sync', authenticateToken, async (req, res) => {
     try {
         const incomingUser = req.body;
-        if (!incomingUser || !incomingUser.id) {
-            return res.status(400).json({ success: false, message: "Data pengguna tidak valid (id wajib disertakan)." });
+        // ✅ SECURITY FIX: userId dari token, bukan dari body (cegah IDOR)
+        const userId = req.user.uid || (req.firebaseUser && req.firebaseUser.uid);
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Token tidak valid." });
         }
 
+        // Hapus field sensitif dari body
+        const safeData = { ...incomingUser };
+        delete safeData.id;
+        delete safeData.isAdmin;
+        delete safeData.role;
+        delete safeData.banned;
+        delete safeData.bannedReason;
+
         const userData = {
-            ...incomingUser,
+            ...safeData,
+            id: userId,  // ← ID dari token
             updatedAt: new Date().toISOString()
         };
 
-        await db.collection('users').doc(incomingUser.id).set(userData, { merge: true });
+        await db.collection('users').doc(userId).set(userData, { merge: true });
 
         res.json({
             success: true,
