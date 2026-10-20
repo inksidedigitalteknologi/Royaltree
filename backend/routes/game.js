@@ -396,6 +396,28 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
             });
         }
 
+        // ✅ SECURITY FIX: Verifikasi SSV AdMob (anti-bypass)
+        const isTestMode = process.env.ALLOW_MOCK_SSV === 'true';
+        if (!isTestMode) {
+            const ssvRef = db.collection('admob_ssv_txns').doc(transactionId);
+            let ssvDoc = await ssvRef.get();
+            let ssvRetries = 0;
+            while (!ssvDoc.exists && ssvRetries < 3) {
+                await new Promise(r => setTimeout(r, 2000));
+                ssvDoc = await ssvRef.get();
+                ssvRetries++;
+            }
+            if (!ssvDoc.exists) {
+                return res.status(400).json({
+                    success: false,
+                    code: 'AD_NOT_VERIFIED',
+                    message: 'Iklan belum terverifikasi. Tonton iklan sampai selesai.'
+                });
+            }
+        } else {
+            AppLogger.d('[SSV] ⚠️ TEST MODE — skipping SSV verification for mining claim:', transactionId);
+        }
+
         // Cek anti-replay
         const txRef = db.collection('mining_claim_transactions').doc(transactionId);
         const txDoc = await txRef.get();

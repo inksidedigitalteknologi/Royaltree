@@ -10,6 +10,7 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 const { checkFraud } = require('../middleware/antiFraud');
+const { sensitiveLimiter } = require('../middleware/rateLimit');
 const { createNotification } = require('../utils/notifications');
 
 // Validation
@@ -39,7 +40,7 @@ function todayStr() {
 // ============================================================
 // GET /search-user — Cari user
 // ============================================================
-router.get('/search-user', verifyFirebaseToken, async (req, res) => {
+router.get('/search-user', sensitiveLimiter, verifyFirebaseToken, async (req, res) => {
     try {
         const { uid } = req.firebaseUser;
         const query = (req.query.q || '').trim();
