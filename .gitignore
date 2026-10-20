@@ -60,3 +60,6 @@ backend/service-account.json
 backend/backup-miners-*.json
 backend/logs/
 *.log
+
+# Backup files (jangan commit)
+*.bak*
