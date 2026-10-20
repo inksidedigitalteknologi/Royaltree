@@ -57,7 +57,7 @@ router.get('/messages', verifyFirebaseToken, async (req, res) => {
         });
     } catch (error) {
         console.error('[CHAT] Get messages error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -157,7 +157,7 @@ router.post('/send', verifyFirebaseToken, validate(chatSchema), async (req, res)
         });
     } catch (error) {
         console.error('[CHAT] Send error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 

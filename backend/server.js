@@ -38,7 +38,18 @@ const anomaly = require('./services/anomaly');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+    origin: [
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'https://royaltree.id',
+        'https://www.royaltree.id',
+        // Tambahkan domain lain jika ada
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-token']
+}));
 app.use(express.json());
 
 // Track Firestore reads/writes per endpoint (flush ke Firestore tiap 1 menit)
@@ -151,7 +162,7 @@ app.get('/api/v1/config', async (req, res) => {
         const data = doc.exists ? { ...defaultConfig, ...doc.data() } : defaultConfig;
         res.json({ success: true, data });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -165,7 +176,7 @@ app.put('/api/v1/config', authenticateToken, async (req, res) => {
             data: doc.data()
         });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -191,7 +202,7 @@ app.post('/api/v1/users/sync', authenticateToken, async (req, res) => {
             user: userData
         });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -207,7 +218,7 @@ app.get('/api/v1/withdrawals', authenticateToken, async (req, res) => {
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.json({ success: true, total: result.length, data: result });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -227,7 +238,7 @@ app.post('/api/v1/withdrawals', authenticateToken, async (req, res) => {
             data: newWd
         });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
     // ==================== END DAILY CHECK-IN ====================
@@ -255,7 +266,7 @@ app.put('/api/v1/withdrawals/:id/status', authenticateToken, async (req, res) =>
             data: { id: updated.id, ...updated.data() }
         });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -266,7 +277,7 @@ app.get('/api/v1/campaigns', async (req, res) => {
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.json({ success: true, total: result.length, data: result });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -283,7 +294,7 @@ app.post('/api/v1/campaigns', authenticateToken, async (req, res) => {
             data: newCamp
         });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -294,7 +305,7 @@ app.get('/api/v1/missions', async (req, res) => {
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.json({ success: true, total: result.length, data: result });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -343,7 +354,7 @@ app.get('/api/v1/users', authenticateToken, async (req, res) => {
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.json({ success: true, total: result.length, data: result });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -361,7 +372,7 @@ app.post('/api/v1/missions', authenticateToken, async (req, res) => {
             data: newMission
         });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -374,7 +385,7 @@ app.get('/api/v1/users/:id', authenticateToken, async (req, res) => {
         }
         res.json({ success: true, data: { id: doc.id, ...doc.data() } });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -388,7 +399,7 @@ app.put('/api/v1/users/:id', authenticateToken, async (req, res) => {
         await docRef.update({ ...req.body, updatedAt: new Date().toISOString() });
         const updated = await docRef.get();
         res.json({ success: true, message: 'User diupdate.', data: { id: updated.id, ...updated.data() } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // DELETE User
@@ -399,7 +410,7 @@ app.delete('/api/v1/users/:id', authenticateToken, async (req, res) => {
         if (!doc.exists) return res.status(404).json({ success: false, message: 'User tidak ditemukan.' });
         await docRef.delete();
         res.json({ success: true, message: 'User dihapus.' });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // PUT Campaign
@@ -411,7 +422,7 @@ app.put('/api/v1/campaigns/:id', authenticateToken, async (req, res) => {
         await docRef.update(req.body);
         const updated = await docRef.get();
         res.json({ success: true, message: 'Kampanye diupdate.', data: { id: updated.id, ...updated.data() } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // DELETE Campaign
@@ -422,7 +433,7 @@ app.delete('/api/v1/campaigns/:id', authenticateToken, async (req, res) => {
         if (!doc.exists) return res.status(404).json({ success: false, message: 'Kampanye tidak ditemukan.' });
         await docRef.delete();
         res.json({ success: true, message: 'Kampanye dihapus.' });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // PUT Mission
@@ -434,7 +445,7 @@ app.put('/api/v1/missions/:id', authenticateToken, async (req, res) => {
         await docRef.update(req.body);
         const updated = await docRef.get();
         res.json({ success: true, message: 'Misi diupdate.', data: { id: updated.id, ...updated.data() } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // DELETE Mission
@@ -445,7 +456,7 @@ app.delete('/api/v1/missions/:id', authenticateToken, async (req, res) => {
         if (!doc.exists) return res.status(404).json({ success: false, message: 'Misi tidak ditemukan.' });
         await docRef.delete();
         res.json({ success: true, message: 'Misi dihapus.' });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // ============================================================
@@ -484,7 +495,7 @@ app.post('/api/v1/missions/:id/complete', authenticateToken, async (req, res) =>
         });
     } catch (error) {
         logger.error('Complete mission error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -547,7 +558,7 @@ app.post('/api/v1/missions/:id/claim', authenticateToken, async (req, res) => {
         });
     } catch (error) {
         logger.error('Claim mission error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -559,7 +570,7 @@ app.delete('/api/v1/withdrawals/:id', authenticateToken, async (req, res) => {
         if (!doc.exists) return res.status(404).json({ success: false, message: 'Penarikan tidak ditemukan.' });
         await docRef.delete();
         res.json({ success: true, message: 'Penarikan dihapus.' });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // PUT Withdrawal (Update)
@@ -571,7 +582,7 @@ app.put('/api/v1/withdrawals/:id', authenticateToken, async (req, res) => {
         await docRef.update(req.body);
         const updated = await docRef.get();
         res.json({ success: true, message: 'Penarikan diupdate.', data: { id: updated.id, ...updated.data() } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // ============ STEP COUNTER ============
@@ -601,7 +612,7 @@ app.post('/api/v1/steps/sync', authenticateToken, async (req, res) => {
         }
         const updated = await docRef.get();
         res.json({ success: true, message: 'Langkah berhasil disimpan.', data: { id: updated.id, ...updated.data() } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.get('/api/v1/steps/today/:userId', authenticateToken, async (req, res) => {
@@ -614,7 +625,7 @@ app.get('/api/v1/steps/today/:userId', authenticateToken, async (req, res) => {
             return res.json({ success: true, data: { userId, date: today, steps: 0 } });
         }
         res.json({ success: true, data: { id: doc.id, ...doc.data() } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.get('/api/v1/steps/history/:userId', authenticateToken, async (req, res) => {
@@ -628,7 +639,7 @@ app.get('/api/v1/steps/history/:userId', authenticateToken, async (req, res) => 
             .get();
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.json({ success: true, total: result.length, data: result });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.get('/api/v1/steps/leaderboard', authenticateToken, async (req, res) => {
@@ -641,7 +652,7 @@ app.get('/api/v1/steps/leaderboard', authenticateToken, async (req, res) => {
             .get();
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.json({ success: true, total: result.length, data: result });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // ============ HISTORY ============
@@ -657,7 +668,7 @@ app.get('/api/v1/history/:userId', authenticateToken, async (req, res) => {
             .get();
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.json({ success: true, total: result.length, data: result });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.get('/api/v1/history/:userId/type/:type', authenticateToken, async (req, res) => {
@@ -672,7 +683,7 @@ app.get('/api/v1/history/:userId/type/:type', authenticateToken, async (req, res
             .get();
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.json({ success: true, type, total: result.length, data: result });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.post('/api/v1/history', authenticateToken, async (req, res) => {
@@ -688,7 +699,7 @@ app.post('/api/v1/history', authenticateToken, async (req, res) => {
         };
         const docRef = await db.collection('transactions').add(newTx);
         res.status(201).json({ success: true, message: 'Transaksi ditambahkan.', data: { id: docRef.id, ...newTx } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.get('/api/v1/point-transactions/:userId', authenticateToken, async (req, res) => {
@@ -702,7 +713,7 @@ app.get('/api/v1/point-transactions/:userId', authenticateToken, async (req, res
             .get();
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.json({ success: true, total: result.length, data: result });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.post('/api/v1/point-transactions', authenticateToken, async (req, res) => {
@@ -730,7 +741,7 @@ app.post('/api/v1/point-transactions', authenticateToken, async (req, res) => {
             await userRef.update({ points: currentPoints + parseInt(points), updatedAt: new Date().toISOString() });
         }
         res.status(201).json({ success: true, message: 'Poin ditambahkan.', data: { id: docRef.id, ...newPt } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // ============ ANALYTICS ============
@@ -766,7 +777,7 @@ app.get('/api/v1/analytics/:userId/summary', authenticateToken, async (req, res)
                 netEarnings: totalCommission - totalWithdrawal
             }
         });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.get('/api/v1/analytics/:userId/earnings', authenticateToken, async (req, res) => {
@@ -789,7 +800,7 @@ app.get('/api/v1/analytics/:userId/earnings', authenticateToken, async (req, res
         });
         const chartData = Object.entries(earnings).map(([date, amount]) => ({ date, amount })).sort((a, b) => a.date.localeCompare(b.date));
         res.json({ success: true, days, total: chartData.length, data: chartData });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.get('/api/v1/analytics/:userId/referrals', authenticateToken, async (req, res) => {
@@ -808,7 +819,7 @@ app.get('/api/v1/analytics/:userId/referrals', authenticateToken, async (req, re
                 referrals: referrals.map(r => ({ id: r.id, name: r.name, tier: r.tier, points: r.points, joinedAt: r.createdAt }))
             }
         });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.get('/api/v1/analytics/global', authenticateToken, async (req, res) => {
@@ -844,7 +855,7 @@ app.get('/api/v1/analytics/global', authenticateToken, async (req, res) => {
                 totalMissions: misSnap.size
             }
         });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // ============ NOTIFICATIONS ============
@@ -860,7 +871,7 @@ app.get('/api/v1/notifications/:userId', verifyFirebaseToken, async (req, res) =
             .get();
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.json({ success: true, total: result.length, data: result });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.get('/api/v1/notifications/:userId/unread', verifyFirebaseToken, async (req, res) => {
@@ -871,7 +882,7 @@ app.get('/api/v1/notifications/:userId/unread', verifyFirebaseToken, async (req,
             .where('read', '==', false)
             .get();
         res.json({ success: true, unread: snapshot.size });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.post('/api/v1/notifications', verifyFirebaseToken, async (req, res) => {
@@ -889,7 +900,7 @@ app.post('/api/v1/notifications', verifyFirebaseToken, async (req, res) => {
         };
         const docRef = await db.collection('notifications').add(newNotif);
         res.status(201).json({ success: true, message: 'Notifikasi dikirim.', data: { id: docRef.id, ...newNotif } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.put('/api/v1/notifications/:id/read', verifyFirebaseToken, async (req, res) => {
@@ -900,7 +911,7 @@ app.put('/api/v1/notifications/:id/read', verifyFirebaseToken, async (req, res) 
         await docRef.update({ read: true, readAt: new Date().toISOString() });
         const updated = await docRef.get();
         res.json({ success: true, message: 'Notifikasi ditandai sudah dibaca.', data: { id: updated.id, ...updated.data() } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.put('/api/v1/notifications/:userId/read-all', verifyFirebaseToken, async (req, res) => {
@@ -916,7 +927,7 @@ app.put('/api/v1/notifications/:userId/read-all', verifyFirebaseToken, async (re
         });
         await batch.commit();
         res.json({ success: true, message: `${snapshot.size} notifikasi ditandai sudah dibaca.` });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.delete('/api/v1/notifications/:id', verifyFirebaseToken, async (req, res) => {
@@ -926,7 +937,7 @@ app.delete('/api/v1/notifications/:id', verifyFirebaseToken, async (req, res) =>
         if (!doc.exists) return res.status(404).json({ success: false, message: 'Notifikasi tidak ditemukan.' });
         await docRef.delete();
         res.json({ success: true, message: 'Notifikasi dihapus.' });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // ============ GAME ROOM ============
@@ -969,7 +980,7 @@ app.post('/api/v1/games/spin', authenticateToken, async (req, res) => {
             });
         }
         res.json({ success: true, message: `Selamat! Anda mendapat ${selected.label}`, data: { id: docRef.id, ...gameLog } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.post('/api/v1/games/quiz/submit', authenticateToken, async (req, res) => {
@@ -991,7 +1002,7 @@ app.post('/api/v1/games/quiz/submit', authenticateToken, async (req, res) => {
             }
         }
         res.json({ success: true, isCorrect, pointsWon, message: isCorrect ? `Benar! +${pointsWon} poin` : 'Salah, coba lagi!', data: { id: docRef.id, ...gameLog } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.get('/api/v1/games/history/:userId', authenticateToken, async (req, res) => {
@@ -1005,7 +1016,7 @@ app.get('/api/v1/games/history/:userId', authenticateToken, async (req, res) => 
             .get();
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.json({ success: true, total: result.length, data: result });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.get('/api/v1/games/leaderboard', authenticateToken, async (req, res) => {
@@ -1013,7 +1024,7 @@ app.get('/api/v1/games/leaderboard', authenticateToken, async (req, res) => {
         const snapshot = await db.collection('game_logs').orderBy('pointsWon', 'desc').limit(20).get();
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.json({ success: true, total: result.length, data: result });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // ============ PROFILE SECURITY ============
@@ -1029,7 +1040,7 @@ app.get('/api/v1/profile/:userId', authenticateToken, async (req, res) => {
         const u = doc.data();
         delete u.pin; delete u.password;
         res.json({ success: true, data: { id: doc.id, ...u } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.put('/api/v1/profile/:userId/update', authenticateToken, async (req, res) => {
@@ -1048,7 +1059,7 @@ app.put('/api/v1/profile/:userId/update', authenticateToken, async (req, res) =>
         await docRef.update(updateData);
         const updated = await docRef.get();
         res.json({ success: true, message: 'Profil diupdate.', data: { id: updated.id, ...updated.data() } });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.put('/api/v1/profile/:userId/change-pin', authenticateToken, async (req, res) => {
@@ -1072,7 +1083,7 @@ app.put('/api/v1/profile/:userId/change-pin', authenticateToken, async (req, res
             timestamp: Date.now(), createdAt: new Date().toISOString()
         });
         res.json({ success: true, message: 'PIN berhasil diubah.' });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.post('/api/v1/profile/:userId/verify-pin', authenticateToken, async (req, res) => {
@@ -1091,7 +1102,7 @@ app.post('/api/v1/profile/:userId/verify-pin', authenticateToken, async (req, re
             timestamp: Date.now(), createdAt: new Date().toISOString()
         });
         res.json({ success: true, isValid });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 app.get('/api/v1/profile/:userId/security-log', authenticateToken, async (req, res) => {
@@ -1108,7 +1119,7 @@ app.get('/api/v1/profile/:userId/security-log', authenticateToken, async (req, r
             .get();
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.json({ success: true, total: result.length, data: result });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // ============ ADMIN AUTHENTICATION ============
@@ -1135,7 +1146,7 @@ app.post('/api/v1/admin/login', async (req, res) => {
         const expiresAt = Date.now() + (24 * 60 * 60 * 1000); // 24 jam
         activeSessions.set(token, { createdAt: Date.now(), expiresAt });
         res.json({ success: true, message: 'Login berhasil.', token, expiresAt });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." }); }
 });
 
 // POST /admin/logout - Logout admin

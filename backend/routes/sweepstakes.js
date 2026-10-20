@@ -445,7 +445,7 @@ router.post('/draw', verifyFirebaseToken, async (req, res) => {
     res.json({ success: true, data: result });
   } catch (error) {
     console.error('[SWEEPSTAKES] /draw error:', error);
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
   }
 });
 

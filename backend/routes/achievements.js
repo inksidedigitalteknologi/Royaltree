@@ -22,7 +22,7 @@ router.get('/', verifyFirebaseToken, async (req, res) => {
         return res.json({ success: true, data: catalog });
     } catch (e) {
         console.error('[ACHIEVEMENTS] list error:', e.message);
-        return res.status(500).json({ success: false, message: e.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -70,7 +70,7 @@ router.get('/my', verifyFirebaseToken, async (req, res) => {
         return res.json({ success: true, data: result, stats });
     } catch (e) {
         console.error('[ACHIEVEMENTS] my error:', e.message);
-        return res.status(500).json({ success: false, message: e.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 

@@ -290,7 +290,7 @@ router.get('/tiers', verifyFirebaseToken, async (req, res) => {
         }));
         return res.json({ success: true, data: tiers });
     } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -308,7 +308,7 @@ router.get('/tiers-public', async (req, res) => {
         }));
         return res.json({ success: true, data: tiers });
     } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 

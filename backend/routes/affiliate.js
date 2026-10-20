@@ -5,9 +5,24 @@ const express = require('express');
 const router = express.Router();
 const admin = require('firebase-admin');
 const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
+const { validate } = require('../middleware/validate');
+const Joi = require('joi');
 const { checkAchievements } = require('../services/achievements');
 
 const db = admin.firestore();
+
+// Schema validasi untuk withdraw
+const withdrawSchema = Joi.object({
+    amount: Joi.number().positive().min(10).required(),
+    method: Joi.string().valid('bank', 'ewallet', 'crypto').required(),
+    destination: Joi.string().min(5).max(200).required()
+});
+
+// Schema validasi untuk FCM register
+const fcmSchema = Joi.object({
+    token: Joi.string().min(10).max(500).required()
+});
+
 
 const MIN_WITHDRAW_USD = 10.00;
 
@@ -38,7 +53,7 @@ router.get('/balance', verifyFirebaseToken, async (req, res) => {
         });
     } catch (error) {
         console.error('Get balance error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -61,7 +76,7 @@ router.get('/transactions', verifyFirebaseToken, async (req, res) => {
         return res.json({ success: true, total: txs.length, data: txs });
     } catch (error) {
         console.error('Get transactions error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -70,7 +85,7 @@ router.get('/transactions', verifyFirebaseToken, async (req, res) => {
 // Request withdraw
 // Body: { amount, method, destination }
 // ============================================================
-router.post('/withdraw', verifyFirebaseToken, async (req, res) => {
+router.post('/withdraw', verifyFirebaseToken, validate(withdrawSchema), async (req, res) => {
     try {
         const { uid } = req.firebaseUser;
         const { amount, method, destination } = req.body;
@@ -142,7 +157,7 @@ router.post('/withdraw', verifyFirebaseToken, async (req, res) => {
 
     } catch (error) {
         console.error('Withdraw error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -165,7 +180,7 @@ router.get('/withdrawals', verifyFirebaseToken, async (req, res) => {
         return res.json({ success: true, total: wds.length, data: wds });
     } catch (error) {
         console.error('Get withdrawals error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -174,7 +189,7 @@ router.get('/withdrawals', verifyFirebaseToken, async (req, res) => {
 // Simpan FCM token user
 // Body: { fcmToken, deviceId }
 // ============================================================
-router.post('/register-fcm', verifyFirebaseToken, async (req, res) => {
+router.post('/register-fcm', verifyFirebaseToken, validate(fcmSchema), async (req, res) => {
     try {
         const { uid } = req.firebaseUser;
         const { fcmToken, deviceId } = req.body;
@@ -195,7 +210,7 @@ router.post('/register-fcm', verifyFirebaseToken, async (req, res) => {
         return res.json({ success: true, message: 'FCM token tersimpan.' });
     } catch (error) {
         console.error('Register FCM error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 

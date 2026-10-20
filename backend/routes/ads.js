@@ -64,7 +64,7 @@ router.get('/config', verifyFirebaseToken, async (req, res) => {
         };
         return res.json({ success: true, data: config });
     } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -101,7 +101,7 @@ router.get('/status', verifyFirebaseToken, async (req, res) => {
             }
         });
     } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -221,7 +221,7 @@ router.post('/reward', verifyFirebaseToken, validate(adRewardSchema), checkFraud
 
     } catch (error) {
         console.error('Ad reward error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 

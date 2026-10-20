@@ -254,7 +254,7 @@ router.post('/marketing-optin', verifyFirebaseToken, async (req, res) => {
         res.json({ success: true, marketingOptIn: optIn });
     } catch (err) {
         console.error('Error /auth/marketing-optin:', err);
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 

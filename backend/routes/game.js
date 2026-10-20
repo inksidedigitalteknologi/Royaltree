@@ -352,7 +352,7 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
         });
     } catch (error) {
         console.error('Game state error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -530,7 +530,7 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
         });
     } catch (error) {
         console.error('Claim mining with ad error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -590,7 +590,7 @@ router.post('/mining/activate', verifyFirebaseToken, checkFraud, async (req, res
         });
     } catch (error) {
         console.error('Activate miner error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -732,7 +732,7 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
         });
     } catch (error) {
         console.error('Claim mining error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -853,7 +853,7 @@ router.post('/mining/buy', verifyFirebaseToken, validate(purchaseMinerSchema), c
         });
     } catch (error) {
         console.error('Buy miner error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -877,7 +877,7 @@ router.get('/config/exchange-rate', async (req, res) => {
         });
     } catch (error) {
         console.error('Exchange rate config error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -916,7 +916,7 @@ router.post('/config/exchange-rate', verifyFirebaseToken, async (req, res) => {
         return res.json({ success: true, message: 'Exchange rate updated' });
     } catch (error) {
         console.error('Update exchange rate error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -952,7 +952,7 @@ router.get('/mining/rate-info', verifyFirebaseToken, async (req, res) => {
         });
     } catch (error) {
         console.error('Rate info error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -998,7 +998,7 @@ router.post('/mining/place', verifyFirebaseToken, validate(placeMinerSchema), as
         return res.json({ success: true, message: 'Miner dipasang.' });
     } catch (error) {
         console.error('Place miner error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -1106,7 +1106,7 @@ router.post('/mining/unlock-slot', verifyFirebaseToken, checkFraud, async (req, 
         });
     } catch (error) {
         console.error('Unlock slot error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -1136,7 +1136,7 @@ router.post('/mining/unplace', verifyFirebaseToken, async (req, res) => {
         return res.json({ success: true, message: 'Miner dilepas.' });
     } catch (error) {
         console.error('Unplace miner error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -1187,7 +1187,7 @@ router.get('/notifications/:userId', verifyFirebaseToken, async (req, res) => {
         console.error('[GAME-NOTIFICATIONS] Error:', error);
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "Terjadi kesalahan server. Coba lagi nanti."
         });
     }
 });
@@ -1244,7 +1244,7 @@ router.get('/history/:userId', verifyFirebaseToken, async (req, res) => {
         console.error('[GAME-HISTORY] Error:', error);
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "Terjadi kesalahan server. Coba lagi nanti."
         });
     }
 });
@@ -1420,7 +1420,7 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
         });
     } catch (error) {
         console.error('Mini game finish error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -1448,7 +1448,7 @@ router.get('/leaderboard', verifyFirebaseToken, async (req, res) => {
         return res.json({ success: true, data: leaderboard });
     } catch (error) {
         console.error('Leaderboard error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -1485,7 +1485,7 @@ router.get('/stats', verifyFirebaseToken, async (req, res) => {
         });
     } catch (error) {
         console.error('Stats error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -1544,7 +1544,7 @@ router.get('/miners/catalog', verifyFirebaseToken, async (req, res) => {
         });
     } catch (error) {
         console.error('Miner catalog error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -1621,7 +1621,7 @@ router.post('/miners/claim-token', verifyFirebaseToken, checkFraud, async (req, 
         });
     } catch (error) {
         console.error('Claim token error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -1721,7 +1721,7 @@ router.post('/miners/unlock', verifyFirebaseToken, checkFraud, async (req, res) 
         });
     } catch (error) {
         console.error('Unlock miner error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 

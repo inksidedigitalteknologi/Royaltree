@@ -72,7 +72,7 @@ router.get('/config', verifyFirebaseToken, async (req, res) => {
         const config = await getConfig();
         return res.json({ success: true, data: config });
     } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -142,7 +142,7 @@ router.get('/status', verifyFirebaseToken, async (req, res) => {
         });
     } catch (error) {
         console.error('Daily status error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -236,7 +236,7 @@ router.post('/check-in', verifyFirebaseToken, validate(checkInSchema), checkFrau
         });
     } catch (error) {
         console.error('Check-in error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -387,7 +387,7 @@ router.post('/recover-day', verifyFirebaseToken, checkFraud, async (req, res) =>
 
     } catch (error) {
         console.error('Recover day error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
@@ -557,7 +557,7 @@ router.post('/check-in-with-ad', verifyFirebaseToken, checkFraud, async (req, re
 
     } catch (error) {
         console.error('Check-in with ad error:', error);
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server. Coba lagi nanti." });
     }
 });
 
