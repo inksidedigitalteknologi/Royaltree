@@ -1,64 +1,72 @@
 package com.inkside.digital.data.network.model
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class ReferralTier(
-    @SerializedName("id") val id: String,
-    @SerializedName("name") val name: String,
-    @SerializedName("min") val min: Int,
-    @SerializedName("max") val max: Int,
-    @SerializedName("icon") val icon: String,
-    @SerializedName("color") val color: String,
-    @SerializedName("reward") val reward: Int,
-    @SerializedName("perks") val perks: List<String> = emptyList()
+    @Json(name = "id") val id: String,
+    @Json(name = "name") val name: String,
+    @Json(name = "min") val min: Int,
+    @Json(name = "max") val max: Int,
+    @Json(name = "icon") val icon: String,
+    @Json(name = "color") val color: String,
+    @Json(name = "reward") val reward: Int,
+    @Json(name = "perks") val perks: List<String> = emptyList()
 )
 
+@JsonClass(generateAdapter = true)
 data class ReferralTierProgress(
-    @SerializedName("current") val current: ReferralTier,
-    @SerializedName("next") val next: ReferralTier? = null,
-    @SerializedName("progress") val progress: Int = 0,
-    @SerializedName("remainingToNext") val remainingToNext: Int = 0
+    @Json(name = "current") val current: ReferralTier,
+    @Json(name = "next") val next: ReferralTier? = null,
+    @Json(name = "progress") val progress: Int = 0,
+    @Json(name = "remainingToNext") val remainingToNext: Int = 0
 )
 
+@JsonClass(generateAdapter = true)
 data class ReferralStats(
-    @SerializedName("referralCode") val referralCode: String,
-    @SerializedName("referralLink") val referralLink: String,
-    @SerializedName("totalInvited") val totalInvited: Int,
-    @SerializedName("activeCount") val activeCount: Int,
-    @SerializedName("pendingCount") val pendingCount: Int,
-    @SerializedName("totalEarned") val totalEarned: Double,
-    @SerializedName("affiliateBalance") val affiliateBalance: Double,
-    @SerializedName("affiliateBalanceAvailable") val affiliateBalanceAvailable: Double,
-    @SerializedName("affiliateBalancePending") val affiliateBalancePending: Double,
-    @SerializedName("tier") val tier: ReferralTierProgress
+    @Json(name = "referralCode") val referralCode: String,
+    @Json(name = "referralLink") val referralLink: String,
+    @Json(name = "totalInvited") val totalInvited: Int,
+    @Json(name = "activeCount") val activeCount: Int,
+    @Json(name = "pendingCount") val pendingCount: Int,
+    @Json(name = "totalEarned") val totalEarned: Double,
+    @Json(name = "affiliateBalance") val affiliateBalance: Double,
+    @Json(name = "affiliateBalanceAvailable") val affiliateBalanceAvailable: Double,
+    @Json(name = "affiliateBalancePending") val affiliateBalancePending: Double,
+    @Json(name = "tier") val tier: ReferralTierProgress
 )
 
+@JsonClass(generateAdapter = true)
 data class ReferralItem(
-    @SerializedName("uid") val uid: String,
-    @SerializedName("username") val username: String,
-    @SerializedName("avatar") val avatar: String? = null,
-    @SerializedName("city") val city: String? = null,
-    @SerializedName("joinedAt") val joinedAt: Long? = null,
-    @SerializedName("status") val status: String,
-    @SerializedName("earnedFromThem") val earnedFromThem: Double = 0.0
+    @Json(name = "uid") val uid: String,
+    @Json(name = "username") val username: String,
+    @Json(name = "avatar") val avatar: String? = null,
+    @Json(name = "city") val city: String? = null,
+    @Json(name = "joinedAt") val joinedAt: Long? = null,
+    @Json(name = "status") val status: String,
+    @Json(name = "earnedFromThem") val earnedFromThem: Double = 0.0
 )
 
+@JsonClass(generateAdapter = true)
 data class ApiReferralStatsResponse(
-    @SerializedName("success") val success: Boolean,
-    @SerializedName("data") val data: ReferralStats? = null,
-    @SerializedName("message") val message: String? = null
+    @Json(name = "success") val success: Boolean,
+    @Json(name = "data") val data: ReferralStats? = null,
+    @Json(name = "message") val message: String? = null
 )
 
+@JsonClass(generateAdapter = true)
 data class ApiReferralListData(
-    @SerializedName("items") val items: List<ReferralItem> = emptyList(),
-    @SerializedName("page") val page: Int = 1,
-    @SerializedName("limit") val limit: Int = 20,
-    @SerializedName("total") val total: Int = 0,
-    @SerializedName("hasMore") val hasMore: Boolean = false
+    @Json(name = "items") val items: List<ReferralItem> = emptyList(),
+    @Json(name = "page") val page: Int = 1,
+    @Json(name = "limit") val limit: Int = 20,
+    @Json(name = "total") val total: Int = 0,
+    @Json(name = "hasMore") val hasMore: Boolean = false
 )
 
+@JsonClass(generateAdapter = true)
 data class ApiReferralListResponse(
-    @SerializedName("success") val success: Boolean,
-    @SerializedName("data") val data: ApiReferralListData? = null,
-    @SerializedName("message") val message: String? = null
+    @Json(name = "success") val success: Boolean,
+    @Json(name = "data") val data: ApiReferralListData? = null,
+    @Json(name = "message") val message: String? = null
 )
