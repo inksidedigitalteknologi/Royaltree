@@ -2,6 +2,8 @@ package com.inkside.digital.data.network
 
 import com.inkside.digital.data.network.model.ApiConfigResponse
 import com.inkside.digital.data.network.model.ApiGenericResponse
+import com.inkside.digital.data.network.model.ApiReferralStatsResponse
+import com.inkside.digital.data.network.model.ApiReferralListResponse
 import com.inkside.digital.data.network.model.ApiHealthResponse
 import com.inkside.digital.data.network.model.ApiUserSyncRequest
 import com.inkside.digital.data.network.model.ApiUserSyncResponse
@@ -297,6 +299,21 @@ interface RoyaltreeApiService {
 
     @POST("achievements/claim/{id}")
     suspend fun claimAchievement(@retrofit2.http.Path("id") id: String): ResponseBody
+
+    // ============================================================
+    // REFERRAL (v1.15)
+    // ============================================================
+    @GET("referral/stats")
+    suspend fun getReferralStats(
+        @Header("Authorization") token: String
+    ): ApiReferralStatsResponse
+
+    @GET("referral/list")
+    suspend fun getReferralList(
+        @Header("Authorization") token: String,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 20
+    ): ApiReferralListResponse
 }
 
 

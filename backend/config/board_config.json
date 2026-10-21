@@ -1,0 +1,732 @@
+{
+  "grid": [],
+  "path": [
+    {
+      "x": 0,
+      "y": 0,
+      "type": "start",
+      "reward": 0,
+      "label": "Start"
+    },
+    {
+      "x": 1,
+      "y": 0,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kehilangan giliran",
+      "skipTurn": true
+    },
+    {
+      "x": 2,
+      "y": 0,
+      "type": "reward",
+      "reward": 25,
+      "label": "+25 RTP"
+    },
+    {
+      "x": 3,
+      "y": 0,
+      "type": "reward",
+      "reward": 15,
+      "label": "+15 RTP"
+    },
+    {
+      "x": 4,
+      "y": 0,
+      "type": "trap",
+      "reward": -25,
+      "label": "-25 RTP"
+    },
+    {
+      "x": 5,
+      "y": 0,
+      "type": "reward",
+      "reward": 40,
+      "label": "+40 RTP"
+    },
+    {
+      "x": 6,
+      "y": 0,
+      "type": "reward",
+      "reward": 10,
+      "label": "+10 RTP"
+    },
+    {
+      "x": 7,
+      "y": 0,
+      "type": "reward",
+      "reward": 75,
+      "label": "+75 RTP"
+    },
+    {
+      "x": 8,
+      "y": 0,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kehilangan giliran",
+      "skipTurn": true
+    },
+    {
+      "x": 9,
+      "y": 0,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kehilangan giliran",
+      "skipTurn": true
+    },
+    {
+      "x": 10,
+      "y": 0,
+      "type": "trap",
+      "reward": -25,
+      "label": "-25 RTP"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "type": "obstacle",
+      "reward": 0,
+      "label": "Mundur 7",
+      "moveBack": 7
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kehilangan giliran",
+      "skipTurn": true
+    },
+    {
+      "x": 13,
+      "y": 0,
+      "type": "bonus",
+      "reward": 150,
+      "label": "+150 RTP (Bonus)"
+    },
+    {
+      "x": 14,
+      "y": 0,
+      "type": "bonus",
+      "reward": 150,
+      "label": "+150 RTP (Bonus)"
+    },
+    {
+      "x": 15,
+      "y": 0,
+      "type": "trap",
+      "reward": -15,
+      "label": "-15 RTP"
+    },
+    {
+      "x": 16,
+      "y": 0,
+      "type": "reward",
+      "reward": 20,
+      "label": "+20 RTP"
+    },
+    {
+      "x": 17,
+      "y": 0,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 18,
+      "y": 0,
+      "type": "obstacle",
+      "reward": 0,
+      "label": "Mundur 2",
+      "moveBack": 2
+    },
+    {
+      "x": 19,
+      "y": 0,
+      "type": "obstacle",
+      "reward": 0,
+      "label": "Mundur 5",
+      "moveBack": 5
+    },
+    {
+      "x": 20,
+      "y": 0,
+      "type": "bonus",
+      "reward": 250,
+      "label": "+250 RTP (Bonus)"
+    },
+    {
+      "x": 21,
+      "y": 0,
+      "type": "reward",
+      "reward": 5,
+      "label": "+5 RTP"
+    },
+    {
+      "x": 22,
+      "y": 0,
+      "type": "trap",
+      "reward": -25,
+      "label": "-25 RTP"
+    },
+    {
+      "x": 23,
+      "y": 0,
+      "type": "reward",
+      "reward": 40,
+      "label": "+40 RTP"
+    },
+    {
+      "x": 24,
+      "y": 0,
+      "type": "reward",
+      "reward": 25,
+      "label": "+25 RTP"
+    },
+    {
+      "x": 25,
+      "y": 0,
+      "type": "bonus",
+      "reward": 250,
+      "label": "+250 RTP (Bonus)"
+    },
+    {
+      "x": 26,
+      "y": 0,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 27,
+      "y": 0,
+      "type": "obstacle",
+      "reward": 0,
+      "label": "Mundur 3",
+      "moveBack": 3
+    },
+    {
+      "x": 28,
+      "y": 0,
+      "type": "trap",
+      "reward": -5,
+      "label": "-5 RTP"
+    },
+    {
+      "x": 29,
+      "y": 0,
+      "type": "trap",
+      "reward": -15,
+      "label": "-15 RTP"
+    },
+    {
+      "x": 30,
+      "y": 0,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 31,
+      "y": 0,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 32,
+      "y": 0,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 33,
+      "y": 0,
+      "type": "obstacle",
+      "reward": 0,
+      "label": "Mundur 7",
+      "moveBack": 7
+    },
+    {
+      "x": 34,
+      "y": 0,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kehilangan giliran",
+      "skipTurn": true
+    },
+    {
+      "x": 35,
+      "y": 0,
+      "type": "obstacle",
+      "reward": 0,
+      "label": "Mundur 5",
+      "moveBack": 5
+    },
+    {
+      "x": 36,
+      "y": 0,
+      "type": "obstacle",
+      "reward": 0,
+      "label": "Mundur 5",
+      "moveBack": 5
+    },
+    {
+      "x": 37,
+      "y": 0,
+      "type": "trap",
+      "reward": -5,
+      "label": "-5 RTP"
+    },
+    {
+      "x": 38,
+      "y": 0,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kehilangan giliran",
+      "skipTurn": true
+    },
+    {
+      "x": 39,
+      "y": 0,
+      "type": "reward",
+      "reward": 20,
+      "label": "+20 RTP"
+    },
+    {
+      "x": 40,
+      "y": 0,
+      "type": "reward",
+      "reward": 40,
+      "label": "+40 RTP"
+    },
+    {
+      "x": 41,
+      "y": 0,
+      "type": "reward",
+      "reward": 75,
+      "label": "+75 RTP"
+    },
+    {
+      "x": 42,
+      "y": 0,
+      "type": "reward",
+      "reward": 30,
+      "label": "+30 RTP"
+    },
+    {
+      "x": 43,
+      "y": 0,
+      "type": "bonus",
+      "reward": 150,
+      "label": "+150 RTP (Bonus)"
+    },
+    {
+      "x": 44,
+      "y": 0,
+      "type": "reward",
+      "reward": 5,
+      "label": "+5 RTP"
+    },
+    {
+      "x": 45,
+      "y": 0,
+      "type": "bonus",
+      "reward": 200,
+      "label": "+200 RTP (Bonus)"
+    },
+    {
+      "x": 46,
+      "y": 0,
+      "type": "reward",
+      "reward": 20,
+      "label": "+20 RTP"
+    },
+    {
+      "x": 47,
+      "y": 0,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 48,
+      "y": 0,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kehilangan giliran",
+      "skipTurn": true
+    },
+    {
+      "x": 49,
+      "y": 0,
+      "type": "trap",
+      "reward": -10,
+      "label": "-10 RTP"
+    },
+    {
+      "x": 49,
+      "y": 1,
+      "type": "trap",
+      "reward": -20,
+      "label": "-20 RTP"
+    },
+    {
+      "x": 49,
+      "y": 2,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 3,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kehilangan giliran",
+      "skipTurn": true
+    },
+    {
+      "x": 49,
+      "y": 4,
+      "type": "reward",
+      "reward": 15,
+      "label": "+15 RTP"
+    },
+    {
+      "x": 49,
+      "y": 5,
+      "type": "reward",
+      "reward": 75,
+      "label": "+75 RTP"
+    },
+    {
+      "x": 49,
+      "y": 6,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kembali ke start",
+      "resetToStart": true
+    },
+    {
+      "x": 49,
+      "y": 7,
+      "type": "trap",
+      "reward": -20,
+      "label": "-20 RTP"
+    },
+    {
+      "x": 49,
+      "y": 8,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 9,
+      "type": "obstacle",
+      "reward": 0,
+      "label": "Mundur 3",
+      "moveBack": 3
+    },
+    {
+      "x": 49,
+      "y": 10,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 11,
+      "type": "reward",
+      "reward": 50,
+      "label": "+50 RTP"
+    },
+    {
+      "x": 49,
+      "y": 12,
+      "type": "reward",
+      "reward": 5,
+      "label": "+5 RTP"
+    },
+    {
+      "x": 49,
+      "y": 13,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 14,
+      "type": "reward",
+      "reward": 15,
+      "label": "+15 RTP"
+    },
+    {
+      "x": 49,
+      "y": 15,
+      "type": "bonus",
+      "reward": 200,
+      "label": "+200 RTP (Bonus)"
+    },
+    {
+      "x": 49,
+      "y": 16,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kehilangan giliran",
+      "skipTurn": true
+    },
+    {
+      "x": 49,
+      "y": 17,
+      "type": "obstacle",
+      "reward": 0,
+      "label": "Mundur 10",
+      "moveBack": 10
+    },
+    {
+      "x": 49,
+      "y": 18,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 19,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kembali ke start",
+      "resetToStart": true
+    },
+    {
+      "x": 49,
+      "y": 20,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 21,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 22,
+      "type": "reward",
+      "reward": 10,
+      "label": "+10 RTP"
+    },
+    {
+      "x": 49,
+      "y": 23,
+      "type": "trap",
+      "reward": -25,
+      "label": "-25 RTP"
+    },
+    {
+      "x": 49,
+      "y": 24,
+      "type": "bonus",
+      "reward": 250,
+      "label": "+250 RTP (Bonus)"
+    },
+    {
+      "x": 49,
+      "y": 25,
+      "type": "obstacle",
+      "reward": 0,
+      "label": "Mundur 5",
+      "moveBack": 5
+    },
+    {
+      "x": 49,
+      "y": 26,
+      "type": "obstacle",
+      "reward": 0,
+      "label": "Mundur 7",
+      "moveBack": 7
+    },
+    {
+      "x": 49,
+      "y": 27,
+      "type": "reward",
+      "reward": 25,
+      "label": "+25 RTP"
+    },
+    {
+      "x": 49,
+      "y": 28,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 29,
+      "type": "bonus",
+      "reward": 250,
+      "label": "+250 RTP (Bonus)"
+    },
+    {
+      "x": 49,
+      "y": 30,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 31,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 32,
+      "type": "reward",
+      "reward": 75,
+      "label": "+75 RTP"
+    },
+    {
+      "x": 49,
+      "y": 33,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kehilangan giliran",
+      "skipTurn": true
+    },
+    {
+      "x": 49,
+      "y": 34,
+      "type": "reward",
+      "reward": 15,
+      "label": "+15 RTP"
+    },
+    {
+      "x": 49,
+      "y": 35,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kembali ke start",
+      "resetToStart": true
+    },
+    {
+      "x": 49,
+      "y": 36,
+      "type": "bonus",
+      "reward": 250,
+      "label": "+250 RTP (Bonus)"
+    },
+    {
+      "x": 49,
+      "y": 37,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 38,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kehilangan giliran",
+      "skipTurn": true
+    },
+    {
+      "x": 49,
+      "y": 39,
+      "type": "trap",
+      "reward": 0,
+      "label": "Kembali ke start",
+      "resetToStart": true
+    },
+    {
+      "x": 49,
+      "y": 40,
+      "type": "reward",
+      "reward": 30,
+      "label": "+30 RTP"
+    },
+    {
+      "x": 49,
+      "y": 41,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 42,
+      "type": "bonus",
+      "reward": 200,
+      "label": "+200 RTP (Bonus)"
+    },
+    {
+      "x": 49,
+      "y": 43,
+      "type": "reward",
+      "reward": 20,
+      "label": "+20 RTP"
+    },
+    {
+      "x": 49,
+      "y": 44,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 45,
+      "type": "neutral",
+      "reward": 0,
+      "label": "Netral"
+    },
+    {
+      "x": 49,
+      "y": 46,
+      "type": "reward",
+      "reward": 50,
+      "label": "+50 RTP"
+    },
+    {
+      "x": 49,
+      "y": 47,
+      "type": "bonus",
+      "reward": 250,
+      "label": "+250 RTP (Bonus)"
+    },
+    {
+      "x": 49,
+      "y": 48,
+      "type": "bonus",
+      "reward": 150,
+      "label": "+150 RTP (Bonus)"
+    },
+    {
+      "x": 49,
+      "y": 49,
+      "type": "trap",
+      "reward": -25,
+      "label": "-25 RTP"
+    },
+    {
+      "x": 48,
+      "y": 49,
+      "type": "jackpot",
+      "reward": 500,
+      "label": "+500 RTP (Jackpot)"
+    }
+  ],
+  "size": 50
+}

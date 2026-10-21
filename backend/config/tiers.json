@@ -1,0 +1,8 @@
+{
+  "tiers": [
+    { "id": "bronze",   "name": "Bronze",   "min": 0,   "max": 4,      "icon": "🥉", "color": "#CD7F32", "reward": 0,    "perks": ["Komisi 5%", "Akses statistik dasar"] },
+    { "id": "silver",   "name": "Silver",   "min": 5,   "max": 19,     "icon": "🥈", "color": "#C0C0C0", "reward": 100,  "perks": ["Komisi 5%", "Bonus 100 RTP saat naik tier", "Badge Silver di profil"] },
+    { "id": "gold",     "name": "Gold",     "min": 20,  "max": 49,     "icon": "🥇", "color": "#FFD700", "reward": 500,  "perks": ["Komisi 7%", "Bonus 500 RTP saat naik tier", "Badge Gold di profil", "Prioritas support"] },
+    { "id": "platinum", "name": "Platinum", "min": 50,  "max": 999999, "icon": "💎", "color": "#E5E4E2", "reward": 2000, "perks": ["Komisi 10%", "Bonus 2000 RTP saat naik tier", "Badge Platinum di profil", "Prioritas support", "Akses fitur beta"] }
+  ]
+}

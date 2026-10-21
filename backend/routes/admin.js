@@ -1633,3 +1633,102 @@ router.get('/firestore-usage', checkAdmin, async (req, res) => {
 });
 
 module.exports = router;
+
+// ============================================================
+// BOARD GAME (Monopoly Adventure) — Admin (Grid 50x50)
+// ============================================================
+
+const fsBoard = require('fs');
+const pathBoard = require('path');
+const BOARD_CONFIG_PATH_ADMIN = pathBoard.join(__dirname, '../config/board_config.json');
+
+// GET /api/v1/admin/board/config
+router.get('/board/config', checkAdmin, async (req, res) => {
+    try {
+        if (!fsBoard.existsSync(BOARD_CONFIG_PATH_ADMIN)) {
+            return res.status(404).json({ success: false, message: 'Board config tidak ditemukan' });
+        }
+        const data = JSON.parse(fsBoard.readFileSync(BOARD_CONFIG_PATH_ADMIN, 'utf8'));
+        return res.json({ success: true, data });
+    } catch (err) {
+        console.error('[ADMIN/BOARD] Error:', err.message);
+        return res.status(500).json({ success: false, message: 'Gagal load board config' });
+    }
+});
+
+// PUT /api/v1/admin/board/config
+router.put('/board/config', checkAdmin, async (req, res) => {
+    try {
+        const { grid, path, size } = req.body;
+        if (!Array.isArray(path)) {
+            return res.status(400).json({ success: false, message: 'Path tidak valid' });
+        }
+        // Validasi path
+        for (let i = 0; i < path.length; i++) {
+            const p = path[i];
+            if (typeof p.x !== 'number' || typeof p.y !== 'number') {
+                return res.status(400).json({ success: false, message: `Path ${i} tidak valid` });
+            }
+            if (p.x < 0 || p.x >= size || p.y < 0 || p.y >= size) {
+                return res.status(400).json({ success: false, message: `Path ${i} di luar grid` });
+            }
+        }
+        const data = { grid: grid || [], path, size };
+        fsBoard.writeFileSync(BOARD_CONFIG_PATH_ADMIN, JSON.stringify(data, null, 2), 'utf8');
+        try {
+            const boardModule = require('./board');
+            if (boardModule.reloadConfig) boardModule.reloadConfig();
+        } catch (e) {}
+        return res.json({ success: true, message: 'Board config disimpan', data });
+    } catch (err) {
+        console.error('[ADMIN/BOARD] Save error:', err.message);
+        return res.status(500).json({ success: false, message: 'Gagal simpan board config' });
+    }
+});
+
+// POST /api/v1/admin/board/reset — generate default (spiral)
+router.post('/board/reset', checkAdmin, async (req, res) => {
+    try {
+        const size = 50;
+        const path = [];
+        // Spiral path: mulai dari (0,0), berputar
+        let x = 0, y = 0;
+        let dx = 1, dy = 0;
+        let minX = 0, minY = 0, maxX = size - 1, maxY = size - 1;
+        while (path.length < 100) {
+            path.push({ x, y });
+            if (dx === 1 && x === maxX) { dx = 0; dy = 1; minY++; }
+            else if (dy === 1 && y === maxY) { dx = -1; dy = 0; maxX--; }
+            else if (dx === -1 && x === minX) { dx = 0; dy = -1; maxY--; }
+            else if (dy === -1 && y === minY) { dx = 1; dy = 0; minX++; }
+            x += dx; y += dy;
+        }
+        // Efek per path
+        const effects = [];
+        for (let i = 0; i < path.length; i++) {
+            if (i === 0) effects.push({ type: 'start', reward: 0, label: 'Start' });
+            else if (i === path.length - 1) effects.push({ type: 'jackpot', reward: 500, label: '+500 RTP (Jackpot)' });
+            else {
+                const r = Math.random();
+                if (r < 0.30) { const rw = [5,10,15,20,25,30,40,50,75,100][Math.floor(Math.random()*10)]; effects.push({ type: 'reward', reward: rw, label: '+' + rw + ' RTP' }); }
+                else if (r < 0.45) { const bk = [2,3,5,7,10][Math.floor(Math.random()*5)]; effects.push({ type: 'obstacle', reward: 0, label: 'Mundur ' + bk, moveBack: bk }); }
+                else if (r < 0.55) effects.push({ type: 'trap', reward: 0, label: 'Kembali ke start', resetToStart: true });
+                else if (r < 0.65) effects.push({ type: 'trap', reward: 0, label: 'Kehilangan giliran', skipTurn: true });
+                else if (r < 0.75) { const pn = [5,10,15,20,25][Math.floor(Math.random()*5)]; effects.push({ type: 'trap', reward: -pn, label: '-' + pn + ' RTP' }); }
+                else if (r < 0.85) { const rw = [150,200,250][Math.floor(Math.random()*3)]; effects.push({ type: 'bonus', reward: rw, label: '+' + rw + ' RTP (Bonus)' }); }
+                else effects.push({ type: 'neutral', reward: 0, label: 'Netral' });
+            }
+        }
+        const pathWithEffects = path.map((p, i) => ({ ...p, ...effects[i] }));
+        const data = { grid: [], path: pathWithEffects, size };
+        fsBoard.writeFileSync(BOARD_CONFIG_PATH_ADMIN, JSON.stringify(data, null, 2), 'utf8');
+        try {
+            const boardModule = require('./board');
+            if (boardModule.reloadConfig) boardModule.reloadConfig();
+        } catch (e) {}
+        return res.json({ success: true, message: 'Board di-reset ke default (spiral 100 titik)', data });
+    } catch (err) {
+        console.error('[ADMIN/BOARD] Reset error:', err.message);
+        return res.status(500).json({ success: false, message: 'Gagal reset board config' });
+    }
+});
