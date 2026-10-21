@@ -122,6 +122,7 @@ import androidx.core.content.ContextCompat
 import androidx.compose.ui.unit.dp
 import com.scottyab.rootbeer.RootBeer
 import android.app.AlertDialog
+import androidx.compose.foundation.layout.width
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -881,7 +882,7 @@ fun MainAffiliateAppContent(
         drawerState = drawerState,
         gesturesEnabled = true,   // ← FIX: enable swipe untuk tutup drawer
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet(modifier = Modifier.width(280.dp)) {
                 AppDrawer(
                     user = user,
                     currentScreen = currentScreen,
