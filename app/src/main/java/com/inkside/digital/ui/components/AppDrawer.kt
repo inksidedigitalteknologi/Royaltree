@@ -121,7 +121,7 @@ fun AppDrawer(
             // ═══════════════════════════════════════════
             // HEADER PREMIUM
             // ═══════════════════════════════════════════
-            PremiumDrawerHeader(user = user, currentLanguage = currentLanguage)
+            PremiumDrawerHeader(user = user, currentLanguage = currentLanguage, roomState = roomState)
 
             Spacer(Modifier.height(12.dp))
 
@@ -313,7 +313,7 @@ fun AppDrawer(
 // PREMIUM HEADER
 // ─────────────────────────────────────────────────────────────
 @Composable
-private fun PremiumDrawerHeader(user: UserEntity?, currentLanguage: AppLanguage) {
+private fun PremiumDrawerHeader(user: UserEntity?, currentLanguage: AppLanguage, roomState: com.inkside.digital.data.model.GameRoomStateEntity? = null) {
     // Glow pulse avatar
     val infinite = rememberInfiniteTransition(label = "header_glow")
     val glowAlpha by infinite.animateFloat(
