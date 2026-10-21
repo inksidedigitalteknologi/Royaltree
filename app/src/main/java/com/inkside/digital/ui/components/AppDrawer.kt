@@ -92,6 +92,7 @@ fun AppDrawer(
     user: UserEntity?,
     currentScreen: AppScreen,
     currentLanguage: AppLanguage,
+    roomState: com.inkside.digital.data.model.GameRoomStateEntity? = null,
     onNavigate: (AppScreen) -> Unit,
     onCloseDrawer: () -> Unit,
     onLogout: () -> Unit
@@ -485,7 +486,7 @@ private fun PremiumDrawerHeader(user: UserEntity?, currentLanguage: AppLanguage)
                     }
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = GlobalPointsManager.formatRtp(user?.points ?: 0.0),
+                        text = GlobalPointsManager.formatRtp((user?.points ?: 0.0) + (roomState?.unclaimedMiningPoints ?: 0.0)),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = EmeraldLight

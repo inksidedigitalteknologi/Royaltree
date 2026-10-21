@@ -199,7 +199,7 @@ fun ProfileScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         Text("RTP", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         RtpAmount(
-                            amount = "${GlobalPointsManager.formatRtp(user?.points ?: 0.0)} RTP",
+                            amount = "${GlobalPointsManager.formatRtp((user?.points ?: 0.0) + (roomState?.unclaimedMiningPoints ?: 0.0))} RTP",
                             fontSize = 13.sp,
                             iconSize = 16.dp,
                             fontWeight = FontWeight.Black,
@@ -303,7 +303,7 @@ fun ProfileScreen(
                 slotsUsed = minerSlotsUsed,
                 slotsMax = minerSlotsMax,
                 powerGhs = minerPowerGhs,
-                userPoints = user?.points ?: 0.0,
+                userPoints = (user?.points ?: 0.0) + (roomState?.unclaimedMiningPoints ?: 0.0),
                 roomState = roomState  // M46: Pass roomState untuk sinkron
             )
         }

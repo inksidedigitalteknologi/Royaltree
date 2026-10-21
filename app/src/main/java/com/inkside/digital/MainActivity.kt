@@ -886,6 +886,7 @@ fun MainAffiliateAppContent(
                     user = user,
                     currentScreen = currentScreen,
                     currentLanguage = currentLanguage,
+                    roomState = roomState,
                     onNavigate = { screen -> onNavigate(screen) },
                     onCloseDrawer = { coroutineScope.launch { drawerState.close() } },
                     onLogout = onLogout
