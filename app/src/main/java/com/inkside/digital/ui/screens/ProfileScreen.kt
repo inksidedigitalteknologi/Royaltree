@@ -67,7 +67,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.UserEntity
-import com.inkside.digital.ui.components.AffiliateBalanceCard
 import com.inkside.digital.viewmodel.AffiliateViewModel
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
@@ -305,16 +304,6 @@ fun ProfileScreen(
                 powerGhs = minerPowerGhs,
                 userPoints = (user?.points ?: 0.0) + (roomState?.unclaimedMiningPoints ?: 0.0),
                 roomState = roomState  // M46: Pass roomState untuk sinkron
-            )
-        }
-
-        // ==== Affiliate Balance ====
-        item {
-            AffiliateBalanceCard(
-                balance = affiliateBalance,
-                currentLanguage = currentLanguage,
-                onWithdraw = onOpenWithdraw,
-                onHistory = onOpenWithdrawHistory
             )
         }
 

@@ -20,7 +20,7 @@ const TIER_CATALOG = {
     'tier_starter_lifetime': {
         tier: 'STARTER',
         displayName: 'Pemula',
-        priceUsd: 1.99,
+        priceUsd: 2.99,
         maxMinerSlots: 3,
         affiliateRate: 0.10,
         tierOrder: 2,
@@ -29,7 +29,7 @@ const TIER_CATALOG = {
     'tier_premium_lifetime': {
         tier: 'PREMIUM',
         displayName: 'Premium',
-        priceUsd: 2.99,
+        priceUsd: 5.99,
         maxMinerSlots: 5,
         affiliateRate: 0.15,
         tierOrder: 3,
@@ -38,21 +38,35 @@ const TIER_CATALOG = {
     'tier_vip_lifetime': {
         tier: 'VIP',
         displayName: 'VIP',
-        priceUsd: 4.99,
-        maxMinerSlots: 8,
-        affiliateRate: 0.25,
+        priceUsd: 14.95,
+        maxMinerSlots: 10,
+        affiliateRate: 0.20,
         tierOrder: 4,
-        benefits: ['Slot miner 8', 'Badge VIP', 'Prioritas support']
+        benefits: ['Slot miner 10', 'Badge VIP', 'Komisi affiliate 20%', 'Prioritas support']
     },
     'tier_royal_lifetime': {
         tier: 'ROYAL',
         displayName: 'Royal',
-        priceUsd: 9.99,
-        maxMinerSlots: 10,
-        affiliateRate: 0.35,
+        priceUsd: 19.98,
+        maxMinerSlots: 20,
+        affiliateRate: 0.25,
         tierOrder: 5,
-        benefits: ['Slot miner 10', 'Badge Royal', 'Fitur eksklusif']
+        benefits: ['Slot miner 20', 'Badge Royal', 'Komisi affiliate 25%', 'Fitur eksklusif']
     }
+};
+
+
+// Syarat referral valid — hanya jika upgrade ke PREMIUM+
+const SYARAT_REFERRAL_TIER = 'PREMIUM';
+const SYARAT_REFERRAL_ORDER = 3;  // TIER_ORDER['PREMIUM']
+
+// Placeholder produk upgrade (Opsi D — nanti diisi)
+const UPGRADE_PRODUCTS = {
+    // 'upgrade_starter_to_premium': {
+    //     from: 'STARTER', to: 'PREMIUM',
+    //     priceUsd: 3.00, tierOrder: 3, maxMinerSlots: 5, affiliateRate: 0.15,
+    //     benefits: ['Slot miner 5', 'Badge Premium']
+    // },
 };
 
 const TIER_ORDER = {
@@ -226,17 +240,30 @@ router.post('/verify', verifyFirebaseToken, validate(purchaseSchema), async (req
             totalSpentUsd: admin.firestore.FieldValue.increment(tierConfig.priceUsd),
         });
 
+        // ============================================================
+        // KOMISI AFFILIATE — hanya jika tierGranted >= SYARAT_REFERRAL_ORDER
+        // ============================================================
         let affiliateResult = { success: false, reason: 'SKIPPED' };
-        try {
-            affiliateResult = await creditAffiliateCommission(
-                uid,
-                tierConfig.tier,
-                tierConfig.priceUsd,
-                req
-            );
-            AppLogger.d(`[PURCHASE] Affiliate commission:`, affiliateResult);
-        } catch (affError) {
-            console.error('[PURCHASE] Affiliate commission error:', affError.message);
+        if (newOrder >= SYARAT_REFERRAL_ORDER) {
+            try {
+                affiliateResult = await creditAffiliateCommission(
+                    uid,
+                    tierConfig.tier,
+                    tierConfig.priceUsd,
+                    req
+                );
+                AppLogger.d(`[PURCHASE] Affiliate commission:`, affiliateResult);
+            } catch (affError) {
+                console.error('[PURCHASE] Affiliate commission error:', affError.message);
+            }
+        } else {
+            affiliateResult = {
+                success: false,
+                reason: 'REFERRAL_NOT_QUALIFIED',
+                skipped: true,
+                message: `Komisi referral hanya berlaku jika upgrade ke ${SYARAT_REFERRAL_TIER} atau lebih tinggi`
+            };
+            AppLogger.d(`[PURCHASE] Skip affiliate — ${tierConfig.tier} < ${SYARAT_REFERRAL_TIER}`);
         }
 
         acknowledgeWithGooglePlay(purchaseToken, productId, packageName)

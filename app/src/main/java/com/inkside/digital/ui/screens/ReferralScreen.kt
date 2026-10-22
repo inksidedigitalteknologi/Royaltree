@@ -80,6 +80,8 @@ import com.inkside.digital.data.network.model.ReferralTier
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.components.BannerAdView
+import com.inkside.digital.ui.components.WhatsAppIcon
+import com.inkside.digital.ui.components.TelegramIcon
 import com.inkside.digital.ui.components.QRCodeImage
 import com.inkside.digital.ui.theme.ElectricBlue
 import com.inkside.digital.ui.theme.EmeraldLight
@@ -368,7 +370,11 @@ private fun CodeCard(
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF25D366), contentColor = Color.White),
                     modifier = Modifier.weight(1f)
-                ) { Text("WhatsApp", fontWeight = FontWeight.Bold, fontSize = 12.sp) }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    WhatsAppIcon(size = 16)
+                    Spacer(Modifier.width(6.dp))
+                    Text("WhatsApp", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                }
 
                 Button(
                     onClick = {
@@ -382,7 +388,11 @@ private fun CodeCard(
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0088CC), contentColor = Color.White),
                     modifier = Modifier.weight(1f)
-                ) { Text("Telegram", fontWeight = FontWeight.Bold, fontSize = 12.sp) }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    TelegramIcon(size = 16)
+                    Spacer(Modifier.width(6.dp))
+                    Text("Telegram", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                }
             }
         }
     }
@@ -437,8 +447,8 @@ private fun StatBox(modifier: Modifier, label: String, value: String, accent: Co
 private fun TierBadges(current: ReferralTier, next: ReferralTier?, progress: Int) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            val allTiers = listOf("bronze", "silver", "gold", "platinum")
-            val labels = listOf("\uD83E\uDD49 Bronze", "\uD83E\uDD48 Silver", "\uD83E\uDD47 Gold", "\uD83D\uDC8E Platinum")
+            val allTiers = listOf("starter", "bronze", "silver", "gold", "platinum")
+            val labels = listOf("\uD83C\uDF31 Starter", "\uD83E\uDD49 Bronze", "\uD83E\uDD48 Silver", "\uD83E\uDD47 Gold", "\uD83D\uDC8E Platinum")
             allTiers.forEachIndexed { idx, id ->
                 val isActive = current.id == id
                 val isUnlocked = allTiers.indexOf(current.id) >= idx

@@ -10,11 +10,11 @@ const DAILY_LIMIT_USD = 50.00;               // $50/hari
 const MIN_ACCOUNT_AGE_MS = 60 * 60 * 1000;   // 1 jam (basic)
 
 const TIER_RATE = {
-    'FREE':    0.05,
+    'FREE':    0.00,
     'STARTER': 0.10,
     'PREMIUM': 0.15,
-    'VIP':     0.25,
-    'ROYAL':   0.35
+    'VIP':     0.20,
+    'ROYAL':   0.25
 };
 
 /**
@@ -86,7 +86,7 @@ async function creditAffiliateCommission(referredUserId, tierGranted, priceUsd, 
 
         // 6. Kira komisi (retroaktif — rate semasa affiliator)
         const affiliateTier = affiliateData.tier || 'FREE';
-        const rate = TIER_RATE[affiliateTier] || 0.05;
+        const rate = TIER_RATE[affiliateTier] || 0.00;
         const commission = parseFloat((priceUsd * rate).toFixed(4));
 
         // 7. Cek cap rate limit harian (sisa quota)

@@ -713,36 +713,36 @@ fun UpgradeVipModal(
     val tierList = listOf(
         TierDef(
             tier = "FREE", displayName = "Gratis", priceLabel = "Gratis",
-            slots = 6,
-            benefits = listOf("Slot miner 6", "Fitur dasar", "Iklan + misi + game"),
+            slots = 1,
+            benefits = listOf("Slot miner 1", "Fitur dasar", "Iklan + misi + game"),
             accentColor = MaterialTheme.colorScheme.surfaceVariant,
             emoji = "🌱", order = 1
         ),
         TierDef(
-            tier = "STARTER", displayName = "Pemula", priceLabel = "$1.99",
+            tier = "STARTER", displayName = "Pemula", priceLabel = "$2.99",
             slots = 3,
             benefits = listOf("Slot miner 3", "Badge Starter", "Bisa jual affiliate"),
             accentColor = Color(0xFFCD7F32),
             emoji = "🥉", order = 2
         ),
         TierDef(
-            tier = "PREMIUM", displayName = "Premium", priceLabel = "$2.99",
+            tier = "PREMIUM", displayName = "Premium", priceLabel = "$5.99",
             slots = 5,
             benefits = listOf("Slot miner 5", "Badge Premium", "Komisi affiliate 15%"),
             accentColor = Color(0xFFC0C0C0),
             emoji = "🥈", order = 3
         ),
         TierDef(
-            tier = "VIP", displayName = "VIP", priceLabel = "$4.99",
-            slots = 8,
-            benefits = listOf("Slot miner 8", "Badge VIP", "Komisi affiliate 25%", "Prioritas support"),
+            tier = "VIP", displayName = "VIP", priceLabel = "$14.95",
+            slots = 10,
+            benefits = listOf("Slot miner 10", "Badge VIP", "Komisi affiliate 20%", "Prioritas support"),
             accentColor = Color(0xFFFFD700),
             emoji = "🥇", order = 4
         ),
         TierDef(
-            tier = "ROYAL", displayName = "Royal", priceLabel = "$9.99",
-            slots = 10,
-            benefits = listOf("Slot miner 10", "Badge Royal", "Komisi affiliate 35%", "Fitur eksklusif", "Prioritas tertinggi"),
+            tier = "ROYAL", displayName = "Royal", priceLabel = "$19.98",
+            slots = 20,
+            benefits = listOf("Slot miner 20", "Badge Royal", "Komisi affiliate 25%", "Fitur eksklusif", "Prioritas tertinggi"),
             accentColor = Color(0xFFB9F2FF),
             emoji = "💎", order = 5
         )
