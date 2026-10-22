@@ -43,6 +43,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.TaskAlt
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
@@ -144,6 +145,12 @@ fun AppDrawer(
                 label = LanguageManager.translate("nav_missions", currentLanguage, "Misi"),
                 selected = currentScreen == AppScreen.MISSIONS,
                 onClick = { onNavigate(AppScreen.MISSIONS); onCloseDrawer() }
+            )
+            DrawerItem(
+                icon = Icons.Default.ShoppingCart,
+                label = LanguageManager.translate("nav_shop", currentLanguage, "Shop"),
+                selected = currentScreen == AppScreen.PURCHASE,
+                onClick = { onNavigate(AppScreen.PURCHASE); onCloseDrawer() }
             )
             DrawerItem(
                 icon = Icons.Default.CardGiftcard,
