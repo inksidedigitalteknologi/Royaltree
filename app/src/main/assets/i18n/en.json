@@ -754,5 +754,13 @@
     "analytics_desc": "Track conversions, EPC, traffic sources, and ROI performance per link",
     "analytics_industry_std": "Industry standard: 4.5%",
     "analytics_value_per_click": "Value per click"
-  }
+  },
+  "nav_shop": "Shop",
+  "referral_toward_tier": "Toward %s",
+  "referral_tier_max": "You're at the highest tier!",
+  "referral_share_prompt": "Share your code!",
+  "common_refresh": "Refresh",
+  "referral_qr_title": "Scan QR Code",
+  "referral_qr_subtitle": "Share code %s",
+  "common_close": "Close"
 }

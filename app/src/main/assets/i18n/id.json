@@ -754,5 +754,13 @@
     "analytics_desc": "Pantau konversi, EPC, sumber traffic, dan performa ROI setiap link",
     "analytics_industry_std": "Standar industri: 4.5%",
     "analytics_value_per_click": "Nilai per klik"
-  }
+  },
+  "nav_shop": "Shop",
+  "referral_toward_tier": "Menuju %s",
+  "referral_tier_max": "Kamu di tier tertinggi!",
+  "referral_share_prompt": "Ayo bagikan kode kamu!",
+  "common_refresh": "Refresh",
+  "referral_qr_title": "Scan QR Code",
+  "referral_qr_subtitle": "Bagikan kode %s",
+  "common_close": "Tutup"
 }

@@ -754,5 +754,13 @@
     "analytics_desc": "追踪转化、EPC、流量来源和每个链接的ROI表现",
     "analytics_industry_std": "行业标准：4.5%",
     "analytics_value_per_click": "每次点击价值"
-  }
+  },
+  "nav_shop": "商店",
+  "referral_toward_tier": "迈向 %s",
+  "referral_tier_max": "您已达到最高等级！",
+  "referral_share_prompt": "分享您的代码！",
+  "common_refresh": "刷新",
+  "referral_qr_title": "扫描二维码",
+  "referral_qr_subtitle": "分享代码 %s",
+  "common_close": "关闭"
 }

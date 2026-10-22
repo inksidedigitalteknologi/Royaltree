@@ -754,5 +754,13 @@
     "analytics_desc": "Rastrea conversiones, EPC, fuentes de tráfico y ROI por enlace",
     "analytics_industry_std": "Estándar de la industria: 4.5%",
     "analytics_value_per_click": "Valor por clic"
-  }
+  },
+  "nav_shop": "Tienda",
+  "referral_toward_tier": "Hacia %s",
+  "referral_tier_max": "¡Estás en el nivel más alto!",
+  "referral_share_prompt": "¡Comparte tu código!",
+  "common_refresh": "Actualizar",
+  "referral_qr_title": "Escanear código QR",
+  "referral_qr_subtitle": "Compartir código %s",
+  "common_close": "Cerrar"
 }

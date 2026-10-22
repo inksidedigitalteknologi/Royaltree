@@ -754,5 +754,13 @@
     "analytics_desc": "コンバージョン、EPC、トラフィックソース、リンクごとのROIを追跡",
     "analytics_industry_std": "業界標準：4.5%",
     "analytics_value_per_click": "クリックあたりの価値"
-  }
+  },
+  "nav_shop": "ショップ",
+  "referral_toward_tier": "%s へ",
+  "referral_tier_max": "最高ティアです！",
+  "referral_share_prompt": "コードをシェアしよう！",
+  "common_refresh": "更新",
+  "referral_qr_title": "QRコードをスキャン",
+  "referral_qr_subtitle": "コード %s を共有",
+  "common_close": "閉じる"
 }

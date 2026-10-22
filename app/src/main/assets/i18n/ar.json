@@ -754,5 +754,13 @@
     "analytics_desc": "تتبع التحويلات وEPC ومصادر الزيارات وأداء ROI لكل رابط",
     "analytics_industry_std": "معيار الصناعة: 4.5%",
     "analytics_value_per_click": "القيمة لكل نقرة"
-  }
+  },
+  "nav_shop": "متجر",
+  "referral_toward_tier": "نحو %s",
+  "referral_tier_max": "أنت في أعلى مستوى!",
+  "referral_share_prompt": "شارك رمزك!",
+  "common_refresh": "تحديث",
+  "referral_qr_title": "مسح رمز QR",
+  "referral_qr_subtitle": "شارك الرمز %s",
+  "common_close": "إغلاق"
 }

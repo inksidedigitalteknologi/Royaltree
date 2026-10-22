@@ -155,7 +155,7 @@ fun ReferralScreen(
             item { StatsGrid(stats = state.stats, currentLanguage = currentLanguage) }
 
             state.stats?.tier?.let { tier ->
-                item { TierBadges(current = tier.current, next = tier.next, progress = tier.progress) }
+                item { TierBadges(current = tier.current, next = tier.next, progress = tier.progress, currentLanguage = currentLanguage) }
             }
 
             item {
@@ -197,7 +197,7 @@ fun ReferralScreen(
     }
 
     if (showQR) {
-        QRDialog(code = referralCode, link = referralLink, onDismiss = { showQR = false })
+        QRDialog(code = referralCode, link = referralLink, onDismiss = { showQR = false }, currentLanguage = currentLanguage)
     }
 }
 
@@ -444,7 +444,12 @@ private fun StatBox(modifier: Modifier, label: String, value: String, accent: Co
 // TIER BADGES (horizontal scroll + progress)
 // ============================================================
 @Composable
-private fun TierBadges(current: ReferralTier, next: ReferralTier?, progress: Int) {
+private fun TierBadges(
+    current: ReferralTier,
+    next: ReferralTier?,
+    progress: Int,
+    currentLanguage: AppLanguage
+) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             val allTiers = listOf("starter", "bronze", "silver", "gold", "platinum")
@@ -475,7 +480,7 @@ private fun TierBadges(current: ReferralTier, next: ReferralTier?, progress: Int
         if (next != null) {
             Column {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Menuju ${next.icon} ${next.name}", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(String.format(LanguageManager.translate("referral_toward_tier", currentLanguage, "Menuju %s"), "${next.icon} ${next.name}"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     Text("${current.max + 1}/${next.min} \u2022 ${next.min - (current.max + 1) + 1} lagi", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Spacer(Modifier.height(4.dp))
@@ -487,7 +492,7 @@ private fun TierBadges(current: ReferralTier, next: ReferralTier?, progress: Int
                 )
             }
         } else {
-            Text("\uD83C\uDF89 Kamu di tier tertinggi!", fontSize = 11.sp, color = GoldVip, fontWeight = FontWeight.Bold)
+            Text("\uD83C\uDF89 " + LanguageManager.translate("referral_tier_max", currentLanguage, "Kamu di tier tertinggi!"), fontSize = 11.sp, color = GoldVip, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -561,12 +566,12 @@ private fun EmptyListCard(currentLanguage: AppLanguage, onRefresh: () -> Unit) {
                 fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center
             )
             Spacer(Modifier.height(4.dp))
-            Text("Ayo bagikan kode kamu!", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Text(LanguageManager.translate("referral_share_prompt", currentLanguage, "Ayo bagikan kode kamu!"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(12.dp))
             TextButton(onClick = onRefresh) {
                 Icon(Icons.Default.Refresh, null, modifier = Modifier.size(16.dp))
                 Spacer(Modifier.width(4.dp))
-                Text("Refresh", fontSize = 12.sp)
+                Text(LanguageManager.translate("common_refresh", currentLanguage, "Refresh"), fontSize = 12.sp)
             }
         }
     }
@@ -622,21 +627,26 @@ private fun HowItWorksCard(currentLanguage: AppLanguage) {
 // QR DIALOG
 // ============================================================
 @Composable
-private fun QRDialog(code: String, link: String, onDismiss: () -> Unit) {
+private fun QRDialog(
+    code: String,
+    link: String,
+    onDismiss: () -> Unit,
+    currentLanguage: AppLanguage
+) {
     Dialog(onDismissRequest = onDismiss) {
         Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surface) {
             Column(
                 modifier = Modifier.padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Scan QR Code", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text(LanguageManager.translate("referral_qr_title", currentLanguage, "Scan QR Code"), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 Spacer(Modifier.height(4.dp))
-                Text("Bagikan kode $code", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(String.format(LanguageManager.translate("referral_qr_subtitle", currentLanguage, "Bagikan kode %s"), code), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(Modifier.height(16.dp))
                 QRCodeImage(content = link, size = 220.dp)
                 Spacer(Modifier.height(16.dp))
                 Button(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
-                    Text("Tutup")
+                    Text(LanguageManager.translate("common_close", currentLanguage, "Tutup"))
                 }
             }
         }
