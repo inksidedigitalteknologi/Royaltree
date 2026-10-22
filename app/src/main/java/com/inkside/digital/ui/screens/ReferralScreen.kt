@@ -370,7 +370,7 @@ private fun CodeCard(
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF25D366), contentColor = Color.White),
                     modifier = Modifier.weight(1f)
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                ) {
                     WhatsAppIcon(size = 16)
                     Spacer(Modifier.width(6.dp))
                     Text("WhatsApp", fontWeight = FontWeight.Bold, fontSize = 12.sp)
@@ -388,7 +388,7 @@ private fun CodeCard(
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0088CC), contentColor = Color.White),
                     modifier = Modifier.weight(1f)
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                ) {
                     TelegramIcon(size = 16)
                     Spacer(Modifier.width(6.dp))
                     Text("Telegram", fontWeight = FontWeight.Bold, fontSize = 12.sp)
