@@ -55,7 +55,6 @@ import com.inkside.digital.ui.components.QrTransferModal
 import com.inkside.digital.ui.components.RedeemPointsModal
 import com.inkside.digital.ui.components.TransferReceiptDialog
 import com.inkside.digital.ui.components.TwoFactorModal
-import com.inkside.digital.ui.components.UpgradeVipModal
 import com.inkside.digital.ui.components.WithdrawDialog
 import com.inkside.digital.ui.components.AffiliateWithdrawDialog
 import androidx.compose.material3.DrawerValue
@@ -1244,17 +1243,6 @@ fun MainAffiliateAppContent(
         )
     }
 
-    if (showUpgrade) {
-        UpgradeVipModal(
-            user = user,
-            currentLanguage = currentLanguage,
-            onDismiss = onUpgradeDismiss,
-            onUpgrade = { tier ->
-                AppLogger.d("MainActivity", "Upgrade tier: $tier")
-                onUpgradeConfirm()
-            }
-        )
-    }
 
     if (showRedeemPoints) {
         RedeemPointsModal(
