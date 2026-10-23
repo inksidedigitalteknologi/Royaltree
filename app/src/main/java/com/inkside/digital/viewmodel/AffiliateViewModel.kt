@@ -56,7 +56,6 @@ enum class AppScreen {
     WITHDRAW,
     INVEST,
     HISTORY,
-    ADMIN,
     REFERRAL,
     SETTINGS,
     FAQ,
