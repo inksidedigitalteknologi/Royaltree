@@ -209,6 +209,20 @@ const MINER_CATALOG_REF = {
 };
 
 // ============================================================
+// MINER SIGNATURE (HMAC-SHA256) — Anti-cheat
+// ============================================================
+const crypto = require('crypto');
+
+function getMinerSigningSecret() {
+    return process.env.MINER_SIGNING_SECRET || 'DEFAULT_INSECURE_SECRET_CHANGE_ME';
+}
+
+function generateMinerSignature(instanceId, catalogId, uid, purchasedAt, powerGhs, pointsPerMinute) {
+    const data = `${instanceId}|${catalogId}|${uid}|${purchasedAt}|${powerGhs}|${pointsPerMinute}`;
+    return crypto.createHmac('sha256', getMinerSigningSecret()).update(data).digest('hex');
+}
+
+// ============================================================
 // HELPER: Tambah miner ke inventory user
 // ============================================================
 async function grantMinersToUser(uid, minersList) {
@@ -227,6 +241,15 @@ async function grantMinersToUser(uid, minersList) {
 
         for (let i = 0; i < item.qty; i++) {
             const instanceId = 'miner_' + uid.slice(0, 6) + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+            const purchasedAt = Date.now();
+            const signature = generateMinerSignature(
+                instanceId,
+                item.catalogId,
+                uid,
+                purchasedAt,
+                catalog.powerGhs,
+                pointsPerMinute
+            );
             updates[`minersOwned.${instanceId}`] = {
                 catalogId: item.catalogId,
                 instanceId: instanceId,
@@ -240,8 +263,9 @@ async function grantMinersToUser(uid, minersList) {
                 isOwned: true,
                 isPlacedInRoom: false,
                 placedSlotIndex: -1,
-                purchasedAt: Date.now(),
-                source: 'PACK'
+                purchasedAt: purchasedAt,
+                source: 'PACK',
+                signature: signature  // ← ANTI-CHEAT
             };
             auditEntries.push({ instanceId, catalogId: item.catalogId, tier: catalog.tier });
         }

@@ -30,6 +30,53 @@ const db = admin.firestore();
 //   0.001    = 1 MH/s (auto-scale)
 //   0.005    = 5 MH/s
 // Format tampilan pakai HashrateFormatter (Android) — auto-scale.
+// ============================================================
+// MINER SIGNATURE (HMAC-SHA256) — Anti-cheat
+// ============================================================
+const crypto = require('crypto');
+
+function getMinerSigningSecret() {
+    const secret = process.env.MINER_SIGNING_SECRET;
+    if (!secret) {
+        console.error('❌ MINER_SIGNING_SECRET tidak di-set di .env — signature tidak aman!');
+        return 'DEFAULT_INSECURE_SECRET_CHANGE_ME';
+    }
+    return secret;
+}
+
+/**
+ * Generate signature untuk miner.
+ * Format: HMAC-SHA256(instanceId|catalogId|uid|purchasedAt|powerGhs|pointsPerMinute, secret)
+ */
+function generateMinerSignature(instanceId, catalogId, uid, purchasedAt, powerGhs, pointsPerMinute) {
+    const data = `${instanceId}|${catalogId}|${uid}|${purchasedAt}|${powerGhs}|${pointsPerMinute}`;
+    return crypto.createHmac('sha256', getMinerSigningSecret()).update(data).digest('hex');
+}
+
+/**
+ * Verify signature miner.
+ * Return true kalau valid, false kalau tidak.
+ */
+function verifyMinerSignature(miner, uid) {
+    if (!miner || !miner.signature) return false;
+    const expected = generateMinerSignature(
+        miner.instanceId,
+        miner.catalogId,
+        uid,
+        miner.purchasedAt,
+        miner.powerGhs,
+        miner.pointsPerMinute
+    );
+    try {
+        return crypto.timingSafeEqual(
+            Buffer.from(miner.signature, 'hex'),
+            Buffer.from(expected, 'hex')
+        );
+    } catch (e) {
+        return false;
+    }
+}
+
 const MINER_CATALOG = [
     {
         id: 'miner_common',
@@ -816,8 +863,18 @@ router.post('/mining/buy', verifyFirebaseToken, validate(purchaseMinerSchema), c
         // ============ Instance ID unik (elak overwrite) ============
         const instanceId = 'miner_' + uid.slice(0, 6) + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
 
+        // ============ SIGNATURE (HMAC-SHA256) ============
+        const purchasedAt = Date.now();
+        const signature = generateMinerSignature(
+            instanceId,
+            lookupId,
+            uid,
+            purchasedAt,
+            powerGhs || 0,
+            pointsPerMinute || 0
+        );
+
         // Potong RTP + simpan miner
-        // NOTE: guna Date.now() — serverTimestamp() tak berfungsi dalam nested object update
         await userRef.update({
             points: admin.firestore.FieldValue.increment(-tokenCost),
             [`minersOwned.${instanceId}`]: {
@@ -833,7 +890,8 @@ router.post('/mining/buy', verifyFirebaseToken, validate(purchaseMinerSchema), c
                 isOwned: true,
                 isPlacedInRoom: false,
                 placedSlotIndex: -1,
-                purchasedAt: Date.now()
+                purchasedAt: purchasedAt,
+                signature: signature  // ← ANTI-CHEAT
             }
         });
 
@@ -853,7 +911,8 @@ router.post('/mining/buy', verifyFirebaseToken, validate(purchaseMinerSchema), c
             isOwned: true,
             isPlacedInRoom: false,
             placedSlotIndex: -1,
-            purchasedAt: admin.firestore.FieldValue.serverTimestamp()
+            purchasedAt: purchasedAt,
+            signature: signature  // ← ANTI-CHEAT
         });
 
         // Audit log
@@ -1026,6 +1085,31 @@ router.post('/mining/place', verifyFirebaseToken, validate(placeMinerSchema), as
             });
         }
 
+        // ============ ANTI-CHEAT: VERIFY MINER SIGNATURE ============
+        const miner = minersOwned[minerId];
+        if (!miner) {
+            return res.status(404).json({
+                success: false,
+                message: 'Miner tidak ditemukan di inventory Anda.'
+            });
+        }
+
+        if (!verifyMinerSignature(miner, uid)) {
+            console.error(`[ANTI-CHEAT] Invalid signature for miner ${minerId} by user ${uid} (place)`);
+            await db.collection('audit_logs').add({
+                userId: uid,
+                action: 'MINER_SIGNATURE_INVALID',
+                minerInstanceId: minerId,
+                endpoint: 'place',
+                slotIndex: slotIndex,
+                timestamp: admin.firestore.FieldValue.serverTimestamp()
+            });
+            return res.status(403).json({
+                success: false,
+                message: 'Miner tidak valid. Hubungi support.'
+            });
+        }
+
         // Update miner — dual-write
         const userRef = db.collection('users').doc(uid);
         await userRef.update({
@@ -1174,6 +1258,23 @@ router.post('/mining/unplace', verifyFirebaseToken, async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: 'Miner tidak ditemukan di inventory Anda.'
+            });
+        }
+
+        // ============ ANTI-CHEAT: VERIFY MINER SIGNATURE ============
+        const miner = minersOwned[minerId];
+        if (!verifyMinerSignature(miner, uid)) {
+            console.error(`[ANTI-CHEAT] Invalid signature for miner ${minerId} by user ${uid} (unplace)`);
+            await db.collection('audit_logs').add({
+                userId: uid,
+                action: 'MINER_SIGNATURE_INVALID',
+                minerInstanceId: minerId,
+                endpoint: 'unplace',
+                timestamp: admin.firestore.FieldValue.serverTimestamp()
+            });
+            return res.status(403).json({
+                success: false,
+                message: 'Miner tidak valid. Hubungi support.'
             });
         }
 
