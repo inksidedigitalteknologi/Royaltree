@@ -1632,6 +1632,201 @@ router.get('/firestore-usage', checkAdmin, async (req, res) => {
     }
 });
 
+
+// ============================================================
+// GET /api/v1/admin/shop-config
+// Config: Tier, RTP Pack, Miner Pack, Bundle
+// ============================================================
+router.get('/shop-config', checkAdmin, async (req, res) => {
+    try {
+        const doc = await db.collection('system').doc('shop_config').get();
+        const config = doc.exists ? doc.data() : {
+            tiers: {
+                FREE:    { priceUsd: 0,     maxMinerSlots: 1,  affiliateRate: 0    },
+                STARTER: { priceUsd: 2.99,  maxMinerSlots: 3,  affiliateRate: 0.10 },
+                PREMIUM: { priceUsd: 5.99,  maxMinerSlots: 5,  affiliateRate: 0.15 },
+                VIP:     { priceUsd: 14.95, maxMinerSlots: 10, affiliateRate: 0.20 },
+                ROYAL:   { priceUsd: 19.98, maxMinerSlots: 20, affiliateRate: 0.25 }
+            },
+            rtpPacks: {
+                'rtp_pack_1000':  { rtp: 1000,  priceUsd: 0.99,  name: 'Starter Pack',  emoji: '💰' },
+                'rtp_pack_5000':  { rtp: 5000,  priceUsd: 3.99,  name: 'Popular Pack',  emoji: '💎' },
+                'rtp_pack_15000': { rtp: 15000, priceUsd: 9.99,  name: 'Pro Pack',      emoji: '👑' },
+                'rtp_pack_50000': { rtp: 50000, priceUsd: 24.99, name: 'Whale Pack',    emoji: '🐋' }
+            },
+            minerPacks: {
+                'miner_pack_starter': { priceUsd: 1.99,  name: 'Starter Miner', emoji: '⛏️', miners: [{ catalogId: 'miner_common', qty: 3 }] },
+                'miner_pack_pro':     { priceUsd: 4.99,  name: 'Pro Miner',     emoji: '🔧', miners: [{ catalogId: 'miner_rare', qty: 2 }, { catalogId: 'miner_common', qty: 3 }] },
+                'miner_pack_elite':   { priceUsd: 9.99,  name: 'Elite Miner',   emoji: '⚡', miners: [{ catalogId: 'miner_epic', qty: 1 }, { catalogId: 'miner_rare', qty: 2 }, { catalogId: 'miner_common', qty: 3 }] },
+                'miner_pack_legend':  { priceUsd: 19.99, name: 'Legend Miner',  emoji: '💎', miners: [{ catalogId: 'miner_legendary', qty: 1 }, { catalogId: 'miner_epic', qty: 2 }, { catalogId: 'miner_rare', qty: 3 }] }
+            },
+            bundles: {
+                'bundle_starter': { rtp: 5000,  priceUsd: 4.99,  name: 'Starter Bundle', emoji: '🎁', miners: [{ catalogId: 'miner_common', qty: 3 }] },
+                'bundle_pro':     { rtp: 15000, priceUsd: 14.99, name: 'Pro Bundle',     emoji: '🎁', miners: [{ catalogId: 'miner_rare', qty: 2 }, { catalogId: 'miner_common', qty: 3 }] },
+                'bundle_elite':   { rtp: 50000, priceUsd: 29.99, name: 'Elite Bundle',   emoji: '🎁', miners: [{ catalogId: 'miner_epic', qty: 1 }, { catalogId: 'miner_rare', qty: 2 }, { catalogId: 'miner_common', qty: 3 }] }
+            }
+        };
+        return res.json({ success: true, data: config });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// PUT /api/v1/admin/shop-config
+// ============================================================
+router.put('/shop-config', checkAdmin, async (req, res) => {
+    try {
+        const config = req.body;
+        await db.collection('system').doc('shop_config').set({
+            ...config,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedBy: req.adminUser?.uid || 'admin_web'
+        }, { merge: true });
+
+        broadcastConfigRefresh('shop').catch(e =>
+            console.error('[SHOP-CONFIG] Broadcast error:', e.message)
+        );
+
+        return res.json({ success: true, message: 'Shop config berhasil disimpan.' });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// GET /api/v1/admin/referral-config
+// ============================================================
+router.get('/referral-config', checkAdmin, async (req, res) => {
+    try {
+        const doc = await db.collection('system').doc('referral_config').get();
+        const config = doc.exists ? doc.data() : {
+            syaratTier: 'PREMIUM',
+            syaratOrder: 3,
+            tiers: [
+                { id: 'starter',  name: 'Starter',  min: 0,   max: 0,      commission: 0,  icon: '🌱' },
+                { id: 'bronze',   name: 'Bronze',   min: 1,   max: 10,     commission: 10, icon: '🥉' },
+                { id: 'silver',   name: 'Silver',   min: 11,  max: 25,     commission: 15, icon: '🥈' },
+                { id: 'gold',     name: 'Gold',     min: 26,  max: 100,    commission: 20, icon: '🥇' },
+                { id: 'platinum', name: 'Platinum', min: 101, max: 999999, commission: 25, icon: '💎' }
+            ]
+        };
+        return res.json({ success: true, data: config });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// PUT /api/v1/admin/referral-config
+// ============================================================
+router.put('/referral-config', checkAdmin, async (req, res) => {
+    try {
+        const config = req.body;
+        await db.collection('system').doc('referral_config').set({
+            ...config,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedBy: req.adminUser?.uid || 'admin_web'
+        }, { merge: true });
+
+        broadcastConfigRefresh('referral').catch(e =>
+            console.error('[REFERRAL-CONFIG] Broadcast error:', e.message)
+        );
+
+        return res.json({ success: true, message: 'Referral config berhasil disimpan.' });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// GET /api/v1/admin/transfer-config
+// ============================================================
+router.get('/transfer-config', checkAdmin, async (req, res) => {
+    try {
+        const doc = await db.collection('system').doc('transfer_config').get();
+        const config = doc.exists ? doc.data() : {
+            minAmount: 20,
+            maxAmount: 100000,
+            feePercent: 2,
+            feeMin: 5,
+            dailyLimit: 500000,
+            enabled: true
+        };
+        return res.json({ success: true, data: config });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// PUT /api/v1/admin/transfer-config
+// ============================================================
+router.put('/transfer-config', checkAdmin, async (req, res) => {
+    try {
+        const config = req.body;
+        await db.collection('system').doc('transfer_config').set({
+            ...config,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedBy: req.adminUser?.uid || 'admin_web'
+        }, { merge: true });
+
+        broadcastConfigRefresh('transfer').catch(e =>
+            console.error('[TRANSFER-CONFIG] Broadcast error:', e.message)
+        );
+
+        return res.json({ success: true, message: 'Transfer config berhasil disimpan.' });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// GET /api/v1/admin/spin-config
+// ============================================================
+router.get('/spin-config', checkAdmin, async (req, res) => {
+    try {
+        const doc = await db.collection('system').doc('spin_config').get();
+        const config = doc.exists ? doc.data() : {
+            cooldownHours: 24,
+            rewards: [
+                { amount: 10,  weight: 30 },
+                { amount: 25,  weight: 25 },
+                { amount: 50,  weight: 20 },
+                { amount: 100, weight: 15 },
+                { amount: 250, weight: 8  },
+                { amount: 500, weight: 2  }
+            ],
+            enabled: true
+        };
+        return res.json({ success: true, data: config });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// PUT /api/v1/admin/spin-config
+// ============================================================
+router.put('/spin-config', checkAdmin, async (req, res) => {
+    try {
+        const config = req.body;
+        await db.collection('system').doc('spin_config').set({
+            ...config,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedBy: req.adminUser?.uid || 'admin_web'
+        }, { merge: true });
+
+        broadcastConfigRefresh('spin').catch(e =>
+            console.error('[SPIN-CONFIG] Broadcast error:', e.message)
+        );
+
+        return res.json({ success: true, message: 'Spin config berhasil disimpan.' });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 module.exports = router;
 
 // ============================================================
