@@ -19,6 +19,7 @@ const referralRoutes = require('./routes/referral');
 const dailyRoutes = require('./routes/daily');
 const adsRoutes = require('./routes/ads');
 const adminRoutes = require('./routes/admin');
+const configRoutes = require('./routes/config');
 const boardRoutes = require('./routes/board');
 const { checkAdmin } = require('./middleware/checkAdmin');
 const gameRoutes = require('./routes/game');
@@ -79,6 +80,7 @@ app.use('/api/v1/auth/register', authLimiter);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/referral', referralRoutes);
 app.use('/api/v1/admin/login', adminLoginLimiter);
+app.use('/api/v1/config', configRoutes);
 app.use('/api/v1/admin', adminRoutes);
 
 // Route sensitif: cek banned (block aksi user banned)
