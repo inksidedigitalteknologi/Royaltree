@@ -43,11 +43,18 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors({
     origin: [
+        // Development
         'http://localhost:3000',
         'http://localhost:5173',
+        // Production (domain utama)
         'https://royaltree.id',
         'https://www.royaltree.id',
-        // Tambahkan domain lain jika ada
+        // Admin panel (Vercel) — nanti ganti setelah deploy
+        'https://royaltree-admin.vercel.app',
+        'https://royaltree-admin-git-main.vercel.app',
+        // IP VPS (untuk admin panel di-host di VPS)
+        'http://45.41.204.21:3000',
+        'http://45.41.204.21:5173',
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
