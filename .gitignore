@@ -63,10 +63,3 @@ backend/logs/
 
 # Backup files (jangan commit)
 *.bak*
-
-# Admin panel
-admin-panel/node_modules/
-admin-panel/dist/
-admin-panel/.env
-admin-panel/.env.production
-admin-panel/.env.local
