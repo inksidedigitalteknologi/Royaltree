@@ -139,6 +139,32 @@ const MINER_CATALOG = [
         description: 'Miner legendaris dengan power tak terbatas'
     }
 ];
+// (catalog defined above)
+
+// ============================================================
+// HELPER: getMinerCatalog — baca dari Firestore (cache 5 menit)
+// ============================================================
+let _MINER_CATALOG_CACHE = null;
+let _MINER_CATALOG_CACHE_AT = 0;
+
+async function getMinerCatalog() {
+    if (_MINER_CATALOG_CACHE && Date.now() - _MINER_CATALOG_CACHE_AT < 5 * 60 * 1000) {
+        return _MINER_CATALOG_CACHE;
+    }
+    try {
+        const doc = await db.collection('system').doc('miner_catalog').get();
+        if (doc.exists && Array.isArray(doc.data().miners) && doc.data().miners.length > 0) {
+            _MINER_CATALOG_CACHE = doc.data().miners;
+            _MINER_CATALOG_CACHE_AT = Date.now();
+            return _MINER_CATALOG_CACHE;
+        }
+    } catch (e) {
+        console.warn('[MINER_CATALOG] Firestore failed, using hardcoded:', e.message);
+    }
+    return MINER_CATALOG;
+}
+module.exports.getMinerCatalog = getMinerCatalog;
+module.exports.MINER_CATALOG = MINER_CATALOG;
 
 // ============================================================
 // HELPER: Hitung token reward
