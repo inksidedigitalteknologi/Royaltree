@@ -1,5 +1,7 @@
 package com.inkside.digital.ui.screens
 
+import androidx.compose.runtime.LaunchedEffect
+import com.inkside.digital.data.network.ApiClient
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -72,7 +74,24 @@ fun WithdrawalScreen(
     var showProviderDropdown by remember { mutableStateOf(false) }
 
     val balance = user?.balance ?: 0.0
-    val minAmount = if (channelType == "E_WALLET") 50000.0 else 100000.0
+    var configMinAmount by remember { mutableStateOf(if (channelType == "E_WALLET") 50000.0 else 100000.0) }
+    var configMaxAmount by remember { mutableStateOf(100000.0) }
+    var configFeePercent by remember { mutableStateOf(2.0) }
+    var configEnabled by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        ApiClient.getTransferConfig().onSuccess { res ->
+            if (res.success && res.data != null) {
+                configMinAmount = res.data.minAmount
+                configMaxAmount = res.data.maxAmount
+                configFeePercent = res.data.feePercent
+                configEnabled = res.data.enabled
+            }
+        }.onFailure { e ->
+            println("WithdrawalScreen config load gagal: ${e.message}")
+        }
+    }
+    val minAmount = configMinAmount
 
     val providers = if (channelType == "E_WALLET") {
         listOf("GoPay", "DANA", "OVO", "ShopeePay", "LinkAja")

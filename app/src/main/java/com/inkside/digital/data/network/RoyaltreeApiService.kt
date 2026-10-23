@@ -28,6 +28,7 @@ import com.inkside.digital.data.network.model.ApiCampaignListResponse
 import com.inkside.digital.data.network.model.ApiMissionListResponse
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
+import com.inkside.digital.data.network.model.ApiTransferConfigResponse
 
 interface RoyaltreeApiService {
 
@@ -36,6 +37,9 @@ interface RoyaltreeApiService {
 
     @GET("config")
     suspend fun getSystemConfig(): ApiConfigResponse
+
+    @GET("config/transfer")
+    suspend fun getTransferConfig(): ApiTransferConfigResponse
 
     @POST("users/sync")
     suspend fun syncUser(

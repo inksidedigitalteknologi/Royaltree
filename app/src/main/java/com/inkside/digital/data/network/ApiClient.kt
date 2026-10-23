@@ -42,6 +42,7 @@ import java.util.concurrent.TimeUnit
 import org.json.JSONObject
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import com.inkside.digital.data.network.model.ApiTransferConfigResponse
 
 object ApiClient {
 
@@ -829,6 +830,16 @@ object ApiClient {
             val json = JSONObject(response.string())
             Result.success(json)
         } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getTransferConfig(): Result<ApiTransferConfigResponse> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getTransferConfig()
+            Result.success(response)
+        } catch (e: Exception) {
+            AppLogger.w("ApiClient", "getTransferConfig gagal: ${e.message}")
             Result.failure(e)
         }
     }

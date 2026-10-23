@@ -242,3 +242,24 @@ data class MissionItem(
     @Json(name = "durationSeconds") val durationSeconds: Int = 0,
     @Json(name = "actionUrl") val actionUrl: String = ""
 )
+
+// ============================================================
+// TRANSFER CONFIG — dari /api/v1/config/transfer
+// ============================================================
+@JsonClass(generateAdapter = true)
+data class ApiTransferConfigResponse(
+    @Json(name = "success") val success: Boolean = false,
+    @Json(name = "type") val type: String? = "transfer",
+    @Json(name = "data") val data: ApiTransferConfigData? = null,
+    @Json(name = "fetchedAt") val fetchedAt: Long? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class ApiTransferConfigData(
+    @Json(name = "minAmount") val minAmount: Double = 20.0,
+    @Json(name = "maxAmount") val maxAmount: Double = 100000.0,
+    @Json(name = "feePercent") val feePercent: Double = 2.0,
+    @Json(name = "feeMin") val feeMin: Double = 5.0,
+    @Json(name = "dailyLimit") val dailyLimit: Double = 500000.0,
+    @Json(name = "enabled") val enabled: Boolean = true
+)
