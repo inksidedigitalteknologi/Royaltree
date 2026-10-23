@@ -128,7 +128,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         AppThemePreferences.init(this)   // Load dark mode & bahasa
-        AppThemePreferences.loadAdminToken(this)  // Load admin token (kalau ada)
         com.inkside.digital.localization.LanguageManager.init(this)  // Init i18n (load JSON)
         AdManager.init(this)              // Init AdMob SDK
 
