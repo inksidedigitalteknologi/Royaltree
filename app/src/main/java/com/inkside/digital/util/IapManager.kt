@@ -35,10 +35,25 @@ object IapManager {
 
     // Product IDs — harus sama dengan backend TIER_CATALOG
     val PRODUCT_IDS = listOf(
+        // Tier (4)
         "tier_starter_lifetime",
         "tier_premium_lifetime",
         "tier_vip_lifetime",
-        "tier_royal_lifetime"
+        "tier_royal_lifetime",
+        // RTP Pack (4)
+        "rtp_pack_1000",
+        "rtp_pack_5000",
+        "rtp_pack_15000",
+        "rtp_pack_50000",
+        // Miner Pack (4)
+        "miner_pack_starter",
+        "miner_pack_pro",
+        "miner_pack_elite",
+        "miner_pack_legend",
+        // Bundle (3)
+        "bundle_starter",
+        "bundle_pro",
+        "bundle_elite"
     )
 
     // ============================================================

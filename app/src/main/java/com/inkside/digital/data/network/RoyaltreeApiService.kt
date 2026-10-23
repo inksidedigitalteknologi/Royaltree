@@ -314,6 +314,19 @@ interface RoyaltreeApiService {
         @Query("page") page: Int = 1,
         @Query("limit") limit: Int = 20
     ): ApiReferralListResponse
+
+    // ============================================================
+    // RTP PACK / MINER PACK / BUNDLE (v1.16)
+    // ============================================================
+    @GET("purchase/rtp-packs")
+    suspend fun getRtpPacks(): okhttp3.ResponseBody
+
+    @GET("purchase/miner-packs")
+    suspend fun getMinerPacks(): okhttp3.ResponseBody
+
+    @GET("purchase/bundles")
+    suspend fun getBundles(): okhttp3.ResponseBody
+
 }
 
 

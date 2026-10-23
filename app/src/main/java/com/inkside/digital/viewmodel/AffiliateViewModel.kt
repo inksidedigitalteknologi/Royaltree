@@ -1620,6 +1620,72 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     private val _purchaseMessage = MutableStateFlow("")
     val purchaseMessage: StateFlow<String> = _purchaseMessage.asStateFlow()
 
+    // ============================================================
+    // RTP PACK / MINER PACK / BUNDLE (v1.16)
+    // ============================================================
+    private val _rtpPacks = MutableStateFlow<List<org.json.JSONObject>>(emptyList())
+    val rtpPacks: StateFlow<List<org.json.JSONObject>> = _rtpPacks.asStateFlow()
+
+    private val _minerPacks = MutableStateFlow<List<org.json.JSONObject>>(emptyList())
+    val minerPacks: StateFlow<List<org.json.JSONObject>> = _minerPacks.asStateFlow()
+
+    private val _bundles = MutableStateFlow<List<org.json.JSONObject>>(emptyList())
+    val bundles: StateFlow<List<org.json.JSONObject>> = _bundles.asStateFlow()
+
+    fun loadRtpPacks() {
+        viewModelScope.launch {
+            try {
+                val response = com.inkside.digital.data.network.ApiClient.apiService.getRtpPacks()
+                val json = org.json.JSONObject(response.string())
+                val arr = json.optJSONArray("data") ?: org.json.JSONArray()
+                val list = mutableListOf<org.json.JSONObject>()
+                for (i in 0 until arr.length()) {
+                    list.add(arr.getJSONObject(i))
+                }
+                _rtpPacks.value = list
+                AppLogger.d("ReferralVM", "✅ ${list.size} RTP packs loaded")
+            } catch (e: Exception) {
+                AppLogger.e("ReferralVM", "❌ loadRtpPacks error: ${e.message}", e)
+            }
+        }
+    }
+
+    fun loadMinerPacks() {
+        viewModelScope.launch {
+            try {
+                val response = com.inkside.digital.data.network.ApiClient.apiService.getMinerPacks()
+                val json = org.json.JSONObject(response.string())
+                val arr = json.optJSONArray("data") ?: org.json.JSONArray()
+                val list = mutableListOf<org.json.JSONObject>()
+                for (i in 0 until arr.length()) {
+                    list.add(arr.getJSONObject(i))
+                }
+                _minerPacks.value = list
+                AppLogger.d("ReferralVM", "✅ ${list.size} Miner packs loaded")
+            } catch (e: Exception) {
+                AppLogger.e("ReferralVM", "❌ loadMinerPacks error: ${e.message}", e)
+            }
+        }
+    }
+
+    fun loadBundles() {
+        viewModelScope.launch {
+            try {
+                val response = com.inkside.digital.data.network.ApiClient.apiService.getBundles()
+                val json = org.json.JSONObject(response.string())
+                val arr = json.optJSONArray("data") ?: org.json.JSONArray()
+                val list = mutableListOf<org.json.JSONObject>()
+                for (i in 0 until arr.length()) {
+                    list.add(arr.getJSONObject(i))
+                }
+                _bundles.value = list
+                AppLogger.d("ReferralVM", "✅ ${list.size} Bundles loaded")
+            } catch (e: Exception) {
+                AppLogger.e("ReferralVM", "❌ loadBundles error: ${e.message}", e)
+            }
+        }
+    }
+
     fun loadPurchaseTiers() {
         viewModelScope.launch {
             _purchaseLoading.value = true
