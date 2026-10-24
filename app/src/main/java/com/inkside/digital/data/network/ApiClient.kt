@@ -8,7 +8,6 @@ import androidx.security.crypto.MasterKey
 import com.inkside.digital.data.network.model.ApiHealthResponse
 import com.inkside.digital.data.network.model.ApiUserSyncRequest
 import com.inkside.digital.data.network.model.ApiUserSyncResponse
-import com.inkside.digital.data.network.model.StepSyncRequest
 import com.inkside.digital.data.network.model.ApiGenericResponse
 import com.inkside.digital.data.network.model.ApiHistoryResponse
 import com.inkside.digital.data.network.model.ApiNotificationListResponse
@@ -243,19 +242,6 @@ object ApiClient {
             Result.failure(e)
         }
     }
-
-    suspend fun syncStepsToPortal(
-        userId: String,
-        steps: Int,
-        token: String = currentApiKey
-    ): Result<ApiGenericResponse> = withContext(Dispatchers.IO) {
-        try {
-            val bearer = if (token.startsWith("Bearer ")) token else "Bearer $token"
-            val response = apiService.syncSteps(bearer, StepSyncRequest(userId, steps))
-            Result.success(response)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
     }
 
     suspend fun syncUserToPortal(

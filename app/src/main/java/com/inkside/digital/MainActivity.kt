@@ -82,7 +82,6 @@ import com.inkside.digital.ui.screens.InvestmentCouponScreen
 import com.inkside.digital.ui.screens.MissionsScreen
 import com.inkside.digital.ui.screens.NotificationsScreen
 import com.inkside.digital.ui.screens.ProfileScreen
-import com.inkside.digital.ui.screens.StepCounterScreenContent
 import com.inkside.digital.ui.screens.AppOffersScreenContent
 import com.inkside.digital.ui.screens.GameRoomScreenContent
 import com.inkside.digital.ui.screens.GameHubScreen
@@ -706,8 +705,6 @@ fun MainAffiliateApp(
         onClaimAppReward = { id -> viewModel.claimAppDownloadReward(id) },
         onClaimMission = { viewModel.claimMissionReward(it) },
         onCompleteTaskAction = { viewModel.completeTaskAction(it) },
-        onAddSteps = { viewModel.addSteps(it) },
-        onConvertSteps = { viewModel.convertStepsToCoins() },
         onClaimMining = { viewModel.setPendingMiningClaim(true); viewModel.showAdRewardModal.value = true },
         onActivateMiner = {
             viewModel.setPendingMinerActivate(true)
@@ -848,8 +845,6 @@ fun MainAffiliateAppContent(
     onClaimAppReward: (String) -> Unit,
     onClaimMission: (String) -> Unit,
     onCompleteTaskAction: (String) -> Unit,
-    onAddSteps: (Int) -> Unit,
-    onConvertSteps: () -> Unit,
     onClaimMining: () -> Unit,
     onActivateMiner: () -> Unit = {},
     onToggleMinerSlot: (String, Int) -> Unit,
@@ -1194,7 +1189,7 @@ fun MainAffiliateAppContent(
 
                 else -> {
                     // Screen yang dinonaktifkan (tidak ada backend support)
-                    // STEP_COUNTER, APP_OFFERS, CAMPAIGNS, ANALYTICS
+                    // APP_OFFERS, CAMPAIGNS, ANALYTICS
                 }
             }  // close when (currentScreen)
             }  // close AnimatedBackground
@@ -1517,8 +1512,6 @@ fun MainAffiliateAppPreview() {
             onClaimAppReward = {},
             onClaimMission = {},
             onCompleteTaskAction = {},
-            onAddSteps = {},
-            onConvertSteps = {},
             onClaimMining = {},
             onToggleMinerSlot = { _, _ -> },
             onBuyGameMinerItem = {},

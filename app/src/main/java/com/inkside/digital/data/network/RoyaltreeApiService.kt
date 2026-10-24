@@ -7,7 +7,6 @@ import com.inkside.digital.data.network.model.ApiReferralListResponse
 import com.inkside.digital.data.network.model.ApiHealthResponse
 import com.inkside.digital.data.network.model.ApiUserSyncRequest
 import com.inkside.digital.data.network.model.ApiUserSyncResponse
-import com.inkside.digital.data.network.model.StepSyncRequest
 import com.inkside.digital.data.network.model.ApiHistoryResponse
 import com.inkside.digital.data.network.model.ApiNotificationListResponse
 import com.inkside.digital.data.network.model.ApiUnreadResponse
@@ -46,13 +45,6 @@ interface RoyaltreeApiService {
         @Header("Authorization") token: String,
         @Body request: ApiUserSyncRequest
     ): ApiUserSyncResponse
-
-    @POST("steps/sync")
-    suspend fun syncSteps(
-        @Header("Authorization") token: String,
-        @Body request: StepSyncRequest
-    ): ApiGenericResponse
-
     @PUT("withdrawals/{id}/status")
     suspend fun updateWithdrawalStatus(
         @Header("Authorization") token: String,

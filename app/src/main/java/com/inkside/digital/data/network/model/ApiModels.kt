@@ -41,7 +41,6 @@ data class ApiUserSyncRequest(
     @Json(name = "tier") val tier: String,
     @Json(name = "balance") val balance: Double,
     @Json(name = "points") val points: Int,
-    @Json(name = "todaySteps") val todaySteps: Int,
     @Json(name = "referralCode") val referralCode: String,
     @Json(name = "city") val city: String? = null
 )
@@ -57,12 +56,6 @@ data class ApiUserSyncResponse(
 data class ApiGenericResponse(
     @Json(name = "success") val success: Boolean = true,
     @Json(name = "message") val message: String = ""
-)
-
-@JsonClass(generateAdapter = true)
-data class StepSyncRequest(
-    @Json(name = "userId") val userId: String,
-    @Json(name = "steps") val steps: Int
 )
 
 @JsonClass(generateAdapter = true)
@@ -119,9 +112,7 @@ data class AnalyticsSummaryData(
     @Json(name = "userId") val userId: String = "",
     @Json(name = "balance") val balance: Double = 0.0,
     @Json(name = "points") val points: Int = 0,
-    @Json(name = "tier") val tier: String = "FREE",
-    @Json(name = "todaySteps") val todaySteps: Int = 0,
-    @Json(name = "totalCommission") val totalCommission: Double = 0.0,
+    @Json(name = "tier") val tier: String = "FREE",    @Json(name = "totalCommission") val totalCommission: Double = 0.0,
     @Json(name = "totalWithdrawal") val totalWithdrawal: Double = 0.0,
     @Json(name = "netEarnings") val netEarnings: Double = 0.0
 )
@@ -163,9 +154,7 @@ data class ProfileData(
     @Json(name = "city") val city: String = "",
     @Json(name = "tier") val tier: String = "FREE",
     @Json(name = "balance") val balance: Double = 0.0,
-    @Json(name = "points") val points: Int = 0,
-    @Json(name = "todaySteps") val todaySteps: Int = 0
-)
+    @Json(name = "points") val points: Int = 0,)
 
 @JsonClass(generateAdapter = true)
 data class ApiWithdrawalListResponse(
