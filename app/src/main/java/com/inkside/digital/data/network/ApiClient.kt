@@ -811,6 +811,23 @@ object ApiClient {
         }
     }
 
+    /**
+     * Merge 5 miner tier sama → 1 miner tier+1.
+     * Backend: POST /api/v1/game/miners/merge
+     */
+    suspend fun mergeMiners(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            val response = post("/api/v1/game/miners/merge", body)
+            if (response.success) {
+                Result.success(response.data ?: JSONObject())
+            } else {
+                Result.failure(Exception(response.message ?: "Merge gagal"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 
     suspend fun getGameLeaderboard(): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {

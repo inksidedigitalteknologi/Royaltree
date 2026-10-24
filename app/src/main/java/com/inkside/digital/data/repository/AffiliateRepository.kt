@@ -1347,12 +1347,11 @@ class AffiliateRepository(private val dao: AppDao) {
                 put("minerIds", org.json.JSONArray(minerIds))
             }
             
-            val response = apiClient.post("/api/v1/game/miners/merge", body)
-            if (response.success) {
-                val data = response.data ?: return@withContext Result.failure(Exception("Data kosong"))
+            val result = ApiClient.mergeMiners(body)
+            result.onSuccess { data ->
                 Result.success(data)
-            } else {
-                Result.failure(Exception(response.message ?: "Merge gagal"))
+            }.onFailure { e ->
+                Result.failure(e)
             }
         } catch (e: Exception) {
             AppLogger.e("AffiliateRepository", "mergeMiners error: ${e.message}")

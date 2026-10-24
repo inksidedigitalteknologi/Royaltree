@@ -116,6 +116,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 
 // ==== Retro Pixel Palette ====
 private val RetroGold = Color(0xFFFFD700)
@@ -3005,7 +3009,7 @@ private fun FusionTab(
                     eligibleTiers.forEach { tier ->
                         val count = byTier[tier]?.size ?: 0
                         val isSelected = selectedTier == tier
-                        val tColor = tierColorFn(tier)
+                        val tColor = tierColor(tier)
                         FilterChip(
                             selected = isSelected,
                             onClick = { selectedTier = tier },
@@ -3046,7 +3050,7 @@ private fun FusionTab(
                         Spacer(Modifier.width(8.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(miner.name, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                            Text("${miner.tier} · ⚡ ${HashrateFormatter.formatShort(miner.basePowerHs.takeIf { it > 0 } ?: miner.powerHs)}", fontSize = 9.sp, color = tierColorFn(miner.tier))
+                            Text("${miner.tier} · ⚡ ${HashrateFormatter.formatShort(miner.basePowerHs.takeIf { it > 0 } ?: miner.powerHs)}", fontSize = 9.sp, color = tierColor(miner.tier))
                         }
                     }
                 }
@@ -3097,7 +3101,7 @@ private fun FusionTab(
     }
 }
 
-private fun tierColorFn(tier: String): Color = when (tier.uppercase()) {
+private fun tierColor(tier: String): Color = when (tier.uppercase()) {
     "COMMON" -> Color(0xFF94A3B8)
     "RARE" -> Color(0xFF3B82F6)
     "EPIC" -> Color(0xFFA855F7)

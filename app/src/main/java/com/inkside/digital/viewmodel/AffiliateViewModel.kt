@@ -1102,7 +1102,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 AppLogger.d("AffiliateViewModel", "✅ Merge sukses: ${data.optJSONObject("newMiner")?.optString("name")}")
                 _mergeSuccess.value = data
                 // Refresh state dari backend
-                refreshGameStateFromBackend()
+                loadGameState()
             }.onFailure { e ->
                 AppLogger.e("AffiliateViewModel", "❌ Merge gagal: ${e.message}")
                 _mergeError.value = e.message ?: "Merge gagal"
