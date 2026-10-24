@@ -1348,15 +1348,10 @@ class AffiliateRepository(private val dao: AppDao) {
                 put("minerIds", org.json.JSONArray(minerIds))
             }
             
-            val result = ApiClient.mergeMiners(body)
-            result.onSuccess { data ->
-                Result.success(data)
-            }.onFailure { e ->
-                Result.failure(e)
-            }
+            return@withContext ApiClient.mergeMiners(body)
         } catch (e: Exception) {
             AppLogger.e("AffiliateRepository", "mergeMiners error: ${e.message}")
-            Result.failure(e)
+            return@withContext Result.failure(e)
         }
     }
 
