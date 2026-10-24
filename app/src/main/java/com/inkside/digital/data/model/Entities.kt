@@ -19,6 +19,7 @@ data class UserEntity(
     val referredCount: Int = 0,
     val checkInStreak: Int = 0,
     val lastCheckInDate: String = "",    // format: "2026-09-25"
+    val todaySteps: Int = 0,
 
     // === Local-only fields (fitur UI, tidak di Firestore) ===
     val pendingBalance: Double = 0.0,

@@ -40,6 +40,7 @@ object WidgetUpdater {
 
                 val balanceFormatted = "Rp ${formatNumber(user.balance)}"
                 val pointsFormatted = formatCompact(user.points.toInt())
+                val stepsFormatted = formatCompact(user.todaySteps)
 
                 glanceIds.forEach { glanceId ->
                     updateAppWidgetState(context, glanceId) { prefs ->

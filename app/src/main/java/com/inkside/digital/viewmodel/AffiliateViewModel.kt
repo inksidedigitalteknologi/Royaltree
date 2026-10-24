@@ -202,6 +202,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 tier = currentUser.tier,
                 balance = currentUser.balance,
                 points = currentUser.points.toInt(),
+                todaySteps = currentUser.todaySteps,
                 referralCode = currentUser.referralCode,
                 city = currentUser.locationCity
             )
@@ -278,6 +279,29 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         val targetUser = allUsers.value.find { it.id == userId }
         _snackbarMessage.value = LanguageManager.translate("vm_switch_account", _currentLanguage.value, "Beralih akun: ${targetUser?.name ?: userId}")
     }
+
+    fun addSteps(steps: Int) {
+        viewModelScope.launch {
+            repository.addSteps(steps)
+            val currentUser = user.value
+            if (currentUser != null) {
+                ApiClient.syncStepsToPortal(currentUser.id, steps)
+            }
+        }
+    }
+
+    fun convertStepsToCoins(onComplete: ((Boolean, String) -> Unit)? = null) {
+        viewModelScope.launch {
+            val result = repository.convertStepsToCoins()
+            if (result.isSuccess) {
+                val (coins, rupiah) = result.getOrThrow()
+                _snackbarMessage.value = LanguageManager.translate("vm_step_exchange_success", _currentLanguage.value, "Sukses menukar langkah! +$coins Koin (Rp ${String.format(java.util.Locale.US, "%,.0f", rupiah)})")
+                onComplete?.invoke(true, "+$coins Koin")
+            } else {
+                val msg = result.exceptionOrNull()?.message ?: LanguageManager.translate("vm_step_exchange_failed", _currentLanguage.value, "Gagal menukar langkah")
+                _snackbarMessage.value = msg
+                onComplete?.invoke(false, msg)
+            }
         }
     }
 
@@ -1184,7 +1208,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             points = currentUser.points.toInt(),
                             referralCode = currentUser.referralCode,
                             checkInStreak = currentUser.checkInStreak,
-                            lastCheckInDate = currentUser.lastCheckInDate
+                            lastCheckInDate = currentUser.lastCheckInDate,
+                            todaySteps = currentUser.todaySteps
                         )
                         showSnackbar("✅ Profil berhasil disimpan")
                     } else {
@@ -2477,7 +2502,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         points = profile.points,
                         referralCode = "",
                         checkInStreak = 0,
-                        lastCheckInDate = ""
+                        lastCheckInDate = "",
+                        todaySteps = profile.todaySteps
                     )
 
             }
@@ -2560,7 +2586,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         userId = data.userId, name = "", email = "", phone = "",
                         tier = data.tier, balance = data.balance,
                         points = data.points,
-                        referralCode = "", checkInStreak = 0, lastCheckInDate = ""
+                        referralCode = "", checkInStreak = 0, lastCheckInDate = "",
+                        todaySteps = data.todaySteps
                     )
                 }
             }
@@ -2576,7 +2603,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         userId = profile.id, name = profile.name, email = profile.email, phone = "",
                         tier = profile.tier, balance = profile.balance,
                         points = profile.points,
-                        referralCode = "", checkInStreak = 0, lastCheckInDate = ""
+                        referralCode = "", checkInStreak = 0, lastCheckInDate = "",
+                        todaySteps = profile.todaySteps
                     )
                 }
             }
@@ -2596,7 +2624,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             points = (current.points + spin.pointsWon).toInt(),
                             referralCode = current.referralCode,
                             checkInStreak = current.checkInStreak,
-                            lastCheckInDate = current.lastCheckInDate
+                            lastCheckInDate = current.lastCheckInDate,
+                            todaySteps = current.todaySteps
                         )
                     }
                 }
@@ -2643,7 +2672,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             referralCode = data.optString("referralCode", ""),
                             referredCount = data.optInt("referredCount", 0),
                             checkInStreak = data.optInt("checkInStreak", 0),
-                            lastCheckInDate = data.optString("lastCheckInDate", ""), 0),
+                            lastCheckInDate = data.optString("lastCheckInDate", ""),
+                            todaySteps = data.optInt("todaySteps", 0),
                             // === 14 field local-only ===
                             pendingBalance = data.optDouble("pendingBalance", 0.0),
                             totalPaidOut = data.optDouble("totalPaidOut", 0.0),
