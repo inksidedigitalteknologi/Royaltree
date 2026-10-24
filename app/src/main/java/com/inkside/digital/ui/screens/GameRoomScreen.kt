@@ -189,6 +189,11 @@ fun GameRoomScreen(
             }
         },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
+        onMergeMiners = { minerIds -> viewModel.mergeMiners(minerIds) },
+        isMerging = isMerging,
+        mergeError = mergeError,
+        mergeSuccess = mergeSuccess,
+        onClearMergeState = { viewModel.clearMergeState() },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
         onBuyAndPlaceGameMinerItem = { id -> viewModel.buyAndPlaceGameMinerItem(id) },
         onFinishGame = { score, duration, nonce -> viewModel.finishMiniGame(score, duration, nonce) },
@@ -212,6 +217,11 @@ fun GameRoomScreenContent(
     onActivateMiner: () -> Unit = {},
     onClaimMining: () -> Unit,
     onToggleMinerSlot: (String, Int) -> Unit,
+    onMergeMiners: (List<String>) -> Unit = {},
+    isMerging: Boolean = false,
+    mergeError: String? = null,
+    mergeSuccess: org.json.JSONObject? = null,
+    onClearMergeState: () -> Unit = {},
     onBuyGameMinerItem: (String) -> Unit,
     onBuyAndPlaceGameMinerItem: (String) -> Unit = {},
     onFinishGame: (score: Int, durationMs: Long, gameNonce: String) -> Unit,
@@ -222,7 +232,12 @@ fun GameRoomScreenContent(
     onUnlockMiner: (String) -> Unit = {},
     onUnlockSlot: (Int) -> Unit = {}
 ) {
-    var activeTab by remember { mutableIntStateOf(0) } // 0: Ruang Rak, 1: Toko Item, 2: Mini-Game
+    var activeTab by remember { mutableIntStateOf(0) } // 0: Rak, 1: Toko, 2: Mini-Game, 3: Fusion
+    
+    // Merge state (weighted adaptive)
+    val isMerging by viewModel.isMerging.collectAsState()
+    val mergeError by viewModel.mergeError.collectAsState()
+    val mergeSuccess by viewModel.mergeSuccess.collectAsState()
     var selectedItemToBuy by remember { mutableStateOf<GameMinerItemEntity?>(null) }
     var slotToAssignItem by remember { mutableStateOf<Int?>(null) }
 
@@ -335,7 +350,7 @@ fun GameRoomScreenContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             // Tabs: Ruang Rak (Virtual Room), Toko Item (Shop), Mini-Game (Arcade)
-            val tabs = listOf("🖥️ Ruang Rak Mining", "🛒 Toko Item", "🎮 Mini-Game Arcade")
+            val tabs = listOf("🖥️ Ruang Rak Mining", "🛒 Toko Item", "🎮 Mini-Game Arcade", "⚗️ Fusion")
             ScrollableTabRow(
                 selectedTabIndex = activeTab,
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -409,6 +424,20 @@ fun GameRoomScreenContent(
                         currentLanguage = currentLanguage,
                         onFinishGame = { score, duration, nonce -> onFinishGame(score, duration, nonce) },
                         highScore = roomState?.miniGameHighScore ?: 0
+                    )
+                }
+                3 -> {
+                    // TAB 3: FUSION LAB
+                    FusionTab(
+                        currentLanguage = currentLanguage,
+                        minerItems = minerItems,
+                        userPoints = user?.points ?: 0.0,
+                        onMerge = { minerIds -> onMergeMiners(minerIds) },
+                        isMerging = isMerging,
+                        mergeError = mergeError,
+                        mergeSuccess = mergeSuccess,
+                        onClearMergeState = onClearMergeState,
+                        onNavigateToShop = { activeTab = 1 }
                     )
                 }
             }
@@ -2778,4 +2807,301 @@ private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
             }
         }
     }
+}
+
+
+// ============================================================
+// FUSION TAB — Merge 5 miner tier sama → 1 tier+1
+// ============================================================
+@Composable
+private fun FusionTab(
+    currentLanguage: AppLanguage,
+    minerItems: List<GameMinerItemEntity>,
+    userPoints: Double,
+    onMerge: (List<String>) -> Unit,
+    isMerging: Boolean,
+    mergeError: String?,
+    mergeSuccess: org.json.JSONObject?,
+    onClearMergeState: () -> Unit,
+    onNavigateToShop: () -> Unit
+) {
+    val availableMiners = remember(minerItems) {
+        minerItems.filter { it.isOwned && !it.isPlacedInRoom && it.tier != "MYTHIC" }
+    }
+    val byTier = remember(availableMiners) {
+        availableMiners.groupBy { it.tier }
+    }
+    val eligibleTiers = remember(byTier) {
+        byTier.filter { it.value.size >= 5 }.keys.sortedBy {
+            listOf("COMMON", "RARE", "EPIC", "LEGENDARY").indexOf(it)
+        }
+    }
+    
+    var selectedTier by remember { mutableStateOf<String?>(eligibleTiers.firstOrNull()) }
+    var selectedMinerIds by remember { mutableStateOf<Set<String>>(emptySet()) }
+    var showConfirmDialog by remember { mutableStateOf(false) }
+    
+    LaunchedEffect(selectedTier) {
+        selectedMinerIds = emptySet()
+    }
+    
+    DisposableEffect(Unit) {
+        onDispose { onClearMergeState() }
+    }
+    
+    val fusionCosts = mapOf(
+        "COMMON" to 100.0,
+        "RARE" to 500.0,
+        "EPIC" to 2000.0,
+        "LEGENDARY" to 10000.0
+    )
+    val currentCost = selectedTier?.let { fusionCosts[it] } ?: 0.0
+    val canAfford = userPoints >= currentCost
+    val canMerge = selectedMinerIds.size == 5 && canAfford && !isMerging
+    
+    // Confirm dialog
+    if (showConfirmDialog && selectedTier != null) {
+        val selectedMiners = availableMiners.filter { selectedMinerIds.contains(it.id) }
+        val nextTier = when (selectedTier) {
+            "COMMON" -> "RARE"
+            "RARE" -> "EPIC"
+            "EPIC" -> "LEGENDARY"
+            "LEGENDARY" -> "MYTHIC"
+            else -> "?"
+        }
+        AlertDialog(
+            onDismissRequest = { showConfirmDialog = false },
+            icon = { Text("⚗️", fontSize = 40.sp) },
+            title = { Text("Konfirmasi Fusion", fontWeight = FontWeight.Bold) },
+            text = {
+                Column {
+                    Text("Anda akan melebur 5 miner:", fontSize = 13.sp)
+                    Spacer(Modifier.height(8.dp))
+                    selectedMiners.forEach { m ->
+                        Text("• ${m.name} (${m.tier})", fontSize = 11.sp, color = Color(0xFF94A3B8))
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Text("Menjadi:", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                    Text("1 miner $nextTier", fontSize = 13.sp, color = Color(0xFFA855F7))
+                    Spacer(Modifier.height(8.dp))
+                    Surface(color = Color(0xFFF59E0B).copy(alpha = 0.15f), shape = RoundedCornerShape(8.dp)) {
+                        Text(
+                            "💰 Biaya: ${GlobalPointsManager.formatRtp(currentCost)} RTP",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFF59E0B),
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "⚠️ Miner yang dilebur akan HILANG permanen",
+                        fontSize = 11.sp,
+                        color = Color(0xFFEF4444),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showConfirmDialog = false
+                        onMerge(selectedMinerIds.toList())
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA855F7))
+                ) {
+                    Text("⚗️ FUSE SEKARANG", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showConfirmDialog = false }) {
+                    Text("Batal")
+                }
+            }
+        )
+    }
+    
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(vertical = 14.dp)
+    ) {
+        item {
+            Surface(
+                color = Color(0xFF0F172A).copy(alpha = 0.85f),
+                shape = RoundedCornerShape(14.dp),
+                border = BorderStroke(1.dp, Color(0xFFA855F7).copy(alpha = 0.35f)),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("⚗️ FUSION LAB", fontSize = 18.sp, fontWeight = FontWeight.Black, color = Color(0xFFA855F7), letterSpacing = 1.5.sp)
+                    Spacer(Modifier.height(4.dp))
+                    Text("Gabungkan 5 miner tier sama → 1 miner tier di atasnya", fontSize = 11.sp, color = Color(0xFF94A3B8))
+                    Spacer(Modifier.height(8.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("💰 Saldo", fontSize = 11.sp, color = Color(0xFF94A3B8))
+                        Text("${GlobalPointsManager.formatRtp(userPoints)} RTP", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = EmeraldLight)
+                    }
+                }
+            }
+        }
+        
+        if (mergeError != null) {
+            item {
+                Surface(
+                    color = Color(0xFFEF4444).copy(alpha = 0.15f),
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, Color(0xFFEF4444).copy(alpha = 0.5f)),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("❌ $mergeError", fontSize = 11.sp, color = Color(0xFFEF4444), modifier = Modifier.padding(12.dp))
+                }
+            }
+        }
+        
+        if (mergeSuccess != null) {
+            item {
+                Surface(
+                    color = Color(0xFF10B981).copy(alpha = 0.15f),
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, Color(0xFF10B981).copy(alpha = 0.5f)),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text("✅ Fusion berhasil!", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF10B981))
+                        Spacer(Modifier.height(4.dp))
+                        val newMiner = mergeSuccess.optJSONObject("newMiner")
+                        if (newMiner != null) {
+                            Text("🎉 ${newMiner.optString("name")} (${newMiner.optString("tier")})", fontSize = 11.sp, color = Color.White)
+                            Text("⚡ ${HashrateFormatter.format(newMiner.optLong("basePowerHs", 0L))}", fontSize = 10.sp, color = EmeraldLight)
+                        }
+                        Text("💰 Biaya: ${GlobalPointsManager.formatRtp(mergeSuccess.optDouble("feePaid", 0.0))} RTP", fontSize = 10.sp, color = Color(0xFF94A3B8))
+                    }
+                }
+            }
+        }
+        
+        if (eligibleTiers.isEmpty()) {
+            item {
+                Surface(color = Color(0xFF0F172A).copy(alpha = 0.6f), shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("📦", fontSize = 32.sp)
+                        Spacer(Modifier.height(8.dp))
+                        Text("Belum ada tier dengan 5+ miner", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF94A3B8))
+                        Spacer(Modifier.height(4.dp))
+                        Text("Beli miner tier sama minimal 5 buah untuk bisa fusion", fontSize = 10.sp, color = Color(0xFF64748B), textAlign = TextAlign.Center)
+                        Spacer(Modifier.height(12.dp))
+                        Button(onClick = onNavigateToShop, colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)) {
+                            Text("🛒 Buka Toko")
+                        }
+                    }
+                }
+            }
+        } else {
+            item {
+                Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    eligibleTiers.forEach { tier ->
+                        val count = byTier[tier]?.size ?: 0
+                        val isSelected = selectedTier == tier
+                        val tColor = tierColorFn(tier)
+                        FilterChip(
+                            selected = isSelected,
+                            onClick = { selectedTier = tier },
+                            label = { Text("$tier ($count)", fontSize = 11.sp) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = tColor.copy(alpha = 0.25f),
+                                selectedLabelColor = tColor
+                            )
+                        )
+                    }
+                }
+            }
+            
+            val tierMiners = selectedTier?.let { byTier[it] } ?: emptyList()
+            items(tierMiners) { miner ->
+                val isSelected = selectedMinerIds.contains(miner.id)
+                val canSelectMore = selectedMinerIds.size < 5
+                Surface(
+                    color = if (isSelected) Color(0xFFA855F7).copy(alpha = 0.15f) else Color(0xFF0F172A).copy(alpha = 0.6f),
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(if (isSelected) 1.5.dp else 1.dp, if (isSelected) Color(0xFFA855F7).copy(alpha = 0.7f) else Color(0xFF334155).copy(alpha = 0.5f)),
+                    modifier = Modifier.fillMaxWidth().clickable {
+                        selectedMinerIds = if (isSelected) selectedMinerIds - miner.id
+                        else if (canSelectMore) selectedMinerIds + miner.id else selectedMinerIds
+                    }
+                ) {
+                    Row(modifier = Modifier.padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier.size(20.dp).clip(RoundedCornerShape(4.dp))
+                                .background(if (isSelected) Color(0xFFA855F7) else Color.Transparent)
+                                .border(1.5.dp, if (isSelected) Color(0xFFA855F7) else Color(0xFF64748B), RoundedCornerShape(4.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (isSelected) Text("✓", fontSize = 12.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        Text(miner.iconEmoji, fontSize = 22.sp)
+                        Spacer(Modifier.width(8.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(miner.name, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                            Text("${miner.tier} · ⚡ ${HashrateFormatter.formatShort(miner.basePowerHs.takeIf { it > 0 } ?: miner.powerHs)}", fontSize = 9.sp, color = tierColorFn(miner.tier))
+                        }
+                    }
+                }
+            }
+            
+            item {
+                Surface(
+                    color = Color(0xFF0F172A).copy(alpha = 0.85f),
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, Color(0xFFA855F7).copy(alpha = 0.4f)),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("💰 Biaya fusion", fontSize = 12.sp, color = Color(0xFF94A3B8))
+                            Text("${GlobalPointsManager.formatRtp(currentCost)} RTP", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = if (canAfford) EmeraldLight else Color(0xFFEF4444))
+                        }
+                        if (!canAfford) {
+                            Text("⚠️ Saldo kurang ${GlobalPointsManager.formatRtp(currentCost - userPoints)} RTP", fontSize = 10.sp, color = Color(0xFFEF4444))
+                        }
+                        Spacer(Modifier.height(10.dp))
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(onClick = onNavigateToShop, modifier = Modifier.weight(1f)) {
+                                Text("🛒 Toko", fontSize = 12.sp)
+                            }
+                            Button(
+                                onClick = { showConfirmDialog = true },
+                                enabled = canMerge,
+                                modifier = Modifier.weight(1.5f),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFFA855F7),
+                                    contentColor = Color.White,
+                                    disabledContainerColor = Color(0xFF334155),
+                                    disabledContentColor = Color(0xFF64748B)
+                                )
+                            ) {
+                                if (isMerging) {
+                                    CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = Color.White)
+                                    Spacer(Modifier.width(6.dp))
+                                }
+                                Text("⚗️ FUSE (${selectedMinerIds.size}/5)", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun tierColorFn(tier: String): Color = when (tier.uppercase()) {
+    "COMMON" -> Color(0xFF94A3B8)
+    "RARE" -> Color(0xFF3B82F6)
+    "EPIC" -> Color(0xFFA855F7)
+    "LEGENDARY" -> Color(0xFFFBBF24)
+    "MYTHIC" -> Color(0xFFEF4444)
+    else -> Color(0xFF6B7280)
 }

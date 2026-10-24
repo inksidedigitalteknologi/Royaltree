@@ -1332,6 +1332,34 @@ class AffiliateRepository(private val dao: AppDao) {
         Result.success(successMsg)
     }
 
+    /**
+     * Merge 5 miner tier sama → 1 miner tier+1.
+     * Backend: POST /api/v1/game/miners/merge
+     * Body: { minerIds: [id1..id5] }
+     * Response: { success, data: { newMiner, feePaid, newBalance } }
+     */
+    suspend fun mergeMiners(minerIds: List<String>): Result<org.json.JSONObject> = withContext(Dispatchers.IO) {
+        try {
+            if (minerIds.size != 5) return@withContext Result.failure(Exception("Harus 5 miner"))
+            if (minerIds.toSet().size != 5) return@withContext Result.failure(Exception("Miner ID harus unique"))
+            
+            val body = org.json.JSONObject().apply {
+                put("minerIds", org.json.JSONArray(minerIds))
+            }
+            
+            val response = apiClient.post("/api/v1/game/miners/merge", body)
+            if (response.success) {
+                val data = response.data ?: return@withContext Result.failure(Exception("Data kosong"))
+                Result.success(data)
+            } else {
+                Result.failure(Exception(response.message ?: "Merge gagal"))
+            }
+        } catch (e: Exception) {
+            AppLogger.e("AffiliateRepository", "mergeMiners error: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
     suspend fun toggleMinerSlot(itemId: String, targetSlot: Int): Result<String> = withContext(Dispatchers.IO) {
         val item = dao.getGameMinerItemById(itemId) ?: return@withContext Result.failure(Exception("Item tidak ditemukan"))
         if (!item.isOwned) {

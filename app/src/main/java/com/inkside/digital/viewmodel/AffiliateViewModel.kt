@@ -1072,6 +1072,51 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    // Merge state
+    private val _isMerging = MutableStateFlow(false)
+    val isMerging: StateFlow<Boolean> = _isMerging
+    private val _mergeError = MutableStateFlow<String?>(null)
+    val mergeError: StateFlow<String?> = _mergeError
+    private val _mergeSuccess = MutableStateFlow<org.json.JSONObject?>(null)
+    val mergeSuccess: StateFlow<org.json.JSONObject?> = _mergeSuccess
+
+    /**
+     * Merge 5 miner tier sama → 1 miner tier+1.
+     * Setelah sukses, refresh game state otomatis.
+     */
+    fun mergeMiners(minerIds: List<String>) {
+        if (minerIds.size != 5) {
+            _mergeError.value = "Harus 5 miner"
+            return
+        }
+        if (_isMerging.value) return
+        
+        viewModelScope.launch {
+            _isMerging.value = true
+            _mergeError.value = null
+            _mergeSuccess.value = null
+            
+            val result = repository.mergeMiners(minerIds)
+            
+            result.onSuccess { data ->
+                AppLogger.d("AffiliateViewModel", "✅ Merge sukses: ${data.optJSONObject("newMiner")?.optString("name")}")
+                _mergeSuccess.value = data
+                // Refresh state dari backend
+                refreshGameStateFromBackend()
+            }.onFailure { e ->
+                AppLogger.e("AffiliateViewModel", "❌ Merge gagal: ${e.message}")
+                _mergeError.value = e.message ?: "Merge gagal"
+            }
+            
+            _isMerging.value = false
+        }
+    }
+    
+    fun clearMergeState() {
+        _mergeError.value = null
+        _mergeSuccess.value = null
+    }
+
     fun toggleMinerSlot(itemId: String, targetSlot: Int) {
         viewModelScope.launch {
             // Check condition: place atau unplace?
