@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
         GameMinerItemEntity::class,
         GameRoomStateEntity::class
     ],
-    version = 7,  // Bump: weighted adaptive + efficiency + signature
+    version = 8,  // Bump: force destructive rebuild (schema mismatch from MIGRATION_6_7)
     exportSchema = false  // No-op, sudah ada migration manual
 )
 abstract class AppDatabase : RoomDatabase() {
