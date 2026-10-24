@@ -316,11 +316,19 @@ object ApiClient {
     suspend fun changePin(userId: String, body: Map<String, String>, token: String = currentApiKey): Result<ApiGenericResponse> = withContext(Dispatchers.IO) {
         try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.changePin(b, userId, body)) } catch (e: Exception) { Result.failure(e) }
     }
-    suspend fun getWithdrawals(token: String = currentApiKey): Result<ApiWithdrawalListResponse> = withContext(Dispatchers.IO) {
-        try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.getWithdrawals(b)) } catch (e: Exception) { Result.failure(e) }
+    suspend fun getWithdrawals(token: String = ""): Result<ApiWithdrawalListResponse> = withContext(Dispatchers.IO) {
+        try {
+            val t = if (token.isNotEmpty()) token else getFirebaseToken()
+            val b = if (t.startsWith("Bearer ")) t else "Bearer $t"
+            Result.success(apiService.getWithdrawals(b))
+        } catch (e: Exception) { Result.failure(e) }
     }
-    suspend fun createWithdrawal(req: ApiWithdrawalRequest, token: String = currentApiKey): Result<ApiGenericResponse> = withContext(Dispatchers.IO) {
-        try { val b = if (token.startsWith("Bearer ")) token else "Bearer $token"; Result.success(apiService.createWithdrawal(b, req)) } catch (e: Exception) { Result.failure(e) }
+    suspend fun createWithdrawal(req: ApiWithdrawalRequest, token: String = ""): Result<ApiGenericResponse> = withContext(Dispatchers.IO) {
+        try {
+            val t = if (token.isNotEmpty()) token else getFirebaseToken()
+            val b = if (t.startsWith("Bearer ")) t else "Bearer $t"
+            Result.success(apiService.createWithdrawal(b, req))
+        } catch (e: Exception) { Result.failure(e) }
     }
 
     suspend fun getCampaigns(token: String = currentApiKey): Result<ApiCampaignListResponse> = withContext(Dispatchers.IO) {

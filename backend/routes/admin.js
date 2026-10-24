@@ -545,7 +545,7 @@ router.get('/users/:uid', checkAdmin, async (req, res) => {
                 ? db.collection('users').doc(userData.referredBy).get().catch(() => null)
                 : Promise.resolve(null),
             db.collection('transactions').where('userId', '==', uid).count().get().catch(() => null),
-            db.collection('withdrawals').where('userId', '==', uid).count().get().catch(() => null),
+            db.collection('affiliate_withdrawals').where('userId', '==', uid).count().get().catch(() => null),
             db.collection('audit_logs').where('userId', '==', uid).orderBy('timestamp', 'desc').limit(10).get().catch(() => null),
             db.collection('audit_logs').where('userId', '==', uid).where('action', '==', 'USER_BANNED').count().get().catch(() => null),
             db.collection('user_flags').doc(uid).get().catch(() => null),
@@ -793,7 +793,7 @@ router.post('/users/:uid/unban', checkAdmin, async (req, res) => {
 router.get('/withdrawals', checkAdmin, async (req, res) => {
     try {
         const statusFilter = req.query.status || 'PENDING';
-        const snapshot = await db.collection('withdrawals')
+        const snapshot = await db.collection('affiliate_withdrawals')
             .where('status', '==', statusFilter)
             .get();
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -805,8 +805,8 @@ router.get('/withdrawals', checkAdmin, async (req, res) => {
 
 router.get('/withdrawals/all', checkAdmin, async (req, res) => {
     try {
-        const snapshot = await db.collection('withdrawals')
-            .orderBy('timestamp', 'desc')
+        const snapshot = await db.collection('affiliate_withdrawals')
+            .orderBy('requestedAt', 'desc')
             .limit(100)
             .get();
         const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -818,7 +818,7 @@ router.get('/withdrawals/all', checkAdmin, async (req, res) => {
 
 router.post('/withdrawals/:id/approve', checkAdmin, async (req, res) => {
     try {
-        const docRef = db.collection('withdrawals').doc(req.params.id);
+        const docRef = db.collection('affiliate_withdrawals').doc(req.params.id);
         const doc = await docRef.get();
         if (!doc.exists) return res.status(404).json({ success: false, message: 'Withdrawal tidak ditemukan' });
         
@@ -835,7 +835,7 @@ router.post('/withdrawals/:id/approve', checkAdmin, async (req, res) => {
 
 router.post('/withdrawals/:id/reject', checkAdmin, async (req, res) => {
     try {
-        const docRef = db.collection('withdrawals').doc(req.params.id);
+        const docRef = db.collection('affiliate_withdrawals').doc(req.params.id);
         const doc = await docRef.get();
         if (!doc.exists) return res.status(404).json({ success: false, message: 'Withdrawal tidak ditemukan' });
         
@@ -1107,7 +1107,7 @@ router.get('/stats', checkAdmin, async (req, res) => {
         const totalTransactions = txSnapshot.data().count;
 
         // Pending withdrawals
-        const pendingWdSnapshot = await db.collection('withdrawals')
+        const pendingWdSnapshot = await db.collection('affiliate_withdrawals')
             .where('status', '==', 'PENDING')
             .count().get();
         const pendingWithdrawals = pendingWdSnapshot.data().count;
