@@ -20,7 +20,7 @@ const db = admin.firestore();
 // ============================================================
 // KATALOG MINER DEFAULT
 // ============================================================
-// powerGhs = hash rate dalam GH/s (Giga Hash/s)
+// powerHs = hash rate dalam H/s (Hash per second)
 // Nilai kecil = KH/s / MH/s:
 //   0.000001 = 1 KH/s
 //   0.000005 = 5 KH/s
@@ -46,10 +46,10 @@ function getMinerSigningSecret() {
 
 /**
  * Generate signature untuk miner.
- * Format: HMAC-SHA256(instanceId|catalogId|uid|purchasedAt|powerGhs|pointsPerMinute, secret)
+ * Format: HMAC-SHA256(instanceId|catalogId|uid|purchasedAt|powerHs|pointsPerMinute, secret)
  */
-function generateMinerSignature(instanceId, catalogId, uid, purchasedAt, powerGhs, pointsPerMinute) {
-    const data = `${instanceId}|${catalogId}|${uid}|${purchasedAt}|${powerGhs}|${pointsPerMinute}`;
+function generateMinerSignature(instanceId, catalogId, uid, purchasedAt, powerHs, pointsPerMinute) {
+    const data = `${instanceId}|${catalogId}|${uid}|${purchasedAt}|${powerHs}|${pointsPerMinute}`;
     return crypto.createHmac('sha256', getMinerSigningSecret()).update(data).digest('hex');
 }
 
@@ -64,7 +64,7 @@ function verifyMinerSignature(miner, uid) {
         miner.catalogId,
         uid,
         miner.purchasedAt,
-        miner.powerGhs,
+        miner.powerHs,
         miner.pointsPerMinute
     );
     try {
@@ -84,7 +84,7 @@ const MINER_CATALOG = [
         tier: 'COMMON',
         iconEmoji: '⛏️',
         tokenCost: 10,
-        powerGhs: 0.000001,
+        powerHs: 1000,
         pointsPerDay: 0.144,
         pointsPerMinute: 0.0001,
         bonusPermanentPct: 0,
@@ -96,7 +96,7 @@ const MINER_CATALOG = [
         tier: 'RARE',
         iconEmoji: '🔧',
         tokenCost: 50,
-        powerGhs: 0.000005,
+        powerHs: 5000,
         pointsPerDay: 0.72,
         pointsPerMinute: 0.0005,
         bonusPermanentPct: 0.10,
@@ -108,7 +108,7 @@ const MINER_CATALOG = [
         tier: 'EPIC',
         iconEmoji: '⚡',
         tokenCost: 200,
-        powerGhs: 0.00002,
+        powerHs: 20000,
         pointsPerDay: 2.88,
         pointsPerMinute: 0.002,
         bonusPermanentPct: 0.23,
@@ -120,7 +120,7 @@ const MINER_CATALOG = [
         tier: 'LEGENDARY',
         iconEmoji: '💎',
         tokenCost: 1000,
-        powerGhs: 0.0001,
+        powerHs: 100000,
         pointsPerDay: 14.4,
         pointsPerMinute: 0.01,
         bonusPermanentPct: 1.20,
@@ -132,7 +132,7 @@ const MINER_CATALOG = [
         tier: 'MYTHIC',
         iconEmoji: '🌌',
         tokenCost: 5000,
-        powerGhs: 0.0005,
+        powerHs: 500000,
         pointsPerDay: 72,
         pointsPerMinute: 0.05,
         bonusPermanentPct: 3.00,
@@ -351,7 +351,7 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
         }
 
         // Hitung total power
-        const totalPowerGhs = miners.reduce((sum, m) => sum + (m.powerGhs || 0), 0);
+        const totalPowerGhs = miners.reduce((sum, m) => sum + (m.powerHs || 0), 0);
         const pointsPerDay = calculatePointsPerDay(totalPowerGhs, miners);
 
         // ============ M41 FIX: Compute unclaimedMiningPoints ============
@@ -839,7 +839,7 @@ router.post('/mining/claim', verifyFirebaseToken, checkFraud, async (req, res) =
 // ============================================================
 // POST /api/v1/game/mining/buy
 // Beli miner item (potong points)
-// Body: { minerId, tier, name, pricePoints, powerGhs, pointsPerMinute, iconEmoji }
+// Body: { minerId, tier, name, pricePoints, powerHs, pointsPerMinute, iconEmoji }
 // ============================================================
 router.post('/mining/buy', verifyFirebaseToken, validate(purchaseMinerSchema), checkFraud, async (req, res) => {
     try {
@@ -861,7 +861,7 @@ router.post('/mining/buy', verifyFirebaseToken, validate(purchaseMinerSchema), c
         const {
             name,
             tier,
-            powerGhs,
+            powerHs,
             pointsPerDay,
             iconEmoji,
             bonusPermanentPct = 0
@@ -896,7 +896,7 @@ router.post('/mining/buy', verifyFirebaseToken, validate(purchaseMinerSchema), c
             lookupId,
             uid,
             purchasedAt,
-            powerGhs || 0,
+            powerHs || 0,
             pointsPerMinute || 0
         );
 
@@ -910,7 +910,7 @@ router.post('/mining/buy', verifyFirebaseToken, validate(purchaseMinerSchema), c
                 tier: tier || 'COMMON',
                 iconEmoji: iconEmoji || '⛏️',
                 tokenCost: tokenCost || 0,
-                powerGhs: powerGhs || 0,
+                powerHs: powerHs || 0,
                 pointsPerMinute: pointsPerMinute || 0,
                 bonusPermanentPct: bonusPermanentPct || 0,
                 isOwned: true,
@@ -931,7 +931,7 @@ router.post('/mining/buy', verifyFirebaseToken, validate(purchaseMinerSchema), c
             tier: tier,
             iconEmoji: iconEmoji,
             tokenCost: tokenCost,
-            powerGhs: powerGhs,
+            powerHs: powerHs,
             pointsPerMinute: pointsPerMinute || 0,
             bonusPermanentPct: bonusPermanentPct || 0,
             isOwned: true,
@@ -959,7 +959,7 @@ router.post('/mining/buy', verifyFirebaseToken, validate(purchaseMinerSchema), c
                 catalogId: lookupId,
                 instanceId: instanceId,
                 name, tier, iconEmoji,
-                tokenCost, powerGhs, pointsPerMinute,
+                tokenCost, powerHs, pointsPerMinute,
                 bonusPermanentPct: bonusPermanentPct || 0
             }
         });
@@ -1874,7 +1874,7 @@ router.post('/miners/unlock', verifyFirebaseToken, checkFraud, async (req, res) 
                 tier: catalogItem.tier || 'COMMON',
                 iconEmoji: catalogItem.iconEmoji || '⛏️',
                 tokenCost: catalogItem.tokenCost || 0,
-                powerGhs: catalogItem.powerGhs || 0,
+                powerHs: catalogItem.powerHs || 0,
                 pointsPerMinute: catalogItem.pointsPerMinute || 0,
                 bonusPermanentPct: catalogItem.bonusPermanentPct || 0,
                 isOwned: true,
@@ -1894,7 +1894,7 @@ router.post('/miners/unlock', verifyFirebaseToken, checkFraud, async (req, res) 
             tier: catalogItem.tier || 'COMMON',
             iconEmoji: catalogItem.iconEmoji || '⛏️',
             tokenCost: catalogItem.tokenCost || 0,
-            powerGhs: catalogItem.powerGhs || 0,
+            powerHs: catalogItem.powerHs || 0,
             pointsPerDay: catalogItem.pointsPerDay || 0,
             pointsPerMinute: catalogItem.pointsPerMinute || 0,
             bonusPermanentPct: catalogItem.bonusPermanentPct || 0,

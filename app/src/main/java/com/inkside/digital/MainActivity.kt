@@ -1015,7 +1015,7 @@ fun MainAffiliateAppContent(
                             "STARTER" -> 3
                             else -> 6
                         },
-                        minerPowerGhs = placedMiners.sumOf { it.powerGhs },
+                        minerPowerHs = placedMiners.sumOf { it.powerHs },
                         // minerTokens dibuang — guna points (RTP)
                         roomState = roomState
                     )

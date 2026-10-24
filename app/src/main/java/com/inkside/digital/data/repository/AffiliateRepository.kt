@@ -1279,7 +1279,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 id = "tx_buy_" + UUID.randomUUID().toString().take(8),
                 type = "POINT_REWARD",
                 title = "Beli Item Penambang: ${item.name}",
-                description = "Pembelian item penambang daya ${HashrateFormatter.format(item.powerGhs)} seharga ${item.tokenCost} Token",
+                description = "Pembelian item penambang daya ${HashrateFormatter.format(item.powerHs)} seharga ${item.tokenCost} Token",
                 amount = item.tokenCost.toDouble(),
                 currency = "POIN",
                 isCredit = false,
@@ -1325,7 +1325,7 @@ class AffiliateRepository(private val dao: AppDao) {
         }
 
         val successMsg = if (firstEmptySlot != null) {
-            "Sukses beli ${item.name}! Langsung terpasang di Rak Slot ${firstEmptySlot + 1} (+${HashrateFormatter.format(item.powerGhs)})"
+            "Sukses beli ${item.name}! Langsung terpasang di Rak Slot ${firstEmptySlot + 1} (+${HashrateFormatter.format(item.powerHs)})"
         } else {
             "Sukses beli ${item.name}! Rak penuh, item disimpan di inventaris."
         }
@@ -1532,9 +1532,9 @@ class AffiliateRepository(private val dao: AppDao) {
                         iconEmoji = m.optString("iconEmoji", "⛏️"),
                         tokenCost = m.optInt("tokenCost", 0),
                         catalogId = m.optString("id", ""),
-                        powerGhs = m.optDouble("powerGhs", 0.0).also {
-                            if (it <= 0.0) {
-                                AppLogger.w("AffiliateRepository", "⚠️ Miner '${m.optString("name", "?")}' powerGhs = 0 (raw: ${m.opt("powerGhs")})")
+                        powerHs = m.optLong("powerHs", 0L).also {
+                            if (it <= 0L) {
+                                AppLogger.w("AffiliateRepository", "⚠️ Miner '${m.optString("name", "?")}' powerHs = 0 (raw: ${m.opt("powerHs")})")
                             }
                         },
                         pointsPerMinute = m.optDouble("pointsPerMinute", 0.0),  // M43 FIX: fix dari pointsPerDay
@@ -1602,7 +1602,7 @@ class AffiliateRepository(private val dao: AppDao) {
                             iconEmoji = m.optString("iconEmoji", "⛏️"),
                             tokenCost = m.optInt("tokenCost", m.optInt("pricePoints", 0)),
                             catalogId = m.optString("catalogId", m.optString("id", "")),
-                            powerGhs = m.optDouble("powerGhs", 0.0),
+                            powerHs = m.optLong("powerHs", 0L),
                             pointsPerMinute = m.optDouble("pointsPerMinute", 0.0),
                             isOwned = m.optBoolean("isOwned", true),
                             isPlacedInRoom = m.optBoolean("isPlacedInRoom", false),

@@ -94,7 +94,7 @@ fun ProfileScreen(
     // Mining & Referral data
     minerSlotsUsed: Int = 0,
     minerSlotsMax: Int = 6,
-    minerPowerGhs: Double = 0.0,
+    minerPowerHs: Double = 0.0,
     roomState: GameRoomStateEntity? = null  // M46: Sinkron data dengan Mining Room
 ) {
     var name by remember { mutableStateOf(user?.name ?: "") }
@@ -301,7 +301,7 @@ fun ProfileScreen(
                 currentLanguage = currentLanguage,
                 slotsUsed = minerSlotsUsed,
                 slotsMax = minerSlotsMax,
-                powerGhs = minerPowerGhs,
+                powerHs = minerPowerHs,
                 userPoints = (user?.points ?: 0.0) + (roomState?.unclaimedMiningPoints ?: 0.0),
                 roomState = roomState  // M46: Pass roomState untuk sinkron
             )
@@ -584,7 +584,7 @@ private fun MiningStatsCard(
     currentLanguage: AppLanguage,
     slotsUsed: Int,
     slotsMax: Int,
-    powerGhs: Double,
+    powerHs: Long,
     userPoints: Double = 0.0,
     roomState: GameRoomStateEntity? = null
 ) {
@@ -621,7 +621,7 @@ private fun MiningStatsCard(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 MiniStatBox(LanguageManager.translate("profile_slot", AppThemePreferences.currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_power", AppThemePreferences.currentLanguage, "Power"), HashrateFormatter.format(powerGhs), EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_power", AppThemePreferences.currentLanguage, "Power"), HashrateFormatter.format(powerHs), EmeraldLight, Modifier.weight(1f))
                 MiniStatBox("RTP", "${GlobalPointsManager.formatRtp(userPoints)}", GoldVip, Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(6.dp))
@@ -631,7 +631,7 @@ private fun MiningStatsCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                MiniStatBox(LanguageManager.translate("profile_rate_day", AppThemePreferences.currentLanguage, "Rate/hari"), "${GlobalPointsManager.formatRtp((roomState?.ratePerMin ?: (powerGhs * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_rate_day", AppThemePreferences.currentLanguage, "Rate/hari"), "${GlobalPointsManager.formatRtp((roomState?.ratePerMin ?: ((powerHs / 1e9) * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_unclaimed", AppThemePreferences.currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_bonus", AppThemePreferences.currentLanguage, "Bonus"), "+${HashrateFormatter.format(roomState?.tempPowerBonusGhs ?: 0.0)}", GoldVip, Modifier.weight(1f))
             }

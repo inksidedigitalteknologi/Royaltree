@@ -230,7 +230,7 @@ fun GameRoomScreenContent(
     var liveUnclaimedPoints by remember { mutableDoubleStateOf(0.0) }
 
     val basePowerGhs = remember(placedMiners) {
-        placedMiners.sumOf { it.powerGhs }
+        placedMiners.sumOf { it.powerHs }
     }
     val bonusPowerGhs = roomState?.tempPowerBonusGhs ?: 0.0
     val totalPowerGhs = basePowerGhs + bonusPowerGhs
@@ -429,9 +429,9 @@ fun GameRoomScreenContent(
 
         // Current stats untuk comparison
         val placedMiners = minerItems.filter { it.isPlacedInRoom }
-        val currentPower = placedMiners.sumOf { it.powerGhs }
+        val currentPower = placedMiners.sumOf { it.powerHs }
         val currentRate = placedMiners.sumOf { it.pointsPerMinute }
-        val newPower = currentPower + item.powerGhs
+        val newPower = currentPower + item.powerHs
         val newRate = currentRate + item.pointsPerMinute
 
         // State untuk checkbox & countdown
@@ -620,7 +620,7 @@ fun GameRoomScreenContent(
                                 MiniStatBox(
                                     icon = "⚡",
                                     label = "Power",
-                                    value = "+${HashrateFormatter.format(item.powerGhs)}",
+                                    value = "+${HashrateFormatter.format(item.powerHs)}",
                                     valueColor = EmeraldLight,
                                     modifier = Modifier.weight(1f)
                                 )
@@ -663,7 +663,7 @@ fun GameRoomScreenContent(
                                 label = "Power",
                                 before = HashrateFormatter.format(currentPower),
                                 after = HashrateFormatter.format(newPower),
-                                delta = "+${HashrateFormatter.format(item.powerGhs)}"
+                                delta = "+${HashrateFormatter.format(item.powerHs)}"
                             )
                             ComparisonRow(
                                 label = "Rate",
@@ -784,7 +784,7 @@ fun GameRoomScreenContent(
     // Modal: Pilih Item dari Inventaris untuk dipasang di Slot Kosong
     slotToAssignItem?.let { targetSlot ->
         val unplacedOwnedMiners = minerItems.filter { 
-            it.isOwned && !it.isPlacedInRoom && it.powerGhs > 0 
+            it.isOwned && !it.isPlacedInRoom && it.powerHs > 0 
         }
 
         AlertDialog(
@@ -1001,7 +1001,7 @@ private fun MiningRoomTab(
         placedMiners
             .sortedByDescending { it.pointsPerMinute }
             .map { miner ->
-                Triple(miner.name, miner.pointsPerMinute, miner.powerGhs)
+                Triple(miner.name, miner.pointsPerMinute, miner.powerHs)
             }
     }
 
@@ -1721,7 +1721,7 @@ private fun RackSlotItemCard(
                     Column {
                         Text("\u26A1", fontSize = 9.sp)
                         Text(
-                            HashrateFormatter.formatShort(miner.powerGhs),
+                            HashrateFormatter.formatShort(miner.powerHs),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
@@ -1954,7 +1954,7 @@ private fun SlotMinerCard(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "+${HashrateFormatter.format(miner.powerGhs)} · ${miner.tier}",
+                    text = "+${HashrateFormatter.format(miner.powerHs)} · ${miner.tier}",
                     fontSize = 9.sp,
                     fontWeight = FontWeight.Medium,
                     color = tierColor,
@@ -2054,7 +2054,7 @@ private fun ShopMinerCard(
                     Text("⚡", fontSize = 9.sp)
                     Spacer(Modifier.width(3.dp))
                     Text(
-                        text = HashrateFormatter.format(item.powerGhs),
+                        text = HashrateFormatter.format(item.powerHs),
                         fontSize = 9.sp,
                         fontWeight = FontWeight.Bold,
                         color = RetroAmber,

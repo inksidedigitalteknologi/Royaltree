@@ -3,65 +3,48 @@ package com.inkside.digital.util
 import java.util.Locale
 
 /**
- * HashrateFormatter — format powerGhs (dalam GH/s) jadi string human-readable.
+ * HashrateFormatter — format powerHs (dalam H/s) jadi string human-readable.
  *
- * powerGhs = 10     → 10 GH/s → "10 GH/s"
- * powerGhs = 0.005  → 5 MH/s  → "5 MH/s"
- * powerGhs = 1500   → 1.5 TH/s → "1.50 TH/s"
- * powerGhs = 0.0001 → 100 KH/s → "100 KH/s"
+ * powerHs = 1_000       → 1 KH/s   → "1 KH/s"
+ * powerHs = 5_000       → 5 KH/s   → "5 KH/s"
+ * powerHs = 20_000      → 20 KH/s  → "20 KH/s"
+ * powerHs = 100_000     → 100 KH/s → "100 KH/s"
+ * powerHs = 500_000     → 500 KH/s → "500 KH/s"
+ * powerHs = 1_000_000   → 1 MH/s   → "1 MH/s"
+ * powerHs = 1_000_000_000 → 1 GH/s → "1 GH/s"
  */
 object HashrateFormatter {
 
-    private const val H = 1.0
-    private const val KH = 1_000.0
-    private const val MH = 1_000_000.0
-    private const val GH = 1_000_000_000.0
-    private const val TH = 1_000_000_000_000.0
+    private const val KH = 1_000L
+    private const val MH = 1_000_000L
+    private const val GH = 1_000_000_000L
+    private const val TH = 1_000_000_000_000L
 
     /**
-     * Convert powerGhs (GH/s) ke H/s (base unit).
-     * 1 GH/s = 1_000_000_000 H/s
+     * Format powerHs (H/s) jadi string dengan unit auto-scale + desimal.
      */
-    private fun toHashPerSec(powerGhs: Double): Double {
-        return powerGhs * GH
-    }
-
-    /**
-     * Format powerGhs jadi string dengan unit auto-scale + desimal.
-     *
-     * Contoh:
-     * - 0.0001 → "100 KH/s"
-     * - 0.005  → "5 MH/s"
-     * - 0.5    → "500 MH/s"
-     * - 10     → "10 GH/s"
-     * - 1500   → "1.50 TH/s"
-     */
-    fun format(powerGhs: Double): String {
-        if (powerGhs <= 0) return "—"
-
-        val hps = toHashPerSec(powerGhs)
-
+    fun format(powerHs: Long): String {
+        if (powerHs <= 0) return "—"
         return when {
-            hps < KH -> "${formatNumber(hps)} H/s"
-            hps < MH -> "${formatNumber(hps / KH)} KH/s"
-            hps < GH -> "${formatNumber(hps / MH)} MH/s"
-            hps < TH -> "${formatNumber(hps / GH)} GH/s"
-            else -> "${formatNumber(hps / TH)} TH/s"
+            powerHs < KH -> "${formatNumber(powerHs.toDouble())} H/s"
+            powerHs < MH -> "${formatNumber(powerHs.toDouble() / KH)} KH/s"
+            powerHs < GH -> "${formatNumber(powerHs.toDouble() / MH)} MH/s"
+            powerHs < TH -> "${formatNumber(powerHs.toDouble() / GH)} GH/s"
+            else -> "${formatNumber(powerHs.toDouble() / TH)} TH/s"
         }
     }
 
     /**
      * Versi short tanpa unit (untuk space terbatas).
      */
-    fun formatShort(powerGhs: Double): String {
-        if (powerGhs <= 0) return "0"
-        val hps = toHashPerSec(powerGhs)
+    fun formatShort(powerHs: Long): String {
+        if (powerHs <= 0) return "0"
         return when {
-            hps < KH -> "${hps.toInt()}"
-            hps < MH -> "${formatNumber(hps / KH)}K"
-            hps < GH -> "${formatNumber(hps / MH)}M"
-            hps < TH -> "${formatNumber(hps / GH)}G"
-            else -> "${formatNumber(hps / TH)}T"
+            powerHs < KH -> "$powerHs"
+            powerHs < MH -> "${formatNumber(powerHs.toDouble() / KH)}K"
+            powerHs < GH -> "${formatNumber(powerHs.toDouble() / MH)}M"
+            powerHs < TH -> "${formatNumber(powerHs.toDouble() / GH)}G"
+            else -> "${formatNumber(powerHs.toDouble() / TH)}T"
         }
     }
 

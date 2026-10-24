@@ -1835,11 +1835,11 @@ router.get('/miner-catalog', checkAdmin, async (req, res) => {
     try {
         const doc = await db.collection('system').doc('miner_catalog').get();
         const DEFAULT_CATALOG = [
-            { id: 'miner_common', name: 'Pico Miner', tier: 'COMMON', iconEmoji: '⛏️', tokenCost: 10, powerGhs: 0.000001, pointsPerDay: 0.144, pointsPerMinute: 0.0001, bonusPermanentPct: 0, description: 'Miner dasar untuk pemula' },
-            { id: 'miner_rare', name: 'Micro Rig', tier: 'RARE', iconEmoji: '🔧', tokenCost: 50, powerGhs: 0.000005, pointsPerDay: 0.72, pointsPerMinute: 0.0005, bonusPermanentPct: 0.10, description: 'Miner dengan power lebih besar' },
-            { id: 'miner_epic', name: 'Quantum Rig', tier: 'EPIC', iconEmoji: '⚡', tokenCost: 200, powerGhs: 0.00002, pointsPerDay: 2.88, pointsPerMinute: 0.002, bonusPermanentPct: 0.23, description: 'Miner dengan teknologi quantum' },
-            { id: 'miner_legendary', name: 'Titan Miner', tier: 'LEGENDARY', iconEmoji: '💎', tokenCost: 1000, powerGhs: 0.0001, pointsPerDay: 14.4, pointsPerMinute: 0.01, bonusPermanentPct: 1.20, description: 'Miner raksasa dengan power luar biasa' },
-            { id: 'miner_mythic', name: 'Infinity Core', tier: 'MYTHIC', iconEmoji: '🌌', tokenCost: 5000, powerGhs: 0.0005, pointsPerDay: 72, pointsPerMinute: 0.05, bonusPermanentPct: 3.00, description: 'Miner legendaris dengan power tak terbatas' }
+            { id: 'miner_common', name: 'Pico Miner', tier: 'COMMON', iconEmoji: '⛏️', tokenCost: 10, powerHs: 1000, pointsPerDay: 0.144, pointsPerMinute: 0.0001, bonusPermanentPct: 0, description: 'Miner dasar untuk pemula' },
+            { id: 'miner_rare', name: 'Micro Rig', tier: 'RARE', iconEmoji: '🔧', tokenCost: 50, powerHs: 5000, pointsPerDay: 0.72, pointsPerMinute: 0.0005, bonusPermanentPct: 0.10, description: 'Miner dengan power lebih besar' },
+            { id: 'miner_epic', name: 'Quantum Rig', tier: 'EPIC', iconEmoji: '⚡', tokenCost: 200, powerHs: 20000, pointsPerDay: 2.88, pointsPerMinute: 0.002, bonusPermanentPct: 0.23, description: 'Miner dengan teknologi quantum' },
+            { id: 'miner_legendary', name: 'Titan Miner', tier: 'LEGENDARY', iconEmoji: '💎', tokenCost: 1000, powerHs: 100000, pointsPerDay: 14.4, pointsPerMinute: 0.01, bonusPermanentPct: 1.20, description: 'Miner raksasa dengan power luar biasa' },
+            { id: 'miner_mythic', name: 'Infinity Core', tier: 'MYTHIC', iconEmoji: '🌌', tokenCost: 5000, powerHs: 500000, pointsPerDay: 72, pointsPerMinute: 0.05, bonusPermanentPct: 3.00, description: 'Miner legendaris dengan power tak terbatas' }
         ];
         const config = doc.exists ? doc.data() : { miners: DEFAULT_CATALOG };
         return res.json({ success: true, data: config });

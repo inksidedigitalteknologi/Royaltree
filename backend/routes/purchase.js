@@ -201,11 +201,11 @@ const BUNDLE_CATALOG = {
 // MINER CATALOG (referensi dari game.js)
 // ============================================================
 const MINER_CATALOG_REF = {
-    'miner_common':    { name: 'Pico Miner',  tier: 'COMMON',    iconEmoji: '⛏️', powerGhs: 0.000001, pointsPerDay: 0.144, bonusPermanentPct: 0 },
-    'miner_rare':      { name: 'Micro Rig',   tier: 'RARE',      iconEmoji: '🔧', powerGhs: 0.000005, pointsPerDay: 0.72,  bonusPermanentPct: 0.10 },
-    'miner_epic':      { name: 'Quantum Rig', tier: 'EPIC',      iconEmoji: '⚡', powerGhs: 0.00002,  pointsPerDay: 2.88,  bonusPermanentPct: 0.23 },
-    'miner_legendary': { name: 'Titan Miner', tier: 'LEGENDARY', iconEmoji: '💎', powerGhs: 0.0001,   pointsPerDay: 14.4,  bonusPermanentPct: 1.20 },
-    'miner_mythic':    { name: 'Infinity Core', tier: 'MYTHIC',  iconEmoji: '🌌', powerGhs: 0.0005,   pointsPerDay: 72,    bonusPermanentPct: 3.00 }
+    'miner_common':    { name: 'Pico Miner',  tier: 'COMMON',    iconEmoji: '⛏️', powerHs: 0.000001, pointsPerDay: 0.144, bonusPermanentPct: 0 },
+    'miner_rare':      { name: 'Micro Rig',   tier: 'RARE',      iconEmoji: '🔧', powerHs: 0.000005, pointsPerDay: 0.72,  bonusPermanentPct: 0.10 },
+    'miner_epic':      { name: 'Quantum Rig', tier: 'EPIC',      iconEmoji: '⚡', powerHs: 0.00002,  pointsPerDay: 2.88,  bonusPermanentPct: 0.23 },
+    'miner_legendary': { name: 'Titan Miner', tier: 'LEGENDARY', iconEmoji: '💎', powerHs: 0.0001,   pointsPerDay: 14.4,  bonusPermanentPct: 1.20 },
+    'miner_mythic':    { name: 'Infinity Core', tier: 'MYTHIC',  iconEmoji: '🌌', powerHs: 0.0005,   pointsPerDay: 72,    bonusPermanentPct: 3.00 }
 };
 
 // ============================================================
@@ -217,8 +217,8 @@ function getMinerSigningSecret() {
     return process.env.MINER_SIGNING_SECRET || 'DEFAULT_INSECURE_SECRET_CHANGE_ME';
 }
 
-function generateMinerSignature(instanceId, catalogId, uid, purchasedAt, powerGhs, pointsPerMinute) {
-    const data = `${instanceId}|${catalogId}|${uid}|${purchasedAt}|${powerGhs}|${pointsPerMinute}`;
+function generateMinerSignature(instanceId, catalogId, uid, purchasedAt, powerHs, pointsPerMinute) {
+    const data = `${instanceId}|${catalogId}|${uid}|${purchasedAt}|${powerHs}|${pointsPerMinute}`;
     return crypto.createHmac('sha256', getMinerSigningSecret()).update(data).digest('hex');
 }
 
@@ -247,7 +247,7 @@ async function grantMinersToUser(uid, minersList) {
                 item.catalogId,
                 uid,
                 purchasedAt,
-                catalog.powerGhs,
+                catalog.powerHs,
                 pointsPerMinute
             );
             updates[`minersOwned.${instanceId}`] = {
@@ -257,7 +257,7 @@ async function grantMinersToUser(uid, minersList) {
                 tier: catalog.tier,
                 iconEmoji: catalog.iconEmoji,
                 tokenCost: 0,
-                powerGhs: catalog.powerGhs,
+                powerHs: catalog.powerHs,
                 pointsPerMinute: pointsPerMinute,
                 bonusPermanentPct: catalog.bonusPermanentPct,
                 isOwned: true,

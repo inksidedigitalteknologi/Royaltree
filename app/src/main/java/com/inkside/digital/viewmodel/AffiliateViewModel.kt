@@ -952,7 +952,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                                 put("tier", item.tier)
                                 put("name", item.name)
                                 put("tokenCost", item.tokenCost)
-                                put("powerGhs", item.powerGhs)
+                                put("powerHs", item.powerHs)
                                 put("pointsPerMinute", item.pointsPerMinute)
                                 put("iconEmoji", item.iconEmoji)
                             }
@@ -1014,7 +1014,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                                 put("tier", item.tier)
                                 put("name", item.name)
                                 put("tokenCost", item.tokenCost)
-                                put("powerGhs", item.powerGhs)
+                                put("powerHs", item.powerHs)
                                 put("pointsPerMinute", item.pointsPerMinute)
                                 put("iconEmoji", item.iconEmoji)
                             }
@@ -2234,7 +2234,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         put("tier", item.tier)
                         put("name", item.name)
                         put("tokenCost", item.tokenCost)
-                        put("powerGhs", item.powerGhs)
+                        put("powerHs", item.powerHs)
                         put("pointsPerMinute", item.pointsPerMinute)
                         put("iconEmoji", item.iconEmoji)
                     }

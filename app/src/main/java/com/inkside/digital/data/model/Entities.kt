@@ -201,19 +201,21 @@ data class GameMinerItemEntity(
     val iconEmoji: String,
     val tokenCost: Int, // Cost to buy using Miner Token
     /**
-     * Hash rate. Nilai dalam GH/s (Giga Hash/s), tapi karena miner baru kecil,
-     * nilai bisa sangat kecil:
-     *   - 0.000001 = 1 KH/s
-     *   - 0.0002   = 200 KH/s
-     *   - 0.001    = 1 MH/s
-     *   - 0.005    = 5 MH/s
-     *   - 1.0      = 1 GH/s
-     *   - 150.0    = 150 GH/s (miner lama, sudah tidak dipakai)
+     * Hash rate dalam H/s (Hash per second) — INTEGER.
+     * 1 KH/s = 1_000 H/s
+     * 1 MH/s = 1_000_000 H/s
+     * 1 GH/s = 1_000_000_000 H/s
      *
-     * Format tampilan: pakai HashrateFormatter.format() — auto-scale (KH/MH/GH/TH).
-     * Jangan tampilkan angka mentah — selalu lewat formatter.
+     * Contoh:
+     *   - 1.000 = 1 KH/s (Pico Miner)
+     *   - 5.000 = 5 KH/s (Micro Rig)
+     *   - 20.000 = 20 KH/s (Quantum Rig)
+     *   - 100.000 = 100 KH/s (Titan Miner)
+     *   - 500.000 = 500 KH/s (Infinity Core)
+     *
+     * Format tampilan: pakai HashrateFormatter.format() — auto-scale (H/KH/MH/GH/TH).
      */
-    val powerGhs: Double,
+    val powerHs: Long,
     val pointsPerMinute: Double, // Generation rate e.g. 0.15 poin/menit
     val isOwned: Boolean = false,
     val isPlacedInRoom: Boolean = false,
