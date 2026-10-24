@@ -1583,7 +1583,14 @@ class AffiliateRepository(private val dao: AppDao) {
                     totalBonusPct = roomJson.optDouble("totalBonusPct", 0.0),
                     // ✅ CRITICAL FIX: Simpan minerActiveUntil + minerActivatedAt dari backend
                     minerActiveUntil = roomJson.optLong("minerActiveUntil", existing?.minerActiveUntil ?: 0L),
-                    minerActivatedAt = roomJson.optLong("minerActivatedAt", existing?.minerActivatedAt ?: 0L)
+                    minerActivatedAt = roomJson.optLong("minerActivatedAt", existing?.minerActivatedAt ?: 0L),
+                    // WEIGHTED ADAPTIVE: breakdown lengkap
+                    weightedBreakdownJson = roomJson.optJSONObject("weightedBreakdown")?.toString() ?: "",
+                    pingMs = roomJson.optInt("pingMs", existing?.pingMs ?: 100),
+                    deviceScore = roomJson.optInt("deviceScore", existing?.deviceScore ?: 70),
+                    tempC = roomJson.optDouble("tempC", existing?.tempC ?: 35.0),
+                    batteryLevel = roomJson.optInt("batteryLevel", existing?.batteryLevel ?: 85),
+                    isCharging = roomJson.optBoolean("isCharging", existing?.isCharging ?: false)
                 )
                 dao.insertGameRoomState(room)
             }
@@ -1603,6 +1610,11 @@ class AffiliateRepository(private val dao: AppDao) {
                             tokenCost = m.optInt("tokenCost", m.optInt("pricePoints", 0)),
                             catalogId = m.optString("catalogId", m.optString("id", "")),
                             powerHs = m.optLong("powerHs", 0L),
+                            // WEIGHTED ADAPTIVE: efficiency + signature
+                            basePowerHs = m.optLong("basePowerHs", m.optLong("powerHs", 0L)),
+                            efficiency = m.optDouble("efficiency", 1.0),
+                            currentPowerHs = m.optLong("currentPowerHs", m.optLong("powerHs", 0L)),
+                            signature = m.optString("signature", ""),
                             pointsPerMinute = m.optDouble("pointsPerMinute", 0.0),
                             isOwned = m.optBoolean("isOwned", true),
                             isPlacedInRoom = m.optBoolean("isPlacedInRoom", false),

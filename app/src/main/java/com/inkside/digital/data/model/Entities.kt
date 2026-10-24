@@ -215,8 +215,12 @@ data class GameMinerItemEntity(
      *
      * Format tampilan: pakai HashrateFormatter.format() — auto-scale (H/KH/MH/GH/TH).
      */
-    val powerHs: Long,
-    val pointsPerMinute: Double, // Generation rate e.g. 0.15 poin/menit
+    val powerHs: Long,                      // BASE power (static, dari catalog)
+    val basePowerHs: Long = 0L,             // Duplikat (untuk signature compatibility)
+    val efficiency: Double = 1.0,           // Live efficiency 0.85-1.05 (deterministik per menit)
+    val currentPowerHs: Long = 0L,          // basePowerHs × efficiency (live)
+    val pointsPerMinute: Double,            // Static (dari catalog)
+    val signature: String = "",             // HMAC-SHA256 (anti-cheat, dari server)
     val isOwned: Boolean = false,
     val isPlacedInRoom: Boolean = false,
     val placedSlotIndex: Int = -1, // 0 to 5 for rack slots, or -1 if in inventory
@@ -245,7 +249,14 @@ data class GameRoomStateEntity(
     val totalBonusPct: Double = 0.0,
     // Auto-claim miner aktif 6 jam
     val minerActiveUntil: Long = 0L,
-    val minerActivatedAt: Long = 0L
+    val minerActivatedAt: Long = 0L,
+    // Weighted adaptive breakdown (dari server)
+    val weightedBreakdownJson: String = "",  // JSON string dari weightedBreakdown
+    val pingMs: Int = 100,                    // Ping RTT (ms)
+    val deviceScore: Int = 70,                // Device score 0-100
+    val tempC: Double = 35.0,                 // Suhu HP (°C)
+    val batteryLevel: Int = 85,               // Baterai (%)
+    val isCharging: Boolean = false           // Charging status
 )
 
 @Entity(tableName = "app_download_ads")

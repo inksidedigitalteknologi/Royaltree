@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
         GameMinerItemEntity::class,
         GameRoomStateEntity::class
     ],
-    version = 6,  // Bump: powerGhs → powerHs (H/s integer)
+    version = 7,  // Bump: weighted adaptive + efficiency + signature
     exportSchema = false  // No-op, sudah ada migration manual
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -59,6 +59,26 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE game_miner_items ADD COLUMN powerHs INTEGER NOT NULL DEFAULT 0")
                 db.execSQL("UPDATE game_miner_items SET powerHs = CAST(ROUND(powerGhs * 1e9) AS INTEGER)")
+            }
+        }
+
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // GameMinerItemEntity: +4 field
+                db.execSQL("ALTER TABLE game_miner_items ADD COLUMN basePowerHs INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("UPDATE game_miner_items SET basePowerHs = powerHs WHERE basePowerHs = 0")
+                db.execSQL("ALTER TABLE game_miner_items ADD COLUMN efficiency REAL NOT NULL DEFAULT 1.0")
+                db.execSQL("ALTER TABLE game_miner_items ADD COLUMN currentPowerHs INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("UPDATE game_miner_items SET currentPowerHs = powerHs WHERE currentPowerHs = 0")
+                db.execSQL("ALTER TABLE game_miner_items ADD COLUMN signature TEXT NOT NULL DEFAULT ''")
+
+                // GameRoomStateEntity: +6 field
+                db.execSQL("ALTER TABLE game_room_state ADD COLUMN weightedBreakdownJson TEXT NOT NULL DEFAULT ''")
+                db.execSQL("ALTER TABLE game_room_state ADD COLUMN pingMs INTEGER NOT NULL DEFAULT 100")
+                db.execSQL("ALTER TABLE game_room_state ADD COLUMN deviceScore INTEGER NOT NULL DEFAULT 70")
+                db.execSQL("ALTER TABLE game_room_state ADD COLUMN tempC REAL NOT NULL DEFAULT 35.0")
+                db.execSQL("ALTER TABLE game_room_state ADD COLUMN batteryLevel INTEGER NOT NULL DEFAULT 85")
+                db.execSQL("ALTER TABLE game_room_state ADD COLUMN isCharging INTEGER NOT NULL DEFAULT 0")
             }
         }
 
@@ -200,7 +220,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "royaltree.db"
                 )
-                    .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)  // MIGRATION PROPER
+                    .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)  // MIGRATION PROPER
                     .addCallback(DatabaseCallback(scope))
                     .fallbackToDestructiveMigration(dropAllTables = true)  // ✅ Aktifkan — handle schema mismatch
                     .build()
