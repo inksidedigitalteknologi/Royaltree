@@ -28,6 +28,7 @@ import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.data.preferences.AppThemePreferences
 import com.inkside.digital.util.AppLogger
 import java.util.UUID
+import com.inkside.digital.data.network.ApiClient
 
 data class PeerContact(
     val id: String,

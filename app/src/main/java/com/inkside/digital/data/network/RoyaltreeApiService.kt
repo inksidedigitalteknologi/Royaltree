@@ -114,6 +114,9 @@ interface RoyaltreeApiService {
     @POST("game/mining/unplace")
     suspend fun unplaceMiner(@Body body: RequestBody): ResponseBody
 
+    @POST("game/miners/merge")
+    suspend fun mergeMiners(@Body body: RequestBody): ResponseBody
+
     @GET("game/leaderboard")
     suspend fun getGameLeaderboard(): ResponseBody
 

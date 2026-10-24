@@ -813,15 +813,22 @@ object ApiClient {
 
     /**
      * Merge 5 miner tier sama → 1 miner tier+1.
-     * Backend: POST /api/v1/game/miners/merge
+     * Backend: POST /game/miners/merge
      */
     suspend fun mergeMiners(body: JSONObject): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
-            val response = post("/api/v1/game/miners/merge", body)
-            if (response.success) {
-                Result.success(response.data ?: JSONObject())
-            } else {
-                Result.failure(Exception(response.message ?: "Merge gagal"))
+            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
+            val response: ResponseBody = apiService.mergeMiners(requestBody)
+            val json = JSONObject(response.string())
+            Result.success(json)
+        } catch (e: retrofit2.HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val json = JSONObject(errorBody)
+                json.put("httpCode", e.code())
+                Result.success(json)
+            } catch (parseErr: Exception) {
+                Result.failure(e)
             }
         } catch (e: Exception) {
             Result.failure(e)
