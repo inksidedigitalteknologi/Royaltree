@@ -788,5 +788,22 @@
   "cd_qr_code": "Kode QR",
   "cd_frame": "Frame",
   "fcm_channel_name": "Notifikasi Royaltree",
-  "fcm_channel_desc": "Notifikasi untuk Royaltree"
+  "fcm_channel_desc": "Notifikasi untuk Royaltree",
+  "game_confirm_buy": "Saya setuju membeli",
+  "game_confirm_buy_suffix": "RTP",
+  "game_place_slot": "Pasang Item ke Slot",
+  "game_no_miner": "Tidak ada item miner di inventaris.",
+  "game_buy_hint": "Beli item penambang baru di Toko Item menggunakan poin Anda.",
+  "game_total": "Total",
+  "game_mining_running": "Mining berjalan...",
+  "game_time_left": "Sisa waktu",
+  "game_rack_title": "Rak Penambang Ruang Game",
+  "game_rack_desc": "Setiap item yang terpasang di rak menghasilkan poin secara pasif",
+  "game_need_power": "Butuh Tambahan Hash Power & Poin?",
+  "game_arcade_desc": "Mainkan Mini-Game Arcade Coin Rush (+%s Power Boost & Poin langsung)!",
+  "game_high_score": "High Score",
+  "game_arcade_desc_long": "Mainkan game 15 detik! Ketuk koin & permata secepat mungkin untuk mendapatkan +20 s/d 60 Poin instan dan +%s Power Boost selama 2 jam.",
+  "game_ready_test": "Siap Uji Kecepatan Jari?",
+  "game_collect_coins": "Kumpulkan koin sebanyak-banyaknya dalam 15 detik.",
+  "game_score": "Skor"
 }

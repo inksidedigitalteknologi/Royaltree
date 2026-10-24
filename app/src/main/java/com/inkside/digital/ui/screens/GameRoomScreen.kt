@@ -717,7 +717,7 @@ fun GameRoomScreenContent(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Saya setuju membeli ${item.name} dengan ${item.tokenCost} RTP",
+                            text = "${LanguageManager.translate("game_confirm_buy", AppThemePreferences.currentLanguage, "Saya setuju membeli")} ${item.name} ${LanguageManager.translate("game_confirm_buy_suffix", AppThemePreferences.currentLanguage, "RTP")} ${item.tokenCost}",
                             fontSize = 11.sp,
                             color = Color(0xFF94A3B8)
                         )
@@ -790,7 +790,7 @@ fun GameRoomScreenContent(
         AlertDialog(
             onDismissRequest = { slotToAssignItem = null },
             title = {
-                Text(text = "Pasang Item ke Slot ${targetSlot + 1}", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text(text = "${LanguageManager.translate("game_place_slot", AppThemePreferences.currentLanguage, "Pasang Item ke Slot")} ${targetSlot + 1}", fontWeight = FontWeight.Bold, fontSize = 16.sp)
             },
             text = {
                 if (unplacedOwnedMiners.isEmpty()) {
@@ -803,13 +803,13 @@ fun GameRoomScreenContent(
                         Text("📦", fontSize = 32.sp)
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Tidak ada item miner di inventaris.",
+                            text = LanguageManager.translate("game_no_miner", AppThemePreferences.currentLanguage, "Tidak ada item miner di inventaris."),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Medium,
                             textAlign = TextAlign.Center
                         )
                         Text(
-                            text = "Beli item penambang baru di Toko Item menggunakan poin Anda.",
+                            text = LanguageManager.translate("game_buy_hint", AppThemePreferences.currentLanguage, "Beli item penambang baru di Toko Item menggunakan poin Anda."),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -1097,7 +1097,7 @@ private fun MiningRoomTab(
                                     RetroStatBox(
                                         emoji = "🔥",
                                         label = LanguageManager.translate("game_mining_power", AppThemePreferences.currentLanguage, "POWER"),
-                                        value = HashrateFormatter.format(totalPowerGhs),
+                                        value = HashrateFormatter.format(totalPowerGhs.toLong()),
                                         color = RetroAmber,
                                         modifier = Modifier.weight(1f)
                                     )
@@ -1168,7 +1168,7 @@ private fun MiningRoomTab(
                                             color = Color(0xFF94A3B8)
                                         )
                                         Text(
-                                            text = "Total: +${String.format(Locale.US, "%.4f", totalRate)}/m",
+                                            text = "${LanguageManager.translate("game_total", AppThemePreferences.currentLanguage, "Total")}: +${String.format(Locale.US, "%.4f", totalRate)}/m",
                                             fontSize = 11.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = EmeraldLight
@@ -1280,7 +1280,7 @@ private fun MiningRoomTab(
                                                                 color = EmeraldLight
                                                             )
                                                             Text(
-                                                                text = "Mining berjalan...",
+                                                                text = LanguageManager.translate("game_mining_running", AppThemePreferences.currentLanguage, "Mining berjalan..."),
                                                                 fontSize = 10.sp,
                                                                 color = Color.White.copy(alpha = 0.6f)
                                                             )
@@ -1303,7 +1303,7 @@ private fun MiningRoomTab(
                                                         horizontalArrangement = Arrangement.SpaceBetween
                                                     ) {
                                                         Text(
-                                                            text = "Sisa waktu",
+                                                            text = LanguageManager.translate("game_time_left", AppThemePreferences.currentLanguage, "Sisa waktu"),
                                                             fontSize = 9.sp,
                                                             color = Color.White.copy(alpha = 0.7f)
                                                         )
@@ -1402,11 +1402,11 @@ private fun MiningRoomTab(
             ) {
                 Column {
                     Text(
-                        text = "Rak Penambang Ruang Game",
+                        text = LanguageManager.translate("game_rack_title", AppThemePreferences.currentLanguage, "Rak Penambang Ruang Game"),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
                     Text(
-                        text = "Setiap item yang terpasang di rak menghasilkan poin secara pasif",
+                        text = LanguageManager.translate("game_rack_desc", AppThemePreferences.currentLanguage, "Setiap item yang terpasang di rak menghasilkan poin secara pasif"),
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1483,12 +1483,12 @@ private fun MiningRoomTab(
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "Butuh Tambahan Hash Power & Poin?",
+                                text = LanguageManager.translate("game_need_power", AppThemePreferences.currentLanguage, "Butuh Tambahan Hash Power & Poin?"),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 13.sp
                             )
                             Text(
-                                text = "Mainkan Mini-Game Arcade Coin Rush (+${HashrateFormatter.format(80.0)} Power Boost & Poin langsung)!",
+                                text = String.format(LanguageManager.translate("game_arcade_desc", AppThemePreferences.currentLanguage, "Mainkan Mini-Game Arcade Coin Rush (+%s Power Boost & Poin langsung)!"), HashrateFormatter.format(80L)),
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -2239,7 +2239,7 @@ private fun MiniGameArcadeTab(
                                 shape = RoundedCornerShape(8.dp)
                             ) {
                                 Text(
-                                    text = "High Score: $highScore",
+                                    text = "${LanguageManager.translate("game_high_score", AppThemePreferences.currentLanguage, "High Score")}: $highScore",
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = GoldVip,
@@ -2249,7 +2249,7 @@ private fun MiniGameArcadeTab(
                         }
 
                         Text(
-                            text = "Mainkan game 15 detik! Ketuk koin & permata secepat mungkin untuk mendapatkan +20 s/d 60 Poin instan dan +${HashrateFormatter.format(80.0)} Power Boost selama 2 jam.",
+                            text = String.format(LanguageManager.translate("game_arcade_desc_long", AppThemePreferences.currentLanguage, "Mainkan game 15 detik! Ketuk koin & permata secepat mungkin untuk mendapatkan +20 s/d 60 Poin instan dan +%s Power Boost selama 2 jam."), HashrateFormatter.format(80L)),
                             fontSize = 11.sp,
                             color = Color(0xFFE0E7FF)
                         )
@@ -2280,13 +2280,13 @@ private fun MiniGameArcadeTab(
                         Text("🎯", fontSize = 54.sp)
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
-                            text = "Siap Uji Kecepatan Jari?",
+                            text = LanguageManager.translate("game_ready_test", AppThemePreferences.currentLanguage, "Siap Uji Kecepatan Jari?"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Kumpulkan koin sebanyak-banyaknya dalam 15 detik.",
+                            text = LanguageManager.translate("game_collect_coins", AppThemePreferences.currentLanguage, "Kumpulkan koin sebanyak-banyaknya dalam 15 detik."),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -2339,7 +2339,7 @@ private fun MiniGameArcadeTab(
                                 shape = RoundedCornerShape(8.dp)
                             ) {
                                 Text(
-                                    text = "Skor: $score",
+                                    text = "${LanguageManager.translate("game_score", AppThemePreferences.currentLanguage, "Skor")}: $score",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 14.sp,
                                     color = EmeraldLight,

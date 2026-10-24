@@ -788,5 +788,22 @@
   "cd_qr_code": "二维码",
   "cd_frame": "边框",
   "fcm_channel_name": "Royaltree 通知",
-  "fcm_channel_desc": "Royaltree 的通知"
+  "fcm_channel_desc": "Royaltree 的通知",
+  "game_confirm_buy": "我同意购买",
+  "game_confirm_buy_suffix": "RTP",
+  "game_place_slot": "将物品放入槽位",
+  "game_no_miner": "库存中没有矿工物品。",
+  "game_buy_hint": "使用您的积分在物品商店购买新的矿工物品。",
+  "game_total": "总计",
+  "game_mining_running": "挖矿运行中...",
+  "game_time_left": "剩余时间",
+  "game_rack_title": "游戏室矿工架",
+  "game_rack_desc": "放置在架子上的每件物品都会被动产生积分",
+  "game_need_power": "需要更多算力和积分吗？",
+  "game_arcade_desc": "玩迷你游戏街机金币冲刺（+%s算力提升和即时积分）！",
+  "game_high_score": "最高分",
+  "game_arcade_desc_long": "玩15秒！尽可能快地点击金币和宝石，获得+20至60即时积分和2小时的+%s算力提升。",
+  "game_ready_test": "准备好测试你的手指速度了吗？",
+  "game_collect_coins": "在15秒内收集尽可能多的金币。",
+  "game_score": "分数"
 }

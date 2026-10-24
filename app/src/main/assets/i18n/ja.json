@@ -788,5 +788,22 @@
   "cd_qr_code": "QRコード",
   "cd_frame": "フレーム",
   "fcm_channel_name": "Royaltree 通知",
-  "fcm_channel_desc": "Royaltree の通知"
+  "fcm_channel_desc": "Royaltree の通知",
+  "game_confirm_buy": "購入に同意します",
+  "game_confirm_buy_suffix": "RTP",
+  "game_place_slot": "スロットにアイテムを配置",
+  "game_no_miner": "インベントリにマイナーアイテムがありません。",
+  "game_buy_hint": "ポイントを使ってアイテムショップで新しいマイナーアイテムを購入してください。",
+  "game_total": "合計",
+  "game_mining_running": "マイニング実行中...",
+  "game_time_left": "残り時間",
+  "game_rack_title": "ゲームルームマイナーラック",
+  "game_rack_desc": "ラックに配置されたすべてのアイテムが受動的にポイントを生成します",
+  "game_need_power": "ハッシュパワーとポイントがもっと必要ですか？",
+  "game_arcade_desc": "ミニゲームアーケードコインラッシュをプレイ（+%sパワーブースト＆即時ポイント）！",
+  "game_high_score": "ハイスコア",
+  "game_arcade_desc_long": "15秒間プレイ！コインと宝石をできるだけ速くタップして、+20〜60の即時ポイントと2時間の+%sパワーブーストを獲得しましょう。",
+  "game_ready_test": "指の速さを試す準備はできましたか？",
+  "game_collect_coins": "15秒でできるだけ多くのコインを集めましょう。",
+  "game_score": "スコア"
 }

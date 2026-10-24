@@ -788,5 +788,22 @@
   "cd_qr_code": "Código QR",
   "cd_frame": "Marco",
   "fcm_channel_name": "Notificaciones de Royaltree",
-  "fcm_channel_desc": "Notificaciones para Royaltree"
+  "fcm_channel_desc": "Notificaciones para Royaltree",
+  "game_confirm_buy": "Acepto comprar",
+  "game_confirm_buy_suffix": "RTP",
+  "game_place_slot": "Colocar artículo en ranura",
+  "game_no_miner": "No hay artículos de minero en el inventario.",
+  "game_buy_hint": "Compra nuevos artículos de minero en la Tienda usando tus puntos.",
+  "game_total": "Total",
+  "game_mining_running": "Minería en curso...",
+  "game_time_left": "Tiempo restante",
+  "game_rack_title": "Estante de mineros de la sala de juegos",
+  "game_rack_desc": "Cada artículo colocado en el estante genera puntos pasivamente",
+  "game_need_power": "¿Necesitas más poder de hash y puntos?",
+  "game_arcade_desc": "¡Juega Mini-Game Arcade Coin Rush (+%s Power Boost y puntos instantáneos)!",
+  "game_high_score": "Puntuación máxima",
+  "game_arcade_desc_long": "¡Juega durante 15 segundos! Toca monedas y gemas lo más rápido posible para obtener +20 a 60 puntos instantáneos y +%s Power Boost durante 2 horas.",
+  "game_ready_test": "¿Listo para probar la velocidad de tus dedos?",
+  "game_collect_coins": "Recoge tantas monedas como puedas en 15 segundos.",
+  "game_score": "Puntuación"
 }

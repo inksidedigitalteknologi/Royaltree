@@ -788,5 +788,22 @@
   "cd_qr_code": "رمز QR",
   "cd_frame": "الإطار",
   "fcm_channel_name": "إشعارات Royaltree",
-  "fcm_channel_desc": "إشعارات لـ Royaltree"
+  "fcm_channel_desc": "إشعارات لـ Royaltree",
+  "game_confirm_buy": "أوافق على شراء",
+  "game_confirm_buy_suffix": "RTP",
+  "game_place_slot": "ضع العنصر في الفتحة",
+  "game_no_miner": "لا يوجد عنصر تعدين في المخزون.",
+  "game_buy_hint": "اشترِ عنصر تعدين جديد من متجر العناصر باستخدام نقاطك.",
+  "game_total": "المجموع",
+  "game_mining_running": "التعدين قيد التشغيل...",
+  "game_time_left": "الوقت المتبقي",
+  "game_rack_title": "رف تعدين غرفة اللعبة",
+  "game_rack_desc": "كل عنصر مثبت على الرف ينتج نقاطًا بشكل سلبي",
+  "game_need_power": "هل تحتاج إلى قوة تجزئة ونقاط إضافية؟",
+  "game_arcade_desc": "العب Mini-Game Arcade Coin Rush (+%s Power Boost & نقاط فورية)!",
+  "game_high_score": "أعلى نتيجة",
+  "game_arcade_desc_long": "العب لمدة 15 ثانية! انقر على العملات والجواهر بأسرع ما يمكن للحصول على +20 إلى 60 نقطة فورية و+%s Power Boost لمدة ساعتين.",
+  "game_ready_test": "هل أنت مستعد لاختبار سرعة إصبعك؟",
+  "game_collect_coins": "اجمع أكبر عدد ممكن من العملات في 15 ثانية.",
+  "game_score": "النتيجة"
 }

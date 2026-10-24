@@ -1375,7 +1375,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 id = "tx_game_reward_" + UUID.randomUUID().toString().take(8),
                 type = "POINT_REWARD",
                 title = "Reward Mini-Game Royaltree 🎯",
-                description = "Skor $score: +$bonusPoints Poin & Boost Mining Power +${HashrateFormatter.format(boostGhs)} (2 Jam)",
+                description = "Skor $score: +$bonusPoints Poin & Boost Mining Power +${HashrateFormatter.format(boostGhs.toLong())} (2 Jam)",
                 amount = bonusPoints.toDouble(),
                 currency = "POIN",
                 isCredit = true,

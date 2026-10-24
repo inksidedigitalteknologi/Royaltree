@@ -788,5 +788,22 @@
   "cd_qr_code": "QR Code",
   "cd_frame": "Frame",
   "fcm_channel_name": "Royaltree Notifications",
-  "fcm_channel_desc": "Notifications for Royaltree"
+  "fcm_channel_desc": "Notifications for Royaltree",
+  "game_confirm_buy": "I agree to buy",
+  "game_confirm_buy_suffix": "RTP",
+  "game_place_slot": "Place Item to Slot",
+  "game_no_miner": "No miner items in inventory.",
+  "game_buy_hint": "Buy new miner items from Item Shop using your points.",
+  "game_total": "Total",
+  "game_mining_running": "Mining running...",
+  "game_time_left": "Time left",
+  "game_rack_title": "Game Room Miner Rack",
+  "game_rack_desc": "Every item placed on the rack generates points passively",
+  "game_need_power": "Need More Hash Power & Points?",
+  "game_arcade_desc": "Play Mini-Game Arcade Coin Rush (+%s Power Boost & instant points)!",
+  "game_high_score": "High Score",
+  "game_arcade_desc_long": "Play for 15 seconds! Tap coins & gems as fast as possible to get +20 to 60 instant points and +%s Power Boost for 2 hours.",
+  "game_ready_test": "Ready to Test Your Finger Speed?",
+  "game_collect_coins": "Collect as many coins as possible in 15 seconds.",
+  "game_score": "Score"
 }
