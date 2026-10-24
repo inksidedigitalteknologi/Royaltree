@@ -46,7 +46,11 @@ class RoyaltreeApp : Application() {
             }
 
             // 3. ApiClient
+            try {
             ApiClient.init(this)
+        } catch (e: Exception) {
+            android.util.Log.e("RoyaltreeApp", "ApiClient.init failed at startup: ${e.message}", e)
+        }
             AppLogger.d(TAG, "✅ ApiClient initialized")
 
             // Analytics — init helper + enabled (release only)

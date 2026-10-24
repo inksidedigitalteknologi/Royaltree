@@ -47,16 +47,33 @@ import com.inkside.digital.data.network.model.ApiTransferConfigResponse
 object ApiClient {
 
     private fun getEncryptedPrefs(context: Context): SharedPreferences {
-        val masterKey = MasterKey.Builder(context)
+        fun buildMasterKey() = MasterKey.Builder(context)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
             .build()
-        return EncryptedSharedPreferences.create(
+
+        fun createPrefs(key: MasterKey) = EncryptedSharedPreferences.create(
             context,
             PREFS_NAME,
-            masterKey,
+            key,
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
+
+        return try {
+            createPrefs(buildMasterKey())
+        } catch (e: Exception) {
+            // Keystore mismatch (factory reset / restore / ROM update).
+            // Wipe prefs + key alias, kemudian recreate.
+            android.util.Log.w("ApiClient", "EncryptedSharedPreferences corrupt, recreating: ${e.message}")
+            try {
+                context.deleteSharedPreferences(PREFS_NAME)
+                val alias = "androidx_security_master_key_"
+                val ks = java.security.KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+                if (ks.containsAlias(alias)) ks.deleteEntry(alias)
+            } catch (_: Exception) { /* ignore */ }
+
+            createPrefs(buildMasterKey())
+        }
     }
 
     // ============ AdGuard Detection Flag ============

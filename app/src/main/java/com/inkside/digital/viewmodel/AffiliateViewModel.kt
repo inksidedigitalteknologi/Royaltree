@@ -123,7 +123,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 loadNotifications()
             }
         }
-        ApiClient.init(application)
+        try {
+            ApiClient.init(application)
+        } catch (e: Exception) {
+            AppLogger.d("AffiliateViewModel", "⚠️ ApiClient.init failed: ${e.message}")
+            android.util.Log.e("AffiliateViewModel", "ApiClient.init failed", e)
+        }
 
         // ============ LOAD MINER CATALOG SELEPAS USER READY ============
         // Obser user state — bila user ready (Firebase + backend), load catalog
