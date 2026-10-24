@@ -3100,12 +3100,3 @@ private fun FusionTab(
         }
     }
 }
-
-private fun tierColor(tier: String): Color = when (tier.uppercase()) {
-    "COMMON" -> Color(0xFF94A3B8)
-    "RARE" -> Color(0xFF3B82F6)
-    "EPIC" -> Color(0xFFA855F7)
-    "LEGENDARY" -> Color(0xFFFBBF24)
-    "MYTHIC" -> Color(0xFFEF4444)
-    else -> Color(0xFF6B7280)
-}
