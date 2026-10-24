@@ -1,0 +1,25 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Firebase
+service-account.json
+
+# Backup
+*.bak.*
+*.log
+
+# Test files (jangan di-commit)
+test_*.js
+check_*.js
+get_test_token.js
+
+# OS
+.DS_Store
+Thumbs.db

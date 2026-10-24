@@ -1865,6 +1865,118 @@ router.put('/miner-catalog', checkAdmin, async (req, res) => {
     }
 });
 
+
+// ============================================================
+// GET /api/v1/admin/fusion-config
+// Lihat konfigurasi biaya fusion
+// ============================================================
+router.get('/fusion-config', verifyFirebaseToken, checkAdmin, async (req, res) => {
+    try {
+        const { getFusionConfig } = require('../config/fusion');
+        const config = await getFusionConfig();
+        return res.json({ success: true, data: config });
+    } catch (error) {
+        console.error('Get fusion-config error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// PUT /api/v1/admin/fusion-config
+// Update biaya fusion
+// Body: { rates: { COMMON, RARE, EPIC, LEGENDARY } }
+// ============================================================
+router.put('/fusion-config', verifyFirebaseToken, checkAdmin, async (req, res) => {
+    try {
+        const { rates } = req.body;
+        const validTiers = ['COMMON', 'RARE', 'EPIC', 'LEGENDARY'];
+        
+        if (!rates || typeof rates !== 'object') {
+            return res.status(400).json({ success: false, message: 'rates wajib diisi' });
+        }
+        
+        for (const tier of validTiers) {
+            if (typeof rates[tier] !== 'number' || rates[tier] <= 0) {
+                return res.status(400).json({ success: false, message: 'Rate ' + tier + ' tidak valid (harus > 0)' });
+            }
+        }
+        
+        const { setFusionConfig } = require('../config/fusion');
+        await setFusionConfig(rates, req.firebaseUser.uid);
+        
+        return res.json({ success: true, data: { rates } });
+    } catch (error) {
+        console.error('Put fusion-config error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+
+
+// ============================================================
+// GET /api/v1/admin/mining-weights
+// Lihat konfigurasi bobot adaptif
+// ============================================================
+router.get('/mining-weights', verifyFirebaseToken, checkAdmin, async (req, res) => {
+    try {
+        const { getMiningWeights } = require('../config/miningWeights');
+        const config = await getMiningWeights();
+        return res.json({ success: true, data: config });
+    } catch (error) {
+        console.error('Get mining-weights error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ============================================================
+// PUT /api/v1/admin/mining-weights
+// Update bobot adaptif
+// Body: { weights: { efficiency, ping, device, thermal }, floor: 0.90 }
+// ============================================================
+router.put('/mining-weights', verifyFirebaseToken, checkAdmin, async (req, res) => {
+    try {
+        const { weights, floor } = req.body;
+        const validKeys = ['efficiency', 'ping', 'device', 'thermal'];
+        
+        if (!weights || typeof weights !== 'object') {
+            return res.status(400).json({ success: false, message: 'weights wajib diisi' });
+        }
+        
+        for (const key of validKeys) {
+            if (typeof weights[key] !== 'number' || weights[key] < 0 || weights[key] > 1) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'weight ' + key + ' harus number 0-1' 
+                });
+            }
+        }
+        
+        const total = validKeys.reduce((sum, k) => sum + weights[k], 0);
+        if (Math.abs(total - 1.0) > 0.01) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Total weights harus = 1.0 (sekarang: ' + total.toFixed(3) + ')' 
+            });
+        }
+        
+        if (floor !== undefined && (typeof floor !== 'number' || floor < 0.5 || floor > 1.0)) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'floor harus number 0.5-1.0' 
+            });
+        }
+        
+        const { setMiningWeights } = require('../config/miningWeights');
+        await setMiningWeights(weights, floor, req.firebaseUser.uid);
+        
+        return res.json({ success: true, data: { weights, floor: floor || 0.90 } });
+    } catch (error) {
+        console.error('Put mining-weights error:', error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+
 module.exports = router;
 
 // ============================================================

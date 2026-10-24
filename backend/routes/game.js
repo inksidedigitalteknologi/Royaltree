@@ -35,6 +35,17 @@ const db = admin.firestore();
 // ============================================================
 const crypto = require('crypto');
 
+// FUSION + EFFICIENCY
+const { computeEfficiency, computeCurrentPowerHs, computePointsPerMinute, computePointsPerDay } = require('../utils/efficiency');
+
+// WEIGHTED ADAPTIVE MINING (efficiency + ping + device + thermal)
+const { getMiningWeights } = require('../config/miningWeights');
+const { adaptWeights } = require('../utils/adaptiveWeights');
+const { calculatePingDelta } = require('../utils/pingFactor');
+const { calculateDeviceDelta } = require('../utils/deviceFactor');
+const { calculateThermalDelta } = require('../utils/thermalFactor');
+const { getFusionConfig } = require('../config/fusion');
+
 function getMinerSigningSecret() {
     const secret = process.env.MINER_SIGNING_SECRET;
     if (!secret) {
@@ -173,6 +184,130 @@ async function getMinerCatalog() {
     }
     return MINER_CATALOG;
 }
+
+// ============================================================
+// POST /api/v1/game/miners/merge
+// Merge 5 miner tier sama → 1 miner tier+1
+// Body: { minerIds: ["id1","id2","id3","id4","id5"] }
+// Biaya: config.fusion.rates[tier] (default COMMON=100, RARE=500, EPIC=2000, LEGENDARY=10000)
+// ============================================================
+router.post('/miners/merge', verifyFirebaseToken, checkFraud, async (req, res) => {
+    try {
+        const { uid } = req.firebaseUser;
+        const { minerIds } = req.body;
+
+        if (!Array.isArray(minerIds) || minerIds.length !== 5) {
+            return res.status(400).json({ success: false, message: 'Harus 5 miner ID' });
+        }
+        if (new Set(minerIds).size !== 5) {
+            return res.status(400).json({ success: false, message: 'Miner ID harus unique' });
+        }
+
+        const result = await db.runTransaction(async (tx) => {
+            const userRef = db.collection('users').doc(uid);
+            const userSnap = await tx.get(userRef);
+            if (!userSnap.exists) throw new Error('USER_NOT_FOUND');
+
+            const userData = userSnap.data();
+            const minersOwned = userData.minersOwned || {};
+
+            // Validasi 5 miner
+            const miners = minerIds.map(id => {
+                const m = minersOwned[id];
+                if (!m) throw new Error('MINER_NOT_FOUND:' + id);
+                if (!m.isOwned) throw new Error('MINER_NOT_OWNED:' + id);
+                if (m.isPlacedInRoom) throw new Error('MINER_PLACED:' + id);
+                return { id, ...m };
+            });
+
+            const firstTier = miners[0].tier;
+            if (!miners.every(m => m.tier === firstTier)) throw new Error('TIER_MISMATCH');
+
+            const tierChain = ['COMMON', 'RARE', 'EPIC', 'LEGENDARY', 'MYTHIC'];
+            const idx = tierChain.indexOf(firstTier);
+            if (idx === -1 || idx >= tierChain.length - 1) throw new Error('TIER_MAX');
+            const newTier = tierChain[idx + 1];
+
+            // Config fusion
+            const fusionConfig = await getFusionConfig();
+            const fee = fusionConfig.rates[firstTier];
+            if (!fee) throw new Error('CONFIG_MISSING');
+
+            if ((userData.points || 0) < fee) throw new Error('INSUFFICIENT_RTP');
+
+            // Catalog tier baru
+            const catalogKey = newTier.toLowerCase();
+            const catalogItem = MINER_CATALOG[catalogKey];
+            if (!catalogItem) throw new Error('CATALOG_MISSING');
+
+            // Buat miner baru
+            const newMinerId = 'miner_' + uid.substring(0,7) + '_' + Date.now() + '_' + Math.random().toString(36).substring(2,8);
+            const basePowerHs = catalogItem.powerHs;
+            const pointsPerMinute = catalogItem.pointsPerMinute;
+            const now = Date.now();
+            const signature = generateMinerSignature(
+                newMinerId, catalogItem.catalogId, uid, now, basePowerHs, pointsPerMinute
+            );
+
+            const newMiner = {
+                id: newMinerId,
+                catalogId: catalogItem.catalogId,
+                instanceId: newMinerId,
+                name: catalogItem.name,
+                tier: newTier,
+                iconEmoji: catalogItem.iconEmoji,
+                tokenCost: catalogItem.tokenCost,
+                powerHs: basePowerHs,           // ← signature pakai ini
+                basePowerHs: basePowerHs,       // ← field baru (duplikat)
+                pointsPerMinute,
+                bonusPermanentPct: catalogItem.bonusPermanentPct || 0,
+                isOwned: true,
+                purchasedAt: now,
+                placedSlotIndex: -1,
+                isPlacedInRoom: false,
+                signature,
+                fusedFrom: minerIds,
+                fusedAt: now,
+            };
+
+            // Hapus 5 miner lama
+            const newMinersOwned = { ...minersOwned };
+            minerIds.forEach(id => delete newMinersOwned[id]);
+            newMinersOwned[newMinerId] = newMiner;
+
+            // Update user
+            tx.update(userRef, {
+                minersOwned: newMinersOwned,
+                points: userData.points - fee,
+                minerTokens: Math.max(0, (userData.minerTokens || 0) - 4),
+                updatedAt: new Date().toISOString(),
+            });
+
+            return {
+                newMiner,
+                feePaid: fee,
+                newBalance: userData.points - fee,
+            };
+        });
+
+        return res.json({ success: true, data: result });
+    } catch (error) {
+        const msg = error.message || '';
+        if (msg.startsWith('MINER_NOT_FOUND')) return res.status(404).json({ success: false, message: 'Miner tidak ditemukan' });
+        if (msg.startsWith('MINER_NOT_OWNED')) return res.status(403).json({ success: false, message: 'Miner bukan milik Anda' });
+        if (msg.startsWith('MINER_PLACED')) return res.status(400).json({ success: false, message: 'Miner sedang dipasang di rak' });
+        if (msg === 'TIER_MISMATCH') return res.status(400).json({ success: false, message: 'Semua miner harus tier sama' });
+        if (msg === 'TIER_MAX') return res.status(400).json({ success: false, message: 'Tier ini tidak bisa di-merge' });
+        if (msg === 'INSUFFICIENT_RTP') return res.status(400).json({ success: false, message: 'RTP tidak cukup untuk fusion' });
+        if (msg === 'CONFIG_MISSING' || msg === 'CATALOG_MISSING') return res.status(500).json({ success: false, message: 'Konfigurasi tidak lengkap' });
+        if (msg === 'USER_NOT_FOUND') return res.status(404).json({ success: false, message: 'User tidak ditemukan' });
+
+        console.error('Merge error:', error);
+        return res.status(500).json({ success: false, message: 'Terjadi kesalahan server' });
+    }
+});
+
+
 module.exports.getMinerCatalog = getMinerCatalog;
 module.exports.MINER_CATALOG = MINER_CATALOG;
 
@@ -268,7 +403,7 @@ async function getThermalConfig() {
     }
 }
 
-function calculateFinalRate(baseRate, room, placedMiners, anomalyScore = 0) {
+function calculateFinalRate(baseRate, room, placedMiners, anomalyScore = 0, ctx = {}) {
     // 1. Bonus permanen dari miner yang placed
     let permanentBonusPct = 0;
     (placedMiners || []).forEach(m => {
@@ -360,17 +495,91 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
             });
         }
 
-        // Hitung total power
-        const totalPowerGhs = miners.reduce((sum, m) => sum + (m.powerHs || 0), 0);
+        // Hitung total power — PAKAI currentPowerHs (dengan efficiency 85-105%)
+        const nowForCalc = Date.now();
+        const totalPowerGhs = miners.reduce((sum, m) => {
+            const basePowerHs = m.basePowerHs || m.powerHs || 0;
+            const eff = computeEfficiency(m.id, nowForCalc);
+            const currentPowerHs = Math.round(basePowerHs * eff);
+            return sum + currentPowerHs;
+        }, 0);
         const pointsPerDay = calculatePointsPerDay(totalPowerGhs, miners);
 
         // ============ M41 FIX: Compute unclaimedMiningPoints ============
         // Guna lastMiningUpdateTimestamp (kalau ada) atau lastClaimTimestamp
         const placedMiners = miners.filter(m => m.isPlacedInRoom === true);
-        // M43: Guna calculateFinalRate untuk masukkan bonus dalam display
-        const baseRateForState = placedMiners.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
+        // M43: Weighted adaptive (efficiency + ping + device + thermal)
+        const pingMsForCtx = userData.lastPingMs || room.lastPingMs || 100;
+        const deviceScoreForCtx = userData.deviceScore || room.deviceScore || 70;
+        const tempCForCtx = room.lastTempC || 35;
+        const batteryForCtx = room.lastBatteryLevel || 85;
+        const chargingForCtx = room.lastIsCharging || false;
+        const userTierForCtx = userData.tier || 'FREE';
+
+        const baseRateForState = placedMiners.reduce((sum, m) => {
+            const basePowerHs = m.basePowerHs || m.powerHs || 0;
+            const eff = computeEfficiency(m.id, nowForCalc);
+            const currentPowerHs = Math.round(basePowerHs * eff);
+            return sum + (currentPowerHs * 1e-8);
+        }, 0);
+
+        const avgEffForState = placedMiners.length > 0
+            ? placedMiners.reduce((sum, m) => sum + computeEfficiency(m.id, nowForCalc), 0) / placedMiners.length
+            : 1.0;
+
+        const { weights: baseWeightsState, floor: floorState } = await getMiningWeights();
+        const adaptedWeightsState = adaptWeights(baseWeightsState, {
+            deviceScore: deviceScoreForCtx,
+            pingMs: pingMsForCtx,
+            tempC: tempCForCtx,
+            userTier: userTierForCtx,
+        });
+
+        const dEffState = avgEffForState - 1.0;
+        const dPingState = calculatePingDelta(pingMsForCtx);
+        const dDevState = calculateDeviceDelta(deviceScoreForCtx);
+        const dThermState = calculateThermalDelta(tempCForCtx, batteryForCtx, chargingForCtx);
+
+        let finalMultiplierState = 1.0;
+        let isPausedState = false;
+        let weightedDeltaState = 0;
+        if (dThermState === null) {
+            isPausedState = true;
+            finalMultiplierState = 0;
+        } else {
+            weightedDeltaState =
+                (adaptedWeightsState.efficiency * dEffState) +
+                (adaptedWeightsState.ping * dPingState) +
+                (adaptedWeightsState.device * dDevState) +
+                (adaptedWeightsState.thermal * dThermState);
+            finalMultiplierState = Math.max(floorState, 1 + weightedDeltaState);
+        }
+
         const userFlag1 = anomaly.getUserFlag(uid);
         const rateInfoForState = calculateFinalRate(baseRateForState, room, placedMiners, userFlag1.score || 0);
+
+        // Override finalRate dengan weighted adaptive
+        const anomalyFactorState = Math.max(0, 1 - (userFlag1.score || 0) * 0.1);
+        rateInfoForState.finalRate = isPausedState ? 0 : (
+            baseRateForState * finalMultiplierState
+            * (1 + (rateInfoForState.permanentBonusPct || 0) / 100)
+            * (1 + (rateInfoForState.miniGameBonusPct || 0) / 100)
+            * anomalyFactorState
+        );
+        rateInfoForState.weightedBreakdown = {
+            weights: adaptedWeightsState,
+            deltas: { efficiency: dEffState, ping: dPingState, device: dDevState, thermal: dThermState },
+            weightedDelta: weightedDeltaState,
+            finalMultiplier: finalMultiplierState,
+            floorApplied: Math.abs(finalMultiplierState - floorState) < 1e-6,
+            paused: isPausedState,
+        };
+        rateInfoForState.pingMs = pingMsForCtx;
+        rateInfoForState.deviceScore = deviceScoreForCtx;
+        rateInfoForState.tempC = tempCForCtx;
+        rateInfoForState.batteryLevel = batteryForCtx;
+        rateInfoForState.isCharging = chargingForCtx;
+
         const ratePerMin = rateInfoForState.finalRate;
         
         const lastUpdate = room.lastMiningUpdateTimestamp 
@@ -428,7 +637,14 @@ router.get('/state', verifyFirebaseToken, async (req, res) => {
                     baseRate: rateInfoForState.baseRate,
                     permanentBonusPct: rateInfoForState.permanentBonusPct,
                     miniGameBonusPct: rateInfoForState.miniGameBonusPct,
-                    totalBonusPct: rateInfoForState.totalBonusPct
+                    totalBonusPct: rateInfoForState.totalBonusPct,
+                    // WEIGHTED ADAPTIVE: breakdown lengkap
+                    weightedBreakdown: rateInfoForState.weightedBreakdown,
+                    pingMs: rateInfoForState.pingMs,
+                    deviceScore: rateInfoForState.deviceScore,
+                    tempC: rateInfoForState.tempC,
+                    batteryLevel: rateInfoForState.batteryLevel,
+                    isCharging: rateInfoForState.isCharging
                 },
                 miners: miners,
                 catalog: MINER_CATALOG
@@ -543,10 +759,73 @@ router.post('/mining/claim-with-ad', verifyFirebaseToken, checkFraud, async (req
             placedMinersArr.push({ id: doc.id, ...doc.data() });
         });
         
-        // M43: Guna calculateFinalRate untuk masukkan bonus permanen + minigame
-        const baseRateFresh = placedMinersArr.reduce((sum, m) => sum + (m.pointsPerMinute || 0), 0);
+        // M43: Weighted adaptive (efficiency + ping + device + thermal)
+        const nowForClaim = Date.now();
+        const pingMsClaim = userData.lastPingMs || room.lastPingMs || 100;
+        const deviceScoreClaim = userData.deviceScore || room.deviceScore || 70;
+        const tempCClaim = room.lastTempC || 35;
+        const batteryClaim = room.lastBatteryLevel || 85;
+        const chargingClaim = room.lastIsCharging || false;
+        const userTierClaim = userData.tier || 'FREE';
+
+        const baseRateFresh = placedMinersArr.reduce((sum, m) => {
+            const basePowerHs = m.basePowerHs || m.powerHs || 0;
+            const eff = computeEfficiency(m.id, nowForClaim);
+            const currentPowerHs = Math.round(basePowerHs * eff);
+            return sum + (currentPowerHs * 1e-8);
+        }, 0);
+
+        const avgEffClaim = placedMinersArr.length > 0
+            ? placedMinersArr.reduce((sum, m) => sum + computeEfficiency(m.id, nowForClaim), 0) / placedMinersArr.length
+            : 1.0;
+
+        const { weights: baseWeightsClaim, floor: floorClaim } = await getMiningWeights();
+        const adaptedWeightsClaim = adaptWeights(baseWeightsClaim, {
+            deviceScore: deviceScoreClaim,
+            pingMs: pingMsClaim,
+            tempC: tempCClaim,
+            userTier: userTierClaim,
+        });
+
+        const dEffClaim = avgEffClaim - 1.0;
+        const dPingClaim = calculatePingDelta(pingMsClaim);
+        const dDevClaim = calculateDeviceDelta(deviceScoreClaim);
+        const dThermClaim = calculateThermalDelta(tempCClaim, batteryClaim, chargingClaim);
+
+        let finalMultiplierClaim = 1.0;
+        let isPausedClaim = false;
+        let weightedDeltaClaim = 0;
+        if (dThermClaim === null) {
+            isPausedClaim = true;
+            finalMultiplierClaim = 0;
+        } else {
+            weightedDeltaClaim =
+                (adaptedWeightsClaim.efficiency * dEffClaim) +
+                (adaptedWeightsClaim.ping * dPingClaim) +
+                (adaptedWeightsClaim.device * dDevClaim) +
+                (adaptedWeightsClaim.thermal * dThermClaim);
+            finalMultiplierClaim = Math.max(floorClaim, 1 + weightedDeltaClaim);
+        }
+
         const userFlag2 = anomaly.getUserFlag(uid);
         const rateCalcFresh = calculateFinalRate(baseRateFresh, room, placedMinersArr, userFlag2.score || 0);
+
+        const anomalyFactorClaim = Math.max(0, 1 - (userFlag2.score || 0) * 0.1);
+        rateCalcFresh.finalRate = isPausedClaim ? 0 : (
+            baseRateFresh * finalMultiplierClaim
+            * (1 + (rateCalcFresh.permanentBonusPct || 0) / 100)
+            * (1 + (rateCalcFresh.miniGameBonusPct || 0) / 100)
+            * anomalyFactorClaim
+        );
+        rateCalcFresh.weightedBreakdown = {
+            weights: adaptedWeightsClaim,
+            deltas: { efficiency: dEffClaim, ping: dPingClaim, device: dDevClaim, thermal: dThermClaim },
+            weightedDelta: weightedDeltaClaim,
+            finalMultiplier: finalMultiplierClaim,
+            floorApplied: Math.abs(finalMultiplierClaim - floorClaim) < 1e-6,
+            paused: isPausedClaim,
+        };
+
         const ratePerMinFresh = rateCalcFresh.finalRate;
         const lastUpdateFresh = room.lastMiningUpdateTimestamp 
             || room.lastClaimTimestamp 
