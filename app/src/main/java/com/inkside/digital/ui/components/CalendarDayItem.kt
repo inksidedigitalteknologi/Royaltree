@@ -1,6 +1,8 @@
 package com.inkside.digital.ui.components
 
 import androidx.compose.foundation.background
+import com.inkside.digital.data.preferences.AppThemePreferences
+import com.inkside.digital.localization.LanguageManager
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -132,7 +134,7 @@ fun CalendarDayItem(
                 DayStatus.CHECKED_IN -> {
                     Icon(
                         Icons.Default.Check,
-                        contentDescription = "Checked",
+                        contentDescription = LanguageManager.translate("cd_checked", AppThemePreferences.currentLanguage, "Checked"),
                         tint = EmeraldLight,
                         modifier = Modifier.size(18.dp)
                     )
@@ -140,7 +142,7 @@ fun CalendarDayItem(
                 DayStatus.TODAY -> {
                     Icon(
                         if (isSpecial) Icons.Default.CardGiftcard else Icons.Default.Star,
-                        contentDescription = "Today",
+                        contentDescription = LanguageManager.translate("cd_today", AppThemePreferences.currentLanguage, "Today"),
                         tint = GoldVip,
                         modifier = Modifier.size(18.dp)
                     )
@@ -148,7 +150,7 @@ fun CalendarDayItem(
                 DayStatus.FUTURE -> {
                     Icon(
                         Icons.Default.Lock,
-                        contentDescription = "Locked",
+                        contentDescription = LanguageManager.translate("cd_locked", AppThemePreferences.currentLanguage, "Locked"),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                         modifier = Modifier.size(14.dp)
                     )

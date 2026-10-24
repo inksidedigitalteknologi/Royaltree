@@ -1,6 +1,8 @@
 package com.inkside.digital.ui.components
 
 import android.graphics.Bitmap
+import com.inkside.digital.data.preferences.AppThemePreferences
+import com.inkside.digital.localization.LanguageManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -51,7 +53,7 @@ fun QRCodeImage(
         contentAlignment = Alignment.Center
     ) {
         if (bitmap != null) {
-            Image(bitmap = bitmap.asImageBitmap(), contentDescription = "QR Code", modifier = Modifier.size(size))
+            Image(bitmap = bitmap.asImageBitmap(), contentDescription = LanguageManager.translate("cd_qr_code", AppThemePreferences.currentLanguage, "QR Code"), modifier = Modifier.size(size))
         }
     }
 }

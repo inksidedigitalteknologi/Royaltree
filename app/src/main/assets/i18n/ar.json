@@ -781,5 +781,12 @@
   "day_short": "ي",
   "close": "إغلاق",
   "camera_permission": "منح إذن الكاميرا",
-  "qr_equivalent": "يعادل"
+  "qr_equivalent": "يعادل",
+  "cd_checked": "محدد",
+  "cd_today": "اليوم",
+  "cd_locked": "مقفل",
+  "cd_qr_code": "رمز QR",
+  "cd_frame": "الإطار",
+  "fcm_channel_name": "إشعارات Royaltree",
+  "fcm_channel_desc": "إشعارات لـ Royaltree"
 }

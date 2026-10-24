@@ -781,5 +781,12 @@
   "day_short": "D",
   "close": "Close",
   "camera_permission": "Grant Camera Permission",
-  "qr_equivalent": "Equivalent"
+  "qr_equivalent": "Equivalent",
+  "cd_checked": "Checked",
+  "cd_today": "Today",
+  "cd_locked": "Locked",
+  "cd_qr_code": "QR Code",
+  "cd_frame": "Frame",
+  "fcm_channel_name": "Royaltree Notifications",
+  "fcm_channel_desc": "Notifications for Royaltree"
 }

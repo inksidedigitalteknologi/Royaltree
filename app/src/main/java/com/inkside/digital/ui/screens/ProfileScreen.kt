@@ -697,7 +697,7 @@ fun ProfileAvatarWithFrame(
         // Frame overlay (kalau ada)
         Image(
             painter = painterResource(frameRes),
-            contentDescription = "Frame $tier",
+            contentDescription = "${LanguageManager.translate("cd_frame", AppThemePreferences.currentLanguage, "Frame")} $tier",
             modifier = Modifier.fillMaxSize()
         )
     }

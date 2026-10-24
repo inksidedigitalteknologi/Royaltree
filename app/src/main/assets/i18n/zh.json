@@ -781,5 +781,12 @@
   "day_short": "天",
   "close": "关闭",
   "camera_permission": "授予相机权限",
-  "qr_equivalent": "相当于"
+  "qr_equivalent": "相当于",
+  "cd_checked": "已选中",
+  "cd_today": "今天",
+  "cd_locked": "已锁定",
+  "cd_qr_code": "二维码",
+  "cd_frame": "边框",
+  "fcm_channel_name": "Royaltree 通知",
+  "fcm_channel_desc": "Royaltree 的通知"
 }

@@ -781,5 +781,12 @@
   "day_short": "日",
   "close": "閉じる",
   "camera_permission": "カメラの許可を与える",
-  "qr_equivalent": "相当"
+  "qr_equivalent": "相当",
+  "cd_checked": "チェック済み",
+  "cd_today": "今日",
+  "cd_locked": "ロック済み",
+  "cd_qr_code": "QRコード",
+  "cd_frame": "フレーム",
+  "fcm_channel_name": "Royaltree 通知",
+  "fcm_channel_desc": "Royaltree の通知"
 }

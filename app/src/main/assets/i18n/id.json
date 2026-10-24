@@ -781,5 +781,12 @@
   "day_short": "H",
   "close": "Tutup",
   "camera_permission": "Beri Izin Kamera",
-  "qr_equivalent": "Setara"
+  "qr_equivalent": "Setara",
+  "cd_checked": "Tercentang",
+  "cd_today": "Hari ini",
+  "cd_locked": "Terkunci",
+  "cd_qr_code": "Kode QR",
+  "cd_frame": "Frame",
+  "fcm_channel_name": "Notifikasi Royaltree",
+  "fcm_channel_desc": "Notifikasi untuk Royaltree"
 }

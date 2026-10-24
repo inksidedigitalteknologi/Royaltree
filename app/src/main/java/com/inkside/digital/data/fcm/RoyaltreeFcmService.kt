@@ -13,19 +13,32 @@ import com.inkside.digital.MainActivity
 import com.inkside.digital.R
 import com.inkside.digital.data.network.ApiClient
 import com.inkside.digital.util.AppLogger
+import com.inkside.digital.localization.LanguageManager
+import com.inkside.digital.data.preferences.AppThemePreferences
 
 class RoyaltreeFcmService : FirebaseMessagingService() {
 
     companion object {
         private const val TAG = "RoyaltreeFCM"
         private const val CHANNEL_ID = "royaltree_default"
-        private const val CHANNEL_NAME = "Royaltree Notifications"
+        private val CHANNEL_NAME: String
+            get() = LanguageManager.translate("fcm_channel_name", AppThemePreferences.currentLanguage, "Royaltree Notifications")
     }
 
     @Suppress("DEPRECATION")
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         AppLogger.d(TAG, "New FCM token: ${token.take(20)}...")
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        try {
+            LanguageManager.init(this)
+            AppThemePreferences.init(this)
+        } catch (e: Exception) {
+            AppLogger.w(TAG, "Init failed: ${e.message}")
+        }
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -95,7 +108,7 @@ class RoyaltreeFcmService : FirebaseMessagingService() {
                 CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Notifications for Royaltree"
+                description = LanguageManager.translate("fcm_channel_desc", AppThemePreferences.currentLanguage, "Notifications for Royaltree")
                 enableLights(true)
                 enableVibration(true)
             }
