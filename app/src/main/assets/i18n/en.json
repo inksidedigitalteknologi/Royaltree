@@ -780,5 +780,6 @@
   "withdrawal_method": "Method",
   "day_short": "D",
   "close": "Close",
-  "camera_permission": "Grant Camera Permission"
+  "camera_permission": "Grant Camera Permission",
+  "qr_equivalent": "Equivalent"
 }

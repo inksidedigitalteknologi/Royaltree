@@ -780,5 +780,6 @@
   "withdrawal_method": "方式",
   "day_short": "天",
   "close": "关闭",
-  "camera_permission": "授予相机权限"
+  "camera_permission": "授予相机权限",
+  "qr_equivalent": "相当于"
 }

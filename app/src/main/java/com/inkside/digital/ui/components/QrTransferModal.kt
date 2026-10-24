@@ -687,7 +687,7 @@ fun QrTransferModal(
                                 ) {
                                     Column {
                                         Text(LanguageManager.translate("qr_fee_net_received", AppThemePreferences.currentLanguage, "Bersih Diterima Penerima:"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                                        Text("Setara: $${String.format(Locale.US, "%.2f", usdValue)} USD ≈ Rp ${String.format("%,.0f", idrValue)}", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                        Text("${LanguageManager.translate("qr_equivalent", AppThemePreferences.currentLanguage, "Setara")}: $${String.format(Locale.US, "%.2f", usdValue)} USD ≈ Rp ${String.format("%,.0f", idrValue)}", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                     RtpAmount(
                                         amount = "${GlobalPointsManager.formatRtp(netReceived)} RTP",

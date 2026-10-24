@@ -780,5 +780,6 @@
   "withdrawal_method": "Método",
   "day_short": "D",
   "close": "Cerrar",
-  "camera_permission": "Conceder permiso de cámara"
+  "camera_permission": "Conceder permiso de cámara",
+  "qr_equivalent": "Equivalente"
 }

@@ -780,5 +780,6 @@
   "withdrawal_method": "الطريقة",
   "day_short": "ي",
   "close": "إغلاق",
-  "camera_permission": "منح إذن الكاميرا"
+  "camera_permission": "منح إذن الكاميرا",
+  "qr_equivalent": "يعادل"
 }

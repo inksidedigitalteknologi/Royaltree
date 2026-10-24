@@ -780,5 +780,6 @@
   "withdrawal_method": "Metode",
   "day_short": "H",
   "close": "Tutup",
-  "camera_permission": "Beri Izin Kamera"
+  "camera_permission": "Beri Izin Kamera",
+  "qr_equivalent": "Setara"
 }

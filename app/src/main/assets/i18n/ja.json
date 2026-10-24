@@ -780,5 +780,6 @@
   "withdrawal_method": "方法",
   "day_short": "日",
   "close": "閉じる",
-  "camera_permission": "カメラの許可を与える"
+  "camera_permission": "カメラの許可を与える",
+  "qr_equivalent": "相当"
 }
