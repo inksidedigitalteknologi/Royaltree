@@ -51,7 +51,7 @@ object ApiClient {
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
             .build()
 
-        fun createPrefs(key: MasterKey) = EncryptedSharedPreferences.create(
+        fun open(key: MasterKey) = EncryptedSharedPreferences.create(
             context,
             PREFS_NAME,
             key,
@@ -59,21 +59,36 @@ object ApiClient {
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
 
-        return try {
-            createPrefs(buildMasterKey())
-        } catch (e: Exception) {
-            // Keystore mismatch (factory reset / restore / ROM update).
-            // Wipe prefs + key alias, kemudian recreate.
-            android.util.Log.w("ApiClient", "EncryptedSharedPreferences corrupt, recreating: ${e.message}")
-            try {
-                context.deleteSharedPreferences(PREFS_NAME)
-                val alias = "androidx_security_master_key_"
-                val ks = java.security.KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
-                if (ks.containsAlias(alias)) ks.deleteEntry(alias)
-            } catch (_: Exception) { /* ignore */ }
-
-            createPrefs(buildMasterKey())
+        // Percobaan 1
+        try {
+            return open(buildMasterKey())
+        } catch (t: Throwable) {
+            android.util.Log.w("ApiClient", "EncryptedSharedPreferences FAIL#1 (${t.javaClass.name}): ${t.message}")
         }
+
+        // Wipe total
+        try { context.deleteSharedPreferences(PREFS_NAME) } catch (_: Throwable) {}
+        try {
+            val ks = java.security.KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+            for (alias in ks.aliases().toList()) {
+                if (alias.contains("master_key") || alias.contains("_androidx_security") || alias.contains("firebear")) {
+                    try { ks.deleteEntry(alias) } catch (_: Throwable) {}
+                }
+            }
+        } catch (t: Throwable) {
+            android.util.Log.w("ApiClient", "Keystore wipe failed: ${t.message}")
+        }
+
+        // Percobaan 2
+        try {
+            return open(buildMasterKey())
+        } catch (t: Throwable) {
+            android.util.Log.w("ApiClient", "EncryptedSharedPreferences FAIL#2 (${t.javaClass.name}): ${t.message}")
+        }
+
+        // FALLBACK — prefs biasa
+        android.util.Log.w("ApiClient", "FALLBACK ke SharedPreferences biasa untuk $PREFS_NAME")
+        return context.getSharedPreferences(PREFS_NAME + "_plain", Context.MODE_PRIVATE)
     }
 
     // ============ AdGuard Detection Flag ============
