@@ -1118,6 +1118,9 @@ private fun MiningRoomTab(
                                     )
                                 }
 
+                                // Rate Breakdown Card (weighted adaptive)
+                                RateBreakdownCard(roomState = roomState)
+
                                 // Live ticker — compact single row
                                 Surface(
                                     color = Color(0xFF064E3B).copy(alpha = 0.4f),
@@ -1698,18 +1701,43 @@ private fun RackSlotItemCard(
 
                 Spacer(Modifier.height(4.dp))
 
-                Surface(
-                    color = tierColor.copy(alpha = 0.2f),
-                    shape = RoundedCornerShape(6.dp)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(3.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        miner.tier,
-                        fontSize = 8.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = tierColor,
-                        letterSpacing = 0.5.sp,
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                    )
+                    Surface(
+                        color = tierColor.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(6.dp)
+                    ) {
+                        Text(
+                            miner.tier,
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = tierColor,
+                            letterSpacing = 0.5.sp,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                    }
+                    // Efficiency badge (live)
+                    val eff = miner.efficiency
+                    val effColor = when {
+                        eff >= 1.00 -> Color(0xFF10B981)  // green
+                        eff >= 0.95 -> Color(0xFFF59E0B)  // amber
+                        else -> Color(0xFFEF4444)          // red
+                    }
+                    Surface(
+                        color = effColor.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(6.dp),
+                        border = BorderStroke(0.5.dp, effColor.copy(alpha = 0.5f))
+                    ) {
+                        Text(
+                            "${(eff * 100).toInt()}%",
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = effColor,
+                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                        )
+                    }
                 }
 
                 Spacer(Modifier.weight(1f))
@@ -1721,10 +1749,12 @@ private fun RackSlotItemCard(
                     Column {
                         Text("\u26A1", fontSize = 9.sp)
                         Text(
-                            HashrateFormatter.formatShort(miner.powerHs),
+                            HashrateFormatter.formatShort(
+                                if (miner.currentPowerHs > 0) miner.currentPowerHs else miner.powerHs
+                            ),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = if (miner.efficiency >= 1.00) Color(0xFF10B981) else Color.White
                         )
                     }
                     Column(horizontalAlignment = Alignment.End) {
@@ -2524,5 +2554,228 @@ private fun ComparisonRow(
             fontWeight = FontWeight.Black,
             color = EmeraldLight
         )
+    }
+}
+
+
+// ============================================================
+// RATE BREAKDOWN CARD — Weighted Adaptive Display
+// ============================================================
+@Composable
+private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
+    if (roomState == null) return
+
+    // Parse weightedBreakdown dari JSON
+    val breakdown = remember(roomState.weightedBreakdownJson) {
+        try {
+            if (roomState.weightedBreakdownJson.isBlank()) null
+            else org.json.JSONObject(roomState.weightedBreakdownJson)
+        } catch (e: Exception) { null }
+    }
+
+    val weights = breakdown?.optJSONObject("weights")
+    val deltas = breakdown?.optJSONObject("deltas")
+    val floorApplied = breakdown?.optBoolean("floorApplied", false) ?: false
+    val paused = breakdown?.optBoolean("paused", false) ?: false
+
+    val baseRate = roomState.baseRate
+    val ratePerMin = roomState.ratePerMin
+
+    Surface(
+        color = Color(0xFF0F172A).copy(alpha = 0.85f),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.25f)),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "⚡ RATE BREAKDOWN",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = EmeraldLight,
+                    letterSpacing = 1.sp
+                )
+                if (paused) {
+                    Surface(
+                        color = Color(0xFFEF4444).copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        Text(
+                            "PAUSED",
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFEF4444),
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                    }
+                } else if (floorApplied) {
+                    Surface(
+                        color = Color(0xFFF59E0B).copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        Text(
+                            "FLOOR 90%",
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFF59E0B),
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                    }
+                }
+            }
+
+            // Divider
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(EmeraldLight.copy(alpha = 0.15f))
+            )
+
+            // Base rate
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("Base rate", fontSize = 10.sp, color = Color(0xFF94A3B8))
+                Text(
+                    String.format(Locale.US, "%.5f/mnt", baseRate),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White
+                )
+            }
+
+            // Factor rows (4)
+            if (deltas != null && weights != null) {
+                val factors = listOf(
+                    Triple("Efficiency", "eff", "🎯"),
+                    Triple("Ping", "ping", "📡"),
+                    Triple("Device", "device", "📱"),
+                    Triple("Thermal", "thermal", "🌡️")
+                )
+                factors.forEach { (label, key, emoji) ->
+                    val delta = deltas.optDouble(key, 0.0)
+                    val weight = weights.optDouble(key, 0.0)
+                    val contrib = delta * weight
+                    val color = when {
+                        delta > 0.001 -> Color(0xFF10B981)
+                        delta < -0.001 -> Color(0xFFEF4444)
+                        else -> Color(0xFF94A3B8)
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "$emoji $label",
+                            fontSize = 10.sp,
+                            color = Color(0xFF94A3B8)
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                "${(delta * 100).toInt().let { if (it >= 0) "+$it" else "$it" }}%",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = color
+                            )
+                            Text(
+                                "×${(weight * 100).toInt()}",
+                                fontSize = 9.sp,
+                                color = Color(0xFF64748B)
+                            )
+                            Text(
+                                "${(contrib * 100).toInt().let { if (it >= 0) "+$it" else "$it" }}%",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = color
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Divider
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(EmeraldLight.copy(alpha = 0.15f))
+            )
+
+            // Bonus rows
+            if (roomState.permanentBonusPct > 0 || roomState.miniGameBonusPct > 0) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("Permanent bonus", fontSize = 10.sp, color = Color(0xFF94A3B8))
+                    Text(
+                        "+${String.format(Locale.US, "%.1f", roomState.permanentBonusPct)}%",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF10B981)
+                    )
+                }
+                if (roomState.miniGameBonusPct > 0) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("MiniGame bonus", fontSize = 10.sp, color = Color(0xFF94A3B8))
+                        Text(
+                            "+${String.format(Locale.US, "%.1f", roomState.miniGameBonusPct)}%",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF10B981)
+                        )
+                    }
+                }
+            }
+
+            // Final row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "FINAL RATE",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Black,
+                    color = EmeraldLight,
+                    letterSpacing = 0.5.sp
+                )
+                Text(
+                    String.format(Locale.US, "%.5f/mnt", ratePerMin),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Black,
+                    color = EmeraldLight
+                )
+            }
+
+            // Weight summary
+            if (weights != null) {
+                Text(
+                    "⚙️ Bobot: eff ${(weights.optDouble("efficiency", 0.0) * 100).toInt()}% · " +
+                    "ping ${(weights.optDouble("ping", 0.0) * 100).toInt()}% · " +
+                    "dev ${(weights.optDouble("device", 0.0) * 100).toInt()}% · " +
+                    "therm ${(weights.optDouble("thermal", 0.0) * 100).toInt()}%",
+                    fontSize = 8.sp,
+                    color = Color(0xFF64748B),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
     }
 }
