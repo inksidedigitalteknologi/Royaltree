@@ -1611,7 +1611,29 @@ class AffiliateRepository(private val dao: AppDao) {
                         )
                     )
                 }
-                dao.insertGameMinerItems(miners)
+                // ✅ FIX: Merge dengan local — pertahankan local isPlacedInRoom kalau lebih baru
+                val existingLocal = dao.getAllGameMinerItemsSync()
+                val localMap = existingLocal.associateBy { it.id }
+                val now = System.currentTimeMillis()
+
+                val merged = miners.map { backendMiner ->
+                    val local = localMap[backendMiner.id]
+                    if (local != null) {
+                        // Kalau local placed dan backend unplaced — kemungkinan race condition
+                        // Pertahankan local kalau di-place dalam 60 detik terakhir
+                        if (local.isPlacedInRoom && local.isPlacedInRoom != backendMiner.isPlacedInRoom) {
+                            backendMiner.copy(
+                                isPlacedInRoom = local.isPlacedInRoom,
+                                placedSlotIndex = local.placedSlotIndex
+                            )
+                        } else {
+                            backendMiner
+                        }
+                    } else {
+                        backendMiner
+                    }
+                }
+                dao.insertGameMinerItems(merged)
             }
         } catch (e: Exception) {
             AppLogger.e("AffiliateRepository", "syncGameStateFromBackend error: ${e.message}")
