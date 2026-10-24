@@ -59,6 +59,16 @@ function generateMinerSignature(instanceId, catalogId, uid, purchasedAt, powerHs
  */
 function verifyMinerSignature(miner, uid) {
     if (!miner || !miner.signature) return false;
+    
+    // DEBUG
+    console.log('[VERIFY-SIG]', JSON.stringify({
+        instanceId: miner.instanceId,
+        catalogId: miner.catalogId,
+        purchasedAt: miner.purchasedAt,
+        powerHs: miner.powerHs,
+        pointsPerMinute: miner.pointsPerMinute,
+        sig: (miner.signature || '').slice(0, 16)
+    }));
     const expected = generateMinerSignature(
         miner.instanceId,
         miner.catalogId,
