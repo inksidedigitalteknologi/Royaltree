@@ -78,6 +78,7 @@ import com.inkside.digital.data.network.model.ReferralItem
 import com.inkside.digital.data.network.model.ReferralStats
 import com.inkside.digital.data.network.model.ReferralTier
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.data.preferences.AppThemePreferences
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.components.BannerAdView
 import com.inkside.digital.ui.components.WhatsAppIcon
@@ -481,7 +482,7 @@ private fun TierBadges(
             Column {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(String.format(LanguageManager.translate("referral_toward_tier", currentLanguage, "Menuju %s"), "${next.icon} ${next.name}"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                    Text("${current.max + 1}/${next.min} \u2022 ${next.min - (current.max + 1) + 1} lagi", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("${current.max + 1}/${next.min} \u2022 ${next.min - (current.max + 1) + 1} ${LanguageManager.translate("referral_more", AppThemePreferences.currentLanguage, "lagi")}", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Spacer(Modifier.height(4.dp))
                 LinearProgressIndicator(

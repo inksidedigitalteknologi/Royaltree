@@ -54,6 +54,7 @@ import com.inkside.digital.data.model.PurchaseTier
 import com.inkside.digital.util.IapManager
 import com.inkside.digital.viewmodel.AffiliateViewModel
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.data.preferences.AppThemePreferences
 import com.inkside.digital.localization.LanguageManager
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -148,7 +149,7 @@ fun PurchaseScreen(
                 Tab(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
-                    text = { Text("💎 Tier", fontSize = 12.sp, fontWeight = FontWeight.Bold) }
+                    text = { Text("💎 ${LanguageManager.translate("purchase_tab_tier", AppThemePreferences.currentLanguage, "Tier")}", fontSize = 12.sp, fontWeight = FontWeight.Bold) }
                 )
                 Tab(
                     selected = selectedTab == 1,
@@ -158,12 +159,12 @@ fun PurchaseScreen(
                 Tab(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
-                    text = { Text("⛏️ Miner", fontSize = 12.sp, fontWeight = FontWeight.Bold) }
+                    text = { Text("⛏️ ${LanguageManager.translate("purchase_tab_miner", AppThemePreferences.currentLanguage, "Miner")}", fontSize = 12.sp, fontWeight = FontWeight.Bold) }
                 )
                 Tab(
                     selected = selectedTab == 3,
                     onClick = { selectedTab = 3 },
-                    text = { Text("🎁 Bundle", fontSize = 12.sp, fontWeight = FontWeight.Bold) }
+                    text = { Text("🎁 ${LanguageManager.translate("purchase_tab_bundle", AppThemePreferences.currentLanguage, "Bundle")}", fontSize = 12.sp, fontWeight = FontWeight.Bold) }
                 )
             }
 
@@ -308,7 +309,7 @@ fun PurchaseScreen(
                                         modifier = Modifier.fillMaxWidth().padding(vertical = 60.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text("Memuat RTP pack...", fontSize = 12.sp)
+                                        Text(LanguageManager.translate("purchase_loading_rtp", AppThemePreferences.currentLanguage, "Memuat RTP pack..."), fontSize = 12.sp)
                                     }
                                 }
                             }
@@ -345,7 +346,7 @@ fun PurchaseScreen(
                                         modifier = Modifier.fillMaxWidth().padding(vertical = 60.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text("Memuat miner pack...", fontSize = 12.sp)
+                                        Text(LanguageManager.translate("purchase_loading_miner", AppThemePreferences.currentLanguage, "Memuat miner pack..."), fontSize = 12.sp)
                                     }
                                 }
                             }
@@ -382,7 +383,7 @@ fun PurchaseScreen(
                                         modifier = Modifier.fillMaxWidth().padding(vertical = 60.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text("Memuat bundle...", fontSize = 12.sp)
+                                        Text(LanguageManager.translate("purchase_loading_bundle", AppThemePreferences.currentLanguage, "Memuat bundle..."), fontSize = 12.sp)
                                     }
                                 }
                             }

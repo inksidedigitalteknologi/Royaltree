@@ -1148,7 +1148,7 @@ fun RedeemPointsModal(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(LanguageManager.translate("appmodal_redeem_global_usd", currentLanguage, "Nilai Acuan Global (USD):"), fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Text("$${String.format(java.util.Locale.US, "%.2f", usdVal)} USD (Universal Peg)", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                            Text("$${String.format(java.util.Locale.US, "%.2f", usdVal)} USD (${LanguageManager.translate("universal_peg", AppThemePreferences.currentLanguage, "Universal Peg")})", fontSize = 10.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -1225,7 +1225,7 @@ fun BuyCouponModal(
                         }
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Text(LanguageManager.translate("appmodal_coupon_duration", currentLanguage, "Durasi Jatuh Tempo:"), fontSize = 11.sp)
-                            Text("${coupon.durationDays} Hari", fontSize = 12.sp)
+                            Text("${coupon.durationDays} ${LanguageManager.translate("duration_days", AppThemePreferences.currentLanguage, "Hari")}", fontSize = 12.sp)
                         }
                     }
                 }
@@ -1414,10 +1414,10 @@ fun AdminReviewModal(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
-                        Text("ID Penarikan: ${withdrawal.id}", fontSize = 11.sp, fontFamily = FontFamily.Monospace)
-                        Text("Pemohon: ${withdrawal.accountHolderName}", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                        Text("Metode: ${withdrawal.providerName}", fontSize = 12.sp)
-                        Text("Rekening/Address: ${withdrawal.accountDestination}", fontSize = 12.sp, color = ElectricBlue)
+                        Text("${LanguageManager.translate("withdrawal_id", AppThemePreferences.currentLanguage, "ID Penarikan")}: ${withdrawal.id}", fontSize = 11.sp, fontFamily = FontFamily.Monospace)
+                        Text("${LanguageManager.translate("withdrawal_requester", AppThemePreferences.currentLanguage, "Pemohon")}: ${withdrawal.accountHolderName}", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                        Text("${LanguageManager.translate("withdrawal_method", AppThemePreferences.currentLanguage, "Metode")}: ${withdrawal.providerName}", fontSize = 12.sp)
+                        Text("${LanguageManager.translate("withdrawal_account", AppThemePreferences.currentLanguage, "Rekening")}: ${withdrawal.accountDestination}", fontSize = 12.sp, color = ElectricBlue)
                         Spacer(modifier = Modifier.height(6.dp))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Text(LanguageManager.translate("appmodal_adminreview_gross", AppThemePreferences.currentLanguage, "Nominal Kotor:"), fontSize = 11.sp)
@@ -1523,7 +1523,7 @@ fun TwoFactorModal(
                     ) {
                         Icon(imageVector = Icons.Default.QrCode, contentDescription = null, modifier = Modifier.size(60.dp))
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text("Secret Key: ${user?.twoFactorSecret ?: "JBSWY3DPEHPK3PXP"}", fontFamily = FontFamily.Monospace, fontSize = 11.sp)
+                        Text("${LanguageManager.translate("appmodal_2fa_secret_key", AppThemePreferences.currentLanguage, "Secret Key")}: ${user?.twoFactorSecret ?: "JBSWY3DPEHPK3PXP"}", fontFamily = FontFamily.Monospace, fontSize = 11.sp)
                         Text("(Demo Master Code: 123456 atau $currentSimulatedCode)", fontSize = 10.sp, color = EmeraldLight)
                     }
                 }
@@ -2336,7 +2336,7 @@ fun DailyCheckInModal(
                                 )
                                 .padding(vertical = 6.dp)
                         ) {
-                            Text("H-$day", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("${LanguageManager.translate("day_short", AppThemePreferences.currentLanguage, "H")}-$day", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(if (day == 7) "🎁" else "⭐", fontSize = 12.sp)
                             Text(
                                 "+$reward",

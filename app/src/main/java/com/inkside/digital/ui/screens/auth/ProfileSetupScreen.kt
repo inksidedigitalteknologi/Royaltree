@@ -1,6 +1,7 @@
 package com.inkside.digital.ui.screens.auth
 
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.data.preferences.AppThemePreferences
 import com.inkside.digital.localization.LanguageManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.clickable
@@ -144,7 +145,7 @@ fun ProfileSetupScreen(
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Simpan & Lanjut", fontWeight = FontWeight.Bold)
+                Text(LanguageManager.translate("save_and_continue", AppThemePreferences.currentLanguage, "Simpan & Lanjut"), fontWeight = FontWeight.Bold)
             }
 
             Spacer(modifier = Modifier.height(12.dp))

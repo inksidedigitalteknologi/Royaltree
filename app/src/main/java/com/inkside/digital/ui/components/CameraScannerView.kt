@@ -10,6 +10,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.data.preferences.AppThemePreferences
 import com.inkside.digital.localization.LanguageManager
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -206,7 +207,7 @@ fun CameraScannerView(
                     onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Text("Beri Izin Kamera")
+                    Text(LanguageManager.translate("camera_permission", AppThemePreferences.currentLanguage, "Beri Izin Kamera"))
                 }
             }
         }

@@ -1,6 +1,8 @@
 package com.inkside.digital.ui.components
 
 import androidx.compose.foundation.background
+import com.inkside.digital.data.preferences.AppThemePreferences
+import com.inkside.digital.localization.LanguageManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -215,7 +217,7 @@ fun MiningClaimDialog(
                         ),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Tutup", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(LanguageManager.translate("close", AppThemePreferences.currentLanguage, "Tutup"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
 
                     Button(

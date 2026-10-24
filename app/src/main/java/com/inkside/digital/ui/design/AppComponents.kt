@@ -174,7 +174,7 @@ fun AppErrorState(
                 ) {
                     Icon(Icons.Default.Refresh, null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Coba Lagi")
+                    Text(LanguageManager.translate("retry", AppThemePreferences.currentLanguage, "Coba Lagi"))
                 }
             }
         }
