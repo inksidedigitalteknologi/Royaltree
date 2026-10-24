@@ -633,7 +633,7 @@ private fun MiningStatsCard(
             ) {
                 MiniStatBox(LanguageManager.translate("profile_rate_day", AppThemePreferences.currentLanguage, "Rate/hari"), "${GlobalPointsManager.formatRtp((roomState?.ratePerMin ?: ((powerHs / 1e9) * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_unclaimed", AppThemePreferences.currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_bonus", AppThemePreferences.currentLanguage, "Bonus"), "+${HashrateFormatter.format(roomState?.tempPowerBonusGhs ?: 0.0)}", GoldVip, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_bonus", AppThemePreferences.currentLanguage, "Bonus"), "+${HashrateFormatter.format((roomState?.tempPowerBonusGhs ?: 0.0).toLong())}", GoldVip, Modifier.weight(1f))
             }
         }
     }
