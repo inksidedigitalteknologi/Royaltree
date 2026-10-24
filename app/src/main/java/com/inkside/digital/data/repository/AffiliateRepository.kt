@@ -1013,6 +1013,61 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     // Step Counter & Pedometer conversion
+    suspend fun addSteps(steps: Int) = withContext(Dispatchers.IO) {
+        val currentId = _activeUserId.value
+        val user = dao.getUserSync(currentId) ?: return@withContext
+        val newTodaySteps = user.todaySteps + steps
+        val newUnclaimedSteps = user.unclaimedSteps + steps
+        dao.updateUser(user.copy(
+            todaySteps = newTodaySteps,
+            unclaimedSteps = newUnclaimedSteps
+        ))
+    }
+
+    suspend fun convertStepsToCoins(): Result<Pair<Int, Double>> = withContext(Dispatchers.IO) {
+        val currentId = _activeUserId.value
+        val user = dao.getUserSync(currentId) ?: return@withContext Result.failure(Exception("Pengguna tidak ditemukan"))
+        if (user.unclaimedSteps < 100) {
+            return@withContext Result.failure(Exception("Langkah belum cukup untuk ditukar (Minimal 100 langkah = 10 Koin)."))
+        }
+        val stepsToConvert = (user.unclaimedSteps / 100) * 100
+        val coinsEarned = (stepsToConvert / 100) * 10
+        val rupiahBonus = coinsEarned * 10.0 // 10 Koin = Rp 100
+
+        val updatedUser = user.copy(
+            unclaimedSteps = user.unclaimedSteps - stepsToConvert,
+            convertedStepsToday = user.convertedStepsToday + stepsToConvert,
+            points = user.points + coinsEarned,
+            balance = user.balance + rupiahBonus
+        )
+        dao.updateUser(updatedUser)
+
+        dao.insertTransaction(
+            TransactionEntity(
+                id = "tx_step_" + UUID.randomUUID().toString().take(8),
+                type = "POINT_REWARD",
+                title = "Tukar Langkah Jadi Koin 👟",
+                description = "Berhasil menukar $stepsToConvert langkah kaki menjadi $coinsEarned Koin (Rp ${String.format("%,.0f", rupiahBonus)})",
+                amount = rupiahBonus,
+                currency = "IDR",
+                isCredit = true,
+                status = "SUCCESS",
+                timestamp = System.currentTimeMillis()
+            )
+        )
+
+        dao.insertNotification(
+            NotificationEntity(
+                id = "notif_" + UUID.randomUUID().toString().take(8),
+                title = "Langkah Ditukar Koin! 👟🎉",
+                message = "Hebat! Kamu berhasil menukar $stepsToConvert langkah menjadi $coinsEarned Koin (+Rp ${String.format("%,.0f", rupiahBonus)}). Tetap aktif berjalan!",
+                type = "REWARD",
+                timestamp = System.currentTimeMillis()
+            )
+        )
+
+        Result.success(Pair(coinsEarned, rupiahBonus))
+    }
 
     // App Download Ads (Offers)
     suspend fun simulateDownloadApp(adId: String) = withContext(Dispatchers.IO) {
@@ -1348,6 +1403,7 @@ class AffiliateRepository(private val dao: AppDao) {
         referredCount: Int = 0,
         checkInStreak: Int,
         lastCheckInDate: String,
+        todaySteps: Int,
         // === 14 field local-only ===
         pendingBalance: Double = 0.0,
         totalPaidOut: Double = 0.0,
@@ -1378,6 +1434,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 referredCount = referredCount,
                 checkInStreak = checkInStreak,
                 lastCheckInDate = lastCheckInDate.ifBlank { existing.lastCheckInDate },
+                todaySteps = todaySteps,
                 pendingBalance = pendingBalance,
                 totalPaidOut = totalPaidOut,
                 unclaimedSteps = unclaimedSteps,
@@ -1408,6 +1465,7 @@ class AffiliateRepository(private val dao: AppDao) {
                     referredCount = referredCount,
                     checkInStreak = checkInStreak,
                     lastCheckInDate = lastCheckInDate,
+                    todaySteps = todaySteps,
                     pendingBalance = pendingBalance,
                     totalPaidOut = totalPaidOut,
                     unclaimedSteps = unclaimedSteps,

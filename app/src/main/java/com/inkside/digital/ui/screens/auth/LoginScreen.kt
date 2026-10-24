@@ -63,7 +63,6 @@ import androidx.compose.ui.unit.sp
 import com.inkside.digital.BuildConfig
 import com.inkside.digital.R
 import com.inkside.digital.localization.AppLanguage
-import com.inkside.digital.data.preferences.AppThemePreferences
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.components.AnimatedBackground
 import com.inkside.digital.ui.components.LanguageSelectionModal
@@ -635,7 +634,7 @@ private fun PremiumCheckbox(
         if (checked) {
             Icon(
                 imageVector = Icons.Default.Check,
-                contentDescription = LanguageManager.translate("cd_checked", AppThemePreferences.currentLanguage, "Checked"),
+                contentDescription = "Checked",
                 tint = Color.White,
                 modifier = Modifier.size(size * 0.65f)
             )

@@ -705,8 +705,6 @@ fun MainAffiliateApp(
         onClaimAppReward = { id -> viewModel.claimAppDownloadReward(id) },
         onClaimMission = { viewModel.claimMissionReward(it) },
         onCompleteTaskAction = { viewModel.completeTaskAction(it) },
-        onAddSteps = { viewModel.addSteps(it) },
-        onConvertSteps = { viewModel.convertStepsToCoins() },
         onClaimMining = { viewModel.setPendingMiningClaim(true); viewModel.showAdRewardModal.value = true },
         onActivateMiner = {
             viewModel.setPendingMinerActivate(true)
@@ -847,8 +845,6 @@ fun MainAffiliateAppContent(
     onClaimAppReward: (String) -> Unit,
     onClaimMission: (String) -> Unit,
     onCompleteTaskAction: (String) -> Unit,
-    onAddSteps: (Int) -> Unit,
-    onConvertSteps: () -> Unit,
     onClaimMining: () -> Unit,
     onActivateMiner: () -> Unit = {},
     onToggleMinerSlot: (String, Int) -> Unit,
@@ -1516,8 +1512,6 @@ fun MainAffiliateAppPreview() {
             onClaimAppReward = {},
             onClaimMission = {},
             onCompleteTaskAction = {},
-            onAddSteps = {},
-            onConvertSteps = {},
             onClaimMining = {},
             onToggleMinerSlot = { _, _ -> },
             onBuyGameMinerItem = {},
