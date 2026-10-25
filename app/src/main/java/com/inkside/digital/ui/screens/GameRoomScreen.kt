@@ -2750,7 +2750,7 @@ private fun RateBreakdownCard(
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .fillMaxWidth((efficiency / 100f).coerceIn(0f, 1f))
+                                        .fillMaxWidth((efficiency / 100.0).coerceIn(0.0, 1.0).toFloat())
                                         .fillMaxHeight()
                                         .background(
                                             Brush.horizontalGradient(
