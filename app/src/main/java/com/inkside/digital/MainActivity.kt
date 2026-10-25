@@ -925,7 +925,7 @@ fun MainAffiliateAppContent(
                 AppScreen.HOME -> {
                     BusinessHomeScreen(
                         user = user,
-                        recentTransactions = recentTransactions,
+                        recentTransactions = transactions,
                         currentLanguage = currentLanguage,
                         affiliateBalance = (affiliateBalance as? com.inkside.digital.viewmodel.AffiliateViewModel.AffiliateBalanceData)?.available ?: 0.0,
                         referralCount = 0,
@@ -941,7 +941,7 @@ fun MainAffiliateAppContent(
                         },
                         onOpenWithdraw = { onSetWithdrawModalVisible(true) },
                         onOpenTransfer = { onSetQrTransferModalVisible(true) },
-                        onOpenDaily = { onSetDailyCheckInModalVisible(true) },
+                        onOpenDaily = { viewModel.showDailyCheckInModal.value = true },
                         onOpenAds = { onSetAdRewardModalVisible(true) },
                         onOpenReferral = { onNavigate(AppScreen.REFERRAL) },
                         onOpenProfile = { onNavigate(AppScreen.PROFILE) }
