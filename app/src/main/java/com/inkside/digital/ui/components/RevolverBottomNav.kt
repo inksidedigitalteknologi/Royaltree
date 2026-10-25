@@ -132,8 +132,8 @@ fun RevolverBottomNav(
             modifier = Modifier
                 .fillMaxWidth()
                 .offset(y = 0.dp)
-                .height(64.dp)
-                .clip(RoundedCornerShape(32.dp))
+                .height(68.dp)
+                .clip(RoundedCornerShape(34.dp))
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -260,7 +260,7 @@ private fun PillTab(
     val pressed by interactionSource.collectIsPressedAsState()
 
     val scale by animateFloatAsState(
-        targetValue = if (pressed) 0.9f else if (isSelected) 1.05f else 1f,
+        targetValue = if (pressed) 0.92f else if (isSelected) 1.02f else 1f,
         animationSpec = spring(dampingRatio = 0.5f, stiffness = 400f),
         label = "tabScale"
     )
