@@ -887,7 +887,6 @@ object ApiClient {
     }
 
 
-    }
 
     suspend fun getGameStats(): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
@@ -1085,3 +1084,4 @@ object ApiClient {
     }
 
 
+}

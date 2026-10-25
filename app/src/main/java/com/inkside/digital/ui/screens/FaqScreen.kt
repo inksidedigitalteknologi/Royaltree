@@ -42,7 +42,14 @@ import com.inkside.digital.localization.LanguageManager
 // DATA MODELS
 // ============================================================
 
-data class        HelpItem(
+data class HelpItem(
+    val emoji: String,
+    val title: String,
+    val content: String
+)
+
+val panduanItems = listOf(
+        HelpItem(
             emoji = "⚙️",
             title = "Settings",
             content = """
