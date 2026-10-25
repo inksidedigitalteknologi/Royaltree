@@ -306,6 +306,7 @@ fun GameRoomScreenContent(
     }
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = {
@@ -349,7 +350,7 @@ fun GameRoomScreenContent(
                     }
                 },
                 // Chip kuning RTP dah dibuang — sebab ada di stats row bawah
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
         }
     ) { paddingValues ->
@@ -362,7 +363,7 @@ fun GameRoomScreenContent(
             val tabs = listOf("⚡ Processor", "🛒 Shop", "🎮 Arcade", "⚗️ Merge")
             ScrollableTabRow(
                 selectedTabIndex = activeTab,
-                containerColor = MaterialTheme.colorScheme.surface,
+                containerColor = Color.Transparent,
                 contentColor = EmeraldLight,
                 edgePadding = 16.dp,
                 indicator = { tabPositions ->

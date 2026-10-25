@@ -126,7 +126,7 @@ fun ProfileScreen(
             Card(
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
+                    containerColor = Color.Transparent
                 ),
                 border = androidx.compose.foundation.BorderStroke(
                     width = 1.5.dp,
