@@ -26,6 +26,9 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.inkside.digital.data.device.DeviceFingerprint
+import com.inkside.digital.data.device.DeviceScore
+import com.inkside.digital.data.ping.PingTracker
 import okhttp3.OkHttpClient
 import okhttp3.Headers
 import okhttp3.Request
@@ -45,6 +48,9 @@ import java.net.UnknownHostException
 import com.inkside.digital.data.network.model.ApiTransferConfigResponse
 
 object ApiClient {
+
+    private var appContext: Context? = null
+    private var deviceFingerprint: DeviceFingerprint? = null
 
     private fun getEncryptedPrefs(context: Context): SharedPreferences {
         fun buildMasterKey() = MasterKey.Builder(context)
@@ -207,6 +213,16 @@ object ApiClient {
     private val okHttpClient = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(10, TimeUnit.SECONDS)
+        .addInterceptor { chain ->
+            val b = chain.request().newBuilder()
+            deviceFingerprint?.let { fp ->
+                b.header("X-Device-Fingerprint", fp.headerValue())
+                b.header("X-Device-Score", DeviceScore.compute(fp).toString())
+            }
+            b.header("X-Ping-Ms", PingTracker.lastRttMs.value.toString())
+            b.header("X-Ping-Timestamp", System.currentTimeMillis().toString())
+            chain.proceed(b.build())
+        }
         .addInterceptor(AuthInterceptor())  // Firebase ID token (kalau ada user login)
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = if (com.inkside.digital.BuildConfig.DEBUG) {
@@ -221,6 +237,9 @@ object ApiClient {
     var apiService: RoyaltreeApiService = retrofit.create(RoyaltreeApiService::class.java)
 
     fun init(context: Context) {
+        appContext = context.applicationContext
+        deviceFingerprint = DeviceFingerprint.collect(context.applicationContext)
+
         val prefs = getEncryptedPrefs(context)
         currentBaseUrl = prefs.getString(KEY_BASE_URL, DEFAULT_BASE_URL) ?: DEFAULT_BASE_URL
         currentApiKey = prefs.getString(KEY_API_KEY, DEFAULT_API_KEY) ?: DEFAULT_API_KEY

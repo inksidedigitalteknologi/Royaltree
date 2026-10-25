@@ -5,6 +5,7 @@ import android.os.Build
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.inkside.digital.data.network.ApiClient
+import com.inkside.digital.data.ping.PingTracker
 import com.inkside.digital.util.AnalyticsHelper
 import com.inkside.digital.util.AppLogger
 
@@ -48,6 +49,8 @@ class RoyaltreeApp : Application() {
             // 3. ApiClient
             try {
             ApiClient.init(this)
+            PingTracker.start(kotlinx.coroutines.CoroutineScope(
+                kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO))
         } catch (e: Exception) {
             android.util.Log.e("RoyaltreeApp", "ApiClient.init failed at startup: ${e.message}", e)
         }
