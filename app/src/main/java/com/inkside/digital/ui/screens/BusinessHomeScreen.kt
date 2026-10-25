@@ -167,7 +167,7 @@ fun BusinessHomeScreen(
                     color = Color(0xFF8B5CF6)
                 ) { onOpenReferral() }
                 QuickAction(
-                    icon = Icons.Filled.Send,
+                    icon = Icons.AutoMirrored.Filled.Send,
                     label = "Transfer",
                     color = Color(0xFF10B981)
                 ) { onOpenTransfer() }

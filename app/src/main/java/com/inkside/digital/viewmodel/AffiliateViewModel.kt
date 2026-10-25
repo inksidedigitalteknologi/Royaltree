@@ -668,21 +668,15 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 _loadingState.value = _loadingState.value.copy(adMobReady = true)
             }
 
-            // 8. FCM Token (M54: guna addOnCompleteListener)
+            // 8. FCM Token (M54: guna await)
             try {
-                com.google.firebase.messaging.FirebaseMessaging.getInstance().token
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            registerFcmToken(task.result)
-                            _loadingState.value = _loadingState.value.copy(fcmToken = true)
-                            AppLogger.d("Preload", "7/7 FCM ✅")
-                        } else {
-                            _loadingState.value = _loadingState.value.copy(fcmToken = true)
-                            AppLogger.w("Preload", "FCM gagal: ${task.exception?.message}")
-                        }
-                    }
+                val token = com.google.firebase.messaging.FirebaseMessaging.getInstance().token.await()
+                registerFcmToken(token)
+                _loadingState.value = _loadingState.value.copy(fcmToken = true)
+                AppLogger.d("Preload", "7/7 FCM ✅")
             } catch (e: Exception) {
                 _loadingState.value = _loadingState.value.copy(fcmToken = true)
+                AppLogger.w("Preload", "FCM gagal: ${e.message}")
                 AppLogger.w("Preload", "FCM gagal: ${e.message}")
             }
 

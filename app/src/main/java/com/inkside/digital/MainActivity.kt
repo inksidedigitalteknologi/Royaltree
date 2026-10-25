@@ -270,21 +270,14 @@ fun RootNav(
         }
     }
 
-    // Register FCM token bila app dibuka (M54: guna addOnCompleteListener, tak deprecated)
+    // Register FCM token bila app dibuka (M54: guna await, tak deprecated)
     androidx.compose.runtime.LaunchedEffect(Unit) {
         try {
-            FirebaseMessaging.getInstance().token
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val token = task.result
-                        AppLogger.d("RootNav", "FCM token: ${token.take(20)}...")
-                        affiliateViewModel.registerFcmToken(token)
-                    } else {
-                        AppLogger.w("RootNav", "Gagal ambil FCM token: ${task.exception?.message}")
-                    }
-                }
+            val token = com.google.firebase.messaging.FirebaseMessaging.getInstance().token.await()
+            AppLogger.d("RootNav", "FCM token: ${token.take(20)}...")
+            affiliateViewModel.registerFcmToken(token)
         } catch (e: Exception) {
-            AppLogger.w("RootNav", "Error: ${e.message}")
+            AppLogger.w("RootNav", "Gagal ambil FCM token: ${e.message}")
         }
     }
 
