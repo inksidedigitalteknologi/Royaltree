@@ -352,10 +352,6 @@ fun GameRoomScreenContent(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // ============ THERMAL STATUS CARD ============
-            ThermalStatusCard(viewModel)
-            Spacer(modifier = Modifier.height(8.dp))
-
             // Tabs: Ruang Rak (Virtual Room), Shop, Arcade
             val tabs = listOf("⚡ Processor", "🛒 Shop", "🎮 Arcade", "⚗️ Merge")
             ScrollableTabRow(
@@ -392,6 +388,7 @@ fun GameRoomScreenContent(
                         LoadingState(currentLanguage)
                     } else {
                         MiningRoomTab(
+                            viewModel = viewModel,
                             currentLanguage = currentLanguage,
                             placedMiners = placedMiners,
                             totalPowerGhs = totalPowerGhs,
@@ -1013,6 +1010,7 @@ private fun RetroStatBox(
 
 @Composable
 private fun MiningRoomTab(
+    viewModel: AffiliateViewModel,
     currentLanguage: AppLanguage,
     placedMiners: List<GameMinerItemEntity>,
     totalPowerGhs: Double,
@@ -1541,6 +1539,11 @@ private fun MiningRoomTab(
                     }
                 }
             }
+        }
+
+        // Thermal Status Card — di paling bawah
+        item {
+            ThermalStatusCard(viewModel)
         }
 }
 

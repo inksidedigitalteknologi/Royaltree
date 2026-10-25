@@ -137,6 +137,34 @@ fun ThermalStatusCard(viewModel: AffiliateViewModel) {
                 )
             }
 
+            // Row 3: Device + Efficiency
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("📱", fontSize = 10.sp)
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        android.os.Build.MODEL ?: "Device",
+                        fontSize = 9.sp,
+                        color = Color.White.copy(alpha = 0.5f),
+                        maxLines = 1
+                    )
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("⚡", fontSize = 10.sp)
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        "Eff: ${(hashrateFactor * 100).toInt()}%",
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = accentColor
+                    )
+                }
+            }
+
             // Paused banner
             if (miningPaused) {
                 Surface(
