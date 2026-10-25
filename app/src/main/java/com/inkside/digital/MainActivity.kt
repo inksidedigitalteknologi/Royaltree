@@ -1134,9 +1134,6 @@ fun MainAffiliateAppContent(
                     )
                 }
 
-                AppScreen.LEADERBOARD -> {
-                }
-
                 AppScreen.GAME_COIN_RUSH -> {
                     CoinRushScreen(
                         user = user,

@@ -163,14 +163,6 @@ fun GameHubScreen(
                 }
             }
 
-            // ==== LEADERBOARD PREVIEW ====
-            item {
-                LeaderboardPreviewCard(
-                    currentLanguage = currentLanguage,
-                    onViewAll = { onNavigate(AppScreen.LEADERBOARD) }
-                )
-            }
-
             // ==== MENU FLOATING (compact) ====
             item {
                 Row(
@@ -184,7 +176,6 @@ fun GameHubScreen(
                 ) {
                     MenuIconButton("🛒", LanguageManager.translate("game_hub_shop", currentLanguage, "Shop")) { onNavigate(AppScreen.MISSIONS) }
                     MenuIconButton("🎁", LanguageManager.translate("game_hub_events", currentLanguage, "Events")) { onNavigate(AppScreen.MISSIONS) }
-                    MenuIconButton("📊", LanguageManager.translate("game_hub_stats", currentLanguage, "Stats")) { onNavigate(AppScreen.LEADERBOARD) }
                     MenuIconButton("⚙️", LanguageManager.translate("game_hub_settings", currentLanguage, "Set")) { onNavigate(AppScreen.SETTINGS) }
                     MenuIconButton("❓", LanguageManager.translate("game_hub_help", currentLanguage, "Help")) { onNavigate(AppScreen.FAQ) }
                 }
@@ -318,44 +309,3 @@ private fun GameGridCard(
     }
 }
 
-@Composable
-private fun LeaderboardPreviewCard(currentLanguage: AppLanguage, onViewAll: () -> Unit) {
-    Surface(
-        color = Color.White.copy(alpha = 0.05f),
-        shape = RoundedCornerShape(14.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, RetroGold.copy(alpha = 0.3f)),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onViewAll() }
-    ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("🏆", fontSize = 14.sp)
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = "TOP PLAYER",
-                    color = RetroGold,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = LanguageManager.translate("game_hub_view_all", currentLanguage, "Lihat →"),
-                    color = TextMuted,
-                    fontSize = 10.sp
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "🥇 MiningKing         15.420",
-                color = Color.White,
-                fontSize = 11.sp
-            )
-            Text(
-                text = "🥈 CryptoHunter       12.380",
-                color = Color.White,
-                fontSize = 11.sp
-            )
-        }
-    }
-}
