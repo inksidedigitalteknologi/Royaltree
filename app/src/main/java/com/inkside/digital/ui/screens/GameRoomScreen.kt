@@ -357,7 +357,7 @@ fun GameRoomScreenContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             // Tabs: Ruang Rak (Virtual Room), Toko Item (Shop), Mini-Game (Arcade)
-            val tabs = listOf("🖥️ Ruang Rak Mining", "🛒 Toko Item", "🎮 Mini-Game Arcade", "⚗️ Fusion")
+            val tabs = listOf("⚡ Processor", "🛒 Shop", "🎮 Arcade", "⚗️ Merge")
             ScrollableTabRow(
                 selectedTabIndex = activeTab,
                 containerColor = MaterialTheme.colorScheme.surface,

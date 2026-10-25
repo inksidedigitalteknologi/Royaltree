@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.People
@@ -89,7 +90,7 @@ fun RevolverBottomNav(
     // Menu items (4 tab + coin center)
     val items = remember {
         listOf(
-            CommandItem(AppScreen.GAME_ROOM, "nav_game", "Game", Icons.Filled.SportsEsports),
+            CommandItem(AppScreen.GAME_ROOM, "nav_game", "RTP Studio", Icons.Filled.Bolt),
             CommandItem(AppScreen.REFERRAL, "nav_referral", "Referral", Icons.Filled.People),
             CommandItem(AppScreen.PROFILE, "nav_profile", "Profil", Icons.Filled.AccountCircle),
             CommandItem(AppScreen.PURCHASE, "nav_purchase", "Beli", Icons.Filled.ShoppingBag)
