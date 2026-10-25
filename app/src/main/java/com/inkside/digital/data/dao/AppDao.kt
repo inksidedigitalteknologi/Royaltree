@@ -193,6 +193,10 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGameMinerItem(item: com.inkside.digital.data.model.GameMinerItemEntity)
 
+    @Query("DELETE FROM game_miner_items WHERE id = :id")
+    suspend fun deleteGameMinerItemById(id: String)
+
+
 
     @Update
     suspend fun updateGameMinerItem(item: com.inkside.digital.data.model.GameMinerItemEntity)

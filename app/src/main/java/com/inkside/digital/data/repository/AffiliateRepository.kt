@@ -1559,6 +1559,13 @@ class AffiliateRepository(private val dao: AppDao) {
                         backendMiner
                     }
                 }
+                // Hapus instance lokal yang tidak ada di backend (mis. setelah merge)
+                val backendIds = miners.map { it.id }.toSet()
+                existingLocal.forEach { local ->
+                    if (local.id !in backendIds) {
+                        dao.deleteGameMinerItemById(local.id)
+                    }
+                }
                 dao.insertGameMinerItems(merged)
             }
         } catch (e: Exception) {
