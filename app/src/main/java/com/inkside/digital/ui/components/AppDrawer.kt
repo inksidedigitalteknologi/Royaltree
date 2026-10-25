@@ -32,10 +32,10 @@ import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.CardGiftcard
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Casino
-import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
