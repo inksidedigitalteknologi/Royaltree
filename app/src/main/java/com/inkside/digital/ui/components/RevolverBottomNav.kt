@@ -121,7 +121,7 @@ fun RevolverBottomNav(
         modifier = modifier
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .padding(horizontal = 16.dp, vertical = 6.dp)
     ) {
         // ═══════════════════════════════════════════
         // FLOATING PILL
@@ -129,7 +129,7 @@ fun RevolverBottomNav(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(72.dp)
+                .height(60.dp)
                 .clip(RoundedCornerShape(36.dp))
                 .background(
                     Brush.verticalGradient(
@@ -174,12 +174,12 @@ fun RevolverBottomNav(
                 // ═══════════════════════════════════════════
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.width(80.dp)
+                    modifier = Modifier.width(64.dp)
                 ) {
                 // Glow pulse
                 Box(
                     modifier = Modifier
-                        .size(80.dp)
+                        .size(64.dp)
                         .background(
                             brush = Brush.radialGradient(
                                 colors = listOf(
@@ -195,7 +195,7 @@ fun RevolverBottomNav(
                 // RTP Coin
                 Box(
                     modifier = Modifier
-                        .size(70.dp)
+                        .size(56.dp)
                         .scale(coinScale)
                         .clip(CircleShape)
                         .background(
@@ -218,7 +218,7 @@ fun RevolverBottomNav(
                     Image(
                         painter = painterResource(id = R.drawable.rtp_coin),
                         contentDescription = "RTP",
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(40.dp)
                     )
                 }
             }
@@ -277,7 +277,7 @@ private fun PillTab(
                 indication = null,
                 onClick = onClick
             )
-            .padding(vertical = 4.dp)
+            .padding(vertical = 2.dp)
     ) {
         // Icon circle
         Box(
