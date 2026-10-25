@@ -397,6 +397,7 @@ fun GameRoomScreenContent(
                             viewModel = viewModel,
                             currentLanguage = currentLanguage,
                             placedMiners = placedMiners,
+                            minerItems = minerItems,
                             totalPowerGhs = totalPowerGhs,
                             generationRatePerMin = generationRatePerMin,
                             liveUnclaimedPoints = liveUnclaimedPoints,
@@ -1038,6 +1039,7 @@ private fun MiningRoomTab(
     viewModel: AffiliateViewModel,
     currentLanguage: AppLanguage,
     placedMiners: List<GameMinerItemEntity>,
+    minerItems: List<GameMinerItemEntity>,
     totalPowerGhs: Double,
     generationRatePerMin: Double,
     liveUnclaimedPoints: Double,
@@ -1120,17 +1122,36 @@ private fun MiningRoomTab(
                                     )
                                 }
                                 Surface(
-                                    color = EmeraldPrimary.copy(alpha = 0.15f),
+                                    color = GoldVip.copy(alpha = 0.15f),
                                     shape = RoundedCornerShape(8.dp),
-                                    border = BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.4f))
+                                    border = BorderStroke(1.dp, GoldVip.copy(alpha = 0.4f))
                                 ) {
-                                    Text(
-                                        text = "${placedMiners.size}/${roomState?.unlockedSlots ?: 6}",
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = EmeraldLight,
-                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                                    )
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.rtp_coin),
+                                            contentDescription = "RTP",
+                                            modifier = Modifier.size(14.dp)
+                                        )
+                                        Spacer(Modifier.width(4.dp))
+                                        Text(
+                                            GlobalPointsManager.formatRtpCompact(userPoints + liveUnclaimedPoints),
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = GoldVip,
+                                            maxLines = 1,
+                                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                        )
+                                        Spacer(Modifier.width(2.dp))
+                                        Text(
+                                            "RTP",
+                                            fontSize = 9.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = GoldVip.copy(alpha = 0.7f)
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -1147,34 +1168,8 @@ private fun MiningRoomTab(
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 // Stats Row
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    RetroStatBox(
-                                        emoji = "🔥",
-                                        label = "POWER",
-                                        value = HashrateFormatter.format(totalPowerGhs.toLong()),
-                                        color = RetroAmber,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    RetroStatBox(
-                                        emoji = "💰",
-                                        label = "RTP",
-                                        value = "${GlobalPointsManager.formatRtp(userPoints + liveUnclaimedPoints)}",
-                                        color = RetroGold,
-                                        modifier = Modifier.weight(1.5f),
-                                        useRtpIcon = true
-                                    )
-                                    RetroStatBox(
-                                        emoji = "⚡",
-                                        label = "RATE",
-                                        value = "${String.format(Locale.US, "%.4f", generationRatePerMin)}/m",
-                                        color = EmeraldLight,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                }
-
+                                // Thermal Status Card — di atas Rate Breakdown
+                    
                                 // Rate Breakdown Card (weighted adaptive)
                                 RateBreakdownCard(roomState = roomState, placedMiners = placedMiners)
 
@@ -2815,7 +2810,7 @@ private fun RateBreakdownCard(
                                 Text("🔧", fontSize = 13.sp)
                                 Spacer(Modifier.width(6.dp))
                                 Text(
-                                    "${placedMiners.size} processor terpasang",
+                                    "${placedMiners.size}/${minerItems.size} processor terpasang",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color.White.copy(alpha = 0.7f)
