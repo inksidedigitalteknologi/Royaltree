@@ -176,4 +176,21 @@ object GlobalPointsManager {
      */
     fun formatRtp(value: Int): String = formatRtp(value.toDouble())
 
+    /**
+     * Format RTP compact — untuk header/UI sempit.
+     * 1234.5678 → "1.23K"
+     * 567.1234  → "567.12"
+     * 0.05123   → "0.0512"
+     */
+    fun formatRtpCompact(value: Double): String {
+        return when {
+            value >= 1_000_000_000 -> String.format(Locale.US, "%.1fB", value / 1_000_000_000)
+            value >= 1_000_000 -> String.format(Locale.US, "%.1fM", value / 1_000_000)
+            value >= 1_000 -> String.format(Locale.US, "%.1fK", value / 1_000)
+            value >= 100 -> String.format(Locale.US, "%.1f", value)
+            value >= 1 -> String.format(Locale.US, "%.2f", value)
+            else -> String.format(Locale.US, "%.4f", value)
+        }
+    }
+
 }
