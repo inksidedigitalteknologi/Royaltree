@@ -90,7 +90,8 @@ fun RevolverBottomNav(
         listOf(
             CommandItem(AppScreen.GAME_ROOM, "nav_game", "Game", Icons.Filled.SportsEsports),
             CommandItem(AppScreen.REFERRAL, "nav_referral", "Referral", Icons.Filled.People),
-            CommandItem(AppScreen.PROFILE, "nav_profile", "Profil", Icons.Filled.AccountCircle)
+            CommandItem(AppScreen.PROFILE, "nav_profile", "Profil", Icons.Filled.AccountCircle),
+            CommandItem(AppScreen.PURCHASE, "nav_purchase", "Beli", Icons.Filled.ShoppingBag)
         )
     }
 
@@ -168,7 +169,7 @@ fun RevolverBottomNav(
                 }
 
                 // ═══════════════════════════════════════════
-                // HOME CENTER (tap → Home)
+                // RTP COIN CENTER (tap → HOME)
                 // ═══════════════════════════════════════════
                 Box(
                     contentAlignment = Alignment.Center,
@@ -181,8 +182,8 @@ fun RevolverBottomNav(
                         .background(
                             brush = Brush.radialGradient(
                                 colors = listOf(
-                                    EmeraldPrimary.copy(alpha = 0.5f * pulseAlpha),
-                                    EmeraldPrimary.copy(alpha = 0.15f * pulseAlpha),
+                                    GoldVip.copy(alpha = 0.5f * pulseAlpha),
+                                    GoldVip.copy(alpha = 0.15f * pulseAlpha),
                                     Color.Transparent
                                 )
                             ),
@@ -190,7 +191,7 @@ fun RevolverBottomNav(
                         )
                 )
 
-                // Home icon
+                // RTP Coin
                 Box(
                     modifier = Modifier
                         .size(70.dp)
@@ -199,24 +200,24 @@ fun RevolverBottomNav(
                         .background(
                             Brush.radialGradient(
                                 colors = listOf(
-                                    EmeraldLight,
-                                    EmeraldPrimary,
-                                    EmeraldDeep
+                                    Color(0xFFFEF3C7),
+                                    GoldBright,
+                                    GoldVip,
+                                    Color(0xFFF59E0B)
                                 )
                             )
                         )
-                        .border(2.dp, EmeraldDeep, CircleShape)
+                        .border(2.dp, GoldDeep, CircleShape)
                         .clickable {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             onNavigate(AppScreen.HOME)
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.Home,
-                        contentDescription = "Home",
-                        tint = Color.White,
-                        modifier = Modifier.size(36.dp)
+                    Image(
+                        painter = painterResource(id = R.drawable.rtp_coin),
+                        contentDescription = "RTP",
+                        modifier = Modifier.size(48.dp)
                     )
                 }
             }
