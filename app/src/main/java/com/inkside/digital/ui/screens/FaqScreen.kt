@@ -126,20 +126,20 @@ fun FaqScreen(currentLanguage: AppLanguage) {
             "Buka menu Profil, ubah data, lalu simpan."
         ),
         FaqItem(
-            "Kenapa mining saya berhenti?",
+            "Kenapa produksi saya berhenti?",
             "Cek suhu HP (≥ 60°C) atau baterai (< 5%). Dinginkan HP / charge."
         ),
         FaqItem(
-            "Berapa lama miner aktif?",
+            "Berapa lama processor aktif?",
             "6 jam per aktivasi (tonton iklan)."
         ),
         FaqItem(
-            "Bagaimana cara dapat Miner Token?",
+            "Bagaimana cara dapat Processor Token?",
             "Dari daily check-in, mission, atau referral."
         ),
         FaqItem(
             "Apakah data saya aman?",
-            "Ya — pakai Firebase Auth + encryption. Data thermal hanya untuk optimasi mining."
+            "Ya — pakai Firebase Auth + encryption. Data thermal hanya untuk optimasi produksi."
         )
     )
 

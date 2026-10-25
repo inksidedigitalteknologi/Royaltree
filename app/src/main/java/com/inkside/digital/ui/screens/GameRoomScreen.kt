@@ -326,7 +326,7 @@ fun GameRoomScreenContent(
                             }
                         }
                         Text(
-                            text = LanguageManager.translate("game_room_subtitle", AppThemePreferences.currentLanguage, "Buy miners with RTP & earn passive income"),
+                            text = LanguageManager.translate("game_room_subtitle", AppThemePreferences.currentLanguage, "Buy processors with RTP & earn passive income"),
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 11.sp
@@ -835,7 +835,7 @@ fun GameRoomScreenContent(
                         Text("📦", fontSize = 32.sp)
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = LanguageManager.translate("game_no_miner", AppThemePreferences.currentLanguage, "Tidak ada item miner di inventaris."),
+                            text = LanguageManager.translate("game_no_miner", AppThemePreferences.currentLanguage, "Tidak ada processor di inventaris."),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Medium,
                             textAlign = TextAlign.Center
@@ -1088,7 +1088,7 @@ private fun MiningRoomTab(
                                         letterSpacing = 1.5.sp
                                     )
                                     Text(
-                                        text = LanguageManager.translate("game_points_miner", AppThemePreferences.currentLanguage, "Royaltree Points Miner"),
+                                        text = LanguageManager.translate("game_points_miner", AppThemePreferences.currentLanguage, "Royaltree Power Miner"),
                                         fontSize = 10.sp,
                                         color = RetroAmber,
                                         letterSpacing = 0.5.sp
@@ -1197,7 +1197,7 @@ private fun MiningRoomTab(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Text(
-                                            text = "🔥 ${placedMiners.size} miner aktif",
+                                            text = "🔥 ${placedMiners.size} processor aktif",
                                             fontSize = 11.sp,
                                             fontWeight = FontWeight.SemiBold,
                                             color = Color(0xFF94A3B8)
@@ -1387,7 +1387,7 @@ private fun MiningRoomTab(
                                                 color = Color(0xFFF87171)
                                             )
                                             Text(
-                                                text = LanguageManager.translate("game_miner_hint", AppThemePreferences.currentLanguage, "Aktifkan untuk mula mining"),
+                                                text = LanguageManager.translate("game_miner_hint", AppThemePreferences.currentLanguage, "Aktifkan untuk mulai produksi"),
                                                 fontSize = 13.sp,
                                                 fontWeight = FontWeight.Medium,
                                                 color = Color(0xFF94A3B8)
@@ -1905,7 +1905,7 @@ private fun ItemShopTab(
                             fontSize = 14.sp
                         )
                         Text(
-                            text = LanguageManager.translate("game_unlock_miner_desc", AppThemePreferences.currentLanguage, "Kumpulkan RTP dari iklan & misi untuk membuka miner baru!"),
+                            text = LanguageManager.translate("game_unlock_miner_desc", AppThemePreferences.currentLanguage, "Kumpulkan RTP dari iklan & misi untuk membuka processor baru!"),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -2841,14 +2841,14 @@ private fun FusionTab(
             title = { Text("Konfirmasi Merge", fontWeight = FontWeight.Bold) },
             text = {
                 Column {
-                    Text("Anda akan melebur 5 miner:", fontSize = 13.sp)
+                    Text("Anda akan melebur 5 processor:", fontSize = 13.sp)
                     Spacer(Modifier.height(8.dp))
                     selectedMiners.forEach { m ->
                         Text("• ${m.name} (${m.tier})", fontSize = 11.sp, color = Color(0xFF94A3B8))
                     }
                     Spacer(Modifier.height(8.dp))
                     Text("Menjadi:", fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                    Text("1 miner $nextTier", fontSize = 13.sp, color = Color(0xFFA855F7))
+                    Text("1 processor $nextTier", fontSize = 13.sp, color = Color(0xFFA855F7))
                     Spacer(Modifier.height(8.dp))
                     Surface(color = Color(0xFFF59E0B).copy(alpha = 0.15f), shape = RoundedCornerShape(8.dp)) {
                         Text(
@@ -2915,7 +2915,7 @@ private fun FusionTab(
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("⚗️ FUSION LAB", fontSize = 18.sp, fontWeight = FontWeight.Black, color = Color(0xFFA855F7), letterSpacing = 1.5.sp)
                     Spacer(Modifier.height(4.dp))
-                    Text("Gabungkan 5 miner tier sama → 1 miner tier di atasnya", fontSize = 11.sp, color = Color(0xFF94A3B8))
+                    Text("Gabungkan 5 processor tier sama → 1 processor tier di atasnya", fontSize = 11.sp, color = Color(0xFF94A3B8))
                     Spacer(Modifier.height(8.dp))
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text("💰 Saldo", fontSize = 11.sp, color = Color(0xFF94A3B8))
@@ -2966,9 +2966,9 @@ private fun FusionTab(
                     Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         Text("📦", fontSize = 32.sp)
                         Spacer(Modifier.height(8.dp))
-                        Text("Belum ada tier dengan 5+ miner", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF94A3B8))
+                        Text("Belum ada tier dengan 5+ processor", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF94A3B8))
                         Spacer(Modifier.height(4.dp))
-                        Text("Beli miner tier sama minimal 5 buah untuk bisa fusion", fontSize = 10.sp, color = Color(0xFF64748B), textAlign = TextAlign.Center)
+                        Text("Beli processor tier sama minimal 5 buah untuk bisa merge", fontSize = 10.sp, color = Color(0xFF64748B), textAlign = TextAlign.Center)
                         Spacer(Modifier.height(12.dp))
                         Button(onClick = onNavigateToShop, colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)) {
                             Text("🛒 Buka Toko")
@@ -3038,7 +3038,7 @@ private fun FusionTab(
                 ) {
                     Column(modifier = Modifier.padding(14.dp)) {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("💰 Biaya fusion", fontSize = 12.sp, color = Color(0xFF94A3B8))
+                            Text("💰 Biaya merge", fontSize = 12.sp, color = Color(0xFF94A3B8))
                             Text("${GlobalPointsManager.formatRtp(currentCost)} RTP", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = if (canAfford) EmeraldLight else Color(0xFFEF4444))
                         }
                         if (!canAfford) {

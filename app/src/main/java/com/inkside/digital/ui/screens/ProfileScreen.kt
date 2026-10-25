@@ -452,7 +452,7 @@ private fun UpgradeTierCard(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    if (currentTier == "ROYAL") LanguageManager.translate("profile_tier_max_msg", AppThemePreferences.currentLanguage, "Tingkat tertinggi tercapai! 🎉") else LanguageManager.translate("profile_tier_desc", AppThemePreferences.currentLanguage, "Upgrade untuk slot miner & komisi lebih besar"),
+                    if (currentTier == "ROYAL") LanguageManager.translate("profile_tier_max_msg", AppThemePreferences.currentLanguage, "Tingkat tertinggi tercapai! 🎉") else LanguageManager.translate("profile_tier_desc", AppThemePreferences.currentLanguage, "Upgrade untuk slot processor & komisi lebih besar"),
                     fontSize = 10.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -596,7 +596,7 @@ private fun MiningStatsCard(
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
             Text(
-                LanguageManager.translate("profile_mining_status", AppThemePreferences.currentLanguage, "⛏️ Status Production"),
+                LanguageManager.translate("profile_mining_status", AppThemePreferences.currentLanguage, "⛏️ Status Produksi"),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )

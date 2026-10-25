@@ -74,17 +74,17 @@ fun WhitepaperScreen(
                 icon = Icons.AutoMirrored.Filled.MenuBook,
                 title = LanguageManager.translate("wp_what_title", currentLanguage, "Apa itu Royaltree?"),
                 content = LanguageManager.translate("wp_what_content", currentLanguage,
-                    "Royaltree adalah platform mining berbasis mobile yang menggabungkan gamifikasi, " +
+                    "Royaltree adalah platform produksi berbasis mobile yang menggabungkan gamifikasi, " +
                     "teknologi blockchain-inspired, dan ekonomi token yang adil. Pengguna dapat menambang " +
-                    "RTP (Royaltree Points) melalui miner virtual, menyelesaikan misi, dan mengikuti mini-game.")
+                    "RTP (Royaltree Points) melalui processor virtual, menyelesaikan misi, dan mengikuti mini-game.")
             ),
             WhitepaperSection(
                 icon = Icons.Filled.Bolt,
-                title = LanguageManager.translate("wp_mining_title", currentLanguage, "Cara Production"),
+                title = LanguageManager.translate("wp_mining_title", currentLanguage, "Cara Produksi"),
                 content = LanguageManager.translate("wp_mining_content", currentLanguage,
-                    "1. Beli miner dari marketplace menggunakan RTP.\n" +
-                    "2. Tempatkan miner di rak (slot terbatas).\n" +
-                    "3. Aktifkan miner 6 jam dengan menonton iklan.\n" +
+                    "1. Beli processor dari marketplace menggunakan RTP.\n" +
+                    "2. Tempatkan processor di rak (slot terbatas).\n" +
+                    "3. Aktifkan processor 6 jam dengan menonton iklan.\n" +
                     "4. Processor menghasilkan RTP secara pasif setiap menit.\n" +
                     "5. Block reward dibagikan setiap 30 menit (epoch).")
             ),
@@ -93,7 +93,7 @@ fun WhitepaperScreen(
                 title = LanguageManager.translate("wp_token_title", currentLanguage, "Token RTP"),
                 content = LanguageManager.translate("wp_token_content", currentLanguage,
                     "RTP adalah token utility internal Royaltree. Digunakan untuk:\n" +
-                    "• Membeli & upgrade miner\n" +
+                    "• Membeli & upgrade processor\n" +
                     "• Transfer ke sesama pengguna\n" +
                     "• RTP hanya untuk ekosistem game (tidak bisa diuangkan)\n\n" +
                     "Total supply terbatas, dengan mekanisme halving setiap 1,000 block.")
@@ -112,9 +112,9 @@ fun WhitepaperScreen(
                 icon = Icons.Filled.Map,
                 title = LanguageManager.translate("wp_roadmap_title", currentLanguage, "Roadmap"),
                 content = LanguageManager.translate("wp_roadmap_content", currentLanguage,
-                    "Q4 2026: Rilis publik, mining tycoon\n" +
+                    "Q4 2026: Rilis publik, power tycoon\n" +
                     "Q1 2027: Mini-game arcade, leaderboard musiman\n" +
-                    "Q2 2027: Secondary market, tier miner baru\n" +
+                    "Q2 2027: Secondary market, tier processor baru\n" +
                     "Q3 2027: Fitur game baru & event komunitas"),
                 accent = GoldVip
             )
