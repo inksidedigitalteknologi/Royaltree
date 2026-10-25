@@ -98,6 +98,8 @@ val panduanItems = listOf(
 
 data class FaqItem(val q: String, val a: String)
 
+@Composable
+fun FaqScreen(currentLanguage: AppLanguage) {
     val faqs = listOf(
         FaqItem(
             "Bagaimana cara mendapatkan poin?",
@@ -275,6 +277,7 @@ data class FaqItem(val q: String, val a: String)
 
         item { Spacer(modifier = Modifier.height(24.dp)) }
     }
+}
 
 // ============================================================
 // COMPONENTS

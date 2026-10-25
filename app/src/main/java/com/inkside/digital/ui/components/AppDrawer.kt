@@ -159,9 +159,6 @@ fun AppDrawer(
                 onClick = { onNavigate(AppScreen.DAILY_CHECK_IN); onCloseDrawer() }
             )
 
-                selected = currentScreen == AppScreen.SWEEPSTAKES,
-                onClick = { onNavigate(AppScreen.SWEEPSTAKES); onCloseDrawer() }
-            )
             DrawerItem(
                 icon = Icons.AutoMirrored.Filled.Send,
                 label = LanguageManager.translate("nav_transfer", currentLanguage, "Transfer"),
