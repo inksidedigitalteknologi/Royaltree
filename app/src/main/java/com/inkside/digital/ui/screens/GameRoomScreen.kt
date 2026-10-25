@@ -7,6 +7,12 @@ import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -2841,6 +2847,8 @@ private fun FusionTab(
     var selectedTier by remember { mutableStateOf<String?>(eligibleTiers.firstOrNull()) }
     var selectedMinerIds by remember { mutableStateOf<Set<String>>(emptySet()) }
     var showConfirmDialog by remember { mutableStateOf(false) }
+    var showFusionAnim by remember { mutableStateOf(false) }
+    var pendingMerge by remember { mutableStateOf<List<String>>(emptyList()) }
     
     LaunchedEffect(selectedTier) {
         selectedMinerIds = emptySet()
@@ -2907,7 +2915,8 @@ private fun FusionTab(
                 Button(
                     onClick = {
                         showConfirmDialog = false
-                        onMerge(selectedMinerIds.toList())
+                        pendingMerge = selectedMinerIds.toList()
+                        showFusionAnim = true
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA855F7))
                 ) {
@@ -2922,6 +2931,16 @@ private fun FusionTab(
         )
     }
     
+    if (showFusionAnim) {
+        FusionAnimOverlay(
+            onComplete = {
+                showFusionAnim = false
+                onMerge(pendingMerge)
+                pendingMerge = emptyList()
+            }
+        )
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -3066,7 +3085,16 @@ private fun FusionTab(
                             Text("${GlobalPointsManager.formatRtp(currentCost)} RTP", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = if (canAfford) EmeraldLight else Color(0xFFEF4444))
                         }
                         if (!canAfford) {
-                            Text("⚠️ Saldo kurang ${GlobalPointsManager.formatRtp(currentCost - userPoints)} RTP", fontSize = 10.sp, color = Color(0xFFEF4444))
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("⚠️ Saldo kurang ${GlobalPointsManager.formatRtp(currentCost - userPoints)} RTP", fontSize = 10.sp, color = Color(0xFFEF4444))
+                                TextButton(onClick = onNavigateToShop) {
+                                    Text("💳 Top Up", fontSize = 10.sp, color = Color(0xFFF59E0B))
+                                }
+                            }
                         }
                         Spacer(Modifier.height(10.dp))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -3094,6 +3122,53 @@ private fun FusionTab(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun FusionAnimOverlay(onComplete: () -> Unit) {
+    val steps = listOf(
+        "🔮 Mengumpulkan miner…",
+        "⚡ Menyinkronkan energi…",
+        "🔒 Mengunci slot…",
+        "🔥 Memanaskan inti…",
+        "💫 Menggabungkan partikel…",
+        "🌊 Menstabilkan hasil…",
+        "✨ Memverifikasi rarity…",
+        "🎉 Selesai!"
+    )
+    var step by remember { mutableIntStateOf(0) }
+    LaunchedEffect(Unit) {
+        for (i in steps.indices) {
+            step = i
+            kotlinx.coroutines.delay(275L)
+        }
+        onComplete()
+    }
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.85f)),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("⚗️", fontSize = 56.sp)
+            Spacer(Modifier.height(16.dp))
+            AnimatedContent(
+                targetState = step,
+                transitionSpec = {
+                    (fadeIn(tween(180)) + scaleIn(tween(180))) togetherWith fadeOut(tween(80))
+                },
+                label = "fusionStep"
+            ) { i ->
+                Text(steps[i], fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            }
+            Spacer(Modifier.height(16.dp))
+            LinearProgressIndicator(
+                progress = { (step + 1) / steps.size.toFloat() },
+                modifier = Modifier.width(220.dp),
+                color = Color(0xFFA855F7)
+            )
         }
     }
 }
