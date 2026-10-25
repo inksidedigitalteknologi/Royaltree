@@ -23,7 +23,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Paid
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -71,7 +71,7 @@ fun WhitepaperScreen(
     val sections = remember(currentLanguage) {
         listOf(
             WhitepaperSection(
-                icon = Icons.Filled.MenuBook,
+                icon = Icons.AutoMirrored.Filled.MenuBook,
                 title = LanguageManager.translate("wp_what_title", currentLanguage, "Apa itu Royaltree?"),
                 content = LanguageManager.translate("wp_what_content", currentLanguage,
                     "Royaltree adalah platform mining berbasis mobile yang menggabungkan gamifikasi, " +

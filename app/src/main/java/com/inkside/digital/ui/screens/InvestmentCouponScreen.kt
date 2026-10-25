@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.inkside.digital.ui.screens
 
 import androidx.compose.foundation.Image

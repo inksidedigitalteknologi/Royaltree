@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.coroutines.FlowPreview::class)
+
 package com.inkside.digital.viewmodel
 
 import android.app.Application
@@ -81,6 +83,7 @@ enum class AdButtonState {
     COOLDOWN        // tunggu 30 detik
 }
 
+@kotlinx.coroutines.FlowPreview
 class AffiliateViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: AffiliateRepository

@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.inkside.digital.ui.screens
 
 import com.inkside.digital.R
