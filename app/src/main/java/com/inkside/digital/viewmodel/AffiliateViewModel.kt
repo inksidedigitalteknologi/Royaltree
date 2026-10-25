@@ -52,7 +52,6 @@ enum class AppScreen {
     MISSIONS,
     GAME_ROOM,
     GAME_MINING,
-    GAME_COIN_RUSH,
     LEADERBOARD,
     ANALYTICS,
     WITHDRAW,
@@ -1130,20 +1129,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
-
-    fun finishMiniGame(score: Int, durationMs: Long = 15000, gameNonce: String = "") {
-        viewModelScope.launch {
-            // 1. Update lokal (Room DB)
-            val result = repository.playMiniGameFinish(score)
-            result.onSuccess { (bonusPoints, boostGhs) ->
-                showSnackbar(String.format(LanguageManager.translate("snackbar_minigame_finished", _currentLanguage.value, "Game Selesai! Skor: %s"), score, bonusPoints, boostGhs.toInt()))
-
-                // 2. Sync ke backend (CRITICAL FIX)
-                ApiClient.finishMiniGame(score, durationMs, gameNonce)
-                    .onSuccess {
-                        AppLogger.d("MiniGame", "✅ MiniGame reward synced to backend")
-                        loadGameState()
-                    }
                     .onFailure { err ->
                         AppLogger.e("MiniGame", "❌ Sync failed: ${err.message}")
                     }

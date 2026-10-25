@@ -88,8 +88,6 @@ fun ProfileScreen(
     // Quick Actions
     onOpenUpgrade: () -> Unit = {},
     onNavigateToDailyCheckIn: () -> Unit = {},
-    onNavigateToMining: () -> Unit = {},
-    onNavigateToCoinRush: () -> Unit = {},
     // Mining & Referral data
     minerSlotsUsed: Int = 0,
     minerSlotsMax: Int = 6,
@@ -270,8 +268,6 @@ fun ProfileScreen(
             QuickActionsRow(
                 currentLanguage = currentLanguage,
                 onDailyCheckIn = onNavigateToDailyCheckIn,
-                onMining = onNavigateToMining,
-                onCoinRush = onNavigateToCoinRush,
             )
         }
 
@@ -361,8 +357,6 @@ fun ProfileScreen(
 private fun QuickActionsRow(
     currentLanguage: AppLanguage,
     onDailyCheckIn: () -> Unit,
-    onMining: () -> Unit,
-    onCoinRush: () -> Unit
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -380,8 +374,6 @@ private fun QuickActionsRow(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 QuickActionButton("🎁", LanguageManager.translate("profile_action_checkin", AppThemePreferences.currentLanguage, "Check-in"), EmeraldLight, onDailyCheckIn)
-                QuickActionButton("⛏️", LanguageManager.translate("profile_action_mining", AppThemePreferences.currentLanguage, "Production"), EmeraldLight, onMining)
-                QuickActionButton("🎰", LanguageManager.translate("profile_action_coinrush", AppThemePreferences.currentLanguage, "Coin Rush"), GoldVip, onCoinRush)
             }
         }
     }
@@ -628,7 +620,6 @@ private fun MiningStatsCard(
             ) {
                 MiniStatBox(LanguageManager.translate("profile_rate_day", AppThemePreferences.currentLanguage, "Rate/hari"), "${GlobalPointsManager.formatRtp((roomState?.ratePerMin ?: ((powerHs / 1e9) * 0.0144 / 1440.0)) * 1440.0)} RTP", EmeraldLight, Modifier.weight(1f))
                 MiniStatBox(LanguageManager.translate("profile_unclaimed", AppThemePreferences.currentLanguage, "Unclaimed"), "${String.format(Locale.US, "%.8f", roomState?.unclaimedMiningPoints ?: 0.0)} RTP", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_bonus", AppThemePreferences.currentLanguage, "Bonus"), "+${HashrateFormatter.format((roomState?.tempPowerBonusGhs ?: 0.0).toLong())}", GoldVip, Modifier.weight(1f))
             }
         }
     }

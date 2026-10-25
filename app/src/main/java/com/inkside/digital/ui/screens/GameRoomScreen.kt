@@ -205,7 +205,7 @@ fun GameRoomScreen(
         onClearMergeState = { viewModel.clearMergeState() },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
         onBuyAndPlaceGameMinerItem = { id -> viewModel.buyAndPlaceGameMinerItem(id) },
-        onFinishGame = { score, duration, nonce -> viewModel.finishMiniGame(score, duration, nonce) },
+        onFinishGame = { _, _, _ -> },   // bonus minigame disabled
         onBack = onBack,
         currentLanguage = currentLanguage,
         onUnlockSlot = { slotIndex -> viewModel.unlockSlot(slotIndex) }

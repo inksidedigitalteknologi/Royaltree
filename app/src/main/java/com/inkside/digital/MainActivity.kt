@@ -76,7 +76,6 @@ import com.inkside.digital.ui.screens.AnalyticsScreen
 import com.inkside.digital.ui.screens.CampaignsScreen
 import com.inkside.digital.ui.screens.HistoryScreen
 import com.inkside.digital.ui.screens.BusinessHomeScreen
-import com.inkside.digital.ui.screens.CoinRushScreen
 import com.inkside.digital.ui.screens.InvestmentCouponScreen
 import com.inkside.digital.ui.screens.NotificationsScreen
 import com.inkside.digital.ui.screens.ProfileScreen
@@ -619,7 +618,6 @@ fun MainAffiliateApp(
         onNewLinkCreate = { camp, slug, subId -> viewModel.createLink(camp, slug, subId) },
         onUpgradeDismiss = { viewModel.showUpgradeModal.value = false },
         onUpgradeConfirm = { viewModel.upgradeToPremium() },
-        onFinishMiniGame = { score -> viewModel.finishMiniGame(score) },
         onRedeemOpenQr = { viewModel.showQrTransferModal.value = true },
         onDailyCheckInDismiss = { viewModel.showDailyCheckInModal.value = false },
         onDailyCheckInClaim = { viewModel.performDailyCheckIn() },
@@ -694,7 +692,7 @@ fun MainAffiliateApp(
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
         onBuyAndPlaceGameMinerItem = { id -> viewModel.buyAndPlaceGameMinerItem(id) },
-        onFinishGame = { score, duration, nonce -> viewModel.finishMiniGame(score, duration, nonce) },
+        onFinishGame = { _, _, _ -> },   // bonus minigame disabled
         onLogout = onLogout
     )
 }
@@ -742,7 +740,6 @@ fun MainAffiliateAppContent(
     listCouponTarget: InvestmentCouponEntity?,
     adminReviewTarget: WithdrawalEntity?,
     showAdReward: Boolean,
-    onFinishMiniGame: (Int) -> Unit = {},
     adBlockedReason: String? = null,
     onAdBlockedDismiss: () -> Unit = {},
     onAdBlockedRetry: () -> Unit = {},
@@ -979,8 +976,6 @@ fun MainAffiliateAppContent(
                         onOpenWithdrawHistory = onOpenWithdrawHistory,
                         
                         onNavigateToDailyCheckIn = { onNavigate(AppScreen.DAILY_CHECK_IN) },
-                        onNavigateToMining = { onNavigate(AppScreen.GAME_MINING) },
-                        onNavigateToCoinRush = { onNavigate(AppScreen.GAME_COIN_RUSH) },
                         minerSlotsUsed = placedMiners.size,
                         minerSlotsMax = when (user?.tier) {
                             "ROYAL" -> 10
@@ -1095,12 +1090,11 @@ fun MainAffiliateAppContent(
                 }
 
                 AppScreen.GAME_ROOM -> {
-                    GameHubScreen(
+                    GameRoomScreen(
+                        viewModel = viewModel,
                         user = user,
                         currentLanguage = currentLanguage,
-                        onNavigate = { onNavigate(it) },
-                        onBack = { onNavigate(AppScreen.HOME) },
-                        onLoadGameState = { onLoadGameState() }
+                        onBack = { onNavigate(AppScreen.HOME) }
                     )
                 }
 
@@ -1110,15 +1104,6 @@ fun MainAffiliateAppContent(
                         user = user,
                         currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.GAME_ROOM) }
-                    )
-                }
-
-                AppScreen.GAME_COIN_RUSH -> {
-                    CoinRushScreen(
-                        user = user,
-                        currentLanguage = currentLanguage,
-                        onBack = { onNavigate(AppScreen.GAME_ROOM) },
-                        onFinish = { score -> onFinishMiniGame(score) }
                     )
                 }
 
