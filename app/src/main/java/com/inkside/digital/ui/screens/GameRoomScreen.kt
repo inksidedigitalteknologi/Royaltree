@@ -1109,7 +1109,7 @@ private fun MiningRoomTab(
                                         text = LanguageManager.translate("game_mining_tycoon", AppThemePreferences.currentLanguage, "POWER TYCOON"),
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Black,
-                                        color = EmeraldLight,
+                                        color = auraColor1,
                                         letterSpacing = 1.5.sp
                                     )
                                     Text(
@@ -2631,7 +2631,7 @@ private fun RateBreakdownCard(
                                 colors = listOf(
                                     Color(0xFF0F172A).copy(alpha = 0.98f),
                                     Color(0xFF0B1220).copy(alpha = 0.95f),
-                                    Color(0xFF064E3B).copy(alpha = 0.85f)
+                                    lerp(EmeraldPrimary, Color(0xFFA855F7), auraProgress).copy(alpha = 0.35f)
                                 )
                             )
                         )
@@ -2663,7 +2663,7 @@ private fun RateBreakdownCard(
                                         .background(
                                             brush = Brush.radialGradient(
                                                 colors = listOf(
-                                                    EmeraldLight.copy(alpha = iconAlpha * 0.5f),
+                                                    auraColor1.copy(alpha = iconAlpha * 0.6f),
                                                     Color.Transparent
                                                 )
                                             ),
@@ -2763,7 +2763,7 @@ private fun RateBreakdownCard(
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Black,
                                     color = when {
-                                        efficiency >= 100 -> EmeraldLight
+                                        efficiency >= 100 -> auraColor1
                                         efficiency >= 50 -> GoldVip
                                         else -> Color(0xFFEF4444)
                                     }
@@ -2782,7 +2782,7 @@ private fun RateBreakdownCard(
                                         .fillMaxHeight()
                                         .background(
                                             Brush.horizontalGradient(
-                                                colors = listOf(EmeraldLight, GoldVip)
+                                                colors = listOf(auraColor1, auraColor2)
                                             )
                                         )
                                 )
@@ -2797,9 +2797,9 @@ private fun RateBreakdownCard(
                                     Brush.horizontalGradient(
                                         colors = listOf(
                                             Color.Transparent,
-                                            EmeraldLight.copy(alpha = 0.4f),
-                                            GoldVip.copy(alpha = 0.4f),
-                                            EmeraldLight.copy(alpha = 0.4f),
+                                            auraColor1.copy(alpha = 0.4f),
+                                            auraColor2.copy(alpha = 0.4f),
+                                            auraColor1.copy(alpha = 0.4f),
                                             Color.Transparent
                                         )
                                     )
