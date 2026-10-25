@@ -2118,51 +2118,25 @@ private fun ShopMinerCard(
                     color = RetroGold.copy(alpha = 0.7f)
                 )
             }
-            // Selalu tampilkan tombol BELI — bisa beli berkali-kali untuk merge
-            // Kalau item sedang terpasang, tampilkan "Terpasang" + tombol beli
-            if (item.isPlacedInRoom) {
-                Surface(
-                    color = EmeraldLight.copy(alpha = 0.15f),
-                    shape = RoundedCornerShape(8.dp),
-                    border = BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.4f)),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text("✅", fontSize = 10.sp)
-                        Spacer(Modifier.width(3.dp))
-                        Text(
-                            text = "Terpasang",
-                            fontSize = 9.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = EmeraldLight,
-                            maxLines = 1
-                        )
-                    }
-                }
-            } else {
-                Surface(
-                    color = if (canAfford) RetroGold else Color.Gray.copy(alpha = 0.3f),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(enabled = canAfford) { onBuy() }
-                ) {
-                    Text(
-                        text = if (canAfford) {
-                            if (item.isOwned) "BELI LAGI" else "BELI"
-                        } else "KURANG",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Black,
-                        color = if (canAfford) Color.Black else Color.White.copy(alpha = 0.7f),
-                        letterSpacing = 1.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(vertical = 7.dp)
-                    )
-                }
+            // Selalu tampil tombol BELI — bisa beli berkali-kali untuk merge
+            Surface(
+                color = if (canAfford) RetroGold else Color.Gray.copy(alpha = 0.3f),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(enabled = canAfford) { onBuy() }
+            ) {
+                Text(
+                    text = if (canAfford) {
+                        if (item.isOwned) "BELI LAGI" else "BELI"
+                    } else "KURANG",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Black,
+                    color = if (canAfford) Color.Black else Color.White.copy(alpha = 0.7f),
+                    letterSpacing = 1.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(vertical = 7.dp)
+                )
             }
         }
     }
