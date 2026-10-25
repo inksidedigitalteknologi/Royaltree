@@ -1083,7 +1083,7 @@ private fun MiningRoomTab(
                             ) {
                                 Column(Modifier.weight(1f)) {
                                     Text(
-                                        text = LanguageManager.translate("game_mining_tycoon", AppThemePreferences.currentLanguage, "MINING TYCOON"),
+                                        text = LanguageManager.translate("game_mining_tycoon", AppThemePreferences.currentLanguage, "POWER TYCOON"),
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Black,
                                         color = EmeraldLight,
@@ -1311,7 +1311,7 @@ private fun MiningRoomTab(
                                                         Spacer(modifier = Modifier.width(12.dp))
                                                         Column {
                                                             Text(
-                                                                text = LanguageManager.translate("game_miner_active", AppThemePreferences.currentLanguage, "MINER SEDANG AKTIF"),
+                                                                text = LanguageManager.translate("game_miner_active", AppThemePreferences.currentLanguage, "PROCESSOR AKTIF"),
                                                                 fontSize = 11.sp,
                                                                 fontWeight = FontWeight.Bold,
                                                                 color = EmeraldLight
@@ -1383,7 +1383,7 @@ private fun MiningRoomTab(
                                     ) {
                                         Column {
                                             Text(
-                                                text = "⛔ ${LanguageManager.translate("game_miner_inactive", AppThemePreferences.currentLanguage, "MINER TIDAK AKTIF")}",
+                                                text = "⛔ ${LanguageManager.translate("game_miner_inactive", AppThemePreferences.currentLanguage, "PROCESSOR TIDAK AKTIF")}",
                                                 fontSize = 10.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 color = Color(0xFFF87171)

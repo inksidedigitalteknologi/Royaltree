@@ -211,7 +211,7 @@ class RoyaltreeWidget : GlanceAppWidget() {
                 Spacer(GlanceModifier.width(4.dp))
                 ActionChip(
                     emoji = "⛏️",
-                    label = "Mining",
+                    label = "Production",
                     color = EmeraldLight,
                     modifier = GlanceModifier.defaultWeight()
                 )

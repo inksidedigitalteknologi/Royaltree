@@ -1241,7 +1241,7 @@ class AffiliateRepository(private val dao: AppDao) {
     suspend fun mergeMiners(minerIds: List<String>): Result<org.json.JSONObject> = withContext(Dispatchers.IO) {
         try {
             if (minerIds.size != 5) return@withContext Result.failure(Exception("Harus 5 miner"))
-            if (minerIds.toSet().size != 5) return@withContext Result.failure(Exception("Miner ID harus unique"))
+            if (minerIds.toSet().size != 5) return@withContext Result.failure(Exception("Processor ID harus unique"))
             
             val body = org.json.JSONObject().apply {
                 put("minerIds", org.json.JSONArray(minerIds))
@@ -1257,7 +1257,7 @@ class AffiliateRepository(private val dao: AppDao) {
     suspend fun toggleMinerSlot(itemId: String, targetSlot: Int): Result<String> = withContext(Dispatchers.IO) {
         val item = dao.getGameMinerItemById(itemId) ?: return@withContext Result.failure(Exception("Item tidak ditemukan"))
         if (!item.isOwned) {
-            return@withContext Result.failure(Exception("Anda belum memiliki item ini. Beli item terlebih dahulu di Toko Item."))
+            return@withContext Result.failure(Exception("Anda belum memiliki processor ini. Beli processor terlebih dahulu di Shop."))
         }
 
         if (item.isPlacedInRoom && item.placedSlotIndex == targetSlot) {

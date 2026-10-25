@@ -589,7 +589,7 @@ private fun MinerPackCard(
 ) {
     val productId = pack.optString("productId")
     val priceUsd = pack.optDouble("priceUsd", 0.0)
-    val name = pack.optString("name", "Miner Pack")
+    val name = pack.optString("name", "Processor Pack")
     val emoji = pack.optString("emoji", "⛏️")
     val description = pack.optString("description", "")
 
