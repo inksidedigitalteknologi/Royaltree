@@ -36,14 +36,19 @@ async function getMaxAdsPerDay() {
     }
 }
 
-// ==== Reward random 2-5 RTP per iklan ====
-function getRandomReward() {
-    // Weighted: 2=40%, 3=30%, 4=20%, 5=10%
-    const roll = Math.random() * 100;
-    if (roll < 40) return 2;
-    if (roll < 70) return 3;
-    if (roll < 90) return 4;
-    return 5;
+// ==== Reward FIXED per iklan (diatur admin via tab Ads) ====
+// Dibaca dari Firestore system/ad_config → rewardPerVideo
+// Fallback ke DEFAULT_REWARD_POINTS kalau kosong
+async function getRewardFromConfig() {
+    try {
+        const doc = await db.collection('system').doc('ad_config').get();
+        const config = doc.exists ? doc.data() : {};
+        const val = parseInt(config.rewardPerVideo);
+        return Number.isFinite(val) && val > 0 ? val : DEFAULT_REWARD_POINTS;
+    } catch (e) {
+        console.error('[ADS/CONFIG] Error baca rewardPerVideo:', e.message);
+        return DEFAULT_REWARD_POINTS;
+    }
 }
 
 // ============================================================
@@ -97,7 +102,7 @@ router.get('/status', verifyFirebaseToken, async (req, res) => {
                 remaining: remaining,
                 canWatch: canWatch,
                 reason: canWatch ? 'ok' : 'limit',
-                rewardPerVideo: DEFAULT_REWARD_POINTS
+                rewardPerVideo: await getRewardFromConfig()
             }
         });
     } catch (error) {
@@ -171,8 +176,8 @@ router.post('/reward', verifyFirebaseToken, validate(adRewardSchema), checkFraud
             });
         }
 
-        // Generate random reward 2-5 RTP
-        const rewardPoints = getRandomReward();
+        // Reward FIXED dari config (admin bisa atur via tab Ads)
+        const rewardPoints = await getRewardFromConfig();
 
         // Simpan transaksi
         await txRef.set({
