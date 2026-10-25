@@ -122,7 +122,7 @@ fun RevolverBottomNav(
         modifier = modifier
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .padding(horizontal = 16.dp, vertical = 4.dp)
     ) {
         // ═══════════════════════════════════════════
         // FLOATING PILL
@@ -130,8 +130,8 @@ fun RevolverBottomNav(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp)
-                .clip(RoundedCornerShape(36.dp))
+                .height(48.dp)
+                .clip(RoundedCornerShape(28.dp))
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -149,7 +149,7 @@ fun RevolverBottomNav(
                             EmeraldPrimary.copy(alpha = 0.35f)
                         )
                     ),
-                    shape = RoundedCornerShape(36.dp)
+                    shape = RoundedCornerShape(28.dp)
                 )
                 .padding(horizontal = 6.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -175,12 +175,12 @@ fun RevolverBottomNav(
                 // ═══════════════════════════════════════════
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.width(64.dp)
+                    modifier = Modifier.width(56.dp)
                 ) {
                 // Glow pulse
                 Box(
                     modifier = Modifier
-                        .size(64.dp)
+                        .size(56.dp)
                         .background(
                             brush = Brush.radialGradient(
                                 colors = listOf(
@@ -196,7 +196,7 @@ fun RevolverBottomNav(
                 // RTP Coin
                 Box(
                     modifier = Modifier
-                        .size(56.dp)
+                        .size(48.dp)
                         .scale(coinScale)
                         .clip(CircleShape)
                         .background(
@@ -219,7 +219,7 @@ fun RevolverBottomNav(
                     Image(
                         painter = painterResource(id = R.drawable.rtp_coin),
                         contentDescription = "RTP",
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(34.dp)
                     )
                 }
             }
@@ -283,7 +283,7 @@ private fun PillTab(
         // Icon circle
         Box(
             modifier = Modifier
-                .size(32.dp)
+                .size(28.dp)
                 .clip(CircleShape)
                 .background(
                     if (isSelected) {
@@ -308,16 +308,16 @@ private fun PillTab(
                 imageVector = item.icon,
                 contentDescription = item.fallbackLabel,
                 tint = if (isSelected) Color(0xFF1F2937) else TextMuted,
-                modifier = Modifier.size(if (isSelected) 18.dp else 16.dp)
+                modifier = Modifier.size(if (isSelected) 16.dp else 14.dp)
             )
         }
 
-        Spacer(Modifier.height(3.dp))
+        Spacer(Modifier.height(2.dp))
 
         // Label
         Text(
             text = LanguageManager.translate(item.labelKey, currentLanguage, item.fallbackLabel),
-            fontSize = 9.sp,
+            fontSize = 8.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
             color = if (isSelected) GoldBright else TextMuted,
             maxLines = 1,
