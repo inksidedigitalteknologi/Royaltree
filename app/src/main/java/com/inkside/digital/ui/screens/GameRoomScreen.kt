@@ -477,6 +477,15 @@ fun GameRoomScreenContent(
         // State untuk checkbox & countdown
         var agreeChecked by remember { mutableStateOf(false) }
         var isBuying by remember { mutableStateOf(false) }
+
+        // Watch snackbarMessage — tutup modal setelah beli sukses
+        val snackbarMsg by viewModel.snackbarMessage.collectAsState()
+        LaunchedEffect(snackbarMsg) {
+            if (isBuying && snackbarMsg != null) {
+                isBuying = false
+                selectedItemToBuy = null
+            }
+        }
         
         val infiniteTransition = rememberInfiniteTransition(label = "miner_pulse")
 
