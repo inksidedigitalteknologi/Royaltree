@@ -1522,7 +1522,7 @@ class AffiliateRepository(private val dao: AppDao) {
                             tier = m.optString("tier", "COMMON"),
                             iconEmoji = m.optString("iconEmoji", "⛏️"),
                             tokenCost = m.optInt("tokenCost", m.optInt("pricePoints", 0)),
-                            catalogId = m.optString("catalogId", m.optString("id", "")),
+                            catalogId = m.optString("catalogId", "").ifBlank { m.optString("id", "") },
                             powerHs = m.optLong("powerHs", 0L),
                             // WEIGHTED ADAPTIVE: efficiency + signature
                             basePowerHs = m.optLong("basePowerHs", m.optLong("powerHs", 0L)),

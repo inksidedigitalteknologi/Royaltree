@@ -913,7 +913,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         val item = repository.getGameMinerItemByIdSync(itemId)
                         if (item != null) {
                             val body = org.json.JSONObject().apply {
-                                put("catalogId", item.catalogId)
+                                put("catalogId", item.catalogId.ifBlank { item.id })
                                 put("instanceId", item.id)
                                 put("tier", item.tier)
                                 put("name", item.name)
@@ -975,7 +975,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                         if (item != null) {
                             AppLogger.d("BuyMiner", "📡 Sync backend: catalogId=${item.catalogId}")
                             val body = org.json.JSONObject().apply {
-                                put("catalogId", item.catalogId)
+                                put("catalogId", item.catalogId.ifBlank { item.id })
                                 put("instanceId", item.id)
                                 put("tier", item.tier)
                                 put("name", item.name)
@@ -2240,7 +2240,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 val item = repository.getGameMinerItemByIdSync(itemId)
                 if (item != null) {
                     val body = org.json.JSONObject().apply {
-                        put("catalogId", item.catalogId)
+                        put("catalogId", item.catalogId.ifBlank { item.id })
                         put("instanceId", item.id)
                         put("tier", item.tier)
                         put("name", item.name)
