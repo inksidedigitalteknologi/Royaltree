@@ -177,12 +177,12 @@ fun RevolverBottomNav(
                 // ═══════════════════════════════════════════
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.width(56.dp)
+                    modifier = Modifier.width(60.dp)
                 ) {
                 // Glow pulse
                 Box(
                     modifier = Modifier
-                        .size(56.dp)
+                        .size(60.dp)
                         .background(
                             brush = Brush.radialGradient(
                                 colors = listOf(
@@ -198,7 +198,7 @@ fun RevolverBottomNav(
                 // RTP Coin
                 Box(
                     modifier = Modifier
-                        .size(46.dp)
+                        .size(50.dp)
                         .scale(coinScale)
                         .clip(CircleShape)
                         .background(
@@ -221,7 +221,7 @@ fun RevolverBottomNav(
                     Image(
                         painter = painterResource(id = R.drawable.rtp_coin),
                         contentDescription = "RTP",
-                        modifier = Modifier.size(34.dp)
+                        modifier = Modifier.size(38.dp)
                     )
                 }
             }
