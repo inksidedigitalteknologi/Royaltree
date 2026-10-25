@@ -104,6 +104,7 @@ android {
   kotlin {
     compilerOptions {
       freeCompilerArgs.add("-Xannotation-default-target=param-property")
+      freeCompilerArgs.add("-opt-in=kotlinx.coroutines.FlowPreview")
     }
   }
 
