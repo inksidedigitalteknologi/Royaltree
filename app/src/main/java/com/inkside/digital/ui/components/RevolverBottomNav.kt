@@ -123,7 +123,7 @@ fun RevolverBottomNav(
         modifier = modifier
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 14.dp)
     ) {
         // ═══════════════════════════════════════════
         // FLOATING PILL
@@ -132,8 +132,8 @@ fun RevolverBottomNav(
             modifier = Modifier
                 .fillMaxWidth()
                 .offset(y = (-6).dp)
-                .height(66.dp)
-                .clip(RoundedCornerShape(36.dp))
+                .height(74.dp)
+                .clip(RoundedCornerShape(38.dp))
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -280,7 +280,7 @@ private fun PillTab(
                 indication = null,
                 onClick = onClick
             )
-            .padding(vertical = 2.dp)
+            .padding(vertical = 0.dp)
     ) {
         // Icon circle
         Box(
