@@ -75,7 +75,7 @@ import com.inkside.digital.ui.screens.DailyCheckInScreen
 import com.inkside.digital.ui.screens.AnalyticsScreen
 import com.inkside.digital.ui.screens.CampaignsScreen
 import com.inkside.digital.ui.screens.HistoryScreen
-import com.inkside.digital.ui.screens.HomeScreen
+import com.inkside.digital.ui.screens.BusinessHomeScreen
 import com.inkside.digital.ui.screens.CoinRushScreen
 import com.inkside.digital.ui.screens.InvestmentCouponScreen
 import com.inkside.digital.ui.screens.NotificationsScreen
@@ -927,7 +927,7 @@ fun MainAffiliateAppContent(
             com.inkside.digital.ui.components.AnimatedBackground {
                 when (currentScreen) {
                 AppScreen.HOME -> {
-                    HomeScreen(
+                    BusinessHomeScreen(
                         user = user,
                         links = links,
                         recentTransactions = transactions,
