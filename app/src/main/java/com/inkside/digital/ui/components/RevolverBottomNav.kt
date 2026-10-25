@@ -283,7 +283,7 @@ private fun PillTab(
         // Icon circle
         Box(
             modifier = Modifier
-                .size(28.dp)
+                .size(32.dp)
                 .clip(CircleShape)
                 .background(
                     if (isSelected) {
@@ -308,7 +308,7 @@ private fun PillTab(
                 imageVector = item.icon,
                 contentDescription = item.fallbackLabel,
                 tint = if (isSelected) Color(0xFF1F2937) else TextMuted,
-                modifier = Modifier.size(if (isSelected) 16.dp else 14.dp)
+                modifier = Modifier.size(if (isSelected) 18.dp else 16.dp)
             )
         }
 
