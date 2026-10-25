@@ -123,7 +123,7 @@ fun RevolverBottomNav(
         modifier = modifier
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 2.dp)
+            .padding(horizontal = 8.dp, vertical = 0.dp)
     ) {
         // ═══════════════════════════════════════════
         // FLOATING PILL
@@ -131,7 +131,7 @@ fun RevolverBottomNav(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(y = (-2).dp)
+                .offset(y = 0.dp)
                 .height(64.dp)
                 .clip(RoundedCornerShape(32.dp))
                 .background(
