@@ -969,23 +969,6 @@ object ApiClient {
     // ============ SWEEPSTAKES ============
 
 
-    suspend fun getMyTickets(): Result<JSONObject> = withContext(Dispatchers.IO) {
-        try {
-            val response: ResponseBody = apiService.getMyTickets()
-            Result.success(JSONObject(response.string()))
-        } catch (e: retrofit2.HttpException) {
-            try {
-                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
-                val json = JSONObject(errorBody)
-                json.put("httpCode", e.code())
-                Result.success(json)
-            } catch (parseErr: Exception) {
-                Result.failure(e)
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
 
     // ============ TRANSFER ============
 

@@ -1221,7 +1221,6 @@ fun MainAffiliateAppContent(
     }
 
 
-        }
 
     if (adBlockedReason != null) {
         AdBlockedDialog(
@@ -1408,3 +1407,4 @@ fun MainAffiliateAppPreview() {
     }
 }
 
+}

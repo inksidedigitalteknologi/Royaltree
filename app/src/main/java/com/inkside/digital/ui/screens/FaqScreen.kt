@@ -96,6 +96,8 @@ val panduanItems = listOf(
         )
     )
 
+data class FaqItem(val q: String, val a: String)
+
     val faqs = listOf(
         FaqItem(
             "Bagaimana cara mendapatkan poin?",

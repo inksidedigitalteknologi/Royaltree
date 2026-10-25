@@ -240,6 +240,7 @@ fun MissionsScreen(
                                         shape = RoundedCornerShape(8.dp),
                                     ) {
                                         Text(
+                                            text = "Tukar >",
                                             fontSize = 10.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = EmeraldLight,

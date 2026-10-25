@@ -159,7 +159,8 @@ fun GameHubScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    GameGrid                }
+                    GameGrid()
+                }
             }
 
             // ==== LEADERBOARD PREVIEW ====
