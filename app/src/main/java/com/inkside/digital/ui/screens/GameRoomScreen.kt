@@ -1554,6 +1554,7 @@ private fun MiningRoomTab(
 }
 @Composable
 private fun LockedSlotCard(
+    slotIndex: Int,
     currentLanguage: AppLanguage,
     onClick: () -> Unit
 ) {
