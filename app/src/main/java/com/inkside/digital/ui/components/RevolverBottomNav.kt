@@ -132,8 +132,8 @@ fun RevolverBottomNav(
             modifier = Modifier
                 .fillMaxWidth()
                 .offset(y = (-6).dp)
-                .height(58.dp)
-                .clip(RoundedCornerShape(30.dp))
+                .height(64.dp)
+                .clip(RoundedCornerShape(32.dp))
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -143,7 +143,7 @@ fun RevolverBottomNav(
                     )
                 )
                 .border(
-                    width = 1.dp,
+                    width = 0.5.dp,
                     brush = Brush.linearGradient(
                         colors = listOf(
                             EmeraldPrimary.copy(alpha = 0.35f),
