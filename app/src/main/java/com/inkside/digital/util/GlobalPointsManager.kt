@@ -201,10 +201,9 @@ object GlobalPointsManager {
      */
     fun formatRtpAnimated(value: Double): String {
         return when {
-            value >= 1_000_000_000 -> String.format(Locale.US, "%.6fB", value / 1_000_000_000)
-            value >= 1_000_000 -> String.format(Locale.US, "%.6fM", value / 1_000_000)
-            value >= 1_000 -> String.format(Locale.US, "%.6fK", value / 1_000)
-            else -> String.format(Locale.US, "%.6f", value)
+            value >= 100 -> String.format(Locale.US, "%,.2f", value)
+            value >= 1 -> String.format(Locale.US, "%,.4f", value)
+            else -> String.format(Locale.US, "%,.6f", value)
         }
     }
 
