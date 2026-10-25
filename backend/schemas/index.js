@@ -138,6 +138,5 @@ module.exports = {
     transferSchema,
     withdrawSchema,
     chatSchema,
-    buyTicketSchema,
     claimMissionSchema
 };
