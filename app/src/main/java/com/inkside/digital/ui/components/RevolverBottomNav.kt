@@ -130,8 +130,8 @@ fun RevolverBottomNav(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
-                .clip(RoundedCornerShape(28.dp))
+                .height(56.dp)
+                .clip(RoundedCornerShape(32.dp))
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -149,7 +149,7 @@ fun RevolverBottomNav(
                             EmeraldPrimary.copy(alpha = 0.35f)
                         )
                     ),
-                    shape = RoundedCornerShape(28.dp)
+                    shape = RoundedCornerShape(32.dp)
                 )
                 .padding(horizontal = 6.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -283,7 +283,7 @@ private fun PillTab(
         // Icon circle
         Box(
             modifier = Modifier
-                .size(32.dp)
+                .size(30.dp)
                 .clip(CircleShape)
                 .background(
                     if (isSelected) {
@@ -308,16 +308,16 @@ private fun PillTab(
                 imageVector = item.icon,
                 contentDescription = item.fallbackLabel,
                 tint = if (isSelected) Color(0xFF1F2937) else TextMuted,
-                modifier = Modifier.size(if (isSelected) 18.dp else 16.dp)
+                modifier = Modifier.size(if (isSelected) 17.dp else 15.dp)
             )
         }
 
-        Spacer(Modifier.height(2.dp))
+        Spacer(Modifier.height(3.dp))
 
         // Label
         Text(
             text = LanguageManager.translate(item.labelKey, currentLanguage, item.fallbackLabel),
-            fontSize = 8.sp,
+            fontSize = 10.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
             color = if (isSelected) GoldBright else TextMuted,
             maxLines = 1,
