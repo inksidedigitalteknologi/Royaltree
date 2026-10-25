@@ -142,11 +142,6 @@ fun AppDrawer(
             )
             DrawerItem(
                 icon = Icons.Default.TaskAlt,
-                label = LanguageManager.translate("nav_missions", currentLanguage, "Misi"),
-                selected = currentScreen == AppScreen.PURCHASE,
-                onClick = { onNavigate(AppScreen.PURCHASE); onCloseDrawer() }
-            )
-            DrawerItem(
                 icon = Icons.Default.CardGiftcard,
                 label = LanguageManager.translate("daily_title", currentLanguage, "Login Harian"),
                 selected = currentScreen == AppScreen.DAILY_CHECK_IN,

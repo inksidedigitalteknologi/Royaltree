@@ -363,10 +363,6 @@ private fun QuickActionsRow(
     onDailyCheckIn: () -> Unit,
     onMining: () -> Unit,
     onCoinRush: () -> Unit,
-    onMissions: () -> Unit
-) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -384,11 +380,9 @@ private fun QuickActionsRow(
                 QuickActionButton("🎁", LanguageManager.translate("profile_action_checkin", AppThemePreferences.currentLanguage, "Check-in"), EmeraldLight, onDailyCheckIn)
                 QuickActionButton("⛏️", LanguageManager.translate("profile_action_mining", AppThemePreferences.currentLanguage, "Production"), EmeraldLight, onMining)
                 QuickActionButton("🎰", LanguageManager.translate("profile_action_coinrush", AppThemePreferences.currentLanguage, "Coin Rush"), GoldVip, onCoinRush)
-                QuickActionButton("🎯", LanguageManager.translate("profile_action_missions", AppThemePreferences.currentLanguage, "Misi"), Color(0xFFEC4899), onMissions)
             }
         }
     }
-}
 
 @Composable
 private fun QuickActionButton(

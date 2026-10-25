@@ -448,7 +448,6 @@ fun MainAffiliateApp(
     val coupons by viewModel.investmentCoupons.collectAsState()
     val notifications by viewModel.notifications.collectAsState()
     val unreadNotifs by viewModel.unreadNotifCount.collectAsState()
-    val missions by viewModel.missions.collectAsState()
     val allUsers by viewModel.allUsers.collectAsState()
     val locationLogs by viewModel.locationLogs.collectAsState()
     val systemSettings by viewModel.systemSettings.collectAsState()
@@ -554,7 +553,7 @@ fun MainAffiliateApp(
         user = user,
         pendingMinerActivate = pendingMinerActivate,
         campaigns = campaigns,
-        links = links,
+        
         withdrawals = withdrawals,
         pendingWithdrawals = pendingWithdrawals,
         transactions = transactions,
@@ -571,8 +570,8 @@ fun MainAffiliateApp(
         isSyncingWithPortal = isSyncingWithPortal,
         currentScreen = currentScreen,
         currentLanguage = currentLanguage,
-        adButtonState = adButtonState,
-        onRetryAdLoad = { viewModel.retryAdLoad() },
+        
+        
         onLanguageChange = { viewModel.setLanguage(it) },
         snackbarMsg = snackbarMsg,
         showWithdraw = showWithdraw,
@@ -612,7 +611,7 @@ fun MainAffiliateApp(
         adsList = adsList,
         minerItems = minerItems,
         placedMiners = placedMiners,
-        roomState = roomState,
+        
         onNavigate = { viewModel.navigateTo(it) },
         onDismissSnackbar = { viewModel.dismissSnackbar() },
         onWithdrawSubmit = { amount, currency, channel, provider, accountDest, accountHolder ->
@@ -729,7 +728,6 @@ fun MainAffiliateAppContent(
     coupons: List<InvestmentCouponEntity>,
     notifications: List<NotificationEntity>,
     unreadNotifs: Int,
-    missions: List<TaskMissionEntity>,
     allUsers: List<UserEntity>,
     locationLogs: List<UserLocationLogEntity>,
     systemSettings: SystemSettingsEntity?,
@@ -865,7 +863,7 @@ fun MainAffiliateAppContent(
                     user = user,
                     currentScreen = currentScreen,
                     currentLanguage = currentLanguage,
-                    roomState = roomState,
+                    
                     onNavigate = { screen -> onNavigate(screen) },
                     onCloseDrawer = { coroutineScope.launch { drawerState.close() } },
                     onLogout = onLogout
@@ -929,10 +927,15 @@ fun MainAffiliateAppContent(
                 AppScreen.HOME -> {
                     BusinessHomeScreen(
                         user = user,
-                        links = links,
+                        affiliateBalance = affiliateBalance,
+                        referralCount = 0,
+                        referralActive = 0,
+                        referralPending = 0,
+                        checkInStreak = user?.checkInStreak ?: 0,
+                        
                         recentTransactions = transactions,
                         currentLanguage = currentLanguage,
-                        roomState = roomState,
+                        
                         onNavigate = { onNavigate(it) },
                         onOpenWithdraw = { onSetWithdrawModalVisible(true) },
                         onOpenNewLink = { onSetNewLinkModalVisible(true) },
@@ -940,7 +943,7 @@ fun MainAffiliateAppContent(
                         onOpenTransferQr = { onSetQrTransferModalVisible(true) },
                         onSimulateConversion = { onSimulateConversion(it) },
                         onOpenAdReward = { onSetAdRewardModalVisible(true) },
-                        adButtonState = adButtonState,
+                        
                         onRetryAdLoad = onRetryAdLoad
                     )
                 }
