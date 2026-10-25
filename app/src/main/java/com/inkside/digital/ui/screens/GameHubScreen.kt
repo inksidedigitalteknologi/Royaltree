@@ -159,47 +159,7 @@ fun GameHubScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    GameGridCard(
-                        title = LanguageManager.translate("game_hub_mining", currentLanguage, "Mining Tycoon"),
-                        emoji = "⛏️",
-                        gradient = listOf(RetroGold, RetroBrown),
-                        available = true,
-                        onClick = { onNavigate(AppScreen.GAME_MINING) },
-                        modifier = Modifier.weight(1f)
-                    )
-                    GameGridCard(
-                        title = LanguageManager.translate("game_hub_coinrush", currentLanguage, "Coin Rush"),
-                        emoji = "🎰",
-                        gradient = listOf(NeonPurple, NeonBlue),
-                        available = true,
-                        onClick = { onNavigate(AppScreen.GAME_COIN_RUSH) },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    GameGridCard(
-                        title = LanguageManager.translate("game_hub_dice", currentLanguage, "Dice Roll"),
-                        emoji = "🎲",
-                        gradient = listOf(NeonPink, NeonPurple),
-                        available = false,
-                        onClick = { },
-                        modifier = Modifier.weight(1f)
-                    )
-                    GameGridCard(
-                        title = LanguageManager.translate("nav_sweepstakes", currentLanguage, "Sweepstakes"),
-                        emoji = "🎟️",
-                        gradient = listOf(Color(0xFF10B981), Color(0xFF059669)),
-                        available = true,
-                        onClick = { onNavigate(AppScreen.SWEEPSTAKES) },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
+                    GameGrid                }
             }
 
             // ==== LEADERBOARD PREVIEW ====

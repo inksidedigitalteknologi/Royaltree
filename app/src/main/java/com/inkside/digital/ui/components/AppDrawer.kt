@@ -158,9 +158,7 @@ fun AppDrawer(
                 selected = currentScreen == AppScreen.DAILY_CHECK_IN,
                 onClick = { onNavigate(AppScreen.DAILY_CHECK_IN); onCloseDrawer() }
             )
-            DrawerItem(
-                icon = Icons.Default.Casino,
-                label = LanguageManager.translate("nav_sweepstakes", currentLanguage, "Sweepstakes"),
+
                 selected = currentScreen == AppScreen.SWEEPSTAKES,
                 onClick = { onNavigate(AppScreen.SWEEPSTAKES); onCloseDrawer() }
             )

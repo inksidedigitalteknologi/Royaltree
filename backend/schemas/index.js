@@ -112,13 +112,6 @@ const chatSchema = Joi.object({
     message: Joi.string().trim().min(1).max(500).required()
 });
 
-// ============================================================
-// SWEEPSTAKES
-// ============================================================
-const buyTicketSchema = Joi.object({
-    sweepstakesId: Joi.string().trim().min(1).max(100).required(),
-    ticketCount: Joi.number().integer().min(1).max(100).required()
-});
 
 // ============================================================
 // MISSION / CAMPAIGN

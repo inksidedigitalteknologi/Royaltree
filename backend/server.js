@@ -25,14 +25,12 @@ const { checkAdmin } = require('./middleware/checkAdmin');
 const gameRoutes = require('./routes/game');
 const purchaseRoutes = require('./routes/purchase');
 const affiliateRoutes = require('./routes/affiliate');
-const sweepstakesRoutes = require('./routes/sweepstakes');
 const transferRoutes = require('./routes/transfer');
 const chatRoutes = require('./routes/chat');
 const achievementsRoutes = require('./routes/achievements');
 
 // Rate limiting
 const { globalLimiter, authLimiter, sensitiveLimiter, miningLimiter, adsLimiter, chatLimiter, adminLoginLimiter } = require('./middleware/rateLimit');
-const sweepstakesJob = require('./jobs/sweepstakesJob');
 const { releasePendingCommission } = require('./services/affiliate');
 const { verifyFirebaseToken, verifyAuthAndBanCheck } = require('./middleware/firebaseAuth');
 const { usageTracker } = require('./middleware/usageTracker');
@@ -91,7 +89,6 @@ app.use('/api/v1/game', miningLimiter, verifyAuthAndBanCheck, gameRoutes);
 app.use('/api/v1/game/board', miningLimiter, verifyAuthAndBanCheck, boardRoutes);
 app.use('/api/v1/purchase', sensitiveLimiter, verifyAuthAndBanCheck, purchaseRoutes);
 app.use('/api/v1/affiliate', verifyAuthAndBanCheck, affiliateRoutes);
-app.use('/api/v1/sweepstakes', sensitiveLimiter, verifyAuthAndBanCheck, sweepstakesRoutes);
 app.use('/api/v1/achievements', verifyAuthAndBanCheck, achievementsRoutes);
 app.use('/api/v1/transfer', sensitiveLimiter, verifyAuthAndBanCheck, transferRoutes);
 app.use('/api/v1/chat', chatLimiter, verifyAuthAndBanCheck, chatRoutes);
@@ -1478,8 +1475,6 @@ app.listen(PORT, () => {
     logger.info(` Health:   http://localhost:${PORT}/api/v1/health`);
     logger.info(`====================================================`);
 
-    // Start sweepstakes auto-draw job (cek setiap 1 jam)
-    sweepstakesJob.start();
 });
 
 module.exports = app;

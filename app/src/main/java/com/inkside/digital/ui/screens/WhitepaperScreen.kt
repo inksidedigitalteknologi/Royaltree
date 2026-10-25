@@ -95,7 +95,7 @@ fun WhitepaperScreen(
                     "RTP adalah token utility internal Royaltree. Digunakan untuk:\n" +
                     "• Membeli & upgrade miner\n" +
                     "• Transfer ke sesama pengguna\n" +
-                    "• Menukar dengan reward (sweepstakes, withdrawal)\n\n" +
+                    "• Menukar dengan reward (withdrawal)\n\n" +
                     "Total supply terbatas, dengan mekanisme halving setiap 1,000 block.")
             ),
             WhitepaperSection(

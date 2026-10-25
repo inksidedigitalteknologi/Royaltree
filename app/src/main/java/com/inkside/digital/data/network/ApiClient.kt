@@ -977,51 +977,6 @@ object ApiClient {
 
     // ============ SWEEPSTAKES ============
 
-    suspend fun getSweepstakesCurrent(): Result<JSONObject> = withContext(Dispatchers.IO) {
-        try {
-            val response: ResponseBody = apiService.getSweepstakesCurrent()
-            Result.success(JSONObject(response.string()))
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun buySweepstakesTickets(quantity: Int): Result<JSONObject> = withContext(Dispatchers.IO) {
-        try {
-            val body = JSONObject().apply { put("quantity", quantity) }
-            val requestBody = body.toString().toRequestBody(JSON_MEDIA)
-            val response: ResponseBody = apiService.buySweepstakesTickets(requestBody)
-            Result.success(JSONObject(response.string()))
-        } catch (e: retrofit2.HttpException) {
-            try {
-                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
-                val json = JSONObject(errorBody)
-                json.put("httpCode", e.code())
-                Result.success(json)
-            } catch (parseErr: Exception) {
-                Result.failure(e)
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun getSweepstakesHistory(): Result<JSONObject> = withContext(Dispatchers.IO) {
-        try {
-            val response: ResponseBody = apiService.getSweepstakesHistory()
-            Result.success(JSONObject(response.string()))
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun getSweepstakesWinners(id: String): Result<JSONObject> = withContext(Dispatchers.IO) {
-        try {
-            val response: ResponseBody = apiService.getSweepstakesWinners(id)
-            Result.success(JSONObject(response.string()))
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
     }
 
     suspend fun getMyTickets(): Result<JSONObject> = withContext(Dispatchers.IO) {
