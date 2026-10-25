@@ -161,7 +161,7 @@ fun PurchaseScreen(
                 Tab(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
-                    text = { Text("⛏️ ${LanguageManager.translate("purchase_tab_miner", AppThemePreferences.currentLanguage, "Miner")}", fontSize = 12.sp, fontWeight = FontWeight.Bold) }
+                    text = { Text("⛏️ ${LanguageManager.translate("purchase_tab_miner", AppThemePreferences.currentLanguage, "Processor")}", fontSize = 12.sp, fontWeight = FontWeight.Bold) }
                 )
                 Tab(
                     selected = selectedTab == 3,

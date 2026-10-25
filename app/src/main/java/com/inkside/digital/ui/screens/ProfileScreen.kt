@@ -384,7 +384,7 @@ private fun QuickActionsRow(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 QuickActionButton("🎁", LanguageManager.translate("profile_action_checkin", AppThemePreferences.currentLanguage, "Check-in"), EmeraldLight, onDailyCheckIn)
-                QuickActionButton("⛏️", LanguageManager.translate("profile_action_mining", AppThemePreferences.currentLanguage, "Mining"), EmeraldLight, onMining)
+                QuickActionButton("⛏️", LanguageManager.translate("profile_action_mining", AppThemePreferences.currentLanguage, "Production"), EmeraldLight, onMining)
                 QuickActionButton("🎰", LanguageManager.translate("profile_action_coinrush", AppThemePreferences.currentLanguage, "Coin Rush"), GoldVip, onCoinRush)
                 QuickActionButton("🎯", LanguageManager.translate("profile_action_missions", AppThemePreferences.currentLanguage, "Misi"), Color(0xFFEC4899), onMissions)
             }

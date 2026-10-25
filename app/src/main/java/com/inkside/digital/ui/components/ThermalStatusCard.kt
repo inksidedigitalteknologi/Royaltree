@@ -103,7 +103,7 @@ fun ThermalStatusCard(viewModel: AffiliateViewModel) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Hashrate",
+                    "Production Rate",
                     fontSize = 10.sp,
                     color = Color.White.copy(alpha = 0.5f)
                 )
@@ -154,7 +154,7 @@ fun ThermalStatusCard(viewModel: AffiliateViewModel) {
                             when (pauseReason) {
                                 "battery_critical" -> "Baterai kritis — charge HP"
                                 "temp_critical" -> "HP terlalu panas — dinginkan"
-                                else -> "Mining dijeda"
+                                else -> "Production paused"
                             },
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,

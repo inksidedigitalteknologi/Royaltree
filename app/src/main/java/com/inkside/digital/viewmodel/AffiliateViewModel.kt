@@ -1405,7 +1405,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
 
                 ApiClient.unlockMiner(body).onSuccess { json ->
                     if (json.optBoolean("success", false)) {
-                        showSnackbar(json.optString("message", LanguageManager.translate("vm_miner_unlocked", _currentLanguage.value, "Miner berhasil di-unlock!")))
+                        showSnackbar(json.optString("message", LanguageManager.translate("vm_miner_unlocked", _currentLanguage.value, "Processor berhasil di-unlock!")))
                         loadGameState()
                         loadMinerCatalog()
                     } else {

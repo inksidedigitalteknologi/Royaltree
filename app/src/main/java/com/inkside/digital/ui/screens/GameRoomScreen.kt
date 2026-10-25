@@ -309,7 +309,7 @@ fun GameRoomScreenContent(
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = LanguageManager.translate("game_room_title", AppThemePreferences.currentLanguage, "Royaltree Mining Room"),
+                                text = LanguageManager.translate("game_room_title", AppThemePreferences.currentLanguage, "RTP Studio"),
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
@@ -939,7 +939,7 @@ fun GameRoomScreenContent(
             icon = { Text(if (isBattery) "🔋" else "⛔", fontSize = 40.sp) },
             title = {
                 Text(
-                    text = if (isBattery) "Baterai Kritis" else "Mining Dijeda",
+                    text = if (isBattery) "Baterai Kritis" else "Production Paused",
                     fontWeight = FontWeight.Bold
                 )
             },
@@ -1322,7 +1322,7 @@ private fun MiningRoomTab(
                                                                 color = EmeraldLight
                                                             )
                                                             Text(
-                                                                text = LanguageManager.translate("game_mining_running", AppThemePreferences.currentLanguage, "Mining berjalan..."),
+                                                                text = LanguageManager.translate("game_mining_running", AppThemePreferences.currentLanguage, "Production running..."),
                                                                 fontSize = 10.sp,
                                                                 color = Color.White.copy(alpha = 0.6f)
                                                             )
@@ -1823,7 +1823,7 @@ private fun RackSlotItemCard(
                     color = EmeraldPrimary.copy(alpha = 0.7f)
                 )
                 Text(
-                    "Miner",
+                    "Processor",
                     fontSize = 9.sp,
                     color = Color(0xFF64748B)
                 )
