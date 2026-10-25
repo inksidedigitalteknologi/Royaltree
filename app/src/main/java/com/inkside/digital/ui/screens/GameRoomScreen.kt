@@ -1171,7 +1171,7 @@ private fun MiningRoomTab(
                                 // Thermal Status Card — di atas Rate Breakdown
                     
                                 // Rate Breakdown Card (weighted adaptive)
-                                RateBreakdownCard(roomState = roomState, placedMiners = placedMiners)
+                                RateBreakdownCard(roomState = roomState, placedMiners = placedMiners, minerItems = minerItems)
 
                             }
                         }
@@ -2534,7 +2534,8 @@ private fun ComparisonRow(
 @Composable
 private fun RateBreakdownCard(
     roomState: GameRoomStateEntity?,
-    placedMiners: List<GameMinerItemEntity> = emptyList()
+    placedMiners: List<GameMinerItemEntity> = emptyList(),
+    minerItems: List<GameMinerItemEntity> = emptyList()
 ) {
     if (roomState == null) return
 
