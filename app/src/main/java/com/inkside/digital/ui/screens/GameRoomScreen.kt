@@ -1917,8 +1917,8 @@ private fun ItemShopTab(
 
         }
 
-        // Shop items list
-        items(minerItems) { item ->
+        // Shop items list — 1 per tier
+        items(minerItems.distinctBy { it.tier }) { item ->
             ShopMinerCard(
                 item = item,
                 userPoints = userPoints,
