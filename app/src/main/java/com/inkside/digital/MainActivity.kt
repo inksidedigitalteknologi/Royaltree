@@ -927,24 +927,33 @@ fun MainAffiliateAppContent(
                 AppScreen.HOME -> {
                     BusinessHomeScreen(
                         user = user,
-                        affiliateBalance = affiliateBalance,
+                        recentTransactions = recentTransactions,
+                        currentLanguage = currentLanguage,
+                        affiliateBalance = (affiliateBalance as? com.inkside.digital.viewmodel.AffiliateViewModel.AffiliateBalanceData)?.available ?: 0.0,
                         referralCount = 0,
                         referralActive = 0,
                         referralPending = 0,
                         checkInStreak = user?.checkInStreak ?: 0,
+                        onNavigate = { screen ->
+                            when (screen) {
+                                "GAME_ROOM" -> onNavigate(AppScreen.GAME_ROOM)
+                                "HISTORY" -> onNavigate(AppScreen.HISTORY)
+                                else -> {}
+                            }
+                        },
                         
                         recentTransactions = transactions,
                         currentLanguage = currentLanguage,
                         
                         onNavigate = { onNavigate(it) },
                         onOpenWithdraw = { onSetWithdrawModalVisible(true) },
-                        onOpenNewLink = { onSetNewLinkModalVisible(true) },
-                        onOpenUpgrade = { onNavigate(AppScreen.PURCHASE) },
-                        onOpenTransferQr = { onSetQrTransferModalVisible(true) },
-                        onSimulateConversion = { onSimulateConversion(it) },
-                        onOpenAdReward = { onSetAdRewardModalVisible(true) },
                         
-                        onRetryAdLoad = onRetryAdLoad
+                        
+                        
+                        
+                        
+                        
+                        
                     )
                 }
 
@@ -984,7 +993,7 @@ fun MainAffiliateAppContent(
                         affiliateBalance = affiliateBalance,
                         onOpenWithdraw = onOpenWithdraw,
                         onOpenWithdrawHistory = onOpenWithdrawHistory,
-                        onOpenUpgrade = { onNavigate(AppScreen.PURCHASE) },
+                        
                         onNavigateToDailyCheckIn = { onNavigate(AppScreen.DAILY_CHECK_IN) },
                         onNavigateToMining = { onNavigate(AppScreen.GAME_MINING) },
                         onNavigateToCoinRush = { onNavigate(AppScreen.GAME_COIN_RUSH) },

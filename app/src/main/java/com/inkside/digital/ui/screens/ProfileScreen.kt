@@ -362,7 +362,9 @@ private fun QuickActionsRow(
     currentLanguage: AppLanguage,
     onDailyCheckIn: () -> Unit,
     onMining: () -> Unit,
-    onCoinRush: () -> Unit,
+    onCoinRush: () -> Unit
+) {
+    Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -383,6 +385,7 @@ private fun QuickActionsRow(
             }
         }
     }
+}
 
 @Composable
 private fun QuickActionButton(

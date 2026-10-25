@@ -140,44 +140,7 @@ fun AppDrawer(
                 selected = currentScreen == AppScreen.HOME,
                 onClick = { onNavigate(AppScreen.HOME); onCloseDrawer() }
             )
-            DrawerItem(
-                icon = Icons.Default.TaskAlt,
-                icon = Icons.Default.CardGiftcard,
-                label = LanguageManager.translate("daily_title", currentLanguage, "Login Harian"),
-                selected = currentScreen == AppScreen.DAILY_CHECK_IN,
-                onClick = { onNavigate(AppScreen.DAILY_CHECK_IN); onCloseDrawer() }
-            )
 
-            DrawerItem(
-                icon = Icons.AutoMirrored.Filled.Send,
-                label = LanguageManager.translate("nav_transfer", currentLanguage, "Transfer"),
-                selected = currentScreen == AppScreen.TRANSFER,
-                onClick = { onNavigate(AppScreen.TRANSFER); onCloseDrawer() }
-            )
-            DrawerItem(
-                icon = Icons.Default.MonetizationOn,
-                label = LanguageManager.translate("nav_withdraw", currentLanguage, "Penarikan"),
-                selected = currentScreen == AppScreen.WITHDRAW,
-                onClick = { onNavigate(AppScreen.WITHDRAW); onCloseDrawer() }
-            )
-            DrawerItem(
-                icon = Icons.Default.TrendingUp,
-                label = LanguageManager.translate("nav_invest", currentLanguage, "Investasi Kupon"),
-                selected = currentScreen == AppScreen.INVEST,
-                onClick = { onNavigate(AppScreen.INVEST); onCloseDrawer() }
-            )
-            DrawerItem(
-                icon = Icons.Default.History,
-                label = LanguageManager.translate("nav_history", currentLanguage, "Riwayat"),
-                selected = currentScreen == AppScreen.HISTORY,
-                onClick = { onNavigate(AppScreen.HISTORY); onCloseDrawer() }
-            )
-            DrawerItem(
-                icon = Icons.Default.CardGiftcard,
-                label = LanguageManager.translate("referral_title", currentLanguage, "Undang Teman"),
-                selected = currentScreen == AppScreen.REFERRAL,
-                onClick = { onNavigate(AppScreen.REFERRAL); onCloseDrawer() }
-            )
 
             Spacer(Modifier.height(8.dp))
 
@@ -189,30 +152,6 @@ fun AppDrawer(
                 emoji = "💬"
             )
 
-            DrawerItem(
-                icon = Icons.Default.Chat,
-                label = LanguageManager.translate("chat_title", currentLanguage, "Global Chat"),
-                selected = currentScreen == AppScreen.GLOBAL_CHAT,
-                onClick = { onNavigate(AppScreen.GLOBAL_CHAT); onCloseDrawer() }
-            )
-            DrawerItem(
-                icon = Icons.Default.MenuBook,
-                label = LanguageManager.translate("wp_title", currentLanguage, "Whitepaper"),
-                selected = currentScreen == AppScreen.WHITEPAPER,
-                onClick = { onNavigate(AppScreen.WHITEPAPER); onCloseDrawer() }
-            )
-            DrawerItem(
-                icon = Icons.Default.EmojiEvents,
-                label = LanguageManager.translate("achievement_title", currentLanguage, "Achievement"),
-                selected = currentScreen == AppScreen.ACHIEVEMENT,
-                onClick = { onNavigate(AppScreen.ACHIEVEMENT); onCloseDrawer() }
-            )
-            DrawerItem(
-                icon = Icons.AutoMirrored.Filled.HelpOutline,
-                label = LanguageManager.translate("faq_title", currentLanguage, "Bantuan"),
-                selected = currentScreen == AppScreen.FAQ,
-                onClick = { onNavigate(AppScreen.FAQ); onCloseDrawer() }
-            )
 
             Spacer(Modifier.height(8.dp))
 
@@ -224,18 +163,6 @@ fun AppDrawer(
                 emoji = "👤"
             )
 
-            DrawerItem(
-                icon = Icons.Default.Person,
-                label = LanguageManager.translate("nav_profile", currentLanguage, "Profil"),
-                selected = currentScreen == AppScreen.PROFILE,
-                onClick = { onNavigate(AppScreen.PROFILE); onCloseDrawer() }
-            )
-            DrawerItem(
-                icon = Icons.Default.Settings,
-                label = LanguageManager.translate("settings_title", currentLanguage, "Pengaturan"),
-                selected = currentScreen == AppScreen.SETTINGS,
-                onClick = { onNavigate(AppScreen.SETTINGS); onCloseDrawer() }
-            )
 
             Spacer(Modifier.height(20.dp))
 
@@ -263,7 +190,6 @@ fun AppDrawer(
             // ═══════════════════════════════════════════
             LogoutButton(
                 text = LanguageManager.translate("settings_logout", currentLanguage, "Keluar"),
-                onClick = { showLogoutDialog = true }
             )
 
             Spacer(Modifier.height(16.dp))
@@ -314,7 +240,6 @@ private fun PremiumDrawerHeader(user: UserEntity?, currentLanguage: AppLanguage,
             animation = tween(2400, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "glow_alpha"
     )
 
     Box(
@@ -596,7 +521,6 @@ private fun DrawerItem(
     val scale by animateFloatAsState(
         targetValue = if (pressed) 0.97f else 1f,
         animationSpec = tween(120),
-        label = "scale"
     )
 
     Row(
@@ -622,7 +546,6 @@ private fun DrawerItem(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = onClick
             )
             .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -691,7 +614,6 @@ private fun LogoutButton(text: String, onClick: () -> Unit) {
     val scale by animateFloatAsState(
         targetValue = if (pressed) 0.97f else 1f,
         animationSpec = tween(120),
-        label = "logoutScale"
     )
 
     Row(
@@ -711,7 +633,6 @@ private fun LogoutButton(text: String, onClick: () -> Unit) {
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = onClick
             )
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
