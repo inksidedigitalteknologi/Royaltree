@@ -609,7 +609,7 @@ private fun MiningStatsCard(
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
             Text(
-                LanguageManager.translate("profile_mining_status", AppThemePreferences.currentLanguage, "⛏️ Status Mining"),
+                LanguageManager.translate("profile_mining_status", AppThemePreferences.currentLanguage, "⛏️ Status Production"),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -621,7 +621,7 @@ private fun MiningStatsCard(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 MiniStatBox(LanguageManager.translate("profile_slot", AppThemePreferences.currentLanguage, "Slot"), "$slotsUsed/$slotsMax", EmeraldLight, Modifier.weight(1f))
-                MiniStatBox(LanguageManager.translate("profile_power", AppThemePreferences.currentLanguage, "Power"), HashrateFormatter.format(powerHs), EmeraldLight, Modifier.weight(1f))
+                MiniStatBox(LanguageManager.translate("profile_power", AppThemePreferences.currentLanguage, "Capacity"), HashrateFormatter.format(powerHs), EmeraldLight, Modifier.weight(1f))
                 MiniStatBox("RTP", "${GlobalPointsManager.formatRtp(userPoints)}", GoldVip, Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(6.dp))

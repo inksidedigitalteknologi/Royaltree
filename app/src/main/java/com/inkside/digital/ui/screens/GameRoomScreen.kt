@@ -1417,7 +1417,7 @@ private fun MiningRoomTab(
                                             Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
                                             Spacer(modifier = Modifier.width(6.dp))
                                             Text(
-                                                text = "🎬 ${LanguageManager.translate("game_miner_button", AppThemePreferences.currentLanguage, "Aktifkan Miner (Tonton Iklan)")}",
+                                                text = "🎬 ${LanguageManager.translate("game_miner_button", AppThemePreferences.currentLanguage, "Aktifkan Processor (Tonton Iklan)")}",
                                                 color = Color.Black,
                                                 fontWeight = FontWeight.Bold,
                                                 fontSize = 13.sp
@@ -1530,7 +1530,7 @@ private fun MiningRoomTab(
                                 fontSize = 13.sp
                             )
                             Text(
-                                text = String.format(LanguageManager.translate("game_arcade_desc", AppThemePreferences.currentLanguage, "Mainkan Mini-Game Arcade Coin Rush (+%s Power Boost & Poin langsung)!"), HashrateFormatter.format(80L)),
+                                text = String.format(LanguageManager.translate("game_arcade_desc", AppThemePreferences.currentLanguage, "Mainkan Mini-Game Arcade Coin Rush (+%s Production Boost & Poin langsung)!"), HashrateFormatter.format(80L)),
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -1903,7 +1903,7 @@ private fun ItemShopTab(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = LanguageManager.translate("game_unlock_miner", AppThemePreferences.currentLanguage, "Unlock Miner dengan RTP"),
+                            text = LanguageManager.translate("game_unlock_miner", AppThemePreferences.currentLanguage, "Unlock Processor dengan RTP"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
                         )
@@ -2318,7 +2318,7 @@ private fun MiniGameArcadeTab(
                         }
 
                         Text(
-                            text = String.format(LanguageManager.translate("game_arcade_desc_long", AppThemePreferences.currentLanguage, "Mainkan game 15 detik! Ketuk koin & permata secepat mungkin untuk mendapatkan +20 s/d 60 Poin instan dan +%s Power Boost selama 2 jam."), HashrateFormatter.format(80L)),
+                            text = String.format(LanguageManager.translate("game_arcade_desc_long", AppThemePreferences.currentLanguage, "Mainkan game 15 detik! Ketuk koin & permata secepat mungkin untuk mendapatkan +20 s/d 60 Poin instan dan +%s Production Boost selama 2 jam."), HashrateFormatter.format(80L)),
                             fontSize = 11.sp,
                             color = Color(0xFFE0E7FF)
                         )
@@ -2907,7 +2907,7 @@ private fun FusionTab(
                     }
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "⚠️ Miner yang dilebur akan HILANG permanen",
+                        "⚠️ Processor yang dilebur akan HILANG permanen",
                         fontSize = 11.sp,
                         color = Color(0xFFEF4444),
                         fontWeight = FontWeight.Bold

@@ -80,12 +80,12 @@ fun WhitepaperScreen(
             ),
             WhitepaperSection(
                 icon = Icons.Filled.Bolt,
-                title = LanguageManager.translate("wp_mining_title", currentLanguage, "Cara Mining"),
+                title = LanguageManager.translate("wp_mining_title", currentLanguage, "Cara Production"),
                 content = LanguageManager.translate("wp_mining_content", currentLanguage,
                     "1. Beli miner dari marketplace menggunakan RTP.\n" +
                     "2. Tempatkan miner di rak (slot terbatas).\n" +
                     "3. Aktifkan miner 6 jam dengan menonton iklan.\n" +
-                    "4. Miner menghasilkan RTP secara pasif setiap menit.\n" +
+                    "4. Processor menghasilkan RTP secara pasif setiap menit.\n" +
                     "5. Block reward dibagikan setiap 30 menit (epoch).")
             ),
             WhitepaperSection(
@@ -105,7 +105,7 @@ fun WhitepaperScreen(
                     "Ekonomi Royaltree dirancang berkelanjutan:\n" +
                     "• 10% rate user masuk ke Pool Fund\n" +
                     "• Pool Fund membiayai block reward\n" +
-                    "• Difficulty naik seiring total hashrate network\n" +
+                    "• Difficulty naik seiring total production rate network\n" +
                     "• Anti-whale: diminishing return & soft cap")
             ),
             WhitepaperSection(

@@ -822,7 +822,7 @@ fun InteractiveMissionDialog(
                         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                             Text("🎮", fontSize = 32.sp)
                             Spacer(modifier = Modifier.height(6.dp))
-                            Text(LanguageManager.translate("mission_game_promo", currentLanguage, "Buka Ruang Mining Royaltree untuk menghasilkan RTP pasif 24/7!"), fontSize = 11.sp)
+                            Text(LanguageManager.translate("mission_game_promo", currentLanguage, "Buka RTP Studio untuk menghasilkan RTP pasif 24/7!"), fontSize = 11.sp)
                         }
                     }
                 }
