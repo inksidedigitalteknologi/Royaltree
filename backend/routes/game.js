@@ -1805,16 +1805,15 @@ router.post('/minigame/finish', verifyFirebaseToken, checkFraud, async (req, res
         const boostGhs = 0.00008;
         const boostExpiry = now + 7200000;  // 2 jam
 
-        // M43: Random speed bonus drop (0.01% - 0.03%)
-        // 60% common (+0.01%), 30% uncommon (+0.02%), 10% rare (+0.03%)
-        const roll = Math.random();
-        let speedBonusDropped = 0.01;
-        if (roll >= 0.90) {
-            speedBonusDropped = 0.03;      // 10% rare
-        } else if (roll >= 0.60) {
-            speedBonusDropped = 0.02;      // 30% uncommon
+        // Skill-based speed bonus drop (bukan chance-based)
+        // Bonus berdasarkan skor mini-game — deterministik
+        let speedBonusDropped;
+        if (score >= 900) {
+            speedBonusDropped = 0.03;      // skor tinggi
+        } else if (score >= 600) {
+            speedBonusDropped = 0.02;      // skor sedang
         } else {
-            speedBonusDropped = 0.01;      // 60% common
+            speedBonusDropped = 0.01;      // skor rendah
         }
 
         // Baca current state untuk stack + cap
