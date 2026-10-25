@@ -84,7 +84,6 @@ import com.inkside.digital.ui.screens.ProfileScreen
 import com.inkside.digital.ui.screens.AppOffersScreenContent
 import com.inkside.digital.ui.screens.GameRoomScreenContent
 import com.inkside.digital.ui.screens.GameHubScreen
-import com.inkside.digital.ui.screens.LeaderboardScreen
 import com.inkside.digital.ui.screens.WithdrawalScreen
 import com.inkside.digital.ui.screens.TransferSimpleScreen
 import com.inkside.digital.ui.theme.MyApplicationTheme
@@ -1136,11 +1135,6 @@ fun MainAffiliateAppContent(
                 }
 
                 AppScreen.LEADERBOARD -> {
-                    LeaderboardScreen(
-                        currentLanguage = currentLanguage,
-                        currentUserId = user?.id,
-                        onBack = { onNavigate(AppScreen.GAME_ROOM) }
-                    )
                 }
 
                 AppScreen.GAME_COIN_RUSH -> {
