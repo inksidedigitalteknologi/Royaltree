@@ -969,7 +969,6 @@ object ApiClient {
 
     // ============ SWEEPSTAKES ============
 
-    }
 
     suspend fun getMyTickets(): Result<JSONObject> = withContext(Dispatchers.IO) {
         try {
@@ -1084,6 +1083,5 @@ object ApiClient {
             Result.failure(e)
         }
     }
-}
 
 

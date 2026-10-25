@@ -285,11 +285,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         _snackbarMessage.value = LanguageManager.translate("vm_switch_account", _currentLanguage.value, "Beralih akun: ${targetUser?.name ?: userId}")
     }
 
-        }
-    }
 
-        }
-    }
 
     fun downloadApp(adId: String) {
         viewModelScope.launch {
@@ -830,9 +826,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             }.onFailure {
                 showSnackbar(it.message ?: LanguageManager.translate("vm_upgrade_failed", _currentLanguage.value, "Upgrade gagal"))
             }
-        }
-    }
-
         }
     }
 

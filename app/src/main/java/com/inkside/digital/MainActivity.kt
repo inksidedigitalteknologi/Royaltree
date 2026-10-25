@@ -1222,7 +1222,6 @@ fun MainAffiliateAppContent(
 
 
         }
-    }
 
     if (adBlockedReason != null) {
         AdBlockedDialog(
@@ -1290,7 +1289,6 @@ fun MainAffiliateAppContent(
             onDismiss = onTransferReceiptDismiss
         )
     }
-}
 
 
 @Composable
