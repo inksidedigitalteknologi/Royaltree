@@ -942,9 +942,9 @@ fun GameRoomScreenContent(
             text = {
                 Text(
                     text = if (isBattery)
-                        "Baterai HP kritis. Mining dijeda sampai HP dicharge.\n\nCharge HP untuk lanjut mining."
+                        "Baterai HP kritis. Produksi dijeda sampai HP dicharge.\n\nCharge HP untuk lanjut produksi."
                     else
-                        "HP terlalu panas. Mining dijeda otomatis sampai suhu turun (< 55°C).\n\nDinginkan HP atau cabut charger untuk lanjut mining."
+                        "HP terlalu panas. Produksi dijeda otomatis sampai suhu turun (< 55°C).\n\nDinginkan HP atau cabut charger untuk lanjut produksi."
                 )
             },
             confirmButton = {
@@ -1064,8 +1064,7 @@ private fun MiningRoomTab(
                     // ==== CARD 1: HEADER ====
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 20.dp),
+                            .fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         // Card 1: Header saja
@@ -1961,7 +1960,7 @@ private fun SlotMinerCard(
             .clickable { onInstall() }
     ) {
         Row(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Icon 40dp
@@ -2645,20 +2644,6 @@ private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
                     .height(1.dp)
                     .background(EmeraldLight.copy(alpha = 0.15f))
             )
-
-            // Base rate
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text("Base rate", fontSize = 10.sp, color = Color(0xFF94A3B8))
-                Text(
-                    String.format(Locale.US, "%.5f/mnt", baseRate),
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White
-                )
-            }
 
             // Factor rows (4)
             if (deltas != null && weights != null) {
