@@ -65,8 +65,8 @@ fun WithdrawalScreen(
     onSubmitWithdrawal: (amount: Double, channelType: String, providerName: String, accountDestination: String, accountHolderName: String) -> Unit
 ) {
     var amount by remember { mutableStateOf("") }
-    var channelType by remember { mutableStateOf("E_WALLET") }
-    var providerName by remember { mutableStateOf("GoPay") }
+    var channelType by remember { mutableStateOf("PAYPAL") }
+    var providerName by remember { mutableStateOf("PayPal") }
     var accountDestination by remember { mutableStateOf("") }
     var accountHolderName by remember { mutableStateOf("") }
     var showConfirmDialog by remember { mutableStateOf(false) }
@@ -93,11 +93,7 @@ fun WithdrawalScreen(
     }
     val minAmount = configMinAmount
 
-    val providers = if (channelType == "E_WALLET") {
-        listOf("GoPay", "DANA", "OVO", "ShopeePay", "LinkAja")
-    } else {
-        listOf("BCA", "Mandiri", "BNI", "BRI", "CIMB Niaga")
-    }
+    val providers = listOf("PayPal")
 
     val amountValue = amount.toDoubleOrNull() ?: 0.0
     val canSubmit = amountValue >= minAmount && amountValue <= balance &&

@@ -102,7 +102,6 @@ fun MissionsScreen(
     onBack: () -> Unit,
     onClaimMission: (missionId: String) -> Unit,
     onCompleteTaskAction: (missionId: String) -> Unit,
-    onOpenRedeemPoints: () -> Unit,
     onOpenTransferQr: () -> Unit = {},
     onOpenWatchAd: () -> Unit,
     onNavigateToGameRoom: () -> Unit = {}
@@ -239,10 +238,8 @@ fun MissionsScreen(
                                     Surface(
                                         color = EmeraldLight.copy(alpha = 0.15f),
                                         shape = RoundedCornerShape(8.dp),
-                                        modifier = Modifier.clickable { onOpenRedeemPoints() }
                                     ) {
                                         Text(
-                                            text = "Tukar >",
                                             fontSize = 10.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = EmeraldLight,

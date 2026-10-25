@@ -52,7 +52,6 @@ import com.inkside.digital.ui.components.ListCouponModal
 import com.inkside.digital.ui.components.NewLinkModal
 import com.inkside.digital.ui.components.PaymentGatewaySimulatorModal
 import com.inkside.digital.ui.components.QrTransferModal
-import com.inkside.digital.ui.components.RedeemPointsModal
 import com.inkside.digital.ui.components.TransferReceiptDialog
 import com.inkside.digital.ui.components.TwoFactorModal
 import com.inkside.digital.ui.components.WithdrawDialog
@@ -495,7 +494,6 @@ fun MainAffiliateApp(
     val showWithdraw by viewModel.showWithdrawModal.collectAsState()
     val showNewLink by viewModel.showNewLinkModal.collectAsState()
     val showUpgrade by viewModel.showUpgradeModal.collectAsState()
-    val showRedeemPoints by viewModel.showRedeemPointsModal.collectAsState()
     val showDailyCheckIn by viewModel.showDailyCheckInModal.collectAsState()
     val buyCouponTarget by viewModel.showBuyCouponModal.collectAsState()
     val listCouponTarget by viewModel.showListCouponModal.collectAsState()
@@ -584,7 +582,6 @@ fun MainAffiliateApp(
         showWithdraw = showWithdraw,
         showNewLink = showNewLink,
         showUpgrade = showUpgrade,
-        showRedeemPoints = showRedeemPoints,
         showDailyCheckIn = showDailyCheckIn,
         buyCouponTarget = buyCouponTarget,
         listCouponTarget = listCouponTarget,
@@ -635,8 +632,6 @@ fun MainAffiliateApp(
         onUpgradeDismiss = { viewModel.showUpgradeModal.value = false },
         onUpgradeConfirm = { viewModel.upgradeToPremium() },
         onFinishMiniGame = { score -> viewModel.finishMiniGame(score) },
-        onRedeemDismiss = { viewModel.showRedeemPointsModal.value = false },
-        onRedeemConfirm = { pts, wallet, phone, curr -> viewModel.redeemPoints(pts, wallet, phone, curr) },
         onRedeemOpenQr = { viewModel.showQrTransferModal.value = true },
         onDailyCheckInDismiss = { viewModel.showDailyCheckInModal.value = false },
         onDailyCheckInClaim = { viewModel.performDailyCheckIn() },
@@ -692,7 +687,6 @@ fun MainAffiliateApp(
         onSetWithdrawModalVisible = { viewModel.showWithdrawModal.value = it },
         onSetNewLinkModalVisible = { viewModel.showNewLinkModal.value = it },
         onSetUpgradeModalVisible = { viewModel.showUpgradeModal.value = it },
-        onSetRedeemPointsModalVisible = { viewModel.showRedeemPointsModal.value = it },
         onSetQrTransferModalVisible = { viewModel.showQrTransferModal.value = it },
         onSetAdRewardModalVisible = { viewModel.showAdRewardModal.value = it },
         onSetBuyCouponModalVisible = { viewModel.showBuyCouponModal.value = it },
@@ -757,7 +751,6 @@ fun MainAffiliateAppContent(
     showWithdraw: Boolean,
     showNewLink: Boolean,
     showUpgrade: Boolean,
-    showRedeemPoints: Boolean,
     showDailyCheckIn: Boolean,
     buyCouponTarget: InvestmentCouponEntity?,
     listCouponTarget: InvestmentCouponEntity?,
@@ -795,8 +788,6 @@ fun MainAffiliateAppContent(
     onNewLinkCreate: (CampaignEntity, String, String) -> Unit,
     onUpgradeDismiss: () -> Unit,
     onUpgradeConfirm: () -> Unit,
-    onRedeemDismiss: () -> Unit,
-    onRedeemConfirm: (Int, String, String, String) -> Unit,
     onRedeemOpenQr: () -> Unit,
     onDailyCheckInDismiss: () -> Unit,
     onDailyCheckInClaim: () -> Unit,
@@ -832,7 +823,6 @@ fun MainAffiliateAppContent(
     onSetWithdrawModalVisible: (Boolean) -> Unit,
     onSetNewLinkModalVisible: (Boolean) -> Unit,
     onSetUpgradeModalVisible: (Boolean) -> Unit,
-    onSetRedeemPointsModalVisible: (Boolean) -> Unit,
     onSetQrTransferModalVisible: (Boolean) -> Unit,
     onSetAdRewardModalVisible: (Boolean) -> Unit,
     onSetBuyCouponModalVisible: (InvestmentCouponEntity?) -> Unit,
@@ -951,7 +941,6 @@ fun MainAffiliateAppContent(
                         onOpenWithdraw = { onSetWithdrawModalVisible(true) },
                         onOpenNewLink = { onSetNewLinkModalVisible(true) },
                         onOpenUpgrade = { onNavigate(AppScreen.PURCHASE) },
-                        onOpenRedeemPoints = { onSetRedeemPointsModalVisible(true) },
                         onOpenTransferQr = { onSetQrTransferModalVisible(true) },
                         onSimulateConversion = { onSimulateConversion(it) },
                         onOpenAdReward = { onSetAdRewardModalVisible(true) },
@@ -1023,7 +1012,6 @@ fun MainAffiliateAppContent(
                         onBack = { onNavigate(AppScreen.HOME) },
                         onClaimMission = { onClaimMission(it) },
                         onCompleteTaskAction = { onCompleteTaskAction(it) },
-                        onOpenRedeemPoints = { onSetRedeemPointsModalVisible(true) },
                         onOpenTransferQr = { onSetQrTransferModalVisible(true) },
                         onOpenWatchAd = { onSetAdRewardModalVisible(true) }
                     )
@@ -1233,95 +1221,6 @@ fun MainAffiliateAppContent(
     }
 
 
-    if (showRedeemPoints) {
-        RedeemPointsModal(
-            user = user,
-            currentLanguage = currentLanguage,
-            onDismiss = onRedeemDismiss,
-            onRedeem = onRedeemConfirm,
-            onOpenTransferQr = onRedeemOpenQr
-        )
-    }
-
-    if (showDailyCheckIn) {
-        DailyCheckInModal(
-            user = user,
-            onDismiss = onDailyCheckInDismiss,
-            onClaim = onDailyCheckInClaim
-        )
-    }
-
-    buyCouponTarget?.let { coupon ->
-        BuyCouponModal(
-            coupon = coupon,
-            user = user,
-            currentLanguage = currentLanguage,
-            onDismiss = onBuyCouponDismiss,
-            onBuy = { qty -> onBuyCouponConfirm(coupon, qty) }
-        )
-    }
-
-    listCouponTarget?.let { coupon ->
-        ListCouponModal(
-            coupon = coupon,
-            onDismiss = onListCouponDismiss,
-            onConfirm = { price, isListing -> onListCouponConfirm(coupon, price, isListing) }
-        )
-    }
-
-    adminReviewTarget?.let { withdrawal ->
-        AdminReviewModal(
-            withdrawal = withdrawal,
-            onDismiss = onAdminReviewDismiss,
-            onProcess = { isApprove, note -> onAdminReviewProcess(withdrawal, isApprove, note) }
-        )
-    }
-
-    if (show2FA) {
-        TwoFactorModal(
-            user = user,
-            currentLanguage = currentLanguage,
-            onDismiss = on2FADismiss,
-            onVerifyToggle = on2FAVerifyToggle
-        )
-    }
-
-    // AdReward Modal — tunjuk modal dulu, user tekan "Tonton Iklan", baru AdMob
-    // Terus tunjuk AdMob rewarded video (skip modal)
-    androidx.compose.runtime.LaunchedEffect(showAdReward) {
-        if (showAdReward) {
-            coroutineScope.launch {
-                try {
-                    val activity = context.findActivity()
-                    if (activity != null) {
-                        // ✅ FIX: Pilih mode berdasarkan pendingMinerActivate
-                        val adMode = if (pendingMinerActivate) {
-                            AdManager.AdMode.MINER_ACTIVATE
-                        } else {
-                            AdManager.AdMode.REWARD
-                        }
-                        AdManager.showRewardedAdForReward(
-                            activity = activity,
-                            userId = user?.id ?: "",
-                            onSuccess = { points ->
-                                onAdRewardDismiss()
-                                // Trigger activate miner (RTP akan generate otomatik)
-                                onAdRewardEarned(points)
-                            },
-                            onFailure = { reason, message ->
-                                onAdRewardDismiss()
-                                onAdBlockedSetReason(reason.name)
-                            },
-                            mode = adMode   // ✅ Pass mode
-                        )
-                    } else {
-                        onAdRewardDismiss()
-                    }
-                } catch (e: Exception) {
-                    AppLogger.e("AdReward", "Launch error: ${e.message}", e)
-                    onAdRewardDismiss()
-                }
-            }
         }
     }
 
@@ -1435,7 +1334,6 @@ fun MainAffiliateAppPreview() {
             showWithdraw = false,
             showNewLink = false,
             showUpgrade = false,
-            showRedeemPoints = false,
             showDailyCheckIn = false,
             buyCouponTarget = null,
             listCouponTarget = null,
@@ -1460,8 +1358,6 @@ fun MainAffiliateAppPreview() {
             onNewLinkCreate = { _, _, _ -> },
             onUpgradeDismiss = {},
             onUpgradeConfirm = {},
-            onRedeemDismiss = {},
-            onRedeemConfirm = { _, _, _, _ -> },
             onRedeemOpenQr = {},
             onDailyCheckInDismiss = {},
             onDailyCheckInClaim = {},
@@ -1495,7 +1391,6 @@ fun MainAffiliateAppPreview() {
             onSetWithdrawModalVisible = {},
             onSetNewLinkModalVisible = {},
             onSetUpgradeModalVisible = {},
-            onSetRedeemPointsModalVisible = {},
             onSetQrTransferModalVisible = {},
             onSetAdRewardModalVisible = {},
             onSetBuyCouponModalVisible = {},

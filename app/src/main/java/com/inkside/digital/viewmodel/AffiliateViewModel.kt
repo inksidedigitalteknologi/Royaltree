@@ -350,7 +350,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     val showWithdrawModal = MutableStateFlow(false)
     val showNewLinkModal = MutableStateFlow(false)
     val showUpgradeModal = MutableStateFlow(false)
-    val showRedeemPointsModal = MutableStateFlow(false)
     val showMissionsModal = MutableStateFlow(false)
     val showDailyCheckInModal = MutableStateFlow(false)
     val showQrTransferModal = MutableStateFlow(false)
@@ -834,15 +833,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun redeemPoints(points: Int, walletName: String, phone: String, currency: String = "USD") {
-        viewModelScope.launch {
-            val res = repository.redeemPointsToWallet(points, walletName, phone, currency)
-            res.onSuccess { earned ->
-                showRedeemPointsModal.value = false
-                showSnackbar(String.format(LanguageManager.translate("snackbar_redeem_success", _currentLanguage.value, "Sukses tukar poin! +Rp %s"), String.format(java.util.Locale.US, "%,.0f", earned)))
-            }.onFailure {
-                showSnackbar(it.message ?: LanguageManager.translate("vm_redeem_failed", _currentLanguage.value, "Gagal tukar poin"))
-            }
         }
     }
 

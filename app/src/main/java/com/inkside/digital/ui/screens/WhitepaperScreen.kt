@@ -95,7 +95,7 @@ fun WhitepaperScreen(
                     "RTP adalah token utility internal Royaltree. Digunakan untuk:\n" +
                     "• Membeli & upgrade miner\n" +
                     "• Transfer ke sesama pengguna\n" +
-                    "• Menukar dengan reward (withdrawal)\n\n" +
+                    "• RTP hanya untuk ekosistem game (tidak bisa diuangkan)\n\n" +
                     "Total supply terbatas, dengan mekanisme halving setiap 1,000 block.")
             ),
             WhitepaperSection(
@@ -115,7 +115,7 @@ fun WhitepaperScreen(
                     "Q4 2026: Rilis publik, mining tycoon\n" +
                     "Q1 2027: Mini-game arcade, leaderboard musiman\n" +
                     "Q2 2027: Secondary market, tier miner baru\n" +
-                    "Q3 2027: Integrasi e-wallet, withdrawal langsung"),
+                    "Q3 2027: Fitur game baru & event komunitas"),
                 accent = GoldVip
             )
         )

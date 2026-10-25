@@ -391,53 +391,6 @@ class AffiliateRepository(private val dao: AppDao) {
 
     }
 
-    suspend fun redeemPointsToWallet(
-        pointsToRedeem: Int,
-        targetEwallet: String,
-        phone: String,
-        payoutCurrency: String = "USD"
-    ): Result<Double> = withContext(Dispatchers.IO) {
-        val user = dao.getUserSync(_activeUserId.value) ?: return@withContext Result.failure(Exception("User not found"))
-        if (pointsToRedeem > user.points) {
-            return@withContext Result.failure(Exception("Poin tidak mencukupi"))
-        }
-
-        val usdValue = GlobalPointsManager.getUsdValue(pointsToRedeem.toDouble())
-        val idrEquivalent = GlobalPointsManager.getIdrValue(pointsToRedeem.toDouble())
-        val payoutAmount = GlobalPointsManager.getValueInCurrency(pointsToRedeem.toDouble(), payoutCurrency)
-        val formattedPayout = GlobalPointsManager.formatCurrencyDisplay(payoutAmount, payoutCurrency)
-
-        val updatedUser = user.copy(
-            points = user.points - pointsToRedeem,
-            balance = user.balance + idrEquivalent
-        )
-        dao.updateUser(updatedUser)
-
-        dao.insertTransaction(
-            TransactionEntity(
-                id = "tx_" + UUID.randomUUID().toString().take(8),
-                type = "POINT_REWARD",
-                title = "Tukar Poin Global (Universal Rate)",
-                description = "$pointsToRedeem Poin ditukar ke $targetEwallet ($phone) • Nilai: $formattedPayout ($${String.format(java.util.Locale.US, "%.2f", usdValue)} USD)",
-                amount = idrEquivalent,
-                isCredit = true,
-                status = "SUCCESS",
-                timestamp = System.currentTimeMillis()
-            )
-        )
-
-        dao.insertNotification(
-            NotificationEntity(
-                id = "notif_" + UUID.randomUUID().toString().take(8),
-                title = "Poin Global Berhasil Dicairkan! 🎁",
-                message = "Penukaran $pointsToRedeem Poin berhasil! Bernilai $formattedPayout ($${String.format(java.util.Locale.US, "%.2f", usdValue)} USD) dikreditkan.",
-                type = "REWARD",
-                timestamp = System.currentTimeMillis()
-            )
-        )
-
-        Result.success(idrEquivalent)
-    }
 
     suspend fun buyInvestmentCoupon(coupon: InvestmentCouponEntity, quantity: Int = 1): Result<String> = withContext(Dispatchers.IO) {
         val user = dao.getUserSync(_activeUserId.value) ?: return@withContext Result.failure(Exception("User not found"))
@@ -761,7 +714,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 type = "DAILY_CHECKIN",
                 title = "Check-in Harian Royaltree (Streak Hari ke-$newStreak) 🌟",
                 description = "Bonus login harian +$rewardRtp RTP berhasil dikreditkan ke saldo poin.",
-                amount = GlobalPointsManager.getIdrValue(rewardRtp.toDouble()),
+                amount = rewardRtp.toDouble(),  // RTP, bukan Rupiah
                 isCredit = true,
                 status = "SUCCESS",
                 timestamp = System.currentTimeMillis()
@@ -805,7 +758,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 type = "MISSION_REWARD",
                 title = "Klaim Misi Royaltree: ${mission.title}",
                 description = "Hadiah penyelesaian misi +${mission.rtpReward} RTP",
-                amount = GlobalPointsManager.getIdrValue(mission.rtpReward.toDouble()),
+                amount = mission.rtpReward.toDouble(),  // RTP, bukan Rupiah
                 isCredit = true,
                 status = "SUCCESS",
                 timestamp = System.currentTimeMillis()
@@ -913,7 +866,7 @@ class AffiliateRepository(private val dao: AppDao) {
             if (recipientUser != null) {
                 val updatedRecipient = recipientUser.copy(
                     points = recipientUser.points + netReceived,
-                    balance = recipientUser.balance + GlobalPointsManager.getIdrValue(netReceived.toDouble())
+                    balance = user.balance  // RTP tidak dikonversi ke Rupiah
                 )
                 dao.updateUser(updatedRecipient)
 
@@ -923,7 +876,7 @@ class AffiliateRepository(private val dao: AppDao) {
                         type = "POINT_TRANSFER_IN",
                         title = "Terima Transfer RTP dari ${user.name}",
                         description = "Menerima $netReceived RTP dari ${user.name} (${user.referralCode}). ${if (note.isNotBlank()) "Pesan: $note" else ""}",
-                        amount = GlobalPointsManager.getIdrValue(netReceived.toDouble()),
+                        amount = netReceived.toDouble(),  // RTP, bukan Rupiah
                         currency = "IDR",
                         isCredit = true,
                         status = "SUCCESS",
@@ -950,7 +903,7 @@ class AffiliateRepository(private val dao: AppDao) {
                     type = "POINT_TRANSFER_OUT",
                     title = "Transfer RTP ke $recipientName",
                     description = "Kirim $pointsAmount RTP (Biaya admin $adminFee RTP dipotong dr saldo penerima, bersih: $netReceived RTP). [Sig: $signature] ${if (note.isNotBlank()) "Catatan: $note" else ""}",
-                    amount = GlobalPointsManager.getIdrValue(pointsAmount.toDouble()),
+                    amount = pointsAmount.toDouble(),  // RTP, bukan Rupiah
                     currency = "IDR",
                     isCredit = false,
                     status = "SUCCESS",
@@ -1041,7 +994,7 @@ class AffiliateRepository(private val dao: AppDao) {
         dao.updateAppDownloadAd(ad.copy(isRewardClaimed = true, isDownloading = false))
         dao.updateUser(user.copy(
             points = user.points + ad.rewardCoins,
-            balance = user.balance + ad.rewardRupiah
+            balance = user.balance  // RTP tidak dikonversi ke Rupiah
         ))
 
         dao.insertTransaction(
@@ -1077,7 +1030,7 @@ class AffiliateRepository(private val dao: AppDao) {
         val rupiah = coins * 10.0
         dao.updateUser(user.copy(
             points = user.points + coins,
-            balance = user.balance + rupiah
+            balance = user.balance  // RTP tidak dikonversi ke Rupiah
         ))
 
         dao.insertTransaction(
