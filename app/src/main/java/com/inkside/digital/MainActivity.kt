@@ -907,7 +907,7 @@ fun MainAffiliateAppContent(
                     .padding(
                         top = innerPadding.calculateTopPadding(),
                         bottom = if (bottomNavHeightState.value > 0.dp) {
-                            bottomNavHeightState.value + 24.dp
+                            bottomNavHeightState.value + 4.dp
                         } else {
                             108.dp
                         }
