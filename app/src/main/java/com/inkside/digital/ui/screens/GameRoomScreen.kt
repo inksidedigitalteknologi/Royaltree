@@ -2859,7 +2859,14 @@ private fun FusionTab(
         }
     }
     
-    var selectedTier by remember { mutableStateOf<String?>(eligibleTiers.firstOrNull()) }
+    var selectedTier by remember { mutableStateOf<String?>(null) }
+
+    // Update selectedTier saat eligibleTiers berubah (5 item terkumpul)
+    LaunchedEffect(eligibleTiers) {
+        if (selectedTier == null || selectedTier !in eligibleTiers) {
+            selectedTier = eligibleTiers.firstOrNull()
+        }
+    }
     var selectedMinerIds by remember { mutableStateOf<Set<String>>(emptySet()) }
     var showConfirmDialog by remember { mutableStateOf(false) }
     var showFusionAnim by remember { mutableStateOf(false) }
