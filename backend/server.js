@@ -99,7 +99,13 @@ app.use('/api/v1/chat', chatLimiter, verifyAuthAndBanCheck, chatRoutes);
 // Serve admin panel
 // Serve admin panel (relative path — portable)
 const path = require('path');
-app.use('/admin', express.static(path.join(__dirname, '../admin')));
+// SPA build (Vite) — /admin/ (NONAKTIF: legacy menang)
+// app.use('/admin', express.static(path.join(__dirname, '../../Royaltree-Admin/dist')));
+// Legacy HTML — /admin/legacy/
+app.use('/admin/legacy', express.static(path.join(__dirname, '../../Royaltree-Admin/legacy')));
+// LEGACY_FALLBACK: serve legacy di /admin/ juga (dist dulu, kalau tidak ketemu → legacy)
+app.use('/admin', express.static(path.join(__dirname, '../../Royaltree-Admin/legacy')));
+
 
 // Kunci Otentikasi Admin Portal
 const API_SECRET_KEY = process.env.ROYALTREE_API_KEY;
@@ -1279,6 +1285,7 @@ function requireAdmin(req, res, next) {
     }
     next();
 }
+// ============================================================
 // ============================================================
 // CRON JOB — Release pending affiliate commission (setiap 5 menit)
 // ============================================================
