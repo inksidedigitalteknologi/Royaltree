@@ -887,14 +887,6 @@ object ApiClient {
     }
 
 
-    suspend fun getGameLeaderboard(): Result<JSONObject> = withContext(Dispatchers.IO) {
-        try {
-            val response: ResponseBody = apiService.getGameLeaderboard()
-            val json = JSONObject(response.string())
-            Result.success(json)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
     }
 
     suspend fun getGameStats(): Result<JSONObject> = withContext(Dispatchers.IO) {
