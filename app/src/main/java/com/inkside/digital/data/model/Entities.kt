@@ -25,7 +25,6 @@ data class UserEntity(
     val pendingBalance: Double = 0.0,
     val totalPaidOut: Double = 0.0,
     val dailyStepGoal: Int = 5000,
-    val unclaimedSteps: Int = 0,
     val isLocationTrackingAllowed: Boolean = true,
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
@@ -35,7 +34,6 @@ data class UserEntity(
     val is2FAEnabled: Boolean = false,
     val twoFactorSecret: String = "",
     val commissionRateMultiplier: Double = 1.0,
-    val convertedStepsToday: Int = 0,
 
     // === Affiliate fields (dari Firestore) ===
     val affiliateBalance: Double = 0.0,

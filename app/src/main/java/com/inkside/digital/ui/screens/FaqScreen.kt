@@ -92,7 +92,7 @@ data class        HelpItem(
     val faqs = listOf(
         FaqItem(
             "Bagaimana cara mendapatkan poin?",
-            "Poin didapat dari langkah kaki, menyelesaikan misi, bermain game, dan mengundang teman."
+            "Poin didapat dari menyelesaikan misi, bermain game, dan mengundang teman."
         ),
         FaqItem(
             "Kapan saya bisa melakukan penarikan?",

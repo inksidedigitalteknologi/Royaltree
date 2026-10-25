@@ -109,7 +109,6 @@ router.post('/sync', verifyFirebaseToken, validate(loginSchema), async (req, res
             const defaults = {
                 pendingBalance: 0,
                 totalPaidOut: 0,
-                unclaimedSteps: 0,
                 dailyStepGoal: 5000,
                 isLocationTrackingAllowed: true,
                 latitude: 0,
@@ -120,7 +119,6 @@ router.post('/sync', verifyFirebaseToken, validate(loginSchema), async (req, res
                 is2FAEnabled: false,
                 twoFactorSecret: '',
                 commissionRateMultiplier: 1.0,
-                convertedStepsToday: 0,
                 checkInStreak: 0,
                 lastCheckInDate: '',
                 // === Affiliate fields (untuk semua user) ===
@@ -177,7 +175,6 @@ router.post('/sync', verifyFirebaseToken, validate(loginSchema), async (req, res
             // === Local-only fields (sync ke Firestore untuk persist) ===
             pendingBalance: 0,
             totalPaidOut: 0,
-            unclaimedSteps: 0,
             dailyStepGoal: 5000,
             isLocationTrackingAllowed: true,
             latitude: 0,
@@ -188,7 +185,6 @@ router.post('/sync', verifyFirebaseToken, validate(loginSchema), async (req, res
             is2FAEnabled: false,
             twoFactorSecret: '',
             commissionRateMultiplier: 1.0,
-            convertedStepsToday: 0,
 
             // === Affiliate fields ===
             affiliateBalance: 0,

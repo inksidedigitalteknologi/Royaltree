@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
         GameMinerItemEntity::class,
         GameRoomStateEntity::class
     ],
-    version = 8,  // Bump: force destructive rebuild (schema mismatch from MIGRATION_6_7)
+    version = 9,  // Bump: force destructive rebuild (schema mismatch from MIGRATION_6_7)
     exportSchema = false  // No-op, sudah ada migration manual
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -102,7 +102,6 @@ abstract class AppDatabase : RoomDatabase() {
                         pendingBalance REAL NOT NULL DEFAULT 0.0,
                         totalPaidOut REAL NOT NULL DEFAULT 0.0,
                         dailyStepGoal INTEGER NOT NULL DEFAULT 5000,
-                        unclaimedSteps INTEGER NOT NULL DEFAULT 0,
                         isLocationTrackingAllowed INTEGER NOT NULL DEFAULT 1,
                         latitude REAL NOT NULL DEFAULT 0.0,
                         longitude REAL NOT NULL DEFAULT 0.0,
@@ -112,7 +111,6 @@ abstract class AppDatabase : RoomDatabase() {
                         is2FAEnabled INTEGER NOT NULL DEFAULT 0,
                         twoFactorSecret TEXT NOT NULL DEFAULT '',
                         commissionRateMultiplier REAL NOT NULL DEFAULT 1.0,
-                        convertedStepsToday INTEGER NOT NULL DEFAULT 0,
                         affiliateBalance REAL NOT NULL DEFAULT 0.0,
                         affiliateBalanceAvailable REAL NOT NULL DEFAULT 0.0,
                         affiliateBalancePending REAL NOT NULL DEFAULT 0.0,
@@ -129,9 +127,9 @@ abstract class AppDatabase : RoomDatabase() {
                            CAST(points AS REAL),
                            referralCode, referredCount, checkInStreak, lastCheckInDate,
                            todaySteps, pendingBalance, totalPaidOut, dailyStepGoal,
-                           unclaimedSteps, isLocationTrackingAllowed, latitude, longitude,
+                           isLocationTrackingAllowed, latitude, longitude,
                            locationCity, locationProvince, regionZone, is2FAEnabled,
-                           twoFactorSecret, commissionRateMultiplier, convertedStepsToday,
+                           twoFactorSecret, commissionRateMultiplier,
                            affiliateBalance, affiliateBalanceAvailable, affiliateBalancePending,
                            affiliateTotalEarned, affiliateTotalWithdrawn
                     FROM users

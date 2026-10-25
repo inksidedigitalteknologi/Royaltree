@@ -283,7 +283,6 @@ fun HomeScreen(user: UserEntity?,
                     StatCard(
                         icon = Icons.AutoMirrored.Filled.DirectionsWalk,
                         iconColor = ElectricBlue,
-                        value = "${user?.todaySteps ?: 0}",
                         label = LanguageManager.translate("home_steps_today", currentLanguage, "Langkah"),
                         modifier = Modifier.weight(1f)
                     )

@@ -285,28 +285,9 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
         _snackbarMessage.value = LanguageManager.translate("vm_switch_account", _currentLanguage.value, "Beralih akun: ${targetUser?.name ?: userId}")
     }
 
-    fun addSteps(steps: Int) {
-        viewModelScope.launch {
-            repository.addSteps(steps)
-            val currentUser = user.value
-            if (currentUser != null) {
-                ApiClient.syncStepsToPortal(currentUser.id, steps)
-            }
         }
     }
 
-    fun convertStepsToCoins(onComplete: ((Boolean, String) -> Unit)? = null) {
-        viewModelScope.launch {
-            val result = repository.convertStepsToCoins()
-            if (result.isSuccess) {
-                val (coins, rupiah) = result.getOrThrow()
-                _snackbarMessage.value = LanguageManager.translate("vm_step_exchange_success", _currentLanguage.value, "Sukses menukar langkah! +$coins Koin (Rp ${String.format(java.util.Locale.US, "%,.0f", rupiah)})")
-                onComplete?.invoke(true, "+$coins Koin")
-            } else {
-                val msg = result.exceptionOrNull()?.message ?: LanguageManager.translate("vm_step_exchange_failed", _currentLanguage.value, "Gagal menukar langkah")
-                _snackbarMessage.value = msg
-                onComplete?.invoke(false, msg)
-            }
         }
     }
 
@@ -2727,7 +2708,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             // === 14 field local-only ===
                             pendingBalance = data.optDouble("pendingBalance", 0.0),
                             totalPaidOut = data.optDouble("totalPaidOut", 0.0),
-                            unclaimedSteps = data.optInt("unclaimedSteps", 0),
                             dailyStepGoal = data.optInt("dailyStepGoal", 5000),
                             isLocationTrackingAllowed = data.optBoolean("isLocationTrackingAllowed", true),
                             latitude = data.optDouble("latitude", 0.0),
@@ -2738,7 +2718,6 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                             is2FAEnabled = data.optBoolean("is2FAEnabled", false),
                             twoFactorSecret = data.optString("twoFactorSecret", ""),
                             commissionRateMultiplier = data.optDouble("commissionRateMultiplier", 1.0),
-                            convertedStepsToday = data.optInt("convertedStepsToday", 0)
                         )
                         AppLogger.d("AffiliateViewModel", "✅ User loaded from backend")
 
