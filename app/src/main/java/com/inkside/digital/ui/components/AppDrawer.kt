@@ -141,7 +141,6 @@ fun AppDrawer(
                 onClick = { onNavigate(AppScreen.HOME); onCloseDrawer() }
             )
             DrawerItem(
-                icon = Icons.Default.TaskAlt,
                 icon = Icons.Default.CardGiftcard,
                 label = LanguageManager.translate("daily_title", currentLanguage, "Login Harian"),
                 selected = currentScreen == AppScreen.DAILY_CHECK_IN,
