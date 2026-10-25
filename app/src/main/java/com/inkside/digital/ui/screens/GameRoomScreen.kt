@@ -1181,10 +1181,6 @@ private fun MiningRoomTab(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(
-                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                // Stats Row
                                 // Thermal Status Card — di atas Rate Breakdown
                     
                                 // Rate Breakdown Card (weighted adaptive)
@@ -1474,48 +1470,72 @@ private fun MiningRoomTab(
             }
         }
 
-        // Action Banner: Arcade Booster
-        item {
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onOpenMiniGame() }
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(14.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+        // ==== SECTION INVENTORY — processor tidak terpasang ====
+        val unplacedMiners = minerItems.filter { it.isOwned && !it.isPlacedInRoom && it.powerHs > 0 }
+        if (unplacedMiners.isNotEmpty()) {
+            item {
+                Surface(
+                    color = Color(0xFF0F172A).copy(alpha = 0.85f),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.3f)),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(
-                        modifier = Modifier.weight(1f),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("🎮", fontSize = 28.sp)
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        // Header
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("📦", fontSize = 18.sp)
+                            Spacer(Modifier.width(8.dp))
                             Text(
-                                text = LanguageManager.translate("game_need_power", AppThemePreferences.currentLanguage, "Butuh Tambahan Hash Power & Poin?"),
+                                text = "Inventory",
+                                fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 13.sp
+                                color = EmeraldLight
                             )
+                            Spacer(Modifier.width(6.dp))
                             Text(
-                                text = String.format(LanguageManager.translate("game_arcade_desc", AppThemePreferences.currentLanguage, "Mainkan Arcade Coin Rush (+%s Production Boost & Poin langsung)!"), HashrateFormatter.format(80L)),
+                                text = "(${unplacedMiners.size} processor)",
                                 fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = Color.White.copy(alpha = 0.6f)
                             )
                         }
-                    }
-                    Button(
-                        onClick = onOpenMiniGame,
-                        colors = ButtonDefaults.buttonColors(containerColor = PurpleSecondary),
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                        modifier = Modifier.height(34.dp)
-                    ) {
-                        Text(LanguageManager.translate("game_play", AppThemePreferences.currentLanguage, "Main"), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            text = "Klik processor untuk pasang ke slot kosong",
+                            fontSize = 10.sp,
+                            color = Color.White.copy(alpha = 0.4f)
+                        )
+                        Spacer(Modifier.height(8.dp))
+
+                        // Grid 2 kolom
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            unplacedMiners.chunked(2).forEach { rowItems ->
+                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    rowItems.forEach { miner ->
+                                        Box(modifier = Modifier.weight(1f)) {
+                                            SlotMinerCard(
+                                                miner = miner,
+                                                tierColor = tierColor(miner.tier),
+                                                onInstall = {
+                                                    // Cari slot kosong pertama
+                                                    val usedSlots = placedMiners.map { it.placedSlotIndex }.toSet()
+                                                    val emptySlot = (0 until unlockedSlots).firstOrNull { it !in usedSlots }
+                                                    if (emptySlot != null) {
+                                                        onToggleMinerSlot(miner.id, emptySlot)
+                                                    } else {
+                                                        // Slot penuh — user harus unplace dulu
+                                                        // atau unlock slot baru
+                                                    }
+                                                }
+                                            )
+                                        }
+                                    }
+                                    // Kalau ganjil, spacer
+                                    if (rowItems.size == 1) {
+                                        Spacer(Modifier.weight(1f))
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
