@@ -1181,11 +1181,14 @@ private fun MiningRoomTab(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(
+                                modifier = Modifier.padding(14.dp),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
                                 // Thermal Status Card — di atas Rate Breakdown
-                    
+                                ThermalStatusCard(viewModel)
+
                                 // Rate Breakdown Card (weighted adaptive)
                                 RateBreakdownCard(roomState = roomState, placedMiners = placedMiners, minerItems = minerItems)
-
                             }
                         }
 
@@ -1397,7 +1400,8 @@ private fun MiningRoomTab(
                             }
                         }
                     }
-                }
+
+        }
 
         // ==== Banner AdMob ====
         item {
@@ -1520,7 +1524,7 @@ private fun MiningRoomTab(
                                                     val usedSlots = placedMiners.map { it.placedSlotIndex }.toSet()
                                                     val emptySlot = (0 until unlockedSlots).firstOrNull { it !in usedSlots }
                                                     if (emptySlot != null) {
-                                                        onToggleMinerSlot(miner.id, emptySlot)
+                                                        onOpenAssignSlotModal(emptySlot)
                                                     } else {
                                                         // Slot penuh — user harus unplace dulu
                                                         // atau unlock slot baru
@@ -1550,7 +1554,6 @@ private fun MiningRoomTab(
 }
 @Composable
 private fun LockedSlotCard(
-    slotIndex: Int,
     currentLanguage: AppLanguage,
     onClick: () -> Unit
 ) {
