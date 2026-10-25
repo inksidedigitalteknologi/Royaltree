@@ -132,8 +132,8 @@ fun RevolverBottomNav(
             modifier = Modifier
                 .fillMaxWidth()
                 .offset(y = (-6).dp)
-                .height(62.dp)
-                .clip(RoundedCornerShape(34.dp))
+                .height(66.dp)
+                .clip(RoundedCornerShape(36.dp))
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -177,12 +177,12 @@ fun RevolverBottomNav(
                 // ═══════════════════════════════════════════
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.width(64.dp)
+                    modifier = Modifier.width(68.dp)
                 ) {
                 // Glow pulse
                 Box(
                     modifier = Modifier
-                        .size(64.dp)
+                        .size(68.dp)
                         .background(
                             brush = Brush.radialGradient(
                                 colors = listOf(
@@ -198,7 +198,7 @@ fun RevolverBottomNav(
                 // RTP Coin
                 Box(
                     modifier = Modifier
-                        .size(54.dp)
+                        .size(56.dp)
                         .scale(coinScale)
                         .clip(CircleShape)
                         .background(
@@ -221,7 +221,7 @@ fun RevolverBottomNav(
                     Image(
                         painter = painterResource(id = R.drawable.rtp_coin),
                         contentDescription = "RTP",
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(42.dp)
                     )
                 }
             }
@@ -285,7 +285,7 @@ private fun PillTab(
         // Icon circle
         Box(
             modifier = Modifier
-                .size(36.dp)
+                .size(38.dp)
                 .clip(CircleShape)
                 .background(
                     if (isSelected) {
@@ -310,7 +310,7 @@ private fun PillTab(
                 imageVector = item.icon,
                 contentDescription = item.fallbackLabel,
                 tint = if (isSelected) Color(0xFF1F2937) else TextMuted,
-                modifier = Modifier.size(if (isSelected) 21.dp else 19.dp)
+                modifier = Modifier.size(if (isSelected) 22.dp else 20.dp)
             )
         }
 
@@ -319,7 +319,7 @@ private fun PillTab(
         // Label
         Text(
             text = LanguageManager.translate(item.labelKey, currentLanguage, item.fallbackLabel),
-            fontSize = 12.sp,
+            fontSize = 13.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
             color = if (isSelected) GoldBright else TextMuted,
             maxLines = 1,
