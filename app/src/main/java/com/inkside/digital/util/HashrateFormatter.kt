@@ -5,13 +5,13 @@ import java.util.Locale
 /**
  * HashrateFormatter — format powerHs (dalam H/s) jadi string human-readable.
  *
- * powerHs = 1_000       → 1 KH/s   → "1 KH/s"
- * powerHs = 5_000       → 5 KH/s   → "5 KH/s"
- * powerHs = 20_000      → 20 KH/s  → "20 KH/s"
- * powerHs = 100_000     → 100 KH/s → "100 KH/s"
- * powerHs = 500_000     → 500 KH/s → "500 KH/s"
- * powerHs = 1_000_000   → 1 MH/s   → "1 MH/s"
- * powerHs = 1_000_000_000 → 1 GH/s → "1 GH/s"
+ * powerHs = 1_000       → 1 KRTP/s  → "1 KRTP/s"
+ * powerHs = 5_000       → 5 KRTP/s  → "5 KRTP/s"
+ * powerHs = 20_000      → 20 KRTP/s → "20 KRTP/s"
+ * powerHs = 100_000     → 100 KRTP/s → "100 KRTP/s"
+ * powerHs = 500_000     → 500 KRTP/s → "500 KRTP/s"
+ * powerHs = 1_000_000   → 1 MRTP/s  → "1 MRTP/s"
+ * powerHs = 1_000_000_000 → 1 GRTP/s → "1 GRTP/s"
  */
 object HashrateFormatter {
 
@@ -25,13 +25,10 @@ object HashrateFormatter {
      */
     fun format(powerHs: Long): String {
         if (powerHs <= 0) return "—"
-        return when {
-            powerHs < KH -> "${formatNumber(powerHs.toDouble())} H/s"
-            powerHs < MH -> "${formatNumber(powerHs.toDouble() / KH)} KH/s"
-            powerHs < GH -> "${formatNumber(powerHs.toDouble() / MH)} MH/s"
-            powerHs < TH -> "${formatNumber(powerHs.toDouble() / GH)} GH/s"
-            else -> "${formatNumber(powerHs.toDouble() / TH)} TH/s"
-        }
+        // Konversi hashrate → RTP/hari
+        // 1 GH/s = 1_000_000_000 H/s → 0.024 RTP/hari
+        val rtpPerDay = powerHs / 1_000_000_000.0 * 0.024
+        return "${formatNumber(rtpPerDay)} RTP/day"
     }
 
     /**
@@ -39,13 +36,8 @@ object HashrateFormatter {
      */
     fun formatShort(powerHs: Long): String {
         if (powerHs <= 0) return "0"
-        return when {
-            powerHs < KH -> "$powerHs"
-            powerHs < MH -> "${formatNumber(powerHs.toDouble() / KH)}K"
-            powerHs < GH -> "${formatNumber(powerHs.toDouble() / MH)}M"
-            powerHs < TH -> "${formatNumber(powerHs.toDouble() / GH)}G"
-            else -> "${formatNumber(powerHs.toDouble() / TH)}T"
-        }
+        val rtpPerDay = powerHs / 1_000_000_000.0 * 0.024
+        return formatNumber(rtpPerDay)
     }
 
     /**
