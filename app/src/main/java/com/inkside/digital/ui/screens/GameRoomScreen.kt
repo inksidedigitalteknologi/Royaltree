@@ -239,7 +239,7 @@ fun GameRoomScreenContent(
     onUnlockMiner: (String) -> Unit = {},
     onUnlockSlot: (Int) -> Unit = {}
 ) {
-    var activeTab by remember { mutableIntStateOf(0) } // 0: Rak, 1: Toko, 2: Mini-Game, 3: Fusion
+    var activeTab by remember { mutableIntStateOf(0) } // 0: Rak, 1: Shop, 2: Arcade, 3: Merge
     
     // Merge state (weighted adaptive)
     val isMerging by viewModel.isMerging.collectAsState()
@@ -356,7 +356,7 @@ fun GameRoomScreenContent(
             ThermalStatusCard(viewModel)
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Tabs: Ruang Rak (Virtual Room), Toko Item (Shop), Mini-Game (Arcade)
+            // Tabs: Ruang Rak (Virtual Room), Shop, Arcade
             val tabs = listOf("⚡ Processor", "🛒 Shop", "🎮 Arcade", "⚗️ Merge")
             ScrollableTabRow(
                 selectedTabIndex = activeTab,
@@ -844,7 +844,7 @@ fun GameRoomScreenContent(
                             textAlign = TextAlign.Center
                         )
                         Text(
-                            text = LanguageManager.translate("game_buy_hint", AppThemePreferences.currentLanguage, "Beli item penambang baru di Toko Item menggunakan poin Anda."),
+                            text = LanguageManager.translate("game_buy_hint", AppThemePreferences.currentLanguage, "Beli processor baru di Shop menggunakan poin Anda."),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -911,7 +911,7 @@ fun GameRoomScreenContent(
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
                     ) {
-                        Text(LanguageManager.translate("game_open_shop", AppThemePreferences.currentLanguage, "Buka Toko Item"))
+                        Text(LanguageManager.translate("game_open_shop", AppThemePreferences.currentLanguage, "Buka Shop"))
                     }
                 }
             },
@@ -1497,7 +1497,7 @@ private fun MiningRoomTab(
             }
         }
 
-        // Action Banner: Mini-Game Booster
+        // Action Banner: Arcade Booster
         item {
             Card(
                 shape = RoundedCornerShape(16.dp),
@@ -1526,7 +1526,7 @@ private fun MiningRoomTab(
                                 fontSize = 13.sp
                             )
                             Text(
-                                text = String.format(LanguageManager.translate("game_arcade_desc", AppThemePreferences.currentLanguage, "Mainkan Mini-Game Arcade Coin Rush (+%s Production Boost & Poin langsung)!"), HashrateFormatter.format(80L)),
+                                text = String.format(LanguageManager.translate("game_arcade_desc", AppThemePreferences.currentLanguage, "Mainkan Arcade Coin Rush (+%s Production Boost & Poin langsung)!"), HashrateFormatter.format(80L)),
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -1881,7 +1881,7 @@ private fun ItemShopTab(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(vertical = 14.dp)
     ) {
-        // Banner info Toko Item (full-width)
+        // Banner info Shop (full-width)
         item(span = { GridItemSpan(2) }) {
             Card(
                 shape = RoundedCornerShape(16.dp),
@@ -2850,7 +2850,7 @@ private fun FusionTab(
         AlertDialog(
             onDismissRequest = { showConfirmDialog = false },
             icon = { Text("⚗️", fontSize = 40.sp) },
-            title = { Text("Konfirmasi Fusion", fontWeight = FontWeight.Bold) },
+            title = { Text("Konfirmasi Merge", fontWeight = FontWeight.Bold) },
             text = {
                 Column {
                     Text("Anda akan melebur 5 miner:", fontSize = 13.sp)
@@ -2959,7 +2959,7 @@ private fun FusionTab(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
-                        Text("✅ Fusion berhasil!", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF10B981))
+                        Text("✅ Merge berhasil!", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF10B981))
                         Spacer(Modifier.height(4.dp))
                         val newMiner = mergeSuccess.optJSONObject("newMiner")
                         if (newMiner != null) {

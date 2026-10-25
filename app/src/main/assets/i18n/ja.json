@@ -44,7 +44,7 @@
     "snackbar_checkin_success": "🎉 %s 日目のチェックイン！+%s RTP",
     "snackbar_transfer_success": "%s RTP を %s に送金しました！",
     "badge_passive": "パッシブ",
-    "game_room_title": "Royaltree Miner",
+    "game_room_title": "RTP Studio",
     "game_room_subtitle": "RTP でマイナーを購入し、受動的収入を得る",
     "nav_analytics": "分析",
     "nav_withdraw": "出金",
