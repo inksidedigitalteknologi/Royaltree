@@ -190,6 +190,7 @@ fun AppDrawer(
             // ═══════════════════════════════════════════
             LogoutButton(
                 text = LanguageManager.translate("settings_logout", currentLanguage, "Keluar"),
+                onClick = { showLogoutDialog = true }
             )
 
             Spacer(Modifier.height(16.dp))
@@ -546,7 +547,7 @@ private fun DrawerItem(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-            )
+            ) { onClick() }
             .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -633,7 +634,7 @@ private fun LogoutButton(text: String, onClick: () -> Unit) {
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-            )
+            ) { onClick() }
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center

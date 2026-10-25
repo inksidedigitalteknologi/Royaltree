@@ -721,7 +721,6 @@ fun MainAffiliateAppContent(
     user: UserEntity?,
     pendingMinerActivate: Boolean = false,
     campaigns: List<CampaignEntity>,
-    links: List<AffiliateLinkEntity>,
     withdrawals: List<WithdrawalEntity>,
     pendingWithdrawals: List<WithdrawalEntity>,
     transactions: List<TransactionEntity>,
@@ -772,7 +771,6 @@ fun MainAffiliateAppContent(
     adsList: List<AppDownloadAdEntity>,
     minerItems: List<GameMinerItemEntity>,
     placedMiners: List<GameMinerItemEntity>,
-    roomState: GameRoomStateEntity?,
     onNavigate: (AppScreen) -> Unit,
     onDismissSnackbar: () -> Unit,
     onWithdrawSubmit: (Double, String, String, String, String, String) -> Unit,
@@ -1007,7 +1005,7 @@ fun MainAffiliateAppContent(
                         },
                         minerPowerHs = placedMiners.sumOf { it.powerHs },
                         // minerTokens dibuang — guna points (RTP)
-                        roomState = roomState
+                        roomState = null
                     )
                 }
 
@@ -1294,7 +1292,6 @@ fun MainAffiliateAppPreview() {
                 // minerTokens dibuang — guna points (RTP)
             ),
             campaigns = emptyList(),
-            links = emptyList(),
             withdrawals = emptyList(),
             pendingWithdrawals = emptyList(),
             transactions = emptyList(),
@@ -1330,7 +1327,6 @@ fun MainAffiliateAppPreview() {
             adsList = emptyList(),
             minerItems = emptyList(),
             placedMiners = emptyList(),
-            roomState = null,
             onNavigate = {},
             onDismissSnackbar = {},
             onWithdrawSubmit = { _, _, _, _, _, _ -> },
