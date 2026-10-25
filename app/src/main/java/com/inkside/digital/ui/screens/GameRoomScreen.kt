@@ -975,43 +975,62 @@ private fun RetroStatBox(
     modifier: Modifier = Modifier,
     useRtpIcon: Boolean = false
 ) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(10.dp))
-            .background(Color.Black.copy(alpha = 0.4f))
-            .border(1.dp, color.copy(alpha = 0.4f), RoundedCornerShape(10.dp))
-            .padding(vertical = 8.dp, horizontal = 6.dp)
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-            if (useRtpIcon) {
-                Image(
-                    painter = painterResource(R.drawable.rtp_coin),
-                    contentDescription = LanguageManager.translate("cd_rtp", AppThemePreferences.currentLanguage, "RTP"),
-                    modifier = Modifier.size(16.dp)
+    BoxWithConstraints(modifier = modifier) {
+        val isNarrow = maxWidth < 110.dp
+        val labelSize = if (isNarrow) 8.sp else 9.sp
+        val valueSize = if (isNarrow) 11.sp else 14.sp
+
+        Surface(
+            color = Color(0xFF0F172A).copy(alpha = 0.85f),
+            shape = RoundedCornerShape(10.dp),
+            border = BorderStroke(0.8.dp, color.copy(alpha = 0.4f)),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(
+                    horizontal = if (isNarrow) 6.dp else 10.dp,
+                    vertical = if (isNarrow) 8.dp else 10.dp
+                ),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(if (isNarrow) 2.dp else 4.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    if (useRtpIcon) {
+                        Image(
+                            painter = painterResource(id = R.drawable.rtp_coin),
+                            contentDescription = null,
+                            modifier = Modifier.size(if (isNarrow) 10.dp else 12.dp)
+                        )
+                    } else {
+                        Text(emoji, fontSize = if (isNarrow) 10.sp else 12.sp)
+                    }
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        label,
+                        fontSize = labelSize,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White.copy(alpha = 0.6f),
+                        letterSpacing = 0.5.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Text(
+                    value,
+                    fontSize = valueSize,
+                    fontWeight = FontWeight.Black,
+                    color = color,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
-            } else {
-                Text(emoji, fontSize = 16.sp)
             }
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = label,
-                fontSize = 8.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White.copy(alpha = 0.6f),
-                letterSpacing = 1.sp
-            )
-            Text(
-                text = value,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Black,
-                color = color,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center
-            )
         }
     }
 }
+
 
 @Composable
 private fun MiningRoomTab(
@@ -1133,14 +1152,14 @@ private fun MiningRoomTab(
                                 ) {
                                     RetroStatBox(
                                         emoji = "🔥",
-                                        label = LanguageManager.translate("game_mining_power", AppThemePreferences.currentLanguage, "POWER"),
+                                        label = "POWER",
                                         value = HashrateFormatter.format(totalPowerGhs.toLong()),
                                         color = RetroAmber,
                                         modifier = Modifier.weight(1f)
                                     )
                                     RetroStatBox(
                                         emoji = "💰",
-                                        label = LanguageManager.translate("game_mining_rtp", AppThemePreferences.currentLanguage, "RTP"),
+                                        label = "RTP",
                                         value = "${GlobalPointsManager.formatRtp(userPoints + liveUnclaimedPoints)}",
                                         color = RetroGold,
                                         modifier = Modifier.weight(1.5f),
@@ -1148,7 +1167,7 @@ private fun MiningRoomTab(
                                     )
                                     RetroStatBox(
                                         emoji = "⚡",
-                                        label = LanguageManager.translate("game_mining_rate", AppThemePreferences.currentLanguage, "RATE"),
+                                        label = "RATE",
                                         value = "${String.format(Locale.US, "%.4f", generationRatePerMin)}/m",
                                         color = EmeraldLight,
                                         modifier = Modifier.weight(1f)
@@ -1156,65 +1175,8 @@ private fun MiningRoomTab(
                                 }
 
                                 // Rate Breakdown Card (weighted adaptive)
-                                RateBreakdownCard(roomState = roomState)
+                                RateBreakdownCard(roomState = roomState, placedMiners = placedMiners)
 
-                                // Live ticker — compact single row
-                                Surface(
-                                    color = Color(0xFF064E3B).copy(alpha = 0.4f),
-                                    shape = RoundedCornerShape(10.dp),
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Icon(
-                                                imageVector = Icons.Filled.Bolt,
-                                                contentDescription = null,
-                                                tint = EmeraldLight,
-                                                modifier = Modifier.size(14.dp)
-                                            )
-                                            Spacer(modifier = Modifier.width(6.dp))
-                                            Text(
-                                                text = "+${String.format(Locale.US, "%.4f", generationRatePerMin)} RTP/mnt",
-                                                fontSize = 11.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = EmeraldLight
-                                            )
-                                        }
-                                        Text(
-                                            text = "${GlobalPointsManager.formatRtp(liveUnclaimedPoints)} RTP",
-                                            fontSize = 13.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = GoldVip
-                                        )
-                                    }
-                                }
-
-                                // Miner breakdown — compact
-                                if (minerBreakdown.isNotEmpty()) {
-                                    val totalRate = minerBreakdown.sumOf { it.second }
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = "🔥 ${placedMiners.size} processor aktif",
-                                            fontSize = 11.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = Color(0xFF94A3B8)
-                                        )
-                                        Text(
-                                            text = "${LanguageManager.translate("game_total", AppThemePreferences.currentLanguage, "Total")}: +${String.format(Locale.US, "%.4f", totalRate)}/m",
-                                            fontSize = 11.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = EmeraldLight
-                                        )
-                                    }
-                                }
                             }
                         }
 
@@ -2574,7 +2536,10 @@ private fun ComparisonRow(
 // RATE BREAKDOWN CARD — Weighted Adaptive Display
 // ============================================================
 @Composable
-private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
+private fun RateBreakdownCard(
+    roomState: GameRoomStateEntity?,
+    placedMiners: List<GameMinerItemEntity> = emptyList()
+) {
     if (roomState == null) return
 
     val breakdown = remember(roomState.weightedBreakdownJson) {
@@ -2583,21 +2548,17 @@ private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
             else JSONObject(roomState.weightedBreakdownJson)
         } catch (e: Exception) { null }
     }
-    val weights = breakdown?.optJSONObject("weights")
-    val deltas = breakdown?.optJSONObject("deltas")
     val floorApplied = breakdown?.optBoolean("floorApplied", false) ?: false
     val paused = breakdown?.optBoolean("paused", false) ?: false
     val ratePerMin = roomState.ratePerMin
     val baseRate = roomState.baseRate
 
-    // Animated rate count-up
     val animatedRate by animateFloatAsState(
         targetValue = ratePerMin.toFloat(),
         animationSpec = tween(1200, easing = FastOutSlowInEasing),
         label = "rate_anim"
     )
 
-    // Pulse icon
     val pulseTransition = rememberInfiniteTransition(label = "rate_pulse")
     val iconAlpha by pulseTransition.animateFloat(
         initialValue = 0.4f,
@@ -2609,26 +2570,28 @@ private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
         label = "icon_alpha"
     )
 
-    // Responsive
+    val efficiency = if (ratePerMin > 0 && baseRate > 0)
+        (ratePerMin / baseRate * 100).coerceIn(0.0, 150.0)
+    else 0.0
+
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         val isWide = maxWidth > 340.dp
-        val cardPadding = if (isWide) 16.dp else 12.dp
-        val rateSize = if (isWide) 20.sp else 17.sp
-        val factorSize = if (isWide) 11.sp else 10.sp
+        val cardPadding = if (isWide) 18.dp else 14.dp
+        val rateSize = if (isWide) 28.sp else 24.sp
+        val unitSize = if (isWide) 12.sp else 11.sp
 
-        // Glow shadow
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .shadow(
-                    elevation = 8.dp,
-                    shape = RoundedCornerShape(16.dp),
-                    ambientColor = EmeraldPrimary.copy(alpha = 0.3f),
-                    spotColor = GoldVip.copy(alpha = 0.2f)
+                    elevation = 10.dp,
+                    shape = RoundedCornerShape(18.dp),
+                    ambientColor = EmeraldPrimary.copy(alpha = 0.35f),
+                    spotColor = GoldVip.copy(alpha = 0.25f)
                 )
         ) {
             Surface(
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(18.dp),
                 color = Color.Transparent,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -2638,8 +2601,8 @@ private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
                         .background(
                             Brush.linearGradient(
                                 colors = listOf(
-                                    Color(0xFF0F172A).copy(alpha = 0.95f),
-                                    Color(0xFF0F172A).copy(alpha = 0.75f),
+                                    Color(0xFF0F172A).copy(alpha = 0.98f),
+                                    Color(0xFF0B1220).copy(alpha = 0.95f),
                                     Color(0xFF064E3B).copy(alpha = 0.85f)
                                 )
                             )
@@ -2648,19 +2611,18 @@ private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
                             width = 1.2.dp,
                             brush = Brush.linearGradient(
                                 colors = listOf(
-                                    EmeraldLight.copy(alpha = 0.5f),
-                                    GoldVip.copy(alpha = 0.4f),
-                                    EmeraldLight.copy(alpha = 0.5f)
+                                    EmeraldLight.copy(alpha = 0.55f),
+                                    GoldVip.copy(alpha = 0.45f),
+                                    EmeraldLight.copy(alpha = 0.55f)
                                 )
                             ),
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(18.dp)
                         )
                 ) {
                     Column(
                         modifier = Modifier.padding(cardPadding),
-                        verticalArrangement = Arrangement.spacedBy(if (isWide) 12.dp else 10.dp)
+                        verticalArrangement = Arrangement.spacedBy(if (isWide) 14.dp else 12.dp)
                     ) {
-                        // Header
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -2669,11 +2631,11 @@ private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Box(
                                     modifier = Modifier
-                                        .size(if (isWide) 28.dp else 24.dp)
+                                        .size(if (isWide) 32.dp else 28.dp)
                                         .background(
                                             brush = Brush.radialGradient(
                                                 colors = listOf(
-                                                    EmeraldLight.copy(alpha = iconAlpha * 0.4f),
+                                                    EmeraldLight.copy(alpha = iconAlpha * 0.5f),
                                                     Color.Transparent
                                                 )
                                             ),
@@ -2681,21 +2643,21 @@ private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
                                         ),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text("⚡", fontSize = if (isWide) 16.sp else 14.sp)
+                                    Text("⚡", fontSize = if (isWide) 18.sp else 16.sp)
                                 }
-                                Spacer(Modifier.width(8.dp))
+                                Spacer(Modifier.width(10.dp))
                                 Column {
                                     Text(
                                         "RATE BREAKDOWN",
-                                        fontSize = if (isWide) 11.sp else 10.sp,
+                                        fontSize = if (isWide) 12.sp else 11.sp,
                                         fontWeight = FontWeight.Black,
                                         color = EmeraldLight,
                                         letterSpacing = 1.5.sp
                                     )
                                     Text(
-                                        "Weighted Production",
-                                        fontSize = 8.sp,
-                                        color = Color.White.copy(alpha = 0.4f),
+                                        "Production Rate",
+                                        fontSize = 9.sp,
+                                        color = Color.White.copy(alpha = 0.45f),
                                         letterSpacing = 0.5.sp
                                     )
                                 }
@@ -2709,11 +2671,11 @@ private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
                             Surface(
                                 color = badgeColor.copy(alpha = 0.15f),
                                 shape = RoundedCornerShape(6.dp),
-                                border = BorderStroke(1.dp, badgeColor.copy(alpha = 0.4f))
+                                border = BorderStroke(1.dp, badgeColor.copy(alpha = 0.45f))
                             ) {
                                 Text(
                                     badgeText,
-                                    fontSize = 8.sp,
+                                    fontSize = 9.sp,
                                     fontWeight = FontWeight.Black,
                                     color = badgeColor,
                                     letterSpacing = 0.8.sp,
@@ -2722,61 +2684,83 @@ private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
                             }
                         }
 
-                        // Rate display besar
-                        Row(
+                        Column(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Column {
+                            Text(
+                                "PRODUCTION RATE",
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White.copy(alpha = 0.45f),
+                                letterSpacing = 1.2.sp
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Row(verticalAlignment = Alignment.Bottom) {
                                 Text(
-                                    "PRODUCTION RATE",
-                                    fontSize = 8.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White.copy(alpha = 0.4f),
-                                    letterSpacing = 1.sp
-                                )
-                                Spacer(Modifier.height(2.dp))
-                                Row(verticalAlignment = Alignment.Bottom) {
-                                    Text(
-                                        String.format(Locale.US, "%.5f", animatedRate),
-                                        fontSize = rateSize,
-                                        fontWeight = FontWeight.Black,
-                                        color = GoldVip,
-                                        fontFamily = FontFamily.Monospace
-                                    )
-                                    Spacer(Modifier.width(4.dp))
-                                    Text(
-                                        "RTP/mnt",
-                                        fontSize = if (isWide) 11.sp else 10.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White.copy(alpha = 0.5f),
-                                        modifier = Modifier.padding(bottom = 2.dp)
-                                    )
-                                }
-                            }
-                            Column(horizontalAlignment = Alignment.End) {
-                                Text(
-                                    "EFFICIENCY",
-                                    fontSize = 8.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White.copy(alpha = 0.4f),
-                                    letterSpacing = 1.sp
-                                )
-                                Spacer(Modifier.height(2.dp))
-                                val efficiency = if (ratePerMin > 0 && baseRate > 0)
-                                    (ratePerMin / baseRate * 100).coerceIn(0.0, 150.0)
-                                else 0.0
-                                Text(
-                                    "${efficiency.toInt()}%",
-                                    fontSize = if (isWide) 16.sp else 14.sp,
+                                    String.format(Locale.US, "%.5f", animatedRate),
+                                    fontSize = rateSize,
                                     fontWeight = FontWeight.Black,
-                                    color = if (efficiency > 100) EmeraldLight else if (efficiency > 50) GoldVip else Color(0xFFEF4444)
+                                    color = GoldVip,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                                Spacer(Modifier.width(6.dp))
+                                Text(
+                                    "RTP / menit",
+                                    fontSize = unitSize,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White.copy(alpha = 0.55f),
+                                    modifier = Modifier.padding(bottom = 4.dp)
                                 )
                             }
                         }
 
-                        // Divider gradient
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    "EFISIENSI PRODUKSI",
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White.copy(alpha = 0.4f),
+                                    letterSpacing = 0.8.sp
+                                )
+                                Text(
+                                    "${efficiency.toInt()}%",
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Black,
+                                    color = when {
+                                        efficiency >= 100 -> EmeraldLight
+                                        efficiency >= 50 -> GoldVip
+                                        else -> Color(0xFFEF4444)
+                                    }
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(8.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(Color.White.copy(alpha = 0.08f))
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth((efficiency / 100f).coerceIn(0f, 1f))
+                                        .fillMaxHeight()
+                                        .background(
+                                            Brush.horizontalGradient(
+                                                colors = listOf(EmeraldLight, GoldVip)
+                                            )
+                                        )
+                                )
+                            }
+                        }
+
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -2785,67 +2769,36 @@ private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
                                     Brush.horizontalGradient(
                                         colors = listOf(
                                             Color.Transparent,
-                                            EmeraldLight.copy(alpha = 0.5f),
-                                            GoldVip.copy(alpha = 0.5f),
-                                            EmeraldLight.copy(alpha = 0.5f),
+                                            EmeraldLight.copy(alpha = 0.4f),
+                                            GoldVip.copy(alpha = 0.4f),
+                                            EmeraldLight.copy(alpha = 0.4f),
                                             Color.Transparent
                                         )
                                     )
                                 )
                         )
 
-                        // Factor grid responsif
-                        if (deltas != null && weights != null) {
-                            val factors = listOf(
-                                RateQuad("Efficiency", "eff", "🎯"),
-                                RateQuad("Ping", "ping", "📡"),
-                                RateQuad("Device", "device", "📱"),
-                                RateQuad("Thermal", "thermal", "🌡️")
-                            )
-                            if (isWide) {
-                                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    factors.chunked(2).forEach { rowFactors ->
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                                        ) {
-                                            rowFactors.forEach { factor ->
-                                                RateFactorChip(
-                                                    factor = factor,
-                                                    deltas = deltas,
-                                                    weights = weights,
-                                                    fontSize = factorSize,
-                                                    modifier = Modifier.weight(1f)
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                                    factors.forEach { factor ->
-                                        RateFactorRow(
-                                            factor = factor,
-                                            deltas = deltas,
-                                            weights = weights,
-                                            fontSize = factorSize
-                                        )
-                                    }
-                                }
-                            }
-                        } else {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text("🔧", fontSize = 13.sp)
+                                Spacer(Modifier.width(6.dp))
                                 Text(
-                                    "⏳ Menunggu data kalkulasi...",
-                                    fontSize = 10.sp,
-                                    color = Color.White.copy(alpha = 0.4f),
-                                    fontStyle = FontStyle.Italic
+                                    "${placedMiners.size} processor terpasang",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White.copy(alpha = 0.7f)
                                 )
                             }
+                            Text(
+                                String.format(Locale.US, "%.5f base", baseRate),
+                                fontSize = 9.sp,
+                                color = Color.White.copy(alpha = 0.35f),
+                                fontFamily = FontFamily.Monospace
+                            )
                         }
                     }
                 }
@@ -2854,105 +2807,9 @@ private fun RateBreakdownCard(roomState: GameRoomStateEntity?) {
     }
 }
 
-private data class RateQuad(val label: String, val key: String, val emoji: String)
 
-@Composable
-private fun RateFactorRow(
-    factor: RateQuad,
-    deltas: JSONObject,
-    weights: JSONObject,
-    fontSize: TextUnit
-) {
-    val delta = deltas.optDouble(factor.key, 0.0)
-    val weight = weights.optDouble(factor.key, 0.0)
-    val contrib = delta * weight
-    val color = when {
-        contrib > 0.001 -> Color(0xFF10B981)
-        contrib < -0.001 -> Color(0xFFEF4444)
-        else -> Color(0xFF94A3B8)
-    }
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(factor.emoji, fontSize = fontSize)
-            Spacer(Modifier.width(6.dp))
-            Text(
-                factor.label,
-                fontSize = fontSize,
-                color = Color.White.copy(alpha = 0.7f),
-                fontWeight = FontWeight.Medium
-            )
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                "${(delta * 100).toInt().let { if (it >= 0) "+$it" else "$it" }}%",
-                fontSize = fontSize,
-                fontWeight = FontWeight.SemiBold,
-                color = color
-            )
-            Text(
-                "×${(weight * 100).toInt()}",
-                fontSize = (fontSize.value - 1).sp,
-                color = Color.White.copy(alpha = 0.3f)
-            )
-            Text(
-                "${(contrib * 100).toInt().let { if (it >= 0) "+$it" else "$it" }}%",
-                fontSize = fontSize,
-                fontWeight = FontWeight.Black,
-                color = color
-            )
-        }
-    }
-}
 
-@Composable
-private fun RateFactorChip(
-    factor: RateQuad,
-    deltas: JSONObject,
-    weights: JSONObject,
-    fontSize: TextUnit,
-    modifier: Modifier = Modifier
-) {
-    val delta = deltas.optDouble(factor.key, 0.0)
-    val weight = weights.optDouble(factor.key, 0.0)
-    val contrib = delta * weight
-    val color = when {
-        contrib > 0.001 -> Color(0xFF10B981)
-        contrib < -0.001 -> Color(0xFFEF4444)
-        else -> Color(0xFF94A3B8)
-    }
-    Surface(
-        color = color.copy(alpha = 0.08f),
-        shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(0.5.dp, color.copy(alpha = 0.3f)),
-        modifier = modifier
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(factor.emoji, fontSize = fontSize)
-                Spacer(Modifier.width(4.dp))
-                Text(
-                    factor.label,
-                    fontSize = (fontSize.value - 1).sp,
-                    color = Color.White.copy(alpha = 0.6f),
-                    fontWeight = FontWeight.Medium
-                )
-            }
-            Text(
-                "${(contrib * 100).toInt().let { if (it >= 0) "+$it" else "$it" }}%",
-                fontSize = fontSize,
-                fontWeight = FontWeight.Black,
-                color = color
-            )
-        }
-    }
-}
+
 
 
 
