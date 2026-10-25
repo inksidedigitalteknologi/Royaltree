@@ -326,7 +326,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     // Navigation and UI State
-    private val _currentScreen = MutableStateFlow(AppScreen.GAME_ROOM)
+    private val _currentScreen = MutableStateFlow(AppScreen.HOME)
     val currentScreen: StateFlow<AppScreen> = _currentScreen.asStateFlow()
 
     // ==== Ad Button State ====
