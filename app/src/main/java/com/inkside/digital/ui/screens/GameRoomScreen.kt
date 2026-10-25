@@ -2109,7 +2109,9 @@ private fun ShopMinerCard(
                     color = RetroGold.copy(alpha = 0.7f)
                 )
             }
-            if (item.isOwned) {
+            // Selalu tampilkan tombol BELI — bisa beli berkali-kali untuk merge
+            // Kalau item sedang terpasang, tampilkan "Terpasang" + tombol beli
+            if (item.isPlacedInRoom) {
                 Surface(
                     color = EmeraldLight.copy(alpha = 0.15f),
                     shape = RoundedCornerShape(8.dp),
@@ -2124,7 +2126,7 @@ private fun ShopMinerCard(
                         Text("✅", fontSize = 10.sp)
                         Spacer(Modifier.width(3.dp))
                         Text(
-                            text = if (item.isPlacedInRoom) "Terpasang" else "Dimiliki",
+                            text = "Terpasang",
                             fontSize = 9.sp,
                             fontWeight = FontWeight.Bold,
                             color = EmeraldLight,
@@ -2141,7 +2143,9 @@ private fun ShopMinerCard(
                         .clickable(enabled = canAfford) { onBuy() }
                 ) {
                     Text(
-                        text = if (canAfford) "BELI" else "KURANG",
+                        text = if (canAfford) {
+                            if (item.isOwned) "BELI LAGI" else "BELI"
+                        } else "KURANG",
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Black,
                         color = if (canAfford) Color.Black else Color.White.copy(alpha = 0.7f),

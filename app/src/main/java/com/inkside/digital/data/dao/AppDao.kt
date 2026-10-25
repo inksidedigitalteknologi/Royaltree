@@ -190,6 +190,9 @@ interface AppDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGameMinerItems(items: List<com.inkside.digital.data.model.GameMinerItemEntity>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertGameMinerItem(item: com.inkside.digital.data.model.GameMinerItemEntity)
+
 
     @Update
     suspend fun updateGameMinerItem(item: com.inkside.digital.data.model.GameMinerItemEntity)

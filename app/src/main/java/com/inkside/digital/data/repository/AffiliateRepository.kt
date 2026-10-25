@@ -1150,10 +1150,6 @@ class AffiliateRepository(private val dao: AppDao) {
         val user = dao.getUserSync(currentId) ?: return@withContext Result.failure(Exception("Pengguna tidak ditemukan"))
         val item = dao.getGameMinerItemById(itemId) ?: return@withContext Result.failure(Exception("Item tidak ditemukan"))
 
-        if (item.isOwned) {
-            return@withContext Result.failure(Exception("Anda sudah memiliki item ini. Pasang item ini di rak ruang game."))
-        }
-
         if (user.points < item.tokenCost) {
             val shortage = item.tokenCost - user.points
             return@withContext Result.failure(Exception("RTP tidak cukup! Anda memiliki ${user.points} RTP (Butuh ${item.tokenCost}, kurang $shortage RTP)."))
@@ -1163,15 +1159,17 @@ class AffiliateRepository(private val dao: AppDao) {
         val occupiedSlots = placedMiners.map { it.placedSlotIndex }.toSet()
         val firstEmptySlot = (0..5).firstOrNull { it !in occupiedSlots }
 
-        val updatedItem = if (firstEmptySlot != null) {
-            item.copy(isOwned = true, isPlacedInRoom = true, placedSlotIndex = firstEmptySlot)
-        } else {
-            item.copy(isOwned = true, isPlacedInRoom = false, placedSlotIndex = -1)
-        }
+        // Setiap beli = instance baru (ID unik) — untuk merge
+        val newItem = item.copy(
+            id = "miner_" + UUID.randomUUID().toString().take(8),
+            isOwned = true,
+            isPlacedInRoom = firstEmptySlot != null,
+            placedSlotIndex = firstEmptySlot ?: -1
+        )
 
         val updatedUser = user.copy(points = user.points - item.tokenCost)
         dao.updateUser(updatedUser)
-        dao.updateGameMinerItem(updatedItem)
+        dao.insertGameMinerItem(newItem)
 
         val now = System.currentTimeMillis()
         dao.insertTransaction(
