@@ -1136,8 +1136,15 @@ private fun MiningRoomTab(
                                             modifier = Modifier.size(14.dp)
                                         )
                                         Spacer(Modifier.width(4.dp))
+                                        // Animasi count-up + desimal bergerak
+                                        val targetRtp = (userPoints + liveUnclaimedPoints).toFloat()
+                                        val animatedRtp by androidx.compose.animation.core.animateFloatAsState(
+                                            targetValue = targetRtp,
+                                            animationSpec = androidx.compose.animation.core.tween(500, easing = androidx.compose.animation.core.FastOutSlowInEasing),
+                                            label = "rtp_anim"
+                                        )
                                         Text(
-                                            GlobalPointsManager.formatRtpCompact(userPoints + liveUnclaimedPoints),
+                                            GlobalPointsManager.formatRtpAnimated(animatedRtp.toDouble()),
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = GoldVip,

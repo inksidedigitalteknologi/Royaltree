@@ -193,4 +193,19 @@ object GlobalPointsManager {
         }
     }
 
+    /**
+     * Format RTP untuk header — desimal bergerak (4 desimal).
+     * 19.1234 → "19.1234"
+     * 1234.5678 → "1.2346K"
+     * 1234567.89 → "1.2346M"
+     */
+    fun formatRtpAnimated(value: Double): String {
+        return when {
+            value >= 1_000_000_000 -> String.format(Locale.US, "%.6fB", value / 1_000_000_000)
+            value >= 1_000_000 -> String.format(Locale.US, "%.6fM", value / 1_000_000)
+            value >= 1_000 -> String.format(Locale.US, "%.6fK", value / 1_000)
+            else -> String.format(Locale.US, "%.6f", value)
+        }
+    }
+
 }
