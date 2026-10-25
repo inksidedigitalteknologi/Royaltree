@@ -1109,7 +1109,7 @@ private fun MiningRoomTab(
                                         text = LanguageManager.translate("game_mining_tycoon", AppThemePreferences.currentLanguage, "POWER TYCOON"),
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Black,
-                                        color = auraColor1,
+                                        color = EmeraldLight,
                                         letterSpacing = 1.5.sp
                                     )
                                     Text(
