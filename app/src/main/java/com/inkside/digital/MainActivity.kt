@@ -940,11 +940,13 @@ fun MainAffiliateAppContent(
                             }
                         },
                         
-                        recentTransactions = transactions,
-                        currentLanguage = currentLanguage,
                         
-                        onNavigate = { onNavigate(it) },
                         onOpenWithdraw = { onSetWithdrawModalVisible(true) },
+                        onOpenTransfer = { onSetQrTransferModalVisible(true) },
+                        onOpenDaily = { onSetDailyCheckInModalVisible(true) },
+                        onOpenAds = { onSetAdRewardModalVisible(true) },
+                        onOpenReferral = { onNavigate(AppScreen.REFERRAL) },
+                        onOpenProfile = { onNavigate(AppScreen.PROFILE) }
                         
                         
                         
@@ -963,7 +965,6 @@ fun MainAffiliateAppContent(
                     WithdrawalScreen(
                         user = user,
                         withdrawals = withdrawals,
-                        currentLanguage = currentLanguage,
                         onSubmitWithdrawal = { amount, channelType, providerName, accountDestination, accountHolderName ->
                             onWithdrawSubmit(amount, channelType, providerName, accountDestination, accountHolderName, "")
                         }
@@ -982,7 +983,6 @@ fun MainAffiliateAppContent(
                 AppScreen.PROFILE -> {
                     ProfileScreen(
                         user = user,
-                        currentLanguage = currentLanguage,
                         onOpenLanguage = { showLanguageModal = true },
                         onSaveProfile = { name, email, phone ->
                             onUpdateProfile(name, email, phone, "")
@@ -1017,7 +1017,6 @@ fun MainAffiliateAppContent(
 
                 AppScreen.WHITEPAPER -> {
                     WhitepaperScreen(
-                        currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.HOME) }
                     )
                 }
@@ -1025,14 +1024,12 @@ fun MainAffiliateAppContent(
                 AppScreen.GLOBAL_CHAT -> {
                     GlobalChatScreen(
                         currentUserId = user?.id ?: "",
-                        currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.HOME) }
                     )
                 }
 
                 AppScreen.SETTINGS -> {
                     SettingsScreen(
-                        currentLanguage = currentLanguage,
                         onOpenLanguage = { showLanguageModal = true },
                         onLogout = { onLogout() }
                     )
@@ -1045,7 +1042,6 @@ fun MainAffiliateAppContent(
                 AppScreen.ACHIEVEMENT -> {
                     AchievementScreen(
                         viewModel = viewModel,
-                        currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.PROFILE) }
                     )
                 }
@@ -1053,7 +1049,6 @@ fun MainAffiliateAppContent(
                 AppScreen.PURCHASE -> {
                     PurchaseScreen(
                         viewModel = viewModel,
-                        currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.PROFILE) }
                     )
                 }
@@ -1063,7 +1058,6 @@ fun MainAffiliateAppContent(
                     val isCheckedInToday = user?.lastCheckInDate == today
 
                     DailyCheckInScreen(
-                        currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.HOME) },
                         onClaimCheckIn = { onDailyCheckInClaim() },
                         onWatchAdAndClaim = { txId, vendor ->
@@ -1083,7 +1077,6 @@ fun MainAffiliateAppContent(
 
                 AppScreen.INBOX -> {
                     InboxScreen(
-                        currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.HOME) }
                     )
                 }
@@ -1092,7 +1085,6 @@ fun MainAffiliateAppContent(
                     LaunchedEffect(Unit) { onLoadNotifications() }
                     NotificationsScreen(
                         notifications = notifications,
-                        currentLanguage = currentLanguage,
                         onMarkAllRead = onMarkAllNotifsRead,
                         onClearAll = onClearAllNotifs
                     )
@@ -1103,7 +1095,6 @@ fun MainAffiliateAppContent(
 
                 AppScreen.TRANSFER -> {
                     TransferSimpleScreen(
-                        currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.HOME) }
                     )
                 }
@@ -1111,8 +1102,6 @@ fun MainAffiliateAppContent(
                 AppScreen.GAME_ROOM -> {
                     GameHubScreen(
                         user = user,
-                        currentLanguage = currentLanguage,
-                        onNavigate = { onNavigate(it) },
                         onBack = { onNavigate(AppScreen.HOME) },
                         onLoadGameState = { onLoadGameState() }
                     )
@@ -1122,7 +1111,6 @@ fun MainAffiliateAppContent(
                     GameRoomScreen(
                         viewModel = viewModel,
                         user = user,
-                        currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.GAME_ROOM) }
                     )
                 }
@@ -1130,7 +1118,6 @@ fun MainAffiliateAppContent(
                 AppScreen.GAME_COIN_RUSH -> {
                     CoinRushScreen(
                         user = user,
-                        currentLanguage = currentLanguage,
                         onBack = { onNavigate(AppScreen.GAME_ROOM) },
                         onFinish = { score -> onFinishMiniGame(score) }
                     )
@@ -1139,7 +1126,6 @@ fun MainAffiliateAppContent(
                 AppScreen.INVEST -> {
                     val coupons by viewModel.investmentCoupons.collectAsState()
                     InvestmentCouponScreen(
-                        currentLanguage = currentLanguage,
                         user = user,
                         coupons = coupons,
                         onBuyCoupon = { coupon ->
@@ -1165,8 +1151,6 @@ fun MainAffiliateAppContent(
             // ✅ RevolverBottomNav sebagai overlay floating di atas konten
             com.inkside.digital.ui.components.RevolverBottomNav(
                 currentScreen = currentScreen,
-                onNavigate = { onNavigate(it) },
-                currentLanguage = currentLanguage,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .onSizeChanged {
@@ -1181,7 +1165,6 @@ fun MainAffiliateAppContent(
     if (showWithdraw) {
         WithdrawDialog(
             user = user,
-            currentLanguage = currentLanguage,
             onDismiss = onWithdrawDismiss,
             onSubmit = onWithdrawSubmit
         )
@@ -1198,7 +1181,6 @@ fun MainAffiliateAppContent(
         NewLinkModal(
             campaigns = campaigns,
             preselectedCampaign = selectedCampForLink,
-            currentLanguage = currentLanguage,
             onDismiss = onNewLinkDismiss,
             onCreateLink = onNewLinkCreate
         )
@@ -1237,7 +1219,6 @@ fun MainAffiliateAppContent(
             minWithdraw = affiliateBalance.minWithdraw,
             userEmail = user?.email ?: "",
             isLoading = affiliateLoading,
-            currentLanguage = currentLanguage,
             onSubmit = { amount, dest -> onWithdrawAffiliateSubmit(amount, dest) },
             onDismiss = { onWithdrawAffiliateDismiss() }
         )
@@ -1245,7 +1226,6 @@ fun MainAffiliateAppContent(
 
     if (showLanguageModal) {
         LanguageModal(
-            currentLanguage = currentLanguage,
             onDismiss = { showLanguageModal = false },
             onSelectLanguage = { lang ->
                 AppLogger.e("LANG_DEBUG", "🔵 onSelectLanguage: ${lang.code}")
@@ -1260,7 +1240,6 @@ fun MainAffiliateAppContent(
             user = user,
             contacts = contacts,
             onToggleFavorite = onQrTransferToggleFavorite,
-            currentLanguage = currentLanguage,
             onDismiss = onQrTransferDismiss,
             onTransfer = onQrTransferSubmit
         )
