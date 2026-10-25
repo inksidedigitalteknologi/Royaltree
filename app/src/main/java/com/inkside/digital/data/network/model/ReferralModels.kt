@@ -11,7 +11,7 @@ data class ReferralTier(
     @Json(name = "max") val max: Int,
     @Json(name = "icon") val icon: String,
     @Json(name = "color") val color: String,
-    @Json(name = "reward") val reward: Int,
+    @Json(name = "reward") val reward: Int = 0,
     @Json(name = "perks") val perks: List<String> = emptyList()
 )
 
