@@ -78,7 +78,6 @@ import com.inkside.digital.ui.screens.HistoryScreen
 import com.inkside.digital.ui.screens.HomeScreen
 import com.inkside.digital.ui.screens.CoinRushScreen
 import com.inkside.digital.ui.screens.InvestmentCouponScreen
-import com.inkside.digital.ui.screens.MissionsScreen
 import com.inkside.digital.ui.screens.NotificationsScreen
 import com.inkside.digital.ui.screens.ProfileScreen
 import com.inkside.digital.ui.screens.AppOffersScreenContent
@@ -475,7 +474,6 @@ fun MainAffiliateApp(
                 AppScreen.INBOX -> "inbox"
                 AppScreen.NOTIFICATIONS -> "notifications"
                 AppScreen.PROFILE -> "profile"
-                AppScreen.MISSIONS -> "missions"
                 AppScreen.GLOBAL_CHAT -> "chat"
                 else -> currentScreen.name.lowercase()
             }
@@ -563,7 +561,6 @@ fun MainAffiliateApp(
         coupons = coupons,
         notifications = notifications,
         unreadNotifs = unreadNotifs,
-        missions = missions,
         allUsers = allUsers,
         locationLogs = locationLogs,
         systemSettings = systemSettings,
@@ -988,7 +985,6 @@ fun MainAffiliateAppContent(
                         onNavigateToDailyCheckIn = { onNavigate(AppScreen.DAILY_CHECK_IN) },
                         onNavigateToMining = { onNavigate(AppScreen.GAME_MINING) },
                         onNavigateToCoinRush = { onNavigate(AppScreen.GAME_COIN_RUSH) },
-                        onNavigateToMissions = { onNavigate(AppScreen.MISSIONS) },
                         minerSlotsUsed = placedMiners.size,
                         minerSlotsMax = when (user?.tier) {
                             "ROYAL" -> 10
@@ -1003,18 +999,6 @@ fun MainAffiliateAppContent(
                     )
                 }
 
-                AppScreen.MISSIONS -> {
-                    MissionsScreen(
-                        user = user,
-                        missions = missions,
-                        currentLanguage = currentLanguage,
-                        onBack = { onNavigate(AppScreen.HOME) },
-                        onClaimMission = { onClaimMission(it) },
-                        onCompleteTaskAction = { onCompleteTaskAction(it) },
-                        onOpenTransferQr = { onSetQrTransferModalVisible(true) },
-                        onOpenWatchAd = { onSetAdRewardModalVisible(true) }
-                    )
-                }
 
 
                 AppScreen.REFERRAL -> {
@@ -1129,7 +1113,6 @@ fun MainAffiliateAppContent(
                         viewModel = viewModel,
                         user = user,
                         currentLanguage = currentLanguage,
-                        onNavigateToMissions = { onNavigate(AppScreen.MISSIONS) },
                         onBack = { onNavigate(AppScreen.GAME_ROOM) }
                     )
                 }
@@ -1306,7 +1289,6 @@ fun MainAffiliateAppPreview() {
             coupons = emptyList(),
             notifications = emptyList(),
             unreadNotifs = 5,
-            missions = emptyList(),
             allUsers = emptyList(),
             locationLogs = emptyList(),
             systemSettings = null,

@@ -174,8 +174,6 @@ fun GameHubScreen(
                         .padding(8.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    MenuIconButton("🛒", LanguageManager.translate("game_hub_shop", currentLanguage, "Shop")) { onNavigate(AppScreen.MISSIONS) }
-                    MenuIconButton("🎁", LanguageManager.translate("game_hub_events", currentLanguage, "Events")) { onNavigate(AppScreen.MISSIONS) }
                     MenuIconButton("⚙️", LanguageManager.translate("game_hub_settings", currentLanguage, "Set")) { onNavigate(AppScreen.SETTINGS) }
                     MenuIconButton("❓", LanguageManager.translate("game_hub_help", currentLanguage, "Help")) { onNavigate(AppScreen.FAQ) }
                 }

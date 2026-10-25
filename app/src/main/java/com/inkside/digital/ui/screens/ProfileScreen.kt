@@ -90,7 +90,6 @@ fun ProfileScreen(
     onNavigateToDailyCheckIn: () -> Unit = {},
     onNavigateToMining: () -> Unit = {},
     onNavigateToCoinRush: () -> Unit = {},
-    onNavigateToMissions: () -> Unit = {},
     // Mining & Referral data
     minerSlotsUsed: Int = 0,
     minerSlotsMax: Int = 6,
@@ -273,7 +272,6 @@ fun ProfileScreen(
                 onDailyCheckIn = onNavigateToDailyCheckIn,
                 onMining = onNavigateToMining,
                 onCoinRush = onNavigateToCoinRush,
-                onMissions = onNavigateToMissions
             )
         }
 

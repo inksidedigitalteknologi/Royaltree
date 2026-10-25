@@ -143,12 +143,6 @@ fun AppDrawer(
             DrawerItem(
                 icon = Icons.Default.TaskAlt,
                 label = LanguageManager.translate("nav_missions", currentLanguage, "Misi"),
-                selected = currentScreen == AppScreen.MISSIONS,
-                onClick = { onNavigate(AppScreen.MISSIONS); onCloseDrawer() }
-            )
-            DrawerItem(
-                icon = Icons.Default.ShoppingCart,
-                label = LanguageManager.translate("nav_shop", currentLanguage, "Shop"),
                 selected = currentScreen == AppScreen.PURCHASE,
                 onClick = { onNavigate(AppScreen.PURCHASE); onCloseDrawer() }
             )

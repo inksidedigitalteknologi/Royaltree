@@ -140,7 +140,6 @@ fun GameRoomScreen(
     viewModel: AffiliateViewModel,
     user: UserEntity?,
     currentLanguage: AppLanguage,
-    onNavigateToMissions: () -> Unit,
     onBack: () -> Unit
 ) {
     val minerItems by viewModel.gameMinerItems.collectAsState()
@@ -207,7 +206,6 @@ fun GameRoomScreen(
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
         onBuyAndPlaceGameMinerItem = { id -> viewModel.buyAndPlaceGameMinerItem(id) },
         onFinishGame = { score, duration, nonce -> viewModel.finishMiniGame(score, duration, nonce) },
-        onNavigateToMissions = onNavigateToMissions,
         onBack = onBack,
         currentLanguage = currentLanguage,
         onUnlockSlot = { slotIndex -> viewModel.unlockSlot(slotIndex) }
@@ -235,7 +233,6 @@ fun GameRoomScreenContent(
     onBuyGameMinerItem: (String) -> Unit,
     onBuyAndPlaceGameMinerItem: (String) -> Unit = {},
     onFinishGame: (score: Int, durationMs: Long, gameNonce: String) -> Unit,
-    onNavigateToMissions: () -> Unit,
     onBack: () -> Unit,
     currentLanguage: AppLanguage,
     onClaimMinerToken: (String) -> Unit = {},
@@ -424,7 +421,6 @@ fun GameRoomScreenContent(
                             userPoints = user?.points ?: 0.0,
                             onBuyItem = { item -> selectedItemToBuy = item },
                             onUnlockMiner = onUnlockMiner,
-                            onNavigateToMissions = onNavigateToMissions
                         )
                     }
                 }
@@ -1875,7 +1871,6 @@ private fun ItemShopTab(
     userPoints: Double,
     onBuyItem: (GameMinerItemEntity) -> Unit,
     onUnlockMiner: (String) -> Unit = {},
-    onNavigateToMissions: () -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -1937,36 +1932,7 @@ private fun ItemShopTab(
 
         // Fast earn points CTA banner (full-width)
         item(span = { GridItemSpan(2) }) {
-            Surface(
-                color = Color(0xFF1E293B),
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onNavigateToMissions() }
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("💡", fontSize = 16.sp)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Column {
-                            Text(LanguageManager.translate("game_need_more_points", AppThemePreferences.currentLanguage, "Butuh Poin Lebih Banyak?"), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = GoldVip)
-                            Text(LanguageManager.translate("game_complete_missions", AppThemePreferences.currentLanguage, "Selesaikan misi Like, Subscribe, Nonton, & Web"), fontSize = 10.sp, color = Color(0xFF94A3B8))
-                        }
-                    }
-                    Button(
-                        onClick = onNavigateToMissions,
-                        colors = ButtonDefaults.buttonColors(containerColor = GoldVip),
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                        modifier = Modifier.height(28.dp)
-                    ) {
-                        Text(LanguageManager.translate("game_open_missions", AppThemePreferences.currentLanguage, "Buka Misi"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color.Black)
-                    }
-                }
-            }
+
         }
 
         // Shop items list

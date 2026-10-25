@@ -302,13 +302,6 @@ fun HomeScreen(user: UserEntity?,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     QuickActionButton(
-                        icon = Icons.Filled.TaskAlt,
-                        label = LanguageManager.translate("nav_missions", currentLanguage, "Misi"),
-                        color = Color(0xFF8B5CF6),
-                        onClick = { onNavigate(AppScreen.MISSIONS) },
-                        modifier = Modifier.weight(1f)
-                    )
-                    QuickActionButton(
                         icon = Icons.Filled.CheckCircle,
                         label = LanguageManager.translate("daily_title", currentLanguage, "Check-In"),
                         color = EmeraldLight,

@@ -88,7 +88,6 @@ fun RevolverBottomNav(
     val items = remember {
         listOf(
             CommandItem(AppScreen.HOME, "nav_home", "Home", Icons.Filled.Home),
-            CommandItem(AppScreen.MISSIONS, "nav_missions", "Misi", Icons.Filled.Flag),
             CommandItem(AppScreen.GAME_ROOM, "nav_game", "Game", Icons.Filled.SportsEsports),
             CommandItem(AppScreen.PROFILE, "nav_profile", "Profil", Icons.Filled.AccountCircle)
         )
