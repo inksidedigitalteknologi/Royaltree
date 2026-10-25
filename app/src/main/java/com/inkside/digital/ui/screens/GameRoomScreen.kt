@@ -7,6 +7,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.ui.unit.TextUnit
 import org.json.JSONObject
+import androidx.compose.ui.graphics.lerp
 import com.inkside.digital.R
 import com.inkside.digital.data.preferences.AppThemePreferences
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -2574,6 +2575,33 @@ private fun RateBreakdownCard(
         (ratePerMin / baseRate * 100).coerceIn(0.0, 150.0)
     else 0.0
 
+    // === AURA ANIMASI ===
+    val auraTransition = rememberInfiniteTransition(label = "aura")
+    val auraProgress by auraTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(4000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "aura_progress"
+    )
+
+    // Warna aura berubah lembut
+    val auraColor1 = lerp(EmeraldLight, Color(0xFFA855F7), auraProgress)  // Emerald → Purple
+    val auraColor2 = lerp(GoldVip, Color(0xFF06B6D4), auraProgress)        // Gold → Cyan
+
+    // Glow shadow animasi
+    val glowIntensity by auraTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.7f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "glow_intensity"
+    )
+
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         val isWide = maxWidth > 340.dp
         val cardPadding = if (isWide) 18.dp else 14.dp
@@ -2584,10 +2612,10 @@ private fun RateBreakdownCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .shadow(
-                    elevation = 10.dp,
+                    elevation = (10 + glowIntensity * 8).dp,
                     shape = RoundedCornerShape(18.dp),
-                    ambientColor = EmeraldPrimary.copy(alpha = 0.35f),
-                    spotColor = GoldVip.copy(alpha = 0.25f)
+                    ambientColor = auraColor1.copy(alpha = glowIntensity * 0.5f),
+                    spotColor = auraColor2.copy(alpha = glowIntensity * 0.4f)
                 )
         ) {
             Surface(
@@ -2608,12 +2636,12 @@ private fun RateBreakdownCard(
                             )
                         )
                         .border(
-                            width = 1.2.dp,
+                            width = 1.5.dp,
                             brush = Brush.linearGradient(
                                 colors = listOf(
-                                    EmeraldLight.copy(alpha = 0.55f),
-                                    GoldVip.copy(alpha = 0.45f),
-                                    EmeraldLight.copy(alpha = 0.55f)
+                                    auraColor1.copy(alpha = 0.6f),
+                                    auraColor2.copy(alpha = 0.5f),
+                                    auraColor1.copy(alpha = 0.6f)
                                 )
                             ),
                             shape = RoundedCornerShape(18.dp)
