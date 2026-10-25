@@ -91,9 +91,9 @@ fun RevolverBottomNav(
     // Menu items (4 tab + coin center)
     val items = remember {
         listOf(
-            CommandItem(AppScreen.GAME_ROOM, "nav_game", "RTP Studio", Icons.Filled.Bolt),
-            CommandItem(AppScreen.REFERRAL, "nav_referral", "Referral", Icons.Filled.People),
             CommandItem(AppScreen.PROFILE, "nav_profile", "Profil", Icons.Filled.AccountCircle),
+            CommandItem(AppScreen.REFERRAL, "nav_referral", "Referral", Icons.Filled.People),
+            CommandItem(AppScreen.GAME_ROOM, "nav_game", "RTP Studio", Icons.Filled.Bolt),
             CommandItem(AppScreen.PURCHASE, "nav_purchase", "Beli", Icons.Filled.ShoppingBag)
         )
     }
