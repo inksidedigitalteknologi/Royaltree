@@ -135,6 +135,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 // ==== Retro Pixel Palette ====
 private val RetroGold = Color(0xFFFFD700)

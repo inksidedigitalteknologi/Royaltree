@@ -905,16 +905,16 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             return
         }
         viewModelScope.launch {
-            try {
-                _isBuyingMiner.value = true
-                // Watchdog: paksa reset kalau stuck >30 detik
-                val watchdog = launch {
-                    delay(30_000L)
-                    if (_isBuyingMiner.value) {
-                        AppLogger.e("BuyMiner", "⏰ WATCHDOG: _isBuyingMiner stuck >30s, forcing reset")
-                        _isBuyingMiner.value = false
-                    }
+            _isBuyingMiner.value = true
+            // Watchdog: paksa reset kalau stuck >30 detik
+            val watchdog = launch {
+                delay(30_000L)
+                if (_isBuyingMiner.value) {
+                    AppLogger.e("BuyMiner", "⏰ WATCHDOG: _isBuyingMiner stuck >30s, forcing reset")
+                    _isBuyingMiner.value = false
                 }
+            }
+            try {
                 AppLogger.d("BuyMiner", "🛒 buyGameMinerItem START: $itemId")
                 
                 // 1. Beli lokal (Room DB)
@@ -984,15 +984,15 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             return
         }
         viewModelScope.launch {
-            try {
-                _isBuyingMiner.value = true
-                val watchdog2 = launch {
-                    delay(30_000L)
-                    if (_isBuyingMiner.value) {
-                        AppLogger.e("BuyMiner", "⏰ WATCHDOG: _isBuyingMiner stuck >30s, forcing reset")
-                        _isBuyingMiner.value = false
-                    }
+            _isBuyingMiner.value = true
+            val watchdog2 = launch {
+                delay(30_000L)
+                if (_isBuyingMiner.value) {
+                    AppLogger.e("BuyMiner", "⏰ WATCHDOG: _isBuyingMiner stuck >30s, forcing reset")
+                    _isBuyingMiner.value = false
                 }
+            }
+            try {
                 AppLogger.d("BuyMiner", "🛒 buyAndPlaceGameMinerItem START: $itemId")
 
                 val result = repository.buyGameMinerItem(itemId)
