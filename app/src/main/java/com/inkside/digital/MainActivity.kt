@@ -1245,6 +1245,16 @@ fun MainAffiliateAppContent(
     }
 
 
+    // === AD REWARD MODAL ===
+    if (showAdReward) {
+        AdRewardModal(
+            onDismiss = onAdRewardDismiss,
+            onRewardEarned = {
+                onAdRewardEarned(0)
+            }
+        )
+    }
+
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     androidx.compose.material3.Text(text = "Hello $name!", modifier = modifier)
