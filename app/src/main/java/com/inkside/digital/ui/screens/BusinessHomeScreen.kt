@@ -293,26 +293,6 @@ fun BusinessHomeScreen(
             TransactionItem(tx)
         }
 
-        item {
-            Surface(
-                color = Color(0xFF1E293B),
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text(
-                        "\uD83D\uDCA1 Tips",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = GoldVip
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        "Ajak 5 teman \u2192 dapat bonus RTP. Semakin banyak referral, semakin tinggi komisi!",
-                        fontSize = 10.sp,
-                        color = Color(0xFF94A3B8)
-                    )
-                }
             }
         }
     }
