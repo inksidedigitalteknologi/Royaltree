@@ -293,8 +293,6 @@ fun BusinessHomeScreen(
             TransactionItem(tx)
         }
 
-            }
-        }
     }
 }
 
