@@ -343,6 +343,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     private val COOLDOWN_MS = 30_000L
 
     private val _snackbarMessage = MutableStateFlow<String?>(null)
+    private val _isBuyingMiner = MutableStateFlow(false)
+    val isBuyingMiner: StateFlow<Boolean> = _isBuyingMiner.asStateFlow()
     val snackbarMessage: StateFlow<String?> = _snackbarMessage.asStateFlow()
 
     // Dialog & Flow States
@@ -898,7 +900,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun buyGameMinerItem(itemId: String) {
+        if (_isBuyingMiner.value) {
+            AppLogger.d("BuyMiner", "⏸️ Ignored (sedang beli): $itemId")
+            return
+        }
         viewModelScope.launch {
+            _isBuyingMiner.value = true
             try {
                 AppLogger.d("BuyMiner", "🛒 buyGameMinerItem START: $itemId")
                 
@@ -952,6 +959,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             } catch (e: Exception) {
                 AppLogger.e("BuyMiner", "❌ Fatal error: ${e.message}", e)
                 showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
+            } finally {
+                _isBuyingMiner.value = false
             }
         }
     }
@@ -961,7 +970,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
      * Kalau takde slot kosong → beli sahaja (masuk inventory).
      */
     fun buyAndPlaceGameMinerItem(itemId: String) {
+        if (_isBuyingMiner.value) {
+            AppLogger.d("BuyMiner", "⏸️ Ignored (sedang beli): $itemId")
+            return
+        }
         viewModelScope.launch {
+            _isBuyingMiner.value = true
             try {
                 AppLogger.d("BuyMiner", "🛒 buyAndPlaceGameMinerItem START: $itemId")
 
@@ -1034,6 +1048,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             } catch (e: Exception) {
                 AppLogger.e("BuyMiner", "❌ Fatal error: ${e.message}", e)
                 showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
+            } finally {
+                _isBuyingMiner.value = false
             }
         }
     }
