@@ -53,7 +53,15 @@ const placeMinerSchema = Joi.object({
 });
 
 const purchaseMinerSchema = Joi.object({
-    tier: Joi.string().valid('COMMON', 'RARE', 'EPIC', 'LEGENDARY', 'MYTHIC').required()
+    tier: Joi.string().valid('COMMON', 'RARE', 'EPIC', 'LEGENDARY', 'MYTHIC').required(),
+    catalogId: Joi.string().optional(),
+    minerId: Joi.string().optional(),
+    instanceId: Joi.string().optional(),
+    name: Joi.string().optional(),
+    tokenCost: Joi.number().optional(),
+    powerHs: Joi.number().optional(),
+    pointsPerMinute: Joi.number().optional(),
+    iconEmoji: Joi.string().optional()
 });
 
 const claimSchema = Joi.object({
