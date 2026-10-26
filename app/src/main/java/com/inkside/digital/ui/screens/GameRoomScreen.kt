@@ -457,7 +457,7 @@ fun GameRoomScreenContent(
         }
     }
 
-    // Modal: Confirmation Beli Item — v2 Lebar & Canggih
+    // Modal: Confirmation Beli Item — REDESIGN
     selectedItemToBuy?.let { item ->
         val userPoints = user?.points ?: 0.0
         val canAfford = userPoints >= item.tokenCost
@@ -469,18 +469,15 @@ fun GameRoomScreenContent(
         val hasEmptySlot = (0 until unlockedSlots).any { it !in usedSlots }
         val rarityColor = tierColor(item.tier)
 
-        // Current stats untuk comparison
         val placedMiners = minerItems.filter { it.isPlacedInRoom }
         val currentPower = placedMiners.sumOf { it.powerHs }
         val currentRate = placedMiners.sumOf { it.pointsPerMinute }
         val newPower = currentPower + item.powerHs
         val newRate = currentRate + item.pointsPerMinute
 
-        // State untuk checkbox & countdown
         var agreeChecked by remember { mutableStateOf(false) }
         var isBuying by remember { mutableStateOf(false) }
 
-        // Watch snackbarMessage — tutup modal setelah beli sukses
         val snackbarMsg by viewModel.snackbarMessage.collectAsState()
         LaunchedEffect(snackbarMsg) {
             if (isBuying && snackbarMsg != null) {
@@ -488,41 +485,34 @@ fun GameRoomScreenContent(
                 selectedItemToBuy = null
             }
         }
-        
-        val infiniteTransition = rememberInfiniteTransition(label = "miner_pulse")
 
-        val pulseScale by infiniteTransition.animateFloat(
-            initialValue = 0.95f,
-            targetValue = 1.05f,
+        val infiniteTransition = rememberInfiniteTransition(label = "buy_pulse")
+        val pulseAlpha by infiniteTransition.animateFloat(
+            initialValue = 0.5f, targetValue = 1f,
             animationSpec = infiniteRepeatable(
-                animation = tween(1500, easing = FastOutSlowInEasing),
+                animation = tween(1400, easing = FastOutSlowInEasing),
                 repeatMode = RepeatMode.Reverse
-            ),
-            label = "pulse"
+            ), label = "pulse_alpha"
         )
         val rotateAngle by infiniteTransition.animateFloat(
-            initialValue = 0f,
-            targetValue = 360f,
+            initialValue = 0f, targetValue = 360f,
             animationSpec = infiniteRepeatable(
-                animation = tween(8000, easing = androidx.compose.animation.core.LinearEasing),
+                animation = tween(10000, easing = androidx.compose.animation.core.LinearEasing),
                 repeatMode = RepeatMode.Restart
-            ),
-            label = "rotate"
+            ), label = "rotate"
         )
 
         Dialog(
             onDismissRequest = { if (!isBuying) selectedItemToBuy = null },
-            properties = androidx.compose.ui.window.DialogProperties(
-                usePlatformDefaultWidth = false
-            )
+            properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
         ) {
             Surface(
                 shape = RoundedCornerShape(24.dp),
-                color = Color(0xFF0F172A),
+                color = Color(0xFF0A0E1A),
                 border = BorderStroke(
-                    width = 2.dp,
+                    width = 1.5.dp,
                     brush = Brush.linearGradient(
-                        colors = listOf(rarityColor, GoldVip, rarityColor)
+                        colors = listOf(rarityColor.copy(alpha = 0.8f), rarityColor.copy(alpha = 0.3f), rarityColor.copy(alpha = 0.8f))
                     )
                 ),
                 shadowElevation = 24.dp,
@@ -533,10 +523,11 @@ fun GameRoomScreenContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
                         .padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
-                    // ==== Header: Close + Countdown ====
+                    // ===== HEADER =====
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -548,21 +539,20 @@ fun GameRoomScreenContent(
                             border = BorderStroke(1.dp, rarityColor.copy(alpha = 0.4f))
                         ) {
                             Row(
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Timer,
-                                    contentDescription = null,
-                                    tint = rarityColor,
-                                    modifier = Modifier.size(12.dp)
+                                Box(
+                                    modifier = Modifier
+                                        .size(6.dp)
+                                        .clip(RoundedCornerShape(3.dp))
+                                        .background(rarityColor)
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
+                                Spacer(Modifier.width(6.dp))
                                 Text(
-                                    text = "",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = rarityColor
+                                    text = item.tier,
+                                    fontSize = 10.sp, fontWeight = FontWeight.Black,
+                                    color = rarityColor, letterSpacing = 1.sp
                                 )
                             }
                         }
@@ -570,146 +560,163 @@ fun GameRoomScreenContent(
                             IconButton(onClick = { selectedItemToBuy = null }) {
                                 Icon(
                                     imageVector = androidx.compose.material.icons.Icons.Default.Close,
-                                    contentDescription = LanguageManager.translate("cd_close_en", AppThemePreferences.currentLanguage, "Close"),
+                                    contentDescription = "Close",
                                     tint = Color(0xFF94A3B8)
                                 )
                             }
                         }
                     }
 
-                    // ==== Icon Miner Besar + Glow + Animasi ====
+                    // ===== HERO AURA =====
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(140.dp),
+                        modifier = Modifier.fillMaxWidth().height(150.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        // Glow layer
+                        // Rotating sweep aura
                         Box(
                             modifier = Modifier
-                                .size(120.dp)
-                                .scale(pulseScale)
+                                .size(140.dp)
+                                .rotate(rotateAngle)
+                                .alpha(pulseAlpha)
                                 .background(
-                                    brush = Brush.radialGradient(
+                                    Brush.sweepGradient(
                                         colors = listOf(
-                                            rarityColor.copy(alpha = 0.4f),
-                                            Color.Transparent
+                                            rarityColor.copy(alpha = 0f),
+                                            rarityColor.copy(alpha = 0.5f),
+                                            rarityColor.copy(alpha = 0f)
                                         )
                                     ),
                                     shape = CircleShape
                                 )
                         )
-                        // Icon miner
+                        // Glow radial
+                        Box(
+                            modifier = Modifier
+                                .size(110.dp)
+                                .alpha(pulseAlpha)
+                                .background(
+                                    Brush.radialGradient(
+                                        colors = listOf(rarityColor.copy(alpha = 0.5f), Color.Transparent)
+                                    ),
+                                    shape = CircleShape
+                                )
+                        )
+                        // Icon box
                         Box(
                             modifier = Modifier
                                 .size(90.dp)
-                                .rotate(rotateAngle * 0.1f)
-                                .scale(pulseScale)
                                 .clip(RoundedCornerShape(24.dp))
-                                .background(Color(0xFF0A0E1A).copy(alpha = 0.7f))
+                                .background(Color(0xFF0F172A))
                                 .border(2.dp, rarityColor, RoundedCornerShape(24.dp)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Image(
-                                painter = painterResource(R.drawable.micro_chip),
-                                contentDescription = item.name,
-                                modifier = Modifier.size(64.dp)
-                            )
+                            Text(item.iconEmoji, fontSize = 48.sp)
                         }
-                        // Tier badge besar
+                        // Tier badge
                         Surface(
                             color = rarityColor,
                             shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .offset(y = 8.dp)
+                            modifier = Modifier.align(Alignment.BottomCenter).offset(y = 10.dp)
                         ) {
                             Text(
                                 text = item.tier,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Black,
-                                color = Color.Black,
-                                letterSpacing = 1.sp,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
+                                fontSize = 10.sp, fontWeight = FontWeight.Black,
+                                color = Color.Black, letterSpacing = 1.sp,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 3.dp)
                             )
                         }
                     }
 
-                    // ==== Nama + Deskripsi ====
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                    Spacer(Modifier.height(4.dp))
+
+                    // ===== NAMA + DESKRIPSI =====
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         Text(
                             text = item.name,
                             fontWeight = FontWeight.Black,
-                            fontSize = 20.sp,
-                            color = Color.White
+                            fontSize = 22.sp,
+                            letterSpacing = 0.5.sp,
+                            style = androidx.compose.ui.text.TextStyle(
+                                brush = Brush.linearGradient(listOf(Color.White, rarityColor))
+                            )
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(Modifier.height(4.dp))
                         Text(
                             text = item.description,
-                            fontSize = 12.sp,
+                            fontSize = 11.sp,
                             color = Color(0xFF94A3B8),
                             textAlign = TextAlign.Center
                         )
                     }
 
-                    // ==== Stat Grid 2x2 ====
-                    Surface(
-                        shape = RoundedCornerShape(14.dp),
-                        color = Color(0xFF1E293B),
-                        border = BorderStroke(1.dp, rarityColor.copy(alpha = 0.3f)),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                                MiniStatBox(
-                                    icon = "💰",
-                                    label = "Harga",
-                                    value = "${item.tokenCost} RTP",
-                                    valueColor = GoldVip,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                MiniStatBox(
-                                    icon = "⚡",
-                                    label = "Power",
-                                    value = "+${HashrateFormatter.formatPowerHs(item.powerHs)}",
-                                    valueColor = EmeraldLight,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                                MiniStatBox(
-                                    icon = "📈",
-                                    label = "Rate",
-                                    value = "+${String.format(Locale.US, "%.4f", item.pointsPerMinute)}/mnt",
-                                    valueColor = EmeraldLight,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                MiniStatBox(
-                                    icon = "💎",
-                                    label = "Saldo",
-                                    value = String.format(Locale.US, "%.2f", userPoints),
-                                    valueColor = if (canAfford) Color.White else Color(0xFFEF4444),
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
+                    // ===== STATS GRID 2x2 =====
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            MiniStatBox(
+                                icon = "💰", label = "Harga",
+                                value = "${item.tokenCost} RTP",
+                                valueColor = GoldVip,
+                                modifier = Modifier.weight(1f)
+                            )
+                            MiniStatBox(
+                                icon = "⚡", label = "Power",
+                                value = "+${HashrateFormatter.formatPowerHs(item.powerHs)}",
+                                valueColor = EmeraldLight,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            MiniStatBox(
+                                icon = "📈", label = "Rate",
+                                value = "+${String.format(Locale.US, "%.4f", item.pointsPerMinute)}/mnt",
+                                valueColor = EmeraldLight,
+                                modifier = Modifier.weight(1f)
+                            )
+                            MiniStatBox(
+                                icon = "💎", label = "Saldo",
+                                value = String.format(Locale.US, "%.2f", userPoints),
+                                valueColor = if (canAfford) Color(0xFF38BDF8) else Color(0xFFEF4444),
+                                modifier = Modifier.weight(1f)
+                            )
                         }
                     }
 
-                    // ==== Comparison Before → After ====
+                    // ===== PERBANDINGAN =====
                     Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = Color(0xFF0A0E1A),
-                        border = BorderStroke(1.dp, EmeraldLight.copy(alpha = 0.3f)),
+                        shape = RoundedCornerShape(14.dp),
+                        color = Color(0xFF0F172A),
+                        border = BorderStroke(1.dp, Color(0xFF10B981).copy(alpha = 0.3f)),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Text(
-                                text = "📊 PERBANDINGAN",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = EmeraldLight,
-                                letterSpacing = 1.sp
-                            )
+                        Column(
+                            modifier = Modifier.padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    "📊 PERBANDINGAN",
+                                    fontSize = 10.sp, fontWeight = FontWeight.Black,
+                                    color = Color(0xFF10B981), letterSpacing = 1.2.sp
+                                )
+                                Text(
+                                    "SEBELUM → SESUDAH",
+                                    fontSize = 8.sp, fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF64748B), letterSpacing = 0.5.sp
+                                )
+                            }
                             ComparisonRow(
                                 label = "Power",
                                 before = HashrateFormatter.formatPowerHs(currentPower.toLong()),
@@ -725,36 +732,52 @@ fun GameRoomScreenContent(
                         }
                     }
 
-                    // ==== Warning kalau tidak cukup ====
+                    // ===== WARNING RTP KURANG =====
                     if (!canAfford) {
                         Surface(
                             color = Color(0xFFEF4444).copy(alpha = 0.12f),
-                            shape = RoundedCornerShape(10.dp),
-                            border = BorderStroke(1.dp, Color(0xFFEF4444).copy(alpha = 0.4f))
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, Color(0xFFEF4444).copy(alpha = 0.4f)),
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Row(
-                                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                                modifier = Modifier.padding(12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("⚠️", fontSize = 14.sp)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "RTP tidak mencukupi — kurang ${String.format(Locale.US, "%.2f", item.tokenCost - userPoints)} RTP",
-                                    fontSize = 11.sp,
-                                    color = Color(0xFFEF4444),
-                                    fontWeight = FontWeight.Medium
-                                )
+                                Box(
+                                    modifier = Modifier
+                                        .size(28.dp)
+                                        .clip(RoundedCornerShape(14.dp))
+                                        .background(Color(0xFFEF4444).copy(alpha = 0.2f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text("⚠️", fontSize = 14.sp)
+                                }
+                                Spacer(Modifier.width(10.dp))
+                                Column {
+                                    Text(
+                                        "RTP tidak mencukupi",
+                                        fontSize = 12.sp, fontWeight = FontWeight.Bold,
+                                        color = Color(0xFFEF4444)
+                                    )
+                                    Text(
+                                        "Kurang ${String.format(Locale.US, "%.2f", item.tokenCost - userPoints)} RTP",
+                                        fontSize = 10.sp, color = Color(0xFFEF4444).copy(alpha = 0.8f)
+                                    )
+                                }
                             }
                         }
                     }
 
-                    // ==== Confirmation Checkbox ====
+                    // ===== CHECKBOX KONFIRMASI =====
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color(0xFF0F172A))
+                            .border(1.dp, if (agreeChecked) EmeraldLight.copy(alpha = 0.5f) else Color(0xFF334155).copy(alpha = 0.5f), RoundedCornerShape(10.dp))
                             .clickable(enabled = canAfford && !isBuying) { agreeChecked = !agreeChecked }
-                            .padding(8.dp),
+                            .padding(10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         androidx.compose.material3.Checkbox(
@@ -766,65 +789,77 @@ fun GameRoomScreenContent(
                                 uncheckedColor = Color(0xFF475569)
                             )
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(Modifier.width(4.dp))
                         Text(
-                            text = "${LanguageManager.translate("game_confirm_buy", AppThemePreferences.currentLanguage, "Saya setuju membeli")} ${item.name} ${LanguageManager.translate("game_confirm_buy_suffix", AppThemePreferences.currentLanguage, "RTP")} ${item.tokenCost}",
+                            text = "Saya setuju membeli ${item.name} seharga ${item.tokenCost} RTP",
                             fontSize = 11.sp,
                             color = Color(0xFF94A3B8)
                         )
                     }
 
-                    // ==== Tombol Full-width ====
-                    Button(
-                        onClick = {
-                            if (isBuying) return@Button
-                            try {
-                                isBuying = true
-                                onBuyGameMinerItem(item.id)
-                            } catch (e: Exception) {
-                                AppLogger.e("GameRoomBuy", "❌ Error onClick: " + e.message, e)
-                                isBuying = false
+                    // ===== TOMBOL BELI =====
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        if (canAfford && agreeChecked && !isBuying) {
+                            Box(
+                                modifier = Modifier
+                                    .matchParentSize()
+                                    .alpha(pulseAlpha)
+                                    .background(
+                                        Brush.radialGradient(
+                                            listOf(EmeraldLight.copy(alpha = 0.4f), Color.Transparent)
+                                        ),
+                                        shape = RoundedCornerShape(14.dp)
+                                    )
+                            )
+                        }
+                        Button(
+                            onClick = {
+                                if (isBuying) return@Button
+                                try {
+                                    isBuying = true
+                                    onBuyGameMinerItem(item.id)
+                                } catch (e: Exception) {
+                                    AppLogger.e("GameRoomBuy", "❌ Error onClick: " + e.message, e)
+                                    isBuying = false
+                                }
+                            },
+                            enabled = canAfford && agreeChecked && !isBuying,
+                            modifier = Modifier.fillMaxWidth().height(54.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = EmeraldLight,
+                                contentColor = Color.Black,
+                                disabledContainerColor = Color(0xFF334155),
+                                disabledContentColor = Color(0xFF64748B)
+                            ),
+                            shape = RoundedCornerShape(14.dp)
+                        ) {
+                            if (isBuying) {
+                                CircularProgressIndicator(
+                                    color = Color.Black, strokeWidth = 2.dp,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text("MEMPROSES…", fontWeight = FontWeight.Black, letterSpacing = 1.sp)
+                            } else {
+                                Text(
+                                    text = if (hasEmptySlot) "🔥 BELI & PASANG" else "🔥 BELI SAHAJA",
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 14.sp,
+                                    letterSpacing = 1.sp
+                                )
                             }
-                        },
-                        enabled = canAfford && agreeChecked && !isBuying,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(52.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (canAfford && agreeChecked) EmeraldPrimary else Color(0xFF334155),
-                            disabledContainerColor = Color(0xFF334155)
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        if (isBuying) {
-                            CircularProgressIndicator(
-                                color = Color.White,
-                                strokeWidth = 2.dp,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(LanguageManager.translate("game_room_processing", AppThemePreferences.currentLanguage, "Memproses..."), fontWeight = FontWeight.Bold)
-                        } else {
-                            Text(
-                                text = if (hasEmptySlot) "🔥 BELI & PASANG" else "🔥 BELI SAHAJA",
-                                fontWeight = FontWeight.Black,
-                                fontSize = 14.sp,
-                                letterSpacing = 1.sp
-                            )
                         }
                     }
 
-                    // ==== Tombol Batal ====
+                    // ===== TOMBOL BATAL =====
                     if (!isBuying) {
                         OutlinedButton(
                             onClick = { selectedItemToBuy = null },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(44.dp),
+                            modifier = Modifier.fillMaxWidth().height(46.dp),
                             border = BorderStroke(1.dp, Color(0xFF475569)),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(14.dp)
                         ) {
-                            Text(LanguageManager.translate("common_cancel", AppThemePreferences.currentLanguage, "Batal"), color = Color(0xFF94A3B8), fontWeight = FontWeight.Medium)
+                            Text("Batal", color = Color(0xFF94A3B8), fontWeight = FontWeight.Medium)
                         }
                     }
                 }
@@ -2486,24 +2521,37 @@ private fun MiniStatBox(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(12.dp),
         color = Color(0xFF0A0E1A),
-        border = BorderStroke(1.dp, valueColor.copy(alpha = 0.25f)),
+        border = BorderStroke(
+            1.dp,
+            Brush.linearGradient(
+                listOf(valueColor.copy(alpha = 0.5f), valueColor.copy(alpha = 0.15f))
+            )
+        ),
         modifier = modifier
     ) {
         Column(
             modifier = Modifier.padding(10.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(icon, fontSize = 12.sp)
-                Spacer(modifier = Modifier.width(4.dp))
+                Box(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(valueColor.copy(alpha = 0.18f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(icon, fontSize = 11.sp)
+                }
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = label.uppercase(),
-                    fontSize = 9.sp,
+                    fontSize = 8.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF94A3B8),
-                    letterSpacing = 0.5.sp
+                    color = Color(0xFF64748B),
+                    letterSpacing = 0.8.sp
                 )
             }
             Text(
@@ -2523,42 +2571,64 @@ private fun ComparisonRow(
     after: String,
     delta: String
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+    Surface(
+        shape = RoundedCornerShape(10.dp),
+        color = Color(0xFF0F172A),
+        border = BorderStroke(1.dp, Color(0xFF10B981).copy(alpha = 0.25f)),
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Text(
-            text = label,
-            fontSize = 11.sp,
-            color = Color(0xFF94A3B8),
-            modifier = Modifier.width(60.dp)
-        )
-        Text(
-            text = before,
-            fontSize = 11.sp,
-            color = Color.White.copy(alpha = 0.5f)
-        )
-        Text(
-            text = " → ",
-            fontSize = 11.sp,
-            color = Color(0xFF94A3B8)
-        )
-        Text(
-            text = after,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = delta,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Black,
-            color = EmeraldLight
-        )
+        Row(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF94A3B8),
+                modifier = Modifier.width(44.dp)
+            )
+            Text(
+                text = before,
+                fontSize = 11.sp,
+                color = Color.White.copy(alpha = 0.55f)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            // Arrow icon
+            Box(
+                modifier = Modifier
+                    .size(16.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color(0xFF10B981).copy(alpha = 0.18f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("→", fontSize = 9.sp, color = Color(0xFF10B981), fontWeight = FontWeight.Black)
+            }
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = after,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Black,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            // Delta badge
+            Surface(
+                color = Color(0xFF10B981).copy(alpha = 0.15f),
+                shape = RoundedCornerShape(6.dp),
+                border = BorderStroke(1.dp, Color(0xFF10B981).copy(alpha = 0.4f))
+            ) {
+                Text(
+                    text = delta,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Color(0xFF10B981),
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                )
+            }
+        }
     }
 }
-
 
 // ============================================================
 // RATE BREAKDOWN CARD — Weighted Adaptive Display
