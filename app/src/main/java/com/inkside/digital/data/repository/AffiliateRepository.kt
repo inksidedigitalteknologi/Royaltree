@@ -1178,7 +1178,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 id = "tx_buy_" + UUID.randomUUID().toString().take(8),
                 type = "POINT_REWARD",
                 title = "Beli Item Penambang: ${item.name}",
-                description = "Pembelian item penambang daya ${HashrateFormatter.format(item.powerHs)} seharga ${item.tokenCost} Token",
+                description = "Pembelian item ${item.name} (+${HashrateFormatter.formatRtpPerDayFromPerMinute(item.pointsPerMinute)} reward) seharga ${item.tokenCost} Token",
                 amount = item.tokenCost.toDouble(),
                 currency = "POIN",
                 isCredit = false,
@@ -1224,7 +1224,7 @@ class AffiliateRepository(private val dao: AppDao) {
         }
 
         val successMsg = if (firstEmptySlot != null) {
-            "Sukses beli ${item.name}! Langsung terpasang di Rak Slot ${firstEmptySlot + 1} (+${HashrateFormatter.format(item.powerHs)})"
+            "Sukses beli ${item.name}! Langsung terpasang di Rak Slot ${firstEmptySlot + 1} (+${HashrateFormatter.formatRtpPerDayFromPerMinute(item.pointsPerMinute)})"
         } else {
             "Sukses beli ${item.name}! Rak penuh, item disimpan di inventaris."
         }
@@ -1296,7 +1296,7 @@ class AffiliateRepository(private val dao: AppDao) {
                 id = "tx_game_reward_" + UUID.randomUUID().toString().take(8),
                 type = "POINT_REWARD",
                 title = "Reward Mini-Game Royaltree 🎯",
-                description = "Skor $score: +$bonusPoints Poin & Boost Mining Power +${HashrateFormatter.format(boostGhs.toLong())} (2 Jam)",
+                description = "Skor $score: +$bonusPoints Poin & Boost Power +${HashrateFormatter.formatPowerHs(boostGhs.toLong())} (2 Jam)",
                 amount = bonusPoints.toDouble(),
                 currency = "POIN",
                 isCredit = true,

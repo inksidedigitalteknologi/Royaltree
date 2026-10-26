@@ -669,7 +669,7 @@ fun GameRoomScreenContent(
                                 MiniStatBox(
                                     icon = "⚡",
                                     label = "Power",
-                                    value = "+${HashrateFormatter.format(item.powerHs)}",
+                                    value = "+${HashrateFormatter.formatPowerHs(item.powerHs)}",
                                     valueColor = EmeraldLight,
                                     modifier = Modifier.weight(1f)
                                 )
@@ -710,9 +710,9 @@ fun GameRoomScreenContent(
                             )
                             ComparisonRow(
                                 label = "Power",
-                                before = HashrateFormatter.format(currentPower),
-                                after = HashrateFormatter.format(newPower),
-                                delta = "+${HashrateFormatter.format(item.powerHs)}"
+                                before = HashrateFormatter.formatPowerHs(currentPower.toLong()),
+                                after = HashrateFormatter.formatPowerHs(newPower.toLong()),
+                                delta = "+${HashrateFormatter.formatPowerHs(item.powerHs)}"
                             )
                             ComparisonRow(
                                 label = "Rate",
@@ -1790,7 +1790,7 @@ private fun RackSlotItemCard(
                     Column {
                         Text("\u26A1", fontSize = 9.sp)
                         Text(
-                            HashrateFormatter.formatShort(
+                            HashrateFormatter.formatPowerShort(
                                 if (miner.currentPowerHs > 0) miner.currentPowerHs else miner.powerHs
                             ),
                             fontSize = 10.sp,
@@ -1995,7 +1995,7 @@ private fun SlotMinerCard(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "+${HashrateFormatter.format(miner.powerHs)} · ${miner.tier}",
+                    text = "+${HashrateFormatter.formatPowerHs(miner.powerHs)} · ${miner.tier}",
                     fontSize = 9.sp,
                     fontWeight = FontWeight.Medium,
                     color = tierColor,
@@ -2095,7 +2095,7 @@ private fun ShopMinerCard(
                     Text("⚡", fontSize = 9.sp)
                     Spacer(Modifier.width(3.dp))
                     Text(
-                        text = HashrateFormatter.format(item.powerHs),
+                        text = HashrateFormatter.formatPowerHs(item.powerHs),
                         fontSize = 9.sp,
                         fontWeight = FontWeight.Bold,
                         color = RetroAmber,
@@ -2268,7 +2268,7 @@ private fun MiniGameArcadeTab(
                         }
 
                         Text(
-                            text = String.format(LanguageManager.translate("game_arcade_desc_long", AppThemePreferences.currentLanguage, "Mainkan game 15 detik! Ketuk koin & permata secepat mungkin untuk mendapatkan +20 s/d 60 Poin instan dan +%s Production Boost selama 2 jam."), HashrateFormatter.format(80L)),
+                            text = String.format(LanguageManager.translate("game_arcade_desc_long", AppThemePreferences.currentLanguage, "Mainkan game 15 detik! Ketuk koin & permata secepat mungkin untuk mendapatkan +20 s/d 60 Poin instan dan +%s Production Boost selama 2 jam."), HashrateFormatter.formatPowerHs(80L)),
                             fontSize = 11.sp,
                             color = Color(0xFFE0E7FF)
                         )
@@ -3041,7 +3041,7 @@ private fun FusionTab(
                         val newMiner = mergeSuccess.optJSONObject("newMiner")
                         if (newMiner != null) {
                             Text("🎉 ${newMiner.optString("name")} (${newMiner.optString("tier")})", fontSize = 11.sp, color = Color.White)
-                            Text("⚡ ${HashrateFormatter.format(newMiner.optLong("basePowerHs", 0L))}", fontSize = 10.sp, color = EmeraldLight)
+                            Text("⚡ ${HashrateFormatter.formatPowerHs(newMiner.optLong("basePowerHs", 0L))}", fontSize = 10.sp, color = EmeraldLight)
                         }
                         Text("💰 Biaya: ${GlobalPointsManager.formatRtp(mergeSuccess.optDouble("feePaid", 0.0))} RTP", fontSize = 10.sp, color = Color(0xFF94A3B8))
                     }
@@ -3112,7 +3112,7 @@ private fun FusionTab(
                         Spacer(Modifier.width(8.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(miner.name, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                            Text("${miner.tier} · ⚡ ${HashrateFormatter.formatShort(miner.basePowerHs.takeIf { it > 0 } ?: miner.powerHs)}", fontSize = 9.sp, color = tierColor(miner.tier))
+                            Text("${miner.tier} · ⚡ ${HashrateFormatter.formatPowerShort(miner.basePowerHs.takeIf { it > 0 } ?: miner.powerHs)}", fontSize = 9.sp, color = tierColor(miner.tier))
                         }
                     }
                 }

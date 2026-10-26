@@ -199,19 +199,18 @@ data class GameMinerItemEntity(
     val iconEmoji: String,
     val tokenCost: Int, // Cost to buy using Miner Token
     /**
-     * Hash rate dalam H/s (Hash per second) — INTEGER.
-     * 1 KH/s = 1_000 H/s
-     * 1 MH/s = 1_000_000 H/s
-     * 1 GH/s = 1_000_000_000 H/s
+     * Power dalam H/s (Hash per second) — INTEGER, angka internal.
      *
-     * Contoh:
-     *   - 1.000 = 1 KH/s (Pico Miner)
-     *   - 5.000 = 5 KH/s (Micro Rig)
-     *   - 20.000 = 20 KH/s (Quantum Rig)
-     *   - 100.000 = 100 KH/s (Titan Miner)
-     *   - 500.000 = 500 KH/s (Infinity Core)
+     * PENTING: powerHs BUKAN RTP/day. Jangan konversi powerHs ke RTP/day
+     * dengan rumus apapun — itu dua besaran berbeda.
      *
-     * Format tampilan: pakai HashrateFormatter.format() — auto-scale (H/KH/MH/GH/TH).
+     * Untuk menampilkan RTP/day, pakai pointsPerMinute × 1440:
+     *   HashrateFormatter.formatRtpPerDayFromPerMinute(pointsPerMinute)
+     *
+     * powerHs tetap dipakai untuk:
+     *   - totalPowerGhs (agregat hashrate)
+     *   - weighted breakdown (efficiency, ping, device, thermal)
+     *   - perhitungan rate backend
      */
     val powerHs: Long,                      // BASE power (static, dari catalog)
     val basePowerHs: Long = 0L,             // Duplikat (untuk signature compatibility)
