@@ -44,6 +44,8 @@ data class PeerContact(
 class AffiliateRepository(private val dao: AppDao) {
 
     private val transferMutex = Mutex()
+    private val buyMinerMutex = Mutex()
+    private val syncStateMutex = Mutex()
     private var lastTransferTimestamp: Long = 0L
 
     private val _activeUserId = MutableStateFlow("")  // Diisi dari Firebase UID setelah login
@@ -1146,13 +1148,14 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun buyGameMinerItem(itemId: String): Result<String> = withContext(Dispatchers.IO) {
+      buyMinerMutex.withLock {
         val currentId = _activeUserId.value
-        val user = dao.getUserSync(currentId) ?: return@withContext Result.failure(Exception("Pengguna tidak ditemukan"))
-        val item = dao.getGameMinerItemById(itemId) ?: return@withContext Result.failure(Exception("Item tidak ditemukan"))
+        val user = dao.getUserSync(currentId) ?: return@withLock Result.failure(Exception("Pengguna tidak ditemukan"))
+        val item = dao.getGameMinerItemById(itemId) ?: return@withLock Result.failure(Exception("Item tidak ditemukan"))
 
         if (user.points < item.tokenCost) {
             val shortage = item.tokenCost - user.points
-            return@withContext Result.failure(Exception("RTP tidak cukup! Anda memiliki ${user.points} RTP (Butuh ${item.tokenCost}, kurang $shortage RTP)."))
+            return@withLock Result.failure(Exception("RTP tidak cukup! Anda memiliki ${user.points} RTP (Butuh ${item.tokenCost}, kurang $shortage RTP)."))
         }
 
         val placedMiners = dao.getPlacedMinerItemsSync()
@@ -1229,6 +1232,7 @@ class AffiliateRepository(private val dao: AppDao) {
             "Sukses beli ${item.name}! Rak penuh, item disimpan di inventaris."
         }
         Result.success(successMsg)
+      }
     }
 
     /**
