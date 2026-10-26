@@ -86,6 +86,7 @@ import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.ui.theme.PurpleSecondary
 import com.inkside.digital.viewmodel.AppScreen
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Email
 
 // ============================================================
@@ -134,6 +135,7 @@ fun AppTopBar(
     onOpenDrawer: () -> Unit,
     onOpenLanguage: () -> Unit,
     onOpenInbox: () -> Unit,
+    onOpenGlobalChat: () -> Unit = {},
     onOpenNotifs: () -> Unit
 ) {
     Surface(
@@ -227,6 +229,21 @@ fun AppTopBar(
                         .testTag("language_button")
                 ) {
                     Text(text = currentLanguage.flag, fontSize = 18.sp)
+                }
+
+                // Global Chat
+                IconButton(
+                    onClick = onOpenGlobalChat,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .testTag("global_chat_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Chat,
+                        contentDescription = LanguageManager.translate("cd_chat", currentLanguage, "Chat"),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
 
                 // Inbox
