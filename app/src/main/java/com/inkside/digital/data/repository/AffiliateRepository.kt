@@ -1471,8 +1471,9 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun syncGameStateFromBackend(json: org.json.JSONObject) = withContext(Dispatchers.IO) {
+      syncStateMutex.withLock {
         try {
-            val data = json.optJSONObject("data") ?: return@withContext
+            val data = json.optJSONObject("data") ?: return@withLock
 
             // 1. Update room state (M33 FIX: preserve lastClaimTimestamp)
             val roomJson = data.optJSONObject("room")
@@ -1580,6 +1581,7 @@ class AffiliateRepository(private val dao: AppDao) {
         } catch (e: Exception) {
             AppLogger.e("AffiliateRepository", "syncGameStateFromBackend error: ${e.message}")
         }
+      }
     }
 }
 
