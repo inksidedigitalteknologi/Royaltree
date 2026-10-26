@@ -905,8 +905,16 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             return
         }
         viewModelScope.launch {
-            _isBuyingMiner.value = true
             try {
+                _isBuyingMiner.value = true
+                // Watchdog: paksa reset kalau stuck >30 detik
+                val watchdog = launch {
+                    delay(30_000L)
+                    if (_isBuyingMiner.value) {
+                        AppLogger.e("BuyMiner", "⏰ WATCHDOG: _isBuyingMiner stuck >30s, forcing reset")
+                        _isBuyingMiner.value = false
+                    }
+                }
                 AppLogger.d("BuyMiner", "🛒 buyGameMinerItem START: $itemId")
                 
                 // 1. Beli lokal (Room DB)
@@ -960,6 +968,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 AppLogger.e("BuyMiner", "❌ Fatal error: ${e.message}", e)
                 showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             } finally {
+                watchdog.cancel()
                 _isBuyingMiner.value = false
             }
         }
@@ -975,8 +984,15 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             return
         }
         viewModelScope.launch {
-            _isBuyingMiner.value = true
             try {
+                _isBuyingMiner.value = true
+                val watchdog2 = launch {
+                    delay(30_000L)
+                    if (_isBuyingMiner.value) {
+                        AppLogger.e("BuyMiner", "⏰ WATCHDOG: _isBuyingMiner stuck >30s, forcing reset")
+                        _isBuyingMiner.value = false
+                    }
+                }
                 AppLogger.d("BuyMiner", "🛒 buyAndPlaceGameMinerItem START: $itemId")
 
                 val result = repository.buyGameMinerItem(itemId)
@@ -1049,6 +1065,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 AppLogger.e("BuyMiner", "❌ Fatal error: ${e.message}", e)
                 showSnackbar(LanguageManager.translate("vm_error_prefix", _currentLanguage.value, "Error: ") + e.message)
             } finally {
+                watchdog2.cancel()
                 _isBuyingMiner.value = false
             }
         }
