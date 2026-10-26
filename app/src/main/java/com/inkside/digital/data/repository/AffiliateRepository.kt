@@ -1162,6 +1162,7 @@ class AffiliateRepository(private val dao: AppDao) {
         // Setiap beli = instance baru (ID unik) — untuk merge
         val newItem = item.copy(
             id = "miner_" + UUID.randomUUID().toString().take(8),
+            catalogId = item.catalogId.ifBlank { "miner_" + item.tier.lowercase() },
             isOwned = true,
             isPlacedInRoom = firstEmptySlot != null,
             placedSlotIndex = firstEmptySlot ?: -1
@@ -1445,7 +1446,7 @@ class AffiliateRepository(private val dao: AppDao) {
                         tier = m.optString("tier", "COMMON"),
                         iconEmoji = m.optString("iconEmoji", "⛏️"),
                         tokenCost = m.optInt("tokenCost", 0),
-                        catalogId = m.optString("id", ""),
+                        catalogId = m.optString("id", "").ifBlank { m.optString("catalogId", "").ifBlank { "miner_" + m.optString("tier", "common").lowercase() } },
                         powerHs = m.optLong("powerHs", 0L).also {
                             if (it <= 0L) {
                                 AppLogger.w("AffiliateRepository", "⚠️ Miner '${m.optString("name", "?")}' powerHs = 0 (raw: ${m.opt("powerHs")})")
@@ -1563,7 +1564,11 @@ class AffiliateRepository(private val dao: AppDao) {
                 val backendIds = miners.map { it.id }.toSet()
                 existingLocal.forEach { local ->
                     if (local.id !in backendIds) {
-                        dao.deleteGameMinerItemById(local.id)
+                        val isRecent = local.id.startsWith("miner_") &&
+                            (System.currentTimeMillis() - local.id.hashCode()) < 120000
+                        if (!isRecent) {
+                            dao.deleteGameMinerItemById(local.id)
+                        }
                     }
                 }
                 dao.insertGameMinerItems(merged)
