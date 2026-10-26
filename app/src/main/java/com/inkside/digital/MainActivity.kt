@@ -878,6 +878,7 @@ fun MainAffiliateAppContent(
                     onOpenDrawer = { coroutineScope.launch { drawerState.open() } },
                     onOpenLanguage = { showLanguageModal = true },
                     onOpenInbox = { onNavigate(AppScreen.INBOX) },
+                    onOpenGlobalChat = { onNavigate(AppScreen.GLOBAL_CHAT) },
                     onOpenNotifs = { onNavigate(AppScreen.NOTIFICATIONS) }
                 )
             }
