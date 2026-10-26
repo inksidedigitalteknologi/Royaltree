@@ -716,7 +716,10 @@ object ApiClient {
                 val errorBody = e.response()?.errorBody()?.string() ?: "{}"
                 val json = JSONObject(errorBody)
                 json.put("httpCode", e.code())
-                Result.success(json)
+                // HTTP error (4xx/5xx) → selalu failure, jangan sampai dianggap sukses
+                Result.failure(
+                    Exception(json.optString("message", "HTTP ${e.code()}: ${e.message()}"))
+                )
             } catch (parseErr: Exception) {
                 Result.failure(e)
             }
@@ -877,7 +880,7 @@ object ApiClient {
                 val errorBody = e.response()?.errorBody()?.string() ?: "{}"
                 val json = JSONObject(errorBody)
                 json.put("httpCode", e.code())
-                Result.success(json)
+                Result.failure(Exception(json.optString("message", "HTTP ${e.code()}: ${e.message()}")))  // HTTP error -> failure
             } catch (parseErr: Exception) {
                 Result.failure(e)
             }
