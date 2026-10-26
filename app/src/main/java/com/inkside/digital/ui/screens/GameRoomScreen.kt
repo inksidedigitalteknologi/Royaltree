@@ -251,6 +251,7 @@ fun GameRoomScreenContent(
     val isMerging by viewModel.isMerging.collectAsState()
     val mergeError by viewModel.mergeError.collectAsState()
     val mergeSuccess by viewModel.mergeSuccess.collectAsState()
+    val isBuyingMiner by viewModel.isBuyingMiner.collectAsState()
     var selectedItemToBuy by remember { mutableStateOf<GameMinerItemEntity?>(null) }
     var slotToAssignItem by remember { mutableStateOf<Int?>(null) }
 
@@ -424,6 +425,7 @@ fun GameRoomScreenContent(
                             currentLanguage = currentLanguage,
                             minerItems = minerItems,
                             userPoints = user?.points ?: 0.0,
+                            isBuying = isBuyingMiner,
                             onBuyItem = { item -> selectedItemToBuy = item },
                             onUnlockMiner = onUnlockMiner,
                         )
@@ -1875,6 +1877,7 @@ private fun ItemShopTab(
     currentLanguage: AppLanguage,
     minerItems: List<GameMinerItemEntity>,
     userPoints: Double,
+    isBuying: Boolean = false,
     onBuyItem: (GameMinerItemEntity) -> Unit,
     onUnlockMiner: (String) -> Unit = {},
 ) {
@@ -1946,6 +1949,7 @@ private fun ItemShopTab(
             ShopMinerCard(
                 item = item,
                 userPoints = userPoints,
+                isBuying = isBuying,
                 onBuy = { onBuyItem(item) }
             )
         }
@@ -2029,6 +2033,7 @@ private fun SlotMinerCard(
 private fun ShopMinerCard(
     item: GameMinerItemEntity,
     userPoints: Double = 0.0,
+    isBuying: Boolean = false,
     onBuy: () -> Unit
 ) {
     val rarityColor = tierColor(item.tier)
@@ -2143,20 +2148,28 @@ private fun ShopMinerCard(
                 )
             }
             // Selalu tampil tombol BELI — bisa beli berkali-kali untuk merge
+            // Disable saat isBuying untuk cegah double-buy
+            val btnEnabled = canAfford && !isBuying
             Surface(
-                color = if (canAfford) RetroGold else Color.Gray.copy(alpha = 0.3f),
+                color = when {
+                    isBuying -> Color(0xFF6366F1)   // indigo saat loading
+                    canAfford -> RetroGold
+                    else -> Color.Gray.copy(alpha = 0.3f)
+                },
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(enabled = canAfford) { onBuy() }
+                    .clickable(enabled = btnEnabled) { onBuy() }
             ) {
                 Text(
-                    text = if (canAfford) {
-                        if (item.isOwned) "BELI LAGI" else "BELI"
-                    } else "KURANG",
+                    text = when {
+                        isBuying -> "⏳ MEMPROSES..."
+                        canAfford -> if (item.isOwned) "BELI LAGI" else "BELI"
+                        else -> "KURANG"
+                    },
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Black,
-                    color = if (canAfford) Color.Black else Color.White.copy(alpha = 0.7f),
+                    color = if (canAfford || isBuying) Color.Black else Color.White.copy(alpha = 0.7f),
                     letterSpacing = 1.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(vertical = 7.dp)
