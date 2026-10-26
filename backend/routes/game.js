@@ -235,9 +235,10 @@ router.post('/miners/merge', verifyFirebaseToken, checkFraud, async (req, res) =
 
             if ((userData.points || 0) < fee) throw new Error('INSUFFICIENT_RTP');
 
-            // Catalog tier baru
-            const catalogKey = newTier.toLowerCase();
-            const catalogItem = MINER_CATALOG[catalogKey];
+            // Catalog tier baru — MINER_CATALOG adalah ARRAY, cari via .find()
+            // Pakai getMinerCatalog() supaya konsisten dengan /mining/buy (baca Firestore)
+            const catalog = await getMinerCatalog();
+            const catalogItem = catalog.find(m => m.tier === newTier);
             if (!catalogItem) throw new Error('CATALOG_MISSING');
 
             // Buat miner baru
