@@ -20,7 +20,8 @@ const withdrawSchema = Joi.object({
 
 // Schema validasi untuk FCM register
 const fcmSchema = Joi.object({
-    token: Joi.string().min(10).max(500).required()
+    fcmToken: Joi.string().trim().min(10).max(500).required(),
+    deviceId: Joi.string().trim().max(200).optional()
 });
 
 
