@@ -2870,7 +2870,7 @@ private fun RateBreakdownCard(
 
 
 // ============================================================
-// FUSION TAB — Merge 5 miner tier sama → 1 tier+1
+// FUSION TAB — Merge 5 miner tier sama → 1 tier+1 (REDESIGN)
 // ============================================================
 @Composable
 private fun FusionTab(
@@ -2887,18 +2887,14 @@ private fun FusionTab(
     val availableMiners = remember(minerItems) {
         minerItems.filter { it.isOwned && !it.isPlacedInRoom && it.tier != "MYTHIC" }
     }
-    val byTier = remember(availableMiners) {
-        availableMiners.groupBy { it.tier }
-    }
+    val byTier = remember(availableMiners) { availableMiners.groupBy { it.tier } }
     val eligibleTiers = remember(byTier) {
         byTier.filter { it.value.size >= 5 }.keys.sortedBy {
             listOf("COMMON", "RARE", "EPIC", "LEGENDARY").indexOf(it)
         }
     }
-    
-    var selectedTier by remember { mutableStateOf<String?>(null) }
 
-    // Update selectedTier saat eligibleTiers berubah (5 item terkumpul)
+    var selectedTier by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(eligibleTiers) {
         if (selectedTier == null || selectedTier !in eligibleTiers) {
             selectedTier = eligibleTiers.firstOrNull()
@@ -2908,65 +2904,102 @@ private fun FusionTab(
     var showConfirmDialog by remember { mutableStateOf(false) }
     var showFusionAnim by remember { mutableStateOf(false) }
     var pendingMerge by remember { mutableStateOf<List<String>>(emptyList()) }
-    
-    LaunchedEffect(selectedTier) {
-        selectedMinerIds = emptySet()
-    }
-    
-    DisposableEffect(Unit) {
-        onDispose { onClearMergeState() }
-    }
-    
+
+    LaunchedEffect(selectedTier) { selectedMinerIds = emptySet() }
+    DisposableEffect(Unit) { onDispose { onClearMergeState() } }
+
     val fusionCosts = mapOf(
-        "COMMON" to 100.0,
-        "RARE" to 500.0,
-        "EPIC" to 2000.0,
-        "LEGENDARY" to 10000.0
+        "COMMON" to 100.0, "RARE" to 500.0,
+        "EPIC" to 2000.0, "LEGENDARY" to 10000.0
     )
     val currentCost = selectedTier?.let { fusionCosts[it] } ?: 0.0
     val canAfford = userPoints >= currentCost
     val canMerge = selectedMinerIds.size == 5 && canAfford && !isMerging
-    
-    // Confirm dialog
+    val nextTier = when (selectedTier) {
+        "COMMON" -> "RARE"; "RARE" -> "EPIC"
+        "EPIC" -> "LEGENDARY"; "LEGENDARY" -> "MYTHIC"; else -> "?"
+    }
+
+    // Aura pulse — animasi ALPHA (tidak pakai graphicsLayer)
+    val auraTransition = rememberInfiniteTransition(label = "fusion_aura")
+    val auraAlpha by auraTransition.animateFloat(
+        initialValue = 0.35f, targetValue = 0.85f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1800, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = "aura_alpha"
+    )
+    val emojiAlpha by auraTransition.animateFloat(
+        initialValue = 0.7f, targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = "emoji_alpha"
+    )
+
+    // ============ DIALOG KONFIRMASI ============
     if (showConfirmDialog && selectedTier != null) {
         val selectedMiners = availableMiners.filter { selectedMinerIds.contains(it.id) }
-        val nextTier = when (selectedTier) {
-            "COMMON" -> "RARE"
-            "RARE" -> "EPIC"
-            "EPIC" -> "LEGENDARY"
-            "LEGENDARY" -> "MYTHIC"
-            else -> "?"
-        }
+        val nextTierColor = tierColor(nextTier)
         AlertDialog(
             onDismissRequest = { showConfirmDialog = false },
             icon = { Text("⚗️", fontSize = 40.sp) },
-            title = { Text("Konfirmasi Merge", fontWeight = FontWeight.Bold) },
+            title = {
+                Text(
+                    "Konfirmasi Merge",
+                    fontWeight = FontWeight.Black,
+                    style = androidx.compose.ui.text.TextStyle(
+                        brush = Brush.linearGradient(
+                            listOf(Color(0xFF10B981), Color(0xFFA855F7))
+                        )
+                    )
+                )
+            },
             text = {
                 Column {
                     Text("Anda akan melebur 5 processor:", fontSize = 13.sp)
                     Spacer(Modifier.height(8.dp))
                     selectedMiners.forEach { m ->
-                        Text("• ${m.name} (${m.tier})", fontSize = 11.sp, color = Color(0xFF94A3B8))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .clip(RoundedCornerShape(3.dp))
+                                    .background(tierColor(m.tier))
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Text("${m.name} (${m.tier})", fontSize = 11.sp, color = Color(0xFF94A3B8))
+                        }
+                    }
+                    Spacer(Modifier.height(10.dp))
+                    Surface(
+                        color = nextTierColor.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(8.dp),
+                        border = BorderStroke(1.dp, nextTierColor.copy(alpha = 0.5f))
+                    ) {
+                        Text(
+                            "✨ Menjadi: 1x ${nextTier}",
+                            fontSize = 13.sp, fontWeight = FontWeight.Bold,
+                            color = nextTierColor,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                        )
                     }
                     Spacer(Modifier.height(8.dp))
-                    Text("Menjadi:", fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                    Text("1 processor $nextTier", fontSize = 13.sp, color = Color(0xFFA855F7))
-                    Spacer(Modifier.height(8.dp))
-                    Surface(color = Color(0xFFF59E0B).copy(alpha = 0.15f), shape = RoundedCornerShape(8.dp)) {
+                    Surface(
+                        color = Color(0xFFF59E0B).copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(8.dp),
+                        border = BorderStroke(1.dp, Color(0xFFF59E0B).copy(alpha = 0.5f))
+                    ) {
                         Text(
                             "💰 Biaya: ${GlobalPointsManager.formatRtp(currentCost)} RTP",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFFF59E0B),
+                            fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFFF59E0B),
                             modifier = Modifier.padding(8.dp)
                         )
                     }
                     Spacer(Modifier.height(8.dp))
                     Text(
                         "⚠️ Processor yang dilebur akan HILANG permanen",
-                        fontSize = 11.sp,
-                        color = Color(0xFFEF4444),
-                        fontWeight = FontWeight.Bold
+                        fontSize = 11.sp, color = Color(0xFFEF4444), fontWeight = FontWeight.Bold
                     )
                 }
             },
@@ -2977,205 +3010,470 @@ private fun FusionTab(
                         pendingMerge = selectedMinerIds.toList()
                         showFusionAnim = true
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA855F7))
-                ) {
-                    Text("⚗️ FUSE SEKARANG", fontWeight = FontWeight.Bold)
-                }
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFA855F7),
+                        contentColor = Color.White
+                    )
+                ) { Text("⚗️ FUSE SEKARANG", fontWeight = FontWeight.Black) }
             },
             dismissButton = {
-                OutlinedButton(onClick = { showConfirmDialog = false }) {
-                    Text("Batal")
-                }
-            }
-        )
-    }
-    
-    if (showFusionAnim) {
-        FusionAnimOverlay(
-            onComplete = {
-                showFusionAnim = false
-                onMerge(pendingMerge)
-                pendingMerge = emptyList()
+                OutlinedButton(onClick = { showConfirmDialog = false }) { Text("Batal") }
             }
         )
     }
 
+    if (showFusionAnim) {
+        FusionAnimOverlay(onComplete = {
+            showFusionAnim = false
+            onMerge(pendingMerge)
+            pendingMerge = emptyList()
+        })
+    }
+
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(vertical = 14.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp)
     ) {
+        // ===== HERO CARD (aura sweep gradient statis + alpha pulse) =====
         item {
-            Surface(
-                color = Color(0xFF0F172A).copy(alpha = 0.85f),
-                shape = RoundedCornerShape(14.dp),
-                border = BorderStroke(1.dp, Color(0xFFA855F7).copy(alpha = 0.35f)),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text("⚗️ FUSION LAB", fontSize = 18.sp, fontWeight = FontWeight.Black, color = Color(0xFFA855F7), letterSpacing = 1.5.sp)
-                    Spacer(Modifier.height(4.dp))
-                    Text("Gabungkan 5 processor tier sama → 1 processor tier di atasnya", fontSize = 11.sp, color = Color(0xFF94A3B8))
-                    Spacer(Modifier.height(8.dp))
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("💰 Saldo", fontSize = 11.sp, color = Color(0xFF94A3B8))
-                        Text("${GlobalPointsManager.formatRtp(userPoints)} RTP", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = EmeraldLight)
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                // Aura background
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .alpha(auraAlpha)
+                        .background(
+                            Brush.sweepGradient(
+                                colors = listOf(
+                                    Color(0xFF10B981).copy(alpha = 0f),
+                                    Color(0xFF10B981).copy(alpha = 0.4f),
+                                    Color(0xFFA855F7).copy(alpha = 0.4f),
+                                    Color(0xFF10B981).copy(alpha = 0f)
+                                )
+                            ),
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                )
+                Surface(
+                    color = Color(0xFF0F172A).copy(alpha = 0.94f),
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(1.dp, Color(0xFFA855F7).copy(alpha = 0.5f)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("⚗️", fontSize = 30.sp, modifier = Modifier.alpha(emojiAlpha))
+                            Spacer(Modifier.width(10.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    "FUSION LAB",
+                                    fontSize = 18.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp,
+                                    style = androidx.compose.ui.text.TextStyle(
+                                        brush = Brush.linearGradient(
+                                            listOf(Color(0xFF10B981), Color(0xFFA855F7), Color(0xFFFFD700))
+                                        )
+                                    )
+                                )
+                                Text("Gabungkan 5 processor tier sama", fontSize = 11.sp, color = Color(0xFF94A3B8))
+                            }
+                        }
+                        Spacer(Modifier.height(10.dp))
+                        Surface(
+                            color = Color(0xFF10B981).copy(alpha = 0.12f),
+                            shape = RoundedCornerShape(8.dp),
+                            border = BorderStroke(1.dp, Color(0xFF10B981).copy(alpha = 0.4f))
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 6.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text("💰 Saldo", fontSize = 11.sp, color = Color(0xFF94A3B8))
+                                Text(
+                                    "${GlobalPointsManager.formatRtp(userPoints)} RTP",
+                                    fontSize = 13.sp, fontWeight = FontWeight.Black, color = Color(0xFF10B981)
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
-        
+
+        // ===== ERROR CARD =====
         if (mergeError != null) {
             item {
                 Surface(
-                    color = Color(0xFFEF4444).copy(alpha = 0.15f),
-                    shape = RoundedCornerShape(10.dp),
+                    color = Color(0xFFEF4444).copy(alpha = 0.12f),
+                    shape = RoundedCornerShape(12.dp),
                     border = BorderStroke(1.dp, Color(0xFFEF4444).copy(alpha = 0.5f)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("❌ $mergeError", fontSize = 11.sp, color = Color(0xFFEF4444), modifier = Modifier.padding(12.dp))
+                    Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color(0xFFEF4444).copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("✕", fontSize = 14.sp, color = Color(0xFFEF4444), fontWeight = FontWeight.Black)
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        Text("$mergeError", fontSize = 11.sp, color = Color(0xFFEF4444), fontWeight = FontWeight.Medium)
+                    }
                 }
             }
         }
-        
+
+        // ===== SUCCESS CARD (celebration) =====
         if (mergeSuccess != null) {
             item {
+                val newMiner = mergeSuccess.optJSONObject("newMiner")
+                val newTierColor = newMiner?.optString("tier")?.let { tierColor(it) } ?: Color(0xFF10B981)
                 Surface(
-                    color = Color(0xFF10B981).copy(alpha = 0.15f),
-                    shape = RoundedCornerShape(10.dp),
-                    border = BorderStroke(1.dp, Color(0xFF10B981).copy(alpha = 0.5f)),
+                    color = Color(0xFF10B981).copy(alpha = 0.12f),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.5.dp, newTierColor.copy(alpha = 0.7f)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
-                        Text("✅ Merge berhasil!", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF10B981))
-                        Spacer(Modifier.height(4.dp))
-                        val newMiner = mergeSuccess.optJSONObject("newMiner")
-                        if (newMiner != null) {
-                            Text("🎉 ${newMiner.optString("name")} (${newMiner.optString("tier")})", fontSize = 11.sp, color = Color.White)
-                            Text("⚡ ${HashrateFormatter.formatPowerHs(newMiner.optLong("basePowerHs", 0L))}", fontSize = 10.sp, color = EmeraldLight)
-                        }
-                        Text("💰 Biaya: ${GlobalPointsManager.formatRtp(mergeSuccess.optDouble("feePaid", 0.0))} RTP", fontSize = 10.sp, color = Color(0xFF94A3B8))
-                    }
-                }
-            }
-        }
-        
-        if (eligibleTiers.isEmpty()) {
-            item {
-                Surface(color = Color(0xFF0F172A).copy(alpha = 0.6f), shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("📦", fontSize = 32.sp)
-                        Spacer(Modifier.height(8.dp))
-                        Text("Belum ada tier dengan 5+ processor", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF94A3B8))
-                        Spacer(Modifier.height(4.dp))
-                        Text("Beli processor tier sama minimal 5 buah untuk bisa merge", fontSize = 10.sp, color = Color(0xFF64748B), textAlign = TextAlign.Center)
-                        Spacer(Modifier.height(12.dp))
-                        Button(onClick = onNavigateToShop, colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)) {
-                            Text("🛒 Buka Toko")
-                        }
-                    }
-                }
-            }
-        } else {
-            item {
-                Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    eligibleTiers.forEach { tier ->
-                        val count = byTier[tier]?.size ?: 0
-                        val isSelected = selectedTier == tier
-                        val tColor = tierColor(tier)
-                        FilterChip(
-                            selected = isSelected,
-                            onClick = { selectedTier = tier },
-                            label = { Text("$tier ($count)", fontSize = 11.sp) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = tColor.copy(alpha = 0.25f),
-                                selectedLabelColor = tColor
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("🎉", fontSize = 24.sp)
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                "MERGE BERHASIL!",
+                                fontSize = 14.sp, fontWeight = FontWeight.Black,
+                                color = Color(0xFF10B981), letterSpacing = 1.sp
                             )
+                        }
+                        if (newMiner != null) {
+                            Spacer(Modifier.height(8.dp))
+                            Surface(
+                                color = newTierColor.copy(alpha = 0.15f),
+                                shape = RoundedCornerShape(10.dp),
+                                border = BorderStroke(1.dp, newTierColor.copy(alpha = 0.5f))
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(newMiner.optString("iconEmoji", "⚡"), fontSize = 26.sp)
+                                    Spacer(Modifier.width(10.dp))
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(newMiner.optString("name"), fontSize = 13.sp, fontWeight = FontWeight.Black, color = Color.White)
+                                        Text(newMiner.optString("tier"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = newTierColor, letterSpacing = 1.sp)
+                                    }
+                                    Text(
+                                        "⚡ ${HashrateFormatter.formatPowerHs(newMiner.optLong("basePowerHs", 0L))}",
+                                        fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF94A3B8)
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(Modifier.height(6.dp))
+                        Text(
+                            "💰 Biaya: ${GlobalPointsManager.formatRtp(mergeSuccess.optDouble("feePaid", 0.0))} RTP",
+                            fontSize = 10.sp, color = Color(0xFF94A3B8)
                         )
                     }
                 }
             }
-            
-            val tierMiners = selectedTier?.let { byTier[it] } ?: emptyList()
-            items(tierMiners) { miner ->
-                val isSelected = selectedMinerIds.contains(miner.id)
-                val canSelectMore = selectedMinerIds.size < 5
+        }
+
+        // ===== EMPTY STATE / TIER SELECTOR =====
+        if (eligibleTiers.isEmpty()) {
+            item {
                 Surface(
-                    color = if (isSelected) Color(0xFFA855F7).copy(alpha = 0.15f) else Color(0xFF0F172A).copy(alpha = 0.6f),
-                    shape = RoundedCornerShape(10.dp),
-                    border = BorderStroke(if (isSelected) 1.5.dp else 1.dp, if (isSelected) Color(0xFFA855F7).copy(alpha = 0.7f) else Color(0xFF334155).copy(alpha = 0.5f)),
-                    modifier = Modifier.fillMaxWidth().clickable {
-                        selectedMinerIds = if (isSelected) selectedMinerIds - miner.id
-                        else if (canSelectMore) selectedMinerIds + miner.id else selectedMinerIds
-                    }
+                    color = Color(0xFF0F172A).copy(alpha = 0.6f),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.dp, Color(0xFF334155).copy(alpha = 0.5f)),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(modifier = Modifier.padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier.size(20.dp).clip(RoundedCornerShape(4.dp))
-                                .background(if (isSelected) Color(0xFFA855F7) else Color.Transparent)
-                                .border(1.5.dp, if (isSelected) Color(0xFFA855F7) else Color(0xFF64748B), RoundedCornerShape(4.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (isSelected) Text("✓", fontSize = 12.sp, color = Color.White, fontWeight = FontWeight.Bold)
-                        }
-                        Spacer(Modifier.width(10.dp))
-                        Text(miner.iconEmoji, fontSize = 22.sp)
-                        Spacer(Modifier.width(8.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(miner.name, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                            Text("${miner.tier} · ⚡ ${HashrateFormatter.formatPowerShort(miner.basePowerHs.takeIf { it > 0 } ?: miner.powerHs)}", fontSize = 9.sp, color = tierColor(miner.tier))
+                    Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("📦", fontSize = 40.sp)
+                        Spacer(Modifier.height(10.dp))
+                        Text("Belum ada tier dengan 5+ processor", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF94A3B8))
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            "Beli processor tier sama minimal 5 buah untuk bisa merge",
+                            fontSize = 10.sp, color = Color(0xFF64748B), textAlign = TextAlign.Center
+                        )
+                        Spacer(Modifier.height(14.dp))
+                        Button(
+                            onClick = onNavigateToShop,
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981))
+                        ) { Text("🛒 Buka Toko", fontWeight = FontWeight.Bold) }
+                    }
+                }
+            }
+        } else {
+            // Tier selector
+            item {
+                Column {
+                    Text("🎯 Pilih Tier", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFF94A3B8), letterSpacing = 1.sp)
+                    Spacer(Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        eligibleTiers.forEach { tier ->
+                            val count = byTier[tier]?.size ?: 0
+                            val isSelected = selectedTier == tier
+                            val tColor = tierColor(tier)
+                            Box {
+                                if (isSelected) {
+                                    Box(
+                                        modifier = Modifier
+                                            .matchParentSize()
+                                            .alpha(auraAlpha)
+                                            .background(
+                                                Brush.radialGradient(
+                                                    listOf(tColor.copy(alpha = 0.6f), tColor.copy(alpha = 0f))
+                                                ),
+                                                shape = RoundedCornerShape(20.dp)
+                                            )
+                                    )
+                                }
+                                Surface(
+                                    color = if (isSelected) tColor.copy(alpha = 0.25f) else Color(0xFF0F172A).copy(alpha = 0.6f),
+                                    shape = RoundedCornerShape(20.dp),
+                                    border = BorderStroke(
+                                        if (isSelected) 2.dp else 1.dp,
+                                        if (isSelected) tColor else Color(0xFF334155).copy(alpha = 0.5f)
+                                    ),
+                                    modifier = Modifier.clickable { selectedTier = tier }
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            tier,
+                                            fontSize = 11.sp,
+                                            fontWeight = if (isSelected) FontWeight.Black else FontWeight.Bold,
+                                            color = if (isSelected) tColor else Color(0xFF94A3B8),
+                                            letterSpacing = 0.5.sp
+                                        )
+                                        Spacer(Modifier.width(6.dp))
+                                        Surface(
+                                            color = if (isSelected) tColor else Color(0xFF334155),
+                                            shape = RoundedCornerShape(10.dp)
+                                        ) {
+                                            Text(
+                                                count.toString(),
+                                                fontSize = 9.sp, fontWeight = FontWeight.Black,
+                                                color = if (isSelected) Color.Black else Color.White,
+                                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
-            
+
+            // Slot preview
             item {
+                val tierMiners = selectedTier?.let { byTier[it] } ?: emptyList()
+                val selectedList = tierMiners.filter { selectedMinerIds.contains(it.id) }
                 Surface(
-                    color = Color(0xFF0F172A).copy(alpha = 0.85f),
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, Color(0xFFA855F7).copy(alpha = 0.4f)),
+                    color = Color(0xFF0F172A).copy(alpha = 0.7f),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.dp, Color(0xFFA855F7).copy(alpha = 0.3f)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(modifier = Modifier.padding(14.dp)) {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("💰 Biaya merge", fontSize = 12.sp, color = Color(0xFF94A3B8))
-                            Text("${GlobalPointsManager.formatRtp(currentCost)} RTP", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = if (canAfford) EmeraldLight else Color(0xFFEF4444))
-                        }
-                        if (!canAfford) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text("⚠️ Saldo kurang ${GlobalPointsManager.formatRtp(currentCost - userPoints)} RTP", fontSize = 10.sp, color = Color(0xFFEF4444))
-                                TextButton(onClick = onNavigateToShop) {
-                                    Text("💳 Top Up", fontSize = 10.sp, color = Color(0xFFF59E0B))
-                                }
-                            }
+                            Text("🧩 Slot Merge", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFFA855F7), letterSpacing = 1.sp)
+                            Text(
+                                "${selectedList.size}/5",
+                                fontSize = 12.sp, fontWeight = FontWeight.Black,
+                                color = if (selectedList.size == 5) Color(0xFF10B981) else Color(0xFF94A3B8)
+                            )
                         }
                         Spacer(Modifier.height(10.dp))
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedButton(onClick = onNavigateToShop, modifier = Modifier.weight(1f)) {
-                                Text("🛒 Toko", fontSize = 12.sp)
-                            }
-                            Button(
-                                onClick = { showConfirmDialog = true },
-                                enabled = canMerge,
-                                modifier = Modifier.weight(1.5f),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFFA855F7),
-                                    contentColor = Color.White,
-                                    disabledContainerColor = Color(0xFF334155),
-                                    disabledContentColor = Color(0xFF64748B)
-                                )
-                            ) {
-                                if (isMerging) {
-                                    CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = Color.White)
-                                    Spacer(Modifier.width(6.dp))
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            (0 until 5).forEach { idx ->
+                                val miner = selectedList.getOrNull(idx)
+                                val tierC = selectedTier?.let { tierColor(it) } ?: Color(0xFF334155)
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(64.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(
+                                            if (miner != null) Brush.verticalGradient(listOf(tierC.copy(alpha = 0.25f), tierC.copy(alpha = 0.08f)))
+                                            else Brush.verticalGradient(listOf(Color(0xFF1E293B), Color(0xFF0F172A)))
+                                        )
+                                        .border(
+                                            if (miner != null) 1.5.dp else 1.dp,
+                                            if (miner != null) tierC.copy(alpha = 0.7f) else Color(0xFF334155).copy(alpha = 0.5f),
+                                            RoundedCornerShape(10.dp)
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (miner != null) {
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                            Text(miner.iconEmoji, fontSize = 22.sp)
+                                            Spacer(Modifier.height(2.dp))
+                                            Text(miner.tier.take(3), fontSize = 7.sp, fontWeight = FontWeight.Black, color = tierC, letterSpacing = 0.5.sp)
+                                        }
+                                    } else {
+                                        Text("+", fontSize = 18.sp, color = Color(0xFF334155), fontWeight = FontWeight.Bold)
+                                    }
                                 }
-                                Text("⚗️ FUSE (${selectedMinerIds.size}/5)", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Miner list header
+            item {
+                Text("📋 Pilih 5 Processor", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFF94A3B8), letterSpacing = 1.sp)
+            }
+
+            // Miner list items
+            val tierMinersList = selectedTier?.let { byTier[it] } ?: emptyList()
+            items(tierMinersList) { miner ->
+                val isSelected = selectedMinerIds.contains(miner.id)
+                val canSelectMore = selectedMinerIds.size < 5
+                val mTierColor = tierColor(miner.tier)
+                Surface(
+                    color = if (isSelected) mTierColor.copy(alpha = 0.15f) else Color(0xFF0F172A).copy(alpha = 0.6f),
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(
+                        if (isSelected) 1.5.dp else 1.dp,
+                        if (isSelected) mTierColor.copy(alpha = 0.8f) else Color(0xFF334155).copy(alpha = 0.5f)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            selectedMinerIds = if (isSelected) selectedMinerIds - miner.id
+                            else if (canSelectMore) selectedMinerIds + miner.id else selectedMinerIds
+                        }
+                ) {
+                    Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(22.dp)
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(if (isSelected) mTierColor else Color.Transparent)
+                                .border(1.5.dp, if (isSelected) mTierColor else Color(0xFF64748B), RoundedCornerShape(6.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (isSelected) Text("✓", fontSize = 13.sp, color = Color.Black, fontWeight = FontWeight.Black)
+                        }
+                        Spacer(Modifier.width(12.dp))
+                        Text(miner.iconEmoji, fontSize = 24.sp)
+                        Spacer(Modifier.width(10.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(miner.name, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                            Text(
+                                "${miner.tier} · ⚡ ${HashrateFormatter.formatPowerShort(miner.basePowerHs.takeIf { it > 0 } ?: miner.powerHs)}",
+                                fontSize = 9.sp, color = mTierColor, fontWeight = FontWeight.Medium
+                            )
+                        }
+                        if (isSelected) {
+                            Text("✓", fontSize = 16.sp, color = mTierColor, fontWeight = FontWeight.Black)
+                        }
+                    }
+                }
+            }
+
+            // Action card
+            item {
+                Surface(
+                    color = Color(0xFF0F172A).copy(alpha = 0.92f),
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(
+                        1.5.dp,
+                        if (canMerge) Color(0xFF10B981).copy(alpha = 0.6f) else Color(0xFFA855F7).copy(alpha = 0.35f)
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text("💎 Biaya Merge", fontSize = 11.sp, color = Color(0xFF94A3B8), letterSpacing = 0.5.sp)
+                                Spacer(Modifier.height(2.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        "${GlobalPointsManager.formatRtp(currentCost)}",
+                                        fontSize = 18.sp, fontWeight = FontWeight.Black,
+                                        color = if (canAfford) Color(0xFFF59E0B) else Color(0xFFEF4444)
+                                    )
+                                    Spacer(Modifier.width(4.dp))
+                                    Text("RTP", fontSize = 10.sp, color = Color(0xFF94A3B8))
+                                }
+                            }
+                            if (!canAfford) {
+                                TextButton(onClick = onNavigateToShop) {
+                                    Text("💳 Top Up", fontSize = 11.sp, color = Color(0xFFF59E0B), fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
+                        if (!canAfford) {
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                "⚠️ Kurang ${GlobalPointsManager.formatRtp(currentCost - userPoints)} RTP",
+                                fontSize = 10.sp, color = Color(0xFFEF4444), fontWeight = FontWeight.Medium
+                            )
+                        }
+                        Spacer(Modifier.height(14.dp))
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            OutlinedButton(
+                                onClick = onNavigateToShop,
+                                modifier = Modifier.weight(1f),
+                                border = BorderStroke(1.dp, Color(0xFF64748B).copy(alpha = 0.6f))
+                            ) { Text("🛒 Toko", fontSize = 12.sp, color = Color(0xFF94A3B8)) }
+
+                            Box(modifier = Modifier.weight(1.8f)) {
+                                if (canMerge) {
+                                    Box(
+                                        modifier = Modifier
+                                            .matchParentSize()
+                                            .alpha(auraAlpha)
+                                            .background(
+                                                Brush.radialGradient(
+                                                    listOf(Color(0xFF10B981).copy(alpha = 0.5f), Color(0xFF10B981).copy(alpha = 0f))
+                                                ),
+                                                shape = RoundedCornerShape(12.dp)
+                                            )
+                                    )
+                                }
+                                Button(
+                                    onClick = { showConfirmDialog = true },
+                                    enabled = canMerge,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(0xFFA855F7),
+                                        contentColor = Color.White,
+                                        disabledContainerColor = Color(0xFF334155),
+                                        disabledContentColor = Color(0xFF64748B)
+                                    ),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    if (isMerging) {
+                                        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = Color.White)
+                                        Spacer(Modifier.width(8.dp))
+                                        Text("MEMPROSES…", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                    } else {
+                                        Text(
+                                            "⚗️ FUSE (${selectedMinerIds.size}/5)",
+                                            fontSize = 12.sp, fontWeight = FontWeight.Black, letterSpacing = 0.5.sp
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
