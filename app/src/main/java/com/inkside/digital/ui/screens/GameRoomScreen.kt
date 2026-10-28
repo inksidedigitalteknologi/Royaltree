@@ -3062,7 +3062,7 @@ private fun FusionTab(
                         border = BorderStroke(1.dp, Color(0xFFF59E0B).copy(alpha = 0.5f))
                     ) {
                         Text(
-                            "💰 Biaya: ${GlobalPointsManager.formatRtp(currentCost)} RTP",
+                            "💰 Biaya: ${GlobalPointsManager.formatRtpCost(currentCost)} RTP",
                             fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFFF59E0B),
                             modifier = Modifier.padding(8.dp)
                         )
@@ -3246,7 +3246,7 @@ private fun FusionTab(
                         }
                         Spacer(Modifier.height(6.dp))
                         Text(
-                            "💰 Biaya: ${GlobalPointsManager.formatRtp(mergeSuccess.optDouble("feePaid", 0.0))} RTP",
+                            "💰 Biaya: ${GlobalPointsManager.formatRtpCost(mergeSuccess.optDouble("feePaid", 0.0))} RTP",
                             fontSize = 10.sp, color = Color(0xFF94A3B8)
                         )
                     }
@@ -3479,7 +3479,7 @@ private fun FusionTab(
                                 Spacer(Modifier.height(2.dp))
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
-                                        "${GlobalPointsManager.formatRtp(currentCost)}",
+                                        "${GlobalPointsManager.formatRtpCost(currentCost)}",
                                         fontSize = 18.sp, fontWeight = FontWeight.Black,
                                         color = if (canAfford) Color(0xFFF59E0B) else Color(0xFFEF4444)
                                     )
@@ -3496,7 +3496,7 @@ private fun FusionTab(
                         if (!canAfford) {
                             Spacer(Modifier.height(4.dp))
                             Text(
-                                "⚠️ Kurang ${GlobalPointsManager.formatRtp(currentCost - userPoints)} RTP",
+                                "⚠️ Kurang ${GlobalPointsManager.formatRtpCost(currentCost - userPoints)} RTP",
                                 fontSize = 10.sp, color = Color(0xFFEF4444), fontWeight = FontWeight.Medium
                             )
                         }

@@ -240,6 +240,8 @@ router.post('/miners/merge', verifyFirebaseToken, checkFraud, async (req, res) =
             const catalog = await getMinerCatalog();
             const catalogItem = catalog.find(m => m.tier === newTier);
             if (!catalogItem) throw new Error('CATALOG_MISSING');
+            const targetCatalogId = catalogItem.id || catalogItem.catalogId;
+            if (!targetCatalogId) throw new Error('CATALOG_ID_MISSING:' + newTier);
 
             // Buat miner baru
             const newMinerId = 'miner_' + uid.substring(0,7) + '_' + Date.now() + '_' + Math.random().toString(36).substring(2,8);
@@ -247,12 +249,12 @@ router.post('/miners/merge', verifyFirebaseToken, checkFraud, async (req, res) =
             const pointsPerMinute = catalogItem.pointsPerMinute;
             const now = Date.now();
             const signature = generateMinerSignature(
-                newMinerId, catalogItem.catalogId, uid, now, basePowerHs, pointsPerMinute
+                newMinerId, (catalogItem.id || catalogItem.catalogId || ''), uid, now, basePowerHs, pointsPerMinute
             );
 
             const newMiner = {
                 id: newMinerId,
-                catalogId: catalogItem.catalogId,
+                catalogId: (catalogItem.id || catalogItem.catalogId || ''),
                 instanceId: newMinerId,
                 name: catalogItem.name,
                 tier: newTier,

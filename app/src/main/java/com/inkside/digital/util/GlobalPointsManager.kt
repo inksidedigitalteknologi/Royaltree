@@ -207,4 +207,23 @@ object GlobalPointsManager {
         }
     }
 
+    /**
+     * Format RTP untuk BIAYA (cost/fee) — ringkas tanpa desimal berlebih.
+     * 100.0   -> "100"
+     * 500.0   -> "500"
+     * 2000.0  -> "2,000"
+     * 10000.0 -> "10,000"
+     * 100.5   -> "100.5"
+     * 100.55  -> "100.55"
+     */
+    fun formatRtpCost(value: Double): String {
+        return if (value == value.toLong().toDouble()) {
+            // Bilangan bulat → tampil tanpa desimal, dengan pemisah ribuan
+            String.format(Locale.US, "%,d", value.toLong())
+        } else {
+            // Ada desimal → tampil 2 desimal
+            String.format(Locale.US, "%,.2f", value)
+        }
+    }
+
 }

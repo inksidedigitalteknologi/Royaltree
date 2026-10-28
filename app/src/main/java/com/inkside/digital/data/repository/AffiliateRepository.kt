@@ -1577,6 +1577,24 @@ class AffiliateRepository(private val dao: AppDao) {
                     }
                 }
                 dao.insertGameMinerItems(merged)
+
+            // 3. Update user.points (sync RTP balance dari backend)
+            // FIX: sebelumnya sync tidak update user.points → header RTP tidak turun setelah merge
+            val userJson = data.optJSONObject("user")
+            if (userJson != null) {
+                val firebaseUid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+                if (firebaseUid != null) {
+                    val existingUser = dao.getUserSync(firebaseUid)
+                    if (existingUser != null) {
+                        val newPoints = userJson.optDouble("points", existingUser.points)
+                        val newMinerTokens = userJson.optInt("minerTokens", existingUser.minerTokens)
+                        dao.insertUser(existingUser.copy(
+                            points = newPoints,
+                            minerTokens = newMinerTokens
+                        ))
+                    }
+                }
+            }
             }
         } catch (e: Exception) {
             AppLogger.e("AffiliateRepository", "syncGameStateFromBackend error: ${e.message}")
