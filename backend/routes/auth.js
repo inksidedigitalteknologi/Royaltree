@@ -8,7 +8,7 @@ const { verifyFirebaseToken } = require('../middleware/firebaseAuth');
 
 // Validation
 const { validate } = require('../middleware/validate');
-const { loginSchema } = require('../schemas');
+const { loginSchema, registerSchema } = require('../schemas');
 const AppLogger = require('../utils/AppLogger');
 
 // -------------------------------------------------------------
@@ -16,7 +16,7 @@ const AppLogger = require('../utils/AppLogger');
 // Dipanggil setelah user login/register via Firebase Auth
 // Body: { name?, phone?, city?, referralCode? }
 // -------------------------------------------------------------
-router.post('/sync', verifyFirebaseToken, validate(loginSchema), async (req, res) => {
+router.post('/sync', verifyFirebaseToken, validate(registerSchema), async (req, res) => {
     try {
         const { uid, email, name: firebaseName } = req.firebaseUser;
         const { name, phone, city, referralCode } = req.body;

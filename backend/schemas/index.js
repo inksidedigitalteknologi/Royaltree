@@ -8,11 +8,13 @@ const Joi = require('joi');
 // AUTH
 // ============================================================
 const registerSchema = Joi.object({
+    name: Joi.string().trim().max(100).allow('', null).optional(),
+    phone: Joi.string().trim().max(20).allow('', null).optional(),
     referralCode: Joi.string().trim().max(20).allow('', null).optional(),
     deviceModel: Joi.string().trim().max(80).optional(),
     androidVersion: Joi.string().trim().max(20).optional(),
     appVersion: Joi.string().trim().max(20).optional(),
-    language: Joi.string().valid('id', 'en').optional(),
+    language: Joi.string().valid('id', 'en', 'zh', 'es', 'ar', 'ja').optional(),
     city: Joi.string().trim().max(80).optional()
 });
 
