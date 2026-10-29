@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import com.inkside.digital.localization.AppLanguage
 import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.data.preferences.AppThemePreferences
@@ -1148,7 +1149,7 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun buyGameMinerItem(itemId: String): Result<String> = withContext(Dispatchers.IO) {
-      val timeoutResult = withTimeoutOrNull(10_000L) {
+      return@withContext withTimeoutOrNull(10_000L) {
         buyMinerMutex.withLock {
         val currentId = _activeUserId.value
         val user = dao.getUserSync(currentId) ?: return@withLock Result.failure(Exception("Pengguna tidak ditemukan"))
