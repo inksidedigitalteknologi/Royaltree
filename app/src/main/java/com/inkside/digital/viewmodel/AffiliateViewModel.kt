@@ -943,7 +943,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                                     val success = resp.optBoolean("success", false)
                                     AppLogger.d("BuyMiner", "✅ Sync response: $resp")
                                     if (success) {
-                                        loadGameState()
+                                        // loadGameState() dipindah ke finally — biar _isBuyingMiner cepat reset
                                     } else {
                                         showSnackbar(resp.optString("message", LanguageManager.translate("vm_backend_reject", _currentLanguage.value, "Backend reject")))
                                     }
@@ -970,6 +970,8 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             } finally {
                 watchdog.cancel()
                 _isBuyingMiner.value = false
+                // Refresh state dari backend (async, tidak blok)
+                viewModelScope.launch { loadGameState() }
             }
         }
     }

@@ -1148,7 +1148,8 @@ class AffiliateRepository(private val dao: AppDao) {
     }
 
     suspend fun buyGameMinerItem(itemId: String): Result<String> = withContext(Dispatchers.IO) {
-      buyMinerMutex.withLock {
+      val timeoutResult = withTimeoutOrNull(10_000L) {
+        buyMinerMutex.withLock {
         val currentId = _activeUserId.value
         val user = dao.getUserSync(currentId) ?: return@withLock Result.failure(Exception("Pengguna tidak ditemukan"))
         val item = dao.getGameMinerItemById(itemId) ?: return@withLock Result.failure(Exception("Item tidak ditemukan"))
@@ -1232,7 +1233,8 @@ class AffiliateRepository(private val dao: AppDao) {
             "Sukses beli ${item.name}! Rak penuh, item disimpan di inventaris."
         }
         Result.success(successMsg)
-      }
+        }
+      } ?: Result.failure(Exception("Sistem sibuk, coba lagi (timeout 10s)."))
     }
 
     /**
