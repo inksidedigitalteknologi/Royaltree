@@ -297,36 +297,38 @@ fun LoginScreen(
                                 accentColor = EmeraldLight
                             )
                             Spacer(Modifier.width(10.dp))
-                            Column(modifier = Modifier.weight(1f)) {
+                            androidx.compose.foundation.layout.FlowRow(
+                                modifier = Modifier.weight(1f),
+                                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Start,
+                                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(2.dp)
+                            ) {
                                 Text(
                                     text = LanguageManager.translate("login_agree_prefix", currentLanguage, "Saya menyetujui"),
                                     fontSize = 12.sp,
                                     color = Color.White.copy(alpha = 0.8f),
                                     lineHeight = 16.sp
                                 )
-                                Row {
-                                    Text(
-                                        text = LanguageManager.translate("login_terms_link", currentLanguage, "Syarat & Ketentuan"),
-                                        fontSize = 12.sp,
-                                        color = EmeraldLight,
-                                        fontWeight = FontWeight.SemiBold,
-                                        textDecoration = TextDecoration.Underline,
-                                        modifier = Modifier.clickable { showTermsDialog = true }
-                                    )
-                                    Text(
-                                        text = "  ·  ",
-                                        fontSize = 12.sp,
-                                        color = Color.White.copy(alpha = 0.5f)
-                                    )
-                                    Text(
-                                        text = LanguageManager.translate("login_privacy_link", currentLanguage, "Kebijakan Privasi"),
-                                        fontSize = 12.sp,
-                                        color = EmeraldLight,
-                                        fontWeight = FontWeight.SemiBold,
-                                        textDecoration = TextDecoration.Underline,
-                                        modifier = Modifier.clickable { showPrivacyDialog = true }
-                                    )
-                                }
+                                Text(
+                                    text = LanguageManager.translate("login_terms_link", currentLanguage, "Syarat & Ketentuan"),
+                                    fontSize = 12.sp,
+                                    color = EmeraldLight,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textDecoration = TextDecoration.Underline,
+                                    modifier = Modifier.clickable { showTermsDialog = true }
+                                )
+                                Text(
+                                    text = "·",
+                                    fontSize = 12.sp,
+                                    color = Color.White.copy(alpha = 0.5f)
+                                )
+                                Text(
+                                    text = LanguageManager.translate("login_privacy_link", currentLanguage, "Kebijakan Privasi"),
+                                    fontSize = 12.sp,
+                                    color = EmeraldLight,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textDecoration = TextDecoration.Underline,
+                                    modifier = Modifier.clickable { showPrivacyDialog = true }
+                                )
                             }
                         }
 
