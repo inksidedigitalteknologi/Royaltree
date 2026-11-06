@@ -419,6 +419,8 @@ fun LoginScreen(
                                 ) {
                                     val googleIdTokenCredential =
                                         com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.createFrom(credential.data)
+                                    // Simpan marketing opt-in ke SharedPreferences sebelum login
+                                    com.inkside.digital.data.preferences.AppThemePreferences.setMarketingOptIn(context, marketingChecked)
                                     onLoginGoogle(googleIdTokenCredential.idToken, marketingChecked)
                                 } else {
                                     AppLogger.e("LoginScreen", "Credential bukan Google ID Token")
