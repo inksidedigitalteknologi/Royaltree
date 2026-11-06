@@ -868,5 +868,22 @@
   "profile_setup_referral": "リファラルコード（オプション）",
   "profile_setup_title": "プロフィールを完成させる",
   "profile_setup_subtitle": "開始するにはこのデータが必要です",
-  "profile_setup_logout": "ログアウト"
+  "profile_setup_logout": "ログアウト",
+  "wp_title": "Royaltree ホワイトペーパー",
+  "wp_subtitle": "ビジョン、ミッション、トークンエコノミー",
+  "wp_what_title": "Royaltree とは？",
+  "wp_what_content": "Royaltree は、アフィリエイトマーケティング、RTPマイニング、グローバルコミュニティを組み合わせたデジタルエコシステムです。すべての活動が実際の価値を生み出すマイクロエコノミーを構築しています。",
+  "wp_mining_title": "マイニングの仕組みは？",
+  "wp_mining_content": "プロセッサを購入し、ラックに設置して、受動的にRTPを生成します。ティアが高いほど生産速度が上がります。5つのプロセッサをマージしてアップグレードします。",
+  "wp_economy_title": "トークンエコノミー",
+  "wp_economy_content": "RTPは内部通貨で、交換レートは1 RTP = 1米セントです。広告、チェックイン、マイニングで獲得できます。プロセッサの購入、マージ、送金に使用されます。",
+  "wp_token_title": "RTPの詳細",
+  "wp_token_content": "RTPはインフレ防止メカニズムを備え、持続可能な成長を目指して設計されています。すべての取引はFirestoreに記録され、いつでも監査できます。",
+  "wp_roadmap_title": "ロードマップ",
+  "wp_roadmap_content": "2026 Q3：初期リリース\\n2026 Q4：Android・Webアプリ\\n2027 Q1：プロセッサマーケットプレイス\\n2027 Q2：グローバル展開\\n2027 Q3：AI分析統合",
+  "faq_title": "よくある質問",
+  "faq_subtitle": "よくある質問への回答",
+  "faq_last_update": "最終更新：%s",
+  "faq_need_help": "もっと助けが必要ですか？",
+  "faq_contact_support": "サポートに連絡"
 }

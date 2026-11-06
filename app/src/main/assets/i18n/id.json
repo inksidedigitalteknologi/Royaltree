@@ -868,5 +868,22 @@
   "profile_setup_referral": "Kode Referral (Opsional)",
   "profile_setup_title": "Lengkapi Profil",
   "profile_setup_subtitle": "Data ini diperlukan untuk memulai",
-  "profile_setup_logout": "Logout"
+  "profile_setup_logout": "Logout",
+  "wp_title": "Whitepaper Royaltree",
+  "wp_subtitle": "Visi, misi & ekonomi token",
+  "wp_what_title": "Apa itu Royaltree?",
+  "wp_what_content": "Royaltree adalah ekosistem digital yang menggabungkan affiliate marketing, mining RTP, dan komunitas global. Kami membangun ekonomi mikro di mana setiap aktivitas menghasilkan nilai nyata.",
+  "wp_mining_title": "Bagaimana Mining Bekerja?",
+  "wp_mining_content": "Beli processor, pasang di rak, dan hasilkan RTP secara pasif. Semakin tinggi tier processor, semakin besar laju produksi. Gabungkan 5 processor untuk naik tier.",
+  "wp_economy_title": "Ekonomi Token",
+  "wp_economy_content": "RTP adalah mata uang internal dengan nilai tukar 1 RTP = 1 sen USD. Diperoleh dari iklan, check-in, dan mining. Digunakan untuk beli processor, merge, dan transfer.",
+  "wp_token_title": "Detail RTP",
+  "wp_token_content": "RTP dirancang untuk pertumbuhan berkelanjutan dengan mekanisme anti-inflasi. Setiap transaksi dicatat di Firestore dan dapat diaudit kapan saja.",
+  "wp_roadmap_title": "Roadmap",
+  "wp_roadmap_content": "Q3 2026: Peluncuran Awal\\nQ4 2026: Aplikasi Android & Web\\nQ1 2027: Marketplace Processor\\nQ2 2027: Ekspansi Global\\nQ3 2027: Integrasi AI Analytics",
+  "faq_title": "Pertanyaan Umum",
+  "faq_subtitle": "Jawaban untuk pertanyaan yang sering diajukan",
+  "faq_last_update": "Terakhir diperbarui: %s",
+  "faq_need_help": "Butuh bantuan lain?",
+  "faq_contact_support": "Hubungi Support"
 }

@@ -868,5 +868,22 @@
   "profile_setup_referral": "Código de referido (opcional)",
   "profile_setup_title": "Completa tu perfil",
   "profile_setup_subtitle": "Estos datos son necesarios para comenzar",
-  "profile_setup_logout": "Cerrar sesión"
+  "profile_setup_logout": "Cerrar sesión",
+  "wp_title": "Whitepaper de Royaltree",
+  "wp_subtitle": "Visión, misión y economía del token",
+  "wp_what_title": "¿Qué es Royaltree?",
+  "wp_what_content": "Royaltree es un ecosistema digital que combina marketing de afiliación, minería RTP y una comunidad global. Construimos una microeconomía donde cada actividad genera valor real.",
+  "wp_mining_title": "¿Cómo funciona la minería?",
+  "wp_mining_content": "Compra procesadores, instálalos en racks y genera RTP pasivamente. Los procesadores de mayor nivel producen más rápido. Fusiona 5 procesadores para subir de nivel.",
+  "wp_economy_title": "Economía del token",
+  "wp_economy_content": "RTP es la moneda interna con tasa de cambio 1 RTP = 1 centavo USD. Se gana con anuncios, check-ins y minería. Se usa para comprar procesadores, fusionar y transferir.",
+  "wp_token_title": "Detalles de RTP",
+  "wp_token_content": "RTP está diseñado para un crecimiento sostenible con mecanismos antiinflacionarios. Cada transacción se registra en Firestore y se puede auditar en cualquier momento.",
+  "wp_roadmap_title": "Hoja de ruta",
+  "wp_roadmap_content": "Q3 2026: Lanzamiento inicial\\nQ4 2026: Apps Android y Web\\nQ1 2027: Mercado de procesadores\\nQ2 2027: Expansión global\\nQ3 2027: Integración de IA analítica",
+  "faq_title": "Preguntas frecuentes",
+  "faq_subtitle": "Respuestas a preguntas frecuentes",
+  "faq_last_update": "Última actualización: %s",
+  "faq_need_help": "¿Necesitas más ayuda?",
+  "faq_contact_support": "Contactar soporte"
 }

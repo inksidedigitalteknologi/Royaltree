@@ -868,5 +868,22 @@
   "profile_setup_referral": "Referral Code (Optional)",
   "profile_setup_title": "Complete Your Profile",
   "profile_setup_subtitle": "This data is required to start",
-  "profile_setup_logout": "Logout"
+  "profile_setup_logout": "Logout",
+  "wp_title": "Royaltree Whitepaper",
+  "wp_subtitle": "Vision, mission & token economy",
+  "wp_what_title": "What is Royaltree?",
+  "wp_what_content": "Royaltree is a digital ecosystem combining affiliate marketing, RTP mining, and a global community. We build a micro-economy where every activity generates real value.",
+  "wp_mining_title": "How Does Mining Work?",
+  "wp_mining_content": "Buy processors, install in racks, and generate RTP passively. Higher tier processors produce faster. Merge 5 processors to upgrade tier.",
+  "wp_economy_title": "Token Economy",
+  "wp_economy_content": "RTP is the internal currency with exchange rate 1 RTP = 1 USD cent. Earned from ads, check-ins, and mining. Used to buy processors, merge, and transfer.",
+  "wp_token_title": "RTP Details",
+  "wp_token_content": "RTP is designed for sustainable growth with anti-inflation mechanisms. Every transaction is recorded in Firestore and can be audited anytime.",
+  "wp_roadmap_title": "Roadmap",
+  "wp_roadmap_content": "Q3 2026: Initial Launch\\nQ4 2026: Android & Web Apps\\nQ1 2027: Processor Marketplace\\nQ2 2027: Global Expansion\\nQ3 2027: AI Analytics Integration",
+  "faq_title": "Frequently Asked Questions",
+  "faq_subtitle": "Answers to frequently asked questions",
+  "faq_last_update": "Last updated: %s",
+  "faq_need_help": "Need more help?",
+  "faq_contact_support": "Contact Support"
 }
