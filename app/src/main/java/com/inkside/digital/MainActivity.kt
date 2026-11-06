@@ -1,6 +1,7 @@
 package com.inkside.digital
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -42,6 +43,7 @@ import com.inkside.digital.ui.components.AdBlockedDialog
 import com.inkside.digital.ui.components.BannedDialog
 import com.inkside.digital.ui.components.MaintenanceBanner
 import com.inkside.digital.data.network.ApiClient
+import com.inkside.digital.data.ads.AdMobProvider
 import com.inkside.digital.ui.components.AdRewardModal
 import com.inkside.digital.ui.components.AdminReviewModal
 import com.inkside.digital.ui.components.AppTopBar
@@ -581,7 +583,25 @@ fun MainAffiliateApp(
         },
         onAdBlockedRetry = {
             adBlockedReason = null
-            viewModel.showAdRewardModal.value = true
+            val activity = this@MainActivity as? android.app.Activity
+            if (activity == null) {
+                Toast.makeText(this@MainActivity, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
+            } else {
+                coroutineScope.launch {
+                    val loadResult = AdMobProvider.loadRewardedAd(activity, user?.id)
+                    if (loadResult.isFailure) {
+                        Toast.makeText(this@MainActivity, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
+                        return@launch
+                    }
+                    AdMobProvider.showRewardedAd(
+                        activity = activity,
+                        onRewardEarned = { _, _ ->
+                            val txId = java.util.UUID.randomUUID().toString()
+                            viewModel.claimMiningWithAd(txId, "admob")
+                        }
+                    )
+                }
+            }
         },
         onAdBlockedSetReason = { r -> adBlockedReason = r },
         affiliateBalance = affiliateBalance,
@@ -684,10 +704,47 @@ fun MainAffiliateApp(
         onClaimAppReward = { id -> viewModel.claimAppDownloadReward(id) },
         onClaimMission = { viewModel.claimMissionReward(it) },
         onCompleteTaskAction = { viewModel.completeTaskAction(it) },
-        onClaimMining = { viewModel.setPendingMiningClaim(true); viewModel.showAdRewardModal.value = true },
+        onClaimMining = {
+            val activity = this@MainActivity as? android.app.Activity
+            if (activity == null) {
+                Toast.makeText(this@MainActivity, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
+            } else {
+                coroutineScope.launch {
+                    val loadResult = AdMobProvider.loadRewardedAd(activity, user?.id)
+                    if (loadResult.isFailure) {
+                        Toast.makeText(this@MainActivity, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
+                        return@launch
+                    }
+                    AdMobProvider.showRewardedAd(
+                        activity = activity,
+                        onRewardEarned = { _, _ ->
+                            val txId = java.util.UUID.randomUUID().toString()
+                            viewModel.claimMiningWithAd(txId, "admob")
+                        }
+                    )
+                }
+            }
+        },
         onActivateMiner = {
-            viewModel.setPendingMinerActivate(true)
-            viewModel.showAdRewardModal.value = true
+            val activity = this@MainActivity as? android.app.Activity
+            if (activity == null) {
+                Toast.makeText(this@MainActivity, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
+            } else {
+                coroutineScope.launch {
+                    val loadResult = AdMobProvider.loadRewardedAd(activity, user?.id)
+                    if (loadResult.isFailure) {
+                        Toast.makeText(this@MainActivity, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
+                        return@launch
+                    }
+                    AdMobProvider.showRewardedAd(
+                        activity = activity,
+                        onRewardEarned = { _, _ ->
+                            val txId = java.util.UUID.randomUUID().toString()
+                            viewModel.activateMinerWithAd(txId, "admob")
+                        }
+                    )
+                }
+            }
         },
         onToggleMinerSlot = { id, slot -> viewModel.toggleMinerSlot(id, slot) },
         onBuyGameMinerItem = { id -> viewModel.buyGameMinerItem(id) },
