@@ -23,16 +23,15 @@ router.post('/sync', verifyFirebaseToken, validate(registerSchema), async (req, 
 
         // ==== Normalize email & phone ====
         const normalizedEmail = (email || '').trim().toLowerCase();
-        const normalizedPhone = (phone || '').trim().replace(/[\s\-]/g, '');
+        // Normalize: hapus spasi, -, dan +
+        const normalizedPhone = (phone || '').trim().replace(/[\s\-\+]/g, '');
 
-        // ==== Validasi format email (jika ada) ====
-        if (normalizedEmail) {
+        // ==== Validasi format email (hanya warning, jangan tolak) ====
+        if (normalizedEmail && normalizedEmail.length > 0) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(normalizedEmail)) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Format email tidak valid.'
-                });
+                console.warn(`[AUTH] Email tidak valid untuk uid=${uid}: "${normalizedEmail}" — skip (email dari token Firebase)`);
+                // Jangan tolak — email di token bisa kosong/invalid (misal: scope tidak disertakan)
             }
         }
 
