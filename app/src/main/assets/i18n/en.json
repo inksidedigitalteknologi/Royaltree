@@ -851,5 +851,15 @@
   "tier_vip": "VIP",
   "tier_premium": "Premium",
   "tier_starter": "Starter",
-  "tier_free": "Free"
+  "tier_free": "Free",
+  "referral_empty_message": "No friends invited yet. Share your code!",
+  "referral_friends": "Friends",
+  "referral_how_it_works": "How It Works",
+  "referral_invited_friends": "Invited Friends",
+  "referral_share": "Share",
+  "referral_subtitle": "Invite friends & earn commission",
+  "referral_title": "Referral",
+  "referral_total_earned": "Total Earned",
+  "referral_your_code": "Your Referral Code",
+  "referral_your_stats": "Your Stats"
 }

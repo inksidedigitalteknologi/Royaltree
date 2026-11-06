@@ -851,5 +851,15 @@
   "tier_vip": "VIP",
   "tier_premium": "مميز",
   "tier_starter": "مبتدئ",
-  "tier_free": "مجاني"
+  "tier_free": "مجاني",
+  "referral_empty_message": "لم تتم دعوة أي أصدقاء بعد. شارك رمزك!",
+  "referral_friends": "الأصدقاء",
+  "referral_how_it_works": "كيف يعمل",
+  "referral_invited_friends": "الأصدقاء المدعوون",
+  "referral_share": "مشاركة",
+  "referral_subtitle": "ادعُ أصدقاءك واكسب عمولة",
+  "referral_title": "الإحالة",
+  "referral_total_earned": "إجمالي الأرباح",
+  "referral_your_code": "رمز الإحالة الخاص بك",
+  "referral_your_stats": "إحصائياتك"
 }

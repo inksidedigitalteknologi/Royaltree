@@ -851,5 +851,15 @@
   "tier_vip": "VIP",
   "tier_premium": "プレミアム",
   "tier_starter": "スターター",
-  "tier_free": "無料"
+  "tier_free": "無料",
+  "referral_empty_message": "まだ友達を招待していません。コードを共有しましょう！",
+  "referral_friends": "友達",
+  "referral_how_it_works": "仕組み",
+  "referral_invited_friends": "招待した友達",
+  "referral_share": "共有",
+  "referral_subtitle": "友達を招待してコミッションを獲得",
+  "referral_title": "リファラル",
+  "referral_total_earned": "総収益",
+  "referral_your_code": "あなたのリファラルコード",
+  "referral_your_stats": "あなたの統計"
 }

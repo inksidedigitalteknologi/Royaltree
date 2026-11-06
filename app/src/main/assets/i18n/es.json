@@ -851,5 +851,15 @@
   "tier_vip": "VIP",
   "tier_premium": "Premium",
   "tier_starter": "Principiante",
-  "tier_free": "Gratis"
+  "tier_free": "Gratis",
+  "referral_empty_message": "Aún no has invitado a ningún amigo. ¡Comparte tu código!",
+  "referral_friends": "Amigos",
+  "referral_how_it_works": "Cómo funciona",
+  "referral_invited_friends": "Amigos invitados",
+  "referral_share": "Compartir",
+  "referral_subtitle": "Invita amigos y gana comisión",
+  "referral_title": "Referidos",
+  "referral_total_earned": "Total ganado",
+  "referral_your_code": "Tu código de referido",
+  "referral_your_stats": "Tus estadísticas"
 }

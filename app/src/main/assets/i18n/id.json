@@ -851,5 +851,15 @@
   "tier_vip": "VIP",
   "tier_premium": "Premium",
   "tier_starter": "Pemula",
-  "tier_free": "Gratis"
+  "tier_free": "Gratis",
+  "referral_empty_message": "Belum ada teman yang diundang. Ayo bagikan kode kamu!",
+  "referral_friends": "Teman",
+  "referral_how_it_works": "Cara Kerja",
+  "referral_invited_friends": "Teman Diundang",
+  "referral_share": "Bagikan",
+  "referral_subtitle": "Ajak teman & dapatkan komisi",
+  "referral_title": "Referral",
+  "referral_total_earned": "Total Diperoleh",
+  "referral_your_code": "Kode Referral Kamu",
+  "referral_your_stats": "Statistik Kamu"
 }
