@@ -583,14 +583,14 @@ fun MainAffiliateApp(
         },
         onAdBlockedRetry = {
             adBlockedReason = null
-            val activity = this@MainActivity as? android.app.Activity
+            val activity = LocalContext.current as? android.app.Activity
             if (activity == null) {
-                Toast.makeText(this@MainActivity, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
+                Toast.makeText(LocalContext.current, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
             } else {
-                coroutineScope.launch {
+                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
                     val loadResult = AdMobProvider.loadRewardedAd(activity, user?.id)
                     if (loadResult.isFailure) {
-                        Toast.makeText(this@MainActivity, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(LocalContext.current, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
                         return@launch
                     }
                     AdMobProvider.showRewardedAd(
@@ -705,14 +705,14 @@ fun MainAffiliateApp(
         onClaimMission = { viewModel.claimMissionReward(it) },
         onCompleteTaskAction = { viewModel.completeTaskAction(it) },
         onClaimMining = {
-            val activity = this@MainActivity as? android.app.Activity
+            val activity = LocalContext.current as? android.app.Activity
             if (activity == null) {
-                Toast.makeText(this@MainActivity, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
+                Toast.makeText(LocalContext.current, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
             } else {
-                coroutineScope.launch {
+                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
                     val loadResult = AdMobProvider.loadRewardedAd(activity, user?.id)
                     if (loadResult.isFailure) {
-                        Toast.makeText(this@MainActivity, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(LocalContext.current, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
                         return@launch
                     }
                     AdMobProvider.showRewardedAd(
@@ -726,14 +726,14 @@ fun MainAffiliateApp(
             }
         },
         onActivateMiner = {
-            val activity = this@MainActivity as? android.app.Activity
+            val activity = LocalContext.current as? android.app.Activity
             if (activity == null) {
-                Toast.makeText(this@MainActivity, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
+                Toast.makeText(LocalContext.current, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
             } else {
-                coroutineScope.launch {
+                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
                     val loadResult = AdMobProvider.loadRewardedAd(activity, user?.id)
                     if (loadResult.isFailure) {
-                        Toast.makeText(this@MainActivity, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(LocalContext.current, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
                         return@launch
                     }
                     AdMobProvider.showRewardedAd(
@@ -910,7 +910,7 @@ fun MainAffiliateAppContent(
                     currentLanguage = currentLanguage,
                     
                     onNavigate = { screen -> onNavigate(screen) },
-                    onCloseDrawer = { coroutineScope.launch { drawerState.close() } },
+                    onCloseDrawer = { kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch { drawerState.close() } },
                     onLogout = onLogout
                 )
             }
@@ -932,7 +932,7 @@ fun MainAffiliateAppContent(
                     user = user,
                     unreadNotifs = unreadNotifs,
                     currentLanguage = currentLanguage,
-                    onOpenDrawer = { coroutineScope.launch { drawerState.open() } },
+                    onOpenDrawer = { kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch { drawerState.open() } },
                     onOpenLanguage = { showLanguageModal = true },
                     onOpenInbox = { onNavigate(AppScreen.INBOX) },
                     onOpenGlobalChat = { onNavigate(AppScreen.GLOBAL_CHAT) },

@@ -193,7 +193,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             // 1. Clear Room DB (hapus semua data user lama)
             try {
-                val db = com.inkside.digital.data.database.AppDatabase.getInstance(getApplication())
+                val db = com.inkside.digital.data.database.AppDatabase.getDatabase(getApplication(), viewModelScope)
                 db.clearAllTables()
                 AppLogger.d(TAG, "✅ Room DB cleared on logout")
             } catch (e: Exception) {
