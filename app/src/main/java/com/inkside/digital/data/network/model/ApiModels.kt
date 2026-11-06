@@ -43,7 +43,10 @@ data class ApiUserSyncRequest(
     @Json(name = "points") val points: Int,
     @Json(name = "todaySteps") val todaySteps: Int,
     @Json(name = "referralCode") val referralCode: String,
-    @Json(name = "city") val city: String? = null
+    @Json(name = "city") val city: String? = null,
+    @Json(name = "marketingOptIn") val marketingOptIn: Boolean? = null,
+    @Json(name = "termsAccepted") val termsAccepted: Boolean? = null,
+    @Json(name = "privacyAccepted") val privacyAccepted: Boolean? = null
 )
 
 @JsonClass(generateAdapter = true)

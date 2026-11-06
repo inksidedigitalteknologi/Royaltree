@@ -212,7 +212,12 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
                 points = currentUser.points.toInt(),
                 todaySteps = currentUser.todaySteps,
                 referralCode = currentUser.referralCode,
-                city = currentUser.locationCity
+                city = currentUser.locationCity,
+                // Consent — wajib true (login mensyaratkan setuju)
+                termsAccepted = true,
+                privacyAccepted = true,
+                // Marketing — baca dari SharedPreferences
+                marketingOptIn = com.inkside.digital.data.preferences.AppThemePreferences.marketingOptIn
             )
             val result = com.inkside.digital.data.network.ApiClient.syncUserToPortal(req)
             isSyncingWithPortal.value = false

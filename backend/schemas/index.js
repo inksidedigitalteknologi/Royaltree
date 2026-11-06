@@ -15,7 +15,10 @@ const registerSchema = Joi.object({
     androidVersion: Joi.string().trim().max(20).optional(),
     appVersion: Joi.string().trim().max(20).optional(),
     language: Joi.string().valid('id', 'en', 'zh', 'es', 'ar', 'ja').optional(),
-    city: Joi.string().trim().max(80).optional()
+    city: Joi.string().trim().max(80).optional(),
+    marketingOptIn: Joi.boolean().optional(),
+    termsAccepted: Joi.boolean().optional(),
+    privacyAccepted: Joi.boolean().optional()
 });
 
 const loginSchema = Joi.object({

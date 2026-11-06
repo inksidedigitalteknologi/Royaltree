@@ -15,6 +15,7 @@ object AppThemePreferences {
     private const val KEY_DARK_MODE = "dark_mode"
     private const val KEY_LANGUAGE = "app_language"
     private const val KEY_ONBOARDED = "is_onboarded"
+    private const val KEY_MARKETING_OPT_IN = "marketing_opt_in"
 
     // Force dark mode only — user tak boleh ubah
     var isDarkMode by mutableStateOf(true)
@@ -25,12 +26,17 @@ object AppThemePreferences {
     var isOnboarded by mutableStateOf(false)
         private set
 
+    // Marketing opt-in (opsional)
+    var marketingOptIn by mutableStateOf(false)
+        private set
+
     fun init(context: Context) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         isDarkMode = true  // Force dark mode
         val langCode = prefs.getString(KEY_LANGUAGE, "EN") ?: "EN"
         currentLanguage = AppLanguage.values().find { it.code == langCode } ?: AppLanguage.ENGLISH
         isOnboarded = prefs.getBoolean(KEY_ONBOARDED, false)
+        marketingOptIn = prefs.getBoolean(KEY_MARKETING_OPT_IN, false)
     }
 
     fun setOnboarded(context: Context, value: Boolean) {
@@ -43,5 +49,11 @@ object AppThemePreferences {
         currentLanguage = language
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putString(KEY_LANGUAGE, language.code).apply()
+    }
+
+    fun setMarketingOptIn(context: Context, value: Boolean) {
+        marketingOptIn = value
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putBoolean(KEY_MARKETING_OPT_IN, value).apply()
     }
 }

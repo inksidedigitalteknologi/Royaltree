@@ -19,7 +19,7 @@ const AppLogger = require('../utils/AppLogger');
 router.post('/sync', verifyFirebaseToken, validate(registerSchema), async (req, res) => {
     try {
         const { uid, email, name: firebaseName } = req.firebaseUser;
-        const { name, phone, city, referralCode } = req.body;
+        const { name, phone, city, referralCode, marketingOptIn, termsAccepted, privacyAccepted } = req.body;
 
         // ==== Normalize email & phone ====
         const normalizedEmail = (email || '').trim().toLowerCase();
@@ -194,7 +194,14 @@ router.post('/sync', verifyFirebaseToken, validate(registerSchema), async (req, 
             affiliateTotalWithdrawn: 0,
             fcmToken: null,
             lastDeviceId: null,
-            lastLoginIp: null
+            lastLoginIp: null,
+
+            // === Consent & Legal (bukti persetujuan) ===
+            termsAcceptedAt: req.body.termsAccepted ? new Date().toISOString() : null,
+            privacyAcceptedAt: req.body.privacyAccepted ? new Date().toISOString() : null,
+            marketingOptIn: req.body.marketingOptIn || false,
+            marketingOptInAt: req.body.marketingOptIn ? new Date().toISOString() : null,
+            marketingOptInVersion: req.body.marketingOptIn ? '1.0' : null
         };
 
         // Kalau ada referral code -> validasi & simpan
@@ -353,11 +360,11 @@ router.post('/link-referral', verifyFirebaseToken, async (req, res) => {
             });
         }
 
-        await userRef.update({
+        await userRef.set({
             referredBy: referrerDoc.id,
             referredByCode: referralCode.trim().toUpperCase(),
             referredAt: admin.firestore.FieldValue.serverTimestamp()
-        });
+        }, { merge: true });
 
         return res.json({
             success: true,
