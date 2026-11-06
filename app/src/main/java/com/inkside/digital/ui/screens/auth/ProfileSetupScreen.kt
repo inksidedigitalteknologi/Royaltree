@@ -58,13 +58,13 @@ fun ProfileSetupScreen(
         Text("👤", fontSize = 56.sp)
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Lengkapi Profil",
+            text = LanguageManager.translate("profile_setup_title", AppThemePreferences.currentLanguage, "Lengkapi Profil"),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Data ini diperlukan untuk memulai",
+            text = LanguageManager.translate("profile_setup_subtitle", AppThemePreferences.currentLanguage, "Data ini diperlukan untuk memulai"),
             fontSize = 13.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -151,7 +151,7 @@ fun ProfileSetupScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Logout",
+                text = LanguageManager.translate("profile_setup_logout", AppThemePreferences.currentLanguage, "Logout"),
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier

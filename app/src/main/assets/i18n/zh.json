@@ -861,5 +861,12 @@
   "referral_title": "推荐",
   "referral_total_earned": "总收益",
   "referral_your_code": "您的推荐代码",
-  "referral_your_stats": "您的统计"
+  "referral_your_stats": "您的统计",
+  "profile_setup_full_name": "全名",
+  "profile_setup_phone": "电话号码",
+  "profile_setup_city": "城市",
+  "profile_setup_referral": "推荐代码（可选）",
+  "profile_setup_title": "完善您的个人资料",
+  "profile_setup_subtitle": "需要此数据才能开始",
+  "profile_setup_logout": "退出登录"
 }

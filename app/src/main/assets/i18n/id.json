@@ -861,5 +861,12 @@
   "referral_title": "Referral",
   "referral_total_earned": "Total Diperoleh",
   "referral_your_code": "Kode Referral Kamu",
-  "referral_your_stats": "Statistik Kamu"
+  "referral_your_stats": "Statistik Kamu",
+  "profile_setup_full_name": "Nama Lengkap",
+  "profile_setup_phone": "Nomor HP",
+  "profile_setup_city": "Kota",
+  "profile_setup_referral": "Kode Referral (Opsional)",
+  "profile_setup_title": "Lengkapi Profil",
+  "profile_setup_subtitle": "Data ini diperlukan untuk memulai",
+  "profile_setup_logout": "Logout"
 }

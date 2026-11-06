@@ -861,5 +861,12 @@
   "referral_title": "Referidos",
   "referral_total_earned": "Total ganado",
   "referral_your_code": "Tu código de referido",
-  "referral_your_stats": "Tus estadísticas"
+  "referral_your_stats": "Tus estadísticas",
+  "profile_setup_full_name": "Nombre completo",
+  "profile_setup_phone": "Número de teléfono",
+  "profile_setup_city": "Ciudad",
+  "profile_setup_referral": "Código de referido (opcional)",
+  "profile_setup_title": "Completa tu perfil",
+  "profile_setup_subtitle": "Estos datos son necesarios para comenzar",
+  "profile_setup_logout": "Cerrar sesión"
 }

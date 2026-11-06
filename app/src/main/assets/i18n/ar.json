@@ -861,5 +861,12 @@
   "referral_title": "الإحالة",
   "referral_total_earned": "إجمالي الأرباح",
   "referral_your_code": "رمز الإحالة الخاص بك",
-  "referral_your_stats": "إحصائياتك"
+  "referral_your_stats": "إحصائياتك",
+  "profile_setup_full_name": "الاسم الكامل",
+  "profile_setup_phone": "رقم الهاتف",
+  "profile_setup_city": "المدينة",
+  "profile_setup_referral": "رمز الإحالة (اختياري)",
+  "profile_setup_title": "أكمل ملفك الشخصي",
+  "profile_setup_subtitle": "هذه البيانات مطلوبة للبدء",
+  "profile_setup_logout": "تسجيل الخروج"
 }

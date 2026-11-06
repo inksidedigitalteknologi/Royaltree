@@ -861,5 +861,12 @@
   "referral_title": "リファラル",
   "referral_total_earned": "総収益",
   "referral_your_code": "あなたのリファラルコード",
-  "referral_your_stats": "あなたの統計"
+  "referral_your_stats": "あなたの統計",
+  "profile_setup_full_name": "氏名",
+  "profile_setup_phone": "電話番号",
+  "profile_setup_city": "都市",
+  "profile_setup_referral": "リファラルコード（オプション）",
+  "profile_setup_title": "プロフィールを完成させる",
+  "profile_setup_subtitle": "開始するにはこのデータが必要です",
+  "profile_setup_logout": "ログアウト"
 }

@@ -861,5 +861,12 @@
   "referral_title": "Referral",
   "referral_total_earned": "Total Earned",
   "referral_your_code": "Your Referral Code",
-  "referral_your_stats": "Your Stats"
+  "referral_your_stats": "Your Stats",
+  "profile_setup_full_name": "Full Name",
+  "profile_setup_phone": "Phone Number",
+  "profile_setup_city": "City",
+  "profile_setup_referral": "Referral Code (Optional)",
+  "profile_setup_title": "Complete Your Profile",
+  "profile_setup_subtitle": "This data is required to start",
+  "profile_setup_logout": "Logout"
 }
