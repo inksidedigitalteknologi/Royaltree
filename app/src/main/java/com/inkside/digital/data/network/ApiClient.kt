@@ -200,7 +200,7 @@ object ApiClient {
     // Helper: ambil Firebase ID token (untuk endpoint yang verifyFirebaseToken)
     private suspend fun getFirebaseToken(): String {
         return try {
-            FirebaseAuth.getInstance().currentUser?.getIdToken(false)?.await()?.token ?: ""
+            FirebaseAuth.getInstance().currentUser?.getIdToken(true)?.await()?.token ?: ""
         } catch (e: Exception) {
             ""
         }
@@ -311,10 +311,12 @@ object ApiClient {
 
     suspend fun syncUserToPortal(
         req: ApiUserSyncRequest,
-        token: String = currentApiKey
+        token: String = ""
     ): Result<ApiUserSyncResponse> = withContext(Dispatchers.IO) {
         try {
-            val bearer = if (token.startsWith("Bearer ")) token else "Bearer $token"
+            // FIX: pakai Firebase token (bukan currentApiKey) — verifyFirebaseToken butuh Firebase token
+            val firebaseToken = if (token.isNotEmpty()) token else getFirebaseToken()
+            val bearer = if (firebaseToken.startsWith("Bearer ")) firebaseToken else "Bearer $firebaseToken"
             val response = apiService.syncUser(bearer, req)
             Result.success(response)
         } catch (e: Exception) {
