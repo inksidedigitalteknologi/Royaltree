@@ -936,7 +936,7 @@ fun MainAffiliateAppContent(
                     currentLanguage = currentLanguage,
                     
                     onNavigate = { screen -> onNavigate(screen) },
-                    onCloseDrawer = { kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch { drawerState.close() } },
+                    onCloseDrawer = { coroutineScope.launch { drawerState.close() } },
                     onLogout = onLogout
                 )
             }
@@ -958,7 +958,7 @@ fun MainAffiliateAppContent(
                     user = user,
                     unreadNotifs = unreadNotifs,
                     currentLanguage = currentLanguage,
-                    onOpenDrawer = { kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch { drawerState.open() } },
+                    onOpenDrawer = { coroutineScope.launch { drawerState.open() } },
                     onOpenLanguage = { showLanguageModal = true },
                     onOpenInbox = { onNavigate(AppScreen.INBOX) },
                     onOpenGlobalChat = { onNavigate(AppScreen.GLOBAL_CHAT) },
