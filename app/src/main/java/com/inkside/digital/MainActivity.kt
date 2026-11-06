@@ -139,6 +139,31 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        // ✅ Minta izin lokasi (semua versi)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                1002
+            )
+        }
+
+        // ✅ Minta izin activity recognition (Android 10+, untuk step counter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+                    1003
+                )
+            }
+        }
+
         // ✅ Jadwalkan MiningWorker (background auto-claim setiap 15 menit)
         try {
             val miningWorkRequest = PeriodicWorkRequestBuilder<MiningWorker>(
