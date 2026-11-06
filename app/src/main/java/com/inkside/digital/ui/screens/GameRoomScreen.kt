@@ -153,8 +153,8 @@ fun GameRoomScreen(
     val placedMiners by viewModel.placedMinerItems.collectAsState()
     val roomState by viewModel.gameRoomState.collectAsState()
 
-    // M46 FIX: Reload catalog bila data kosong (first launch race condition)
-    LaunchedEffect(minerItems.size) {
+    // M46 FIX: Reload catalog sekali saat pertama buka (bukan loop)
+    LaunchedEffect(Unit) {
         if (minerItems.isEmpty()) {
             viewModel.loadMinerCatalog()
             viewModel.loadGameState()
@@ -279,7 +279,7 @@ fun GameRoomScreenContent(
     // (minerBreakdown dipindah ke MiningRoomTab)
 
     // Local timer — sync dari server unclaimed + elapsed dari sync
-    LaunchedEffect(roomState, placedMiners, minerActiveUntil) {
+    LaunchedEffect(minerActiveUntil) {
         val serverUnclaimed = roomState?.unclaimedMiningPoints ?: 0.0
         val syncTime = System.currentTimeMillis()
 
