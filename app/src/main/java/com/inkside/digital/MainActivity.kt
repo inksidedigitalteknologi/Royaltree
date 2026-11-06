@@ -406,6 +406,7 @@ fun MainAffiliateApp(
     viewModel: AffiliateViewModel = viewModel(),
     onLogout: () -> Unit = {}
 ) {
+    val context = LocalContext.current   // ← TAMBAH: untuk callback & Toast
     // Refresh semua data dari backend saat app dibuka
     androidx.compose.runtime.LaunchedEffect(Unit) {
         viewModel.loadUserFromBackend()
@@ -583,14 +584,14 @@ fun MainAffiliateApp(
         },
         onAdBlockedRetry = {
             adBlockedReason = null
-            val activity = LocalContext.current as? android.app.Activity
+            val activity = context as? android.app.Activity
             if (activity == null) {
-                Toast.makeText(LocalContext.current, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
             } else {
                 kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
                     val loadResult = AdMobProvider.loadRewardedAd(activity, user?.id)
                     if (loadResult.isFailure) {
-                        Toast.makeText(LocalContext.current, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
                         return@launch
                     }
                     AdMobProvider.showRewardedAd(
@@ -705,14 +706,14 @@ fun MainAffiliateApp(
         onClaimMission = { viewModel.claimMissionReward(it) },
         onCompleteTaskAction = { viewModel.completeTaskAction(it) },
         onClaimMining = {
-            val activity = LocalContext.current as? android.app.Activity
+            val activity = context as? android.app.Activity
             if (activity == null) {
-                Toast.makeText(LocalContext.current, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
             } else {
                 kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
                     val loadResult = AdMobProvider.loadRewardedAd(activity, user?.id)
                     if (loadResult.isFailure) {
-                        Toast.makeText(LocalContext.current, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
                         return@launch
                     }
                     AdMobProvider.showRewardedAd(
@@ -726,14 +727,14 @@ fun MainAffiliateApp(
             }
         },
         onActivateMiner = {
-            val activity = LocalContext.current as? android.app.Activity
+            val activity = context as? android.app.Activity
             if (activity == null) {
-                Toast.makeText(LocalContext.current, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Activity tidak tersedia", Toast.LENGTH_SHORT).show()
             } else {
                 kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
                     val loadResult = AdMobProvider.loadRewardedAd(activity, user?.id)
                     if (loadResult.isFailure) {
-                        Toast.makeText(LocalContext.current, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Iklan tidak tersedia. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
                         return@launch
                     }
                     AdMobProvider.showRewardedAd(
