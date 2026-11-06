@@ -321,6 +321,7 @@ fun ProfileSetupScreen(
                         )
                         .clickable(enabled = canSubmit) {
                             val fullName = "$firstName ${lastName}".trim()
+                            com.inkside.digital.util.AppLogger.d("ProfileSetup", "📝 onSave dipanggil: name=$firstName $lastName, phone=$phone, country=${selectedCountry.code}")
                             onSave(
                                 fullName,
                                 "+${selectedCountry.code}${phone.trim()}",
