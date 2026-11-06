@@ -1237,15 +1237,24 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             // 1. Update Room DB (biar UI langsung berubah)
             repository.updateUserProfile(name, email, phone, region)
 
-            // 2. Kirim ke backend
-            val body = mapOf(
-                "name" to name,
-                "email" to email,
-                "phone" to phone,
-                "city" to region
+            // 2. Kirim ke backend via /auth/sync (endpoint yang sudah ada)
+            val syncReq = com.inkside.digital.data.network.model.ApiUserSyncRequest(
+                id = currentUser.id,
+                name = name,
+                email = email,
+                phone = phone,
+                tier = currentUser.tier,
+                balance = currentUser.balance,
+                points = currentUser.points.toInt(),
+                todaySteps = currentUser.todaySteps,
+                referralCode = currentUser.referralCode,
+                city = region,
+                termsAccepted = true,
+                privacyAccepted = true,
+                marketingOptIn = com.inkside.digital.data.preferences.AppThemePreferences.marketingOptIn
             )
 
-            ApiClient.updateProfile(currentUser.id, body)
+            ApiClient.syncUserToPortal(syncReq)
                 .onSuccess { response ->
                     if (response.success) {
                         // Update Room dengan data dari backend
