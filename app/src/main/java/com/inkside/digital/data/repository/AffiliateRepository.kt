@@ -1516,6 +1516,34 @@ class AffiliateRepository(private val dao: AppDao) {
                     isCharging = roomJson.optBoolean("isCharging", existing?.isCharging ?: false)
                 )
                 dao.insertGameRoomState(room)
+            } else {
+                // FIX: Kalau backend kirim room: null, reset roomState (miner kosong)
+                val existing = dao.getGameRoomStateSync()
+                val resetRoom = com.inkside.digital.data.model.GameRoomStateEntity(
+                    id = "default_room",
+                    unclaimedMiningPoints = 0.0,
+                    lastClaimTimestamp = existing?.lastClaimTimestamp ?: System.currentTimeMillis(),
+                    totalMinedPointsClaimed = 0.0,
+                    tempPowerBonusGhs = 0.0,
+                    bonusExpiryTimestamp = 0L,
+                    miniGameHighScore = existing?.miniGameHighScore ?: 0,
+                    lastMiningClaimAt = 0L,
+                    unlockedSlots = existing?.unlockedSlots ?: 2,
+                    ratePerMin = 0.0,
+                    baseRate = 0.0,
+                    permanentBonusPct = 0.0,
+                    miniGameBonusPct = 0.0,
+                    totalBonusPct = 0.0,
+                    minerActiveUntil = 0L,
+                    minerActivatedAt = 0L,
+                    weightedBreakdownJson = "",
+                    pingMs = existing?.pingMs ?: 100,
+                    deviceScore = existing?.deviceScore ?: 70,
+                    tempC = existing?.tempC ?: 35.0,
+                    batteryLevel = existing?.batteryLevel ?: 85,
+                    isCharging = existing?.isCharging ?: false
+                )
+                dao.insertGameRoomState(resetRoom)
             }
 
             // 2. Update miners
