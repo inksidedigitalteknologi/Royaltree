@@ -805,5 +805,9 @@
   "game_arcade_desc_long": "15秒間プレイ！コインと宝石をできるだけ速くタップして、+20〜60の即時ポイントと2時間の+%sパワーブーストを獲得しましょう。",
   "game_ready_test": "指の速さを試す準備はできましたか？",
   "game_collect_coins": "15秒でできるだけ多くのコインを集めましょう。",
-  "game_score": "スコア"
+  "game_score": "スコア",
+  "home_greeting": "👋 こんにちは、{name}",
+  "home_tier": "ティア: {tier}",
+  "home_default_user": "ユーザー",
+  "home_tier_free": "無料"
 }

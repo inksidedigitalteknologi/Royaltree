@@ -805,5 +805,9 @@
   "game_arcade_desc_long": "玩15秒！尽可能快地点击金币和宝石，获得+20至60即时积分和2小时的+%s算力提升。",
   "game_ready_test": "准备好测试你的手指速度了吗？",
   "game_collect_coins": "在15秒内收集尽可能多的金币。",
-  "game_score": "分数"
+  "game_score": "分数",
+  "home_greeting": "👋 你好，{name}",
+  "home_tier": "等级: {tier}",
+  "home_default_user": "用户",
+  "home_tier_free": "免费"
 }

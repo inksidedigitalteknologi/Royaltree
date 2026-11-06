@@ -30,6 +30,8 @@ import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.EmeraldPrimary
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.util.GlobalPointsManager
+import com.inkside.digital.util.LanguageManager
+import com.inkside.digital.data.preferences.AppThemePreferences
 
 @Composable
 fun BusinessHomeScreen(
@@ -70,13 +72,13 @@ fun BusinessHomeScreen(
             ) {
                 Column {
                     Text(
-                        text = "\uD83D\uDC4B Halo, ${user?.name ?: "User"}",
+                        text = LanguageManager.translate("home_greeting", AppThemePreferences.currentLanguage, "👋 Halo, {name}").replace("{name}", user?.name ?: LanguageManager.translate("home_default_user", AppThemePreferences.currentLanguage, "User")),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                     Text(
-                        text = "Tier: ${user?.tier ?: "FREE"}",
+                        text = LanguageManager.translate("home_tier", AppThemePreferences.currentLanguage, "Tier: {tier}").replace("{tier}", user?.tier ?: LanguageManager.translate("home_tier_free", AppThemePreferences.currentLanguage, "FREE")),
                         fontSize = 12.sp,
                         color = GoldVip
                     )

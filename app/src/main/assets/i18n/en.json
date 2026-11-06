@@ -805,5 +805,9 @@
   "game_arcade_desc_long": "Play for 15 seconds! Tap coins & gems as fast as possible to get +20 to 60 instant points and +%s Power Boost for 2 hours.",
   "game_ready_test": "Ready to Test Your Finger Speed?",
   "game_collect_coins": "Collect as many coins as possible in 15 seconds.",
-  "game_score": "Score"
+  "game_score": "Score",
+  "home_greeting": "👋 Hello, {name}",
+  "home_tier": "Tier: {tier}",
+  "home_default_user": "User",
+  "home_tier_free": "FREE"
 }

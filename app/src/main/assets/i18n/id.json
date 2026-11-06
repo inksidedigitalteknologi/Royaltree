@@ -805,5 +805,9 @@
   "game_arcade_desc_long": "Mainkan game 15 detik! Ketuk koin & permata secepat mungkin untuk mendapatkan +20 s/d 60 Poin instan dan +%s Power Boost selama 2 jam.",
   "game_ready_test": "Siap Uji Kecepatan Jari?",
   "game_collect_coins": "Kumpulkan koin sebanyak-banyaknya dalam 15 detik.",
-  "game_score": "Skor"
+  "game_score": "Skor",
+  "home_greeting": "👋 Halo, {name}",
+  "home_tier": "Tier: {tier}",
+  "home_default_user": "Pengguna",
+  "home_tier_free": "GRATIS"
 }

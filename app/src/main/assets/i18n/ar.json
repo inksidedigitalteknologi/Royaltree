@@ -805,5 +805,9 @@
   "game_arcade_desc_long": "العب لمدة 15 ثانية! انقر على العملات والجواهر بأسرع ما يمكن للحصول على +20 إلى 60 نقطة فورية و+%s Power Boost لمدة ساعتين.",
   "game_ready_test": "هل أنت مستعد لاختبار سرعة إصبعك؟",
   "game_collect_coins": "اجمع أكبر عدد ممكن من العملات في 15 ثانية.",
-  "game_score": "النتيجة"
+  "game_score": "النتيجة",
+  "home_greeting": "👋 مرحبا، {name}",
+  "home_tier": "المستوى: {tier}",
+  "home_default_user": "مستخدم",
+  "home_tier_free": "مجاني"
 }

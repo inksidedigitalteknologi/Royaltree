@@ -805,5 +805,9 @@
   "game_arcade_desc_long": "¡Juega durante 15 segundos! Toca monedas y gemas lo más rápido posible para obtener +20 a 60 puntos instantáneos y +%s Power Boost durante 2 horas.",
   "game_ready_test": "¿Listo para probar la velocidad de tus dedos?",
   "game_collect_coins": "Recoge tantas monedas como puedas en 15 segundos.",
-  "game_score": "Puntuación"
+  "game_score": "Puntuación",
+  "home_greeting": "👋 Hola, {name}",
+  "home_tier": "Nivel: {tier}",
+  "home_default_user": "Usuario",
+  "home_tier_free": "GRATIS"
 }
