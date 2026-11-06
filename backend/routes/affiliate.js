@@ -206,7 +206,7 @@ router.post('/register-fcm', verifyFirebaseToken, validate(fcmSchema), async (re
         if (deviceId) update.lastDeviceId = deviceId;
         if (req.ip) update.lastLoginIp = req.ip;
 
-        await db.collection('users').doc(uid).update(update);
+        await db.collection('users').doc(uid).set(update, { merge: true });
 
         return res.json({ success: true, message: 'FCM token tersimpan.' });
     } catch (error) {
