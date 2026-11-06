@@ -809,5 +809,15 @@
   "home_greeting": "👋 Halo, {name}",
   "home_tier": "Tier: {tier}",
   "home_default_user": "Pengguna",
-  "home_tier_free": "GRATIS"
+  "home_tier_free": "GRATIS",
+  "game_battery_critical": "Baterai Kritis",
+  "game_production_paused": "Produksi Dijeda",
+  "game_battery_critical_desc": "Baterai HP kritis. Produksi dijeda sampai HP dicharge.\\n\\nCharge HP untuk lanjut produksi.",
+  "game_thermal_paused_desc": "HP terlalu panas. Produksi dijeda otomatis sampai suhu turun (< 55°C).\\n\\nDinginkan HP atau cabut charger untuk lanjut produksi.",
+  "game_inventory": "Inventaris",
+  "game_inventory_count": "({count} processor)",
+  "game_inventory_hint": "Klik processor untuk pasang ke slot kosong",
+  "game_production_rate": "Laju Produksi",
+  "game_merge_confirm_title": "Konfirmasi Merge",
+  "game_minigame_instruction": "KETUK KOIN / DIAMOND!"
 }

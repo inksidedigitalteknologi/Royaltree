@@ -809,5 +809,15 @@
   "home_greeting": "👋 Hello, {name}",
   "home_tier": "Tier: {tier}",
   "home_default_user": "User",
-  "home_tier_free": "FREE"
+  "home_tier_free": "FREE",
+  "game_battery_critical": "Battery Critical",
+  "game_production_paused": "Production Paused",
+  "game_battery_critical_desc": "Phone battery critical. Production paused until charged.\\n\\nCharge your phone to continue.",
+  "game_thermal_paused_desc": "Phone too hot. Production paused until temperature drops (< 55°C).\\n\\nCool your phone or unplug charger to continue.",
+  "game_inventory": "Inventory",
+  "game_inventory_count": "({count} processors)",
+  "game_inventory_hint": "Tap a processor to place in an empty slot",
+  "game_production_rate": "Production Rate",
+  "game_merge_confirm_title": "Confirm Merge",
+  "game_minigame_instruction": "TAP COINS / DIAMONDS!"
 }

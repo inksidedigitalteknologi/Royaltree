@@ -809,5 +809,15 @@
   "home_greeting": "👋 مرحبا، {name}",
   "home_tier": "المستوى: {tier}",
   "home_default_user": "مستخدم",
-  "home_tier_free": "مجاني"
+  "home_tier_free": "مجاني",
+  "game_battery_critical": "بطارية حرجة",
+  "game_production_paused": "الإنتاج متوقف مؤقتًا",
+  "game_battery_critical_desc": "بطارية الهاتف حرجة. الإنتاج متوقف حتى الشحن.\\n\\nاشحن هاتفك للمتابعة.",
+  "game_thermal_paused_desc": "الهاتف ساخن جدًا. الإنتاج متوقف حتى تنخفض الحرارة (< 55°C).\\n\\nبرّد هاتفك أو افصل الشاحن.",
+  "game_inventory": "المخزون",
+  "game_inventory_count": "({count} معالج)",
+  "game_inventory_hint": "انقر على معالج لوضعه في فتحة فارغة",
+  "game_production_rate": "معدل الإنتاج",
+  "game_merge_confirm_title": "تأكيد الدمج",
+  "game_minigame_instruction": "انقر على العملات / الماس!"
 }

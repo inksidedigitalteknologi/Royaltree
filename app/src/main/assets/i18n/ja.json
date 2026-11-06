@@ -809,5 +809,15 @@
   "home_greeting": "👋 こんにちは、{name}",
   "home_tier": "ティア: {tier}",
   "home_default_user": "ユーザー",
-  "home_tier_free": "無料"
+  "home_tier_free": "無料",
+  "game_battery_critical": "バッテリー残量低下",
+  "game_production_paused": "生産一時停止",
+  "game_battery_critical_desc": "スマホのバッテリーが低下しています。充電するまで生産を停止します。\\n\\n充電して生産を再開してください。",
+  "game_thermal_paused_desc": "スマホが高温です。温度が下がるまで生産を一時停止します（< 55°C）。\\n\\n冷却するか充電器を外してください。",
+  "game_inventory": "インベントリ",
+  "game_inventory_count": "({count} プロセッサ)",
+  "game_inventory_hint": "プロセッサをタップして空きスロットに配置",
+  "game_production_rate": "生産レート",
+  "game_merge_confirm_title": "マージ確認",
+  "game_minigame_instruction": "コイン / ダイヤモンドをタップ！"
 }

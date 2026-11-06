@@ -809,5 +809,15 @@
   "home_greeting": "👋 你好，{name}",
   "home_tier": "等级: {tier}",
   "home_default_user": "用户",
-  "home_tier_free": "免费"
+  "home_tier_free": "免费",
+  "game_battery_critical": "电池电量不足",
+  "game_production_paused": "生产暂停",
+  "game_battery_critical_desc": "手机电量不足。生产暂停直到充电。\\n\\n请充电以继续生产。",
+  "game_thermal_paused_desc": "手机过热。生产暂停直到温度下降（< 55°C）。\\n\\n请冷却手机或拔掉充电器。",
+  "game_inventory": "库存",
+  "game_inventory_count": "({count} 个处理器)",
+  "game_inventory_hint": "点击处理器以放置到空槽位",
+  "game_production_rate": "生产率",
+  "game_merge_confirm_title": "确认合并",
+  "game_minigame_instruction": "点击金币/钻石！"
 }

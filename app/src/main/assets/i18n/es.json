@@ -809,5 +809,15 @@
   "home_greeting": "👋 Hola, {name}",
   "home_tier": "Nivel: {tier}",
   "home_default_user": "Usuario",
-  "home_tier_free": "GRATIS"
+  "home_tier_free": "GRATIS",
+  "game_battery_critical": "Batería crítica",
+  "game_production_paused": "Producción pausada",
+  "game_battery_critical_desc": "Batería crítica. Producción pausada hasta cargar.\\n\\nCarga tu teléfono para continuar.",
+  "game_thermal_paused_desc": "Teléfono demasiado caliente. Producción pausada hasta bajar temperatura (< 55°C).\\n\\nEnfría tu teléfono o desconecta el cargador.",
+  "game_inventory": "Inventario",
+  "game_inventory_count": "({count} procesadores)",
+  "game_inventory_hint": "Toca un procesador para colocarlo en una ranura vacía",
+  "game_production_rate": "Tasa de producción",
+  "game_merge_confirm_title": "Confirmar fusión",
+  "game_minigame_instruction": "¡TOCA MONEDAS / DIAMANTES!"
 }

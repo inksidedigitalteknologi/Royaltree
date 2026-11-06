@@ -792,7 +792,7 @@ fun GameRoomScreenContent(
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
-                            text = "Saya setuju membeli ${item.name} seharga ${item.tokenCost} RTP",
+                            text = "${LanguageManager.translate("game_confirm_buy", AppThemePreferences.currentLanguage, "Saya setuju membeli")} ${item.name} ${LanguageManager.translate("game_confirm_buy_suffix", AppThemePreferences.currentLanguage, "RTP")} ${item.tokenCost}",
                             fontSize = 11.sp,
                             color = Color(0xFF94A3B8)
                         )
@@ -987,16 +987,16 @@ fun GameRoomScreenContent(
             icon = { Text(if (isBattery) "🔋" else "⛔", fontSize = 40.sp) },
             title = {
                 Text(
-                    text = if (isBattery) "Baterai Kritis" else "Production Paused",
+                    text = if (isBattery) LanguageManager.translate("game_battery_critical", AppThemePreferences.currentLanguage, "Baterai Kritis") else LanguageManager.translate("game_production_paused", AppThemePreferences.currentLanguage, "Production Paused"),
                     fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Text(
                     text = if (isBattery)
-                        "Baterai HP kritis. Produksi dijeda sampai HP dicharge.\n\nCharge HP untuk lanjut produksi."
+                        LanguageManager.translate("game_battery_critical_desc", AppThemePreferences.currentLanguage, "Baterai HP kritis. Produksi dijeda sampai HP dicharge.\n\nCharge HP untuk lanjut produksi.")
                     else
-                        "HP terlalu panas. Produksi dijeda otomatis sampai suhu turun (< 55°C).\n\nDinginkan HP atau cabut charger untuk lanjut produksi."
+                        LanguageManager.translate("game_thermal_paused_desc", AppThemePreferences.currentLanguage, "HP terlalu panas. Produksi dijeda otomatis sampai suhu turun (< 55°C).\n\nDinginkan HP atau cabut charger untuk lanjut produksi.")
                 )
             },
             confirmButton = {
@@ -1528,21 +1528,21 @@ private fun MiningRoomTab(
                             Text("📦", fontSize = 18.sp)
                             Spacer(Modifier.width(8.dp))
                             Text(
-                                text = "Inventory",
+                                text = LanguageManager.translate("game_inventory", AppThemePreferences.currentLanguage, "Inventory"),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = EmeraldLight
                             )
                             Spacer(Modifier.width(6.dp))
                             Text(
-                                text = "(${unplacedMiners.size} processor)",
+                                text = LanguageManager.translate("game_inventory_count", AppThemePreferences.currentLanguage, "({count} processor)").replace("{count}", unplacedMiners.size.toString()),
                                 fontSize = 11.sp,
                                 color = Color.White.copy(alpha = 0.6f)
                             )
                         }
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            text = "Klik processor untuk pasang ke slot kosong",
+                            text = LanguageManager.translate("game_inventory_hint", AppThemePreferences.currentLanguage, "Klik processor untuk pasang ke slot kosong"),
                             fontSize = 10.sp,
                             color = Color.White.copy(alpha = 0.4f)
                         )
@@ -2441,7 +2441,7 @@ private fun MiniGameArcadeTab(
                         }
 
                         Text(
-                            text = "KETUK KOIN / DIAMOND!",
+                            text = LanguageManager.translate("game_minigame_instruction", AppThemePreferences.currentLanguage, "KETUK KOIN / DIAMOND!"),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
@@ -2782,7 +2782,7 @@ private fun RateBreakdownCard(
                                         letterSpacing = 1.5.sp
                                     )
                                     Text(
-                                        "Production Rate",
+                                        LanguageManager.translate("game_production_rate", AppThemePreferences.currentLanguage, "Production Rate"),
                                         fontSize = 9.sp,
                                         color = Color.White.copy(alpha = 0.45f),
                                         letterSpacing = 0.5.sp
@@ -3017,7 +3017,7 @@ private fun FusionTab(
             icon = { Text("⚗️", fontSize = 40.sp) },
             title = {
                 Text(
-                    "Konfirmasi Merge",
+                    LanguageManager.translate("game_merge_confirm_title", AppThemePreferences.currentLanguage, "Konfirmasi Merge"),
                     fontWeight = FontWeight.Black,
                     style = androidx.compose.ui.text.TextStyle(
                         brush = Brush.linearGradient(
