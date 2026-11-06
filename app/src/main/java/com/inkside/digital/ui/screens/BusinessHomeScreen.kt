@@ -26,11 +26,11 @@ import androidx.compose.ui.unit.sp
 import com.inkside.digital.data.model.TransactionEntity
 import com.inkside.digital.data.model.UserEntity
 import com.inkside.digital.localization.AppLanguage
+import com.inkside.digital.localization.LanguageManager
 import com.inkside.digital.ui.theme.EmeraldLight
 import com.inkside.digital.ui.theme.EmeraldPrimary
 import com.inkside.digital.ui.theme.GoldVip
 import com.inkside.digital.util.GlobalPointsManager
-import com.inkside.digital.util.LanguageManager
 import com.inkside.digital.data.preferences.AppThemePreferences
 
 @Composable
