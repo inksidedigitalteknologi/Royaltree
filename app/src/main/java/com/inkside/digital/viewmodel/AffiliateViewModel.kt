@@ -1229,6 +1229,7 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
     fun updateProfile(name: String, email: String, phone: String, region: String) {
         viewModelScope.launch {
             val currentUser = user.value
+            com.inkside.digital.util.AppLogger.d("updateProfile", "currentUser=${currentUser?.id}, name=$name, phone=$phone")
             if (currentUser == null) {
                 showSnackbar(LanguageManager.translate("vm_user_not_found", _currentLanguage.value, "User tidak ditemukan"))
                 return@launch
