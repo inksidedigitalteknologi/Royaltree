@@ -190,11 +190,25 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     // ============ LOGOUT ============
 
     fun logout() {
-        authManager.logout()
-        _currentUser.value = null
-        _currentScreen.value = AuthScreen.LOGIN
-        _errorMessage.value = null
-        _successMessage.value = null
+        viewModelScope.launch {
+            // 1. Clear Room DB (hapus semua data user lama)
+            try {
+                val db = com.inkside.digital.data.database.AppDatabase.getInstance(getApplication())
+                db.clearAllTables()
+                AppLogger.d(TAG, "✅ Room DB cleared on logout")
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "❌ Failed to clear Room DB: ${e.message}")
+            }
+            
+            // 2. Logout Firebase
+            authManager.logout()
+            
+            // 3. Reset state
+            _currentUser.value = null
+            _currentScreen.value = AuthScreen.LOGIN
+            _errorMessage.value = null
+            _successMessage.value = null
+        }
     }
 
     // ============ CLEAR MESSAGES ============
