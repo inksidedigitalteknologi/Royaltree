@@ -41,7 +41,7 @@ interface RoyaltreeApiService {
     @GET("config/transfer")
     suspend fun getTransferConfig(): ApiTransferConfigResponse
 
-    @POST("users/sync")
+    @POST("auth/sync")
     suspend fun syncUser(
         @Header("Authorization") token: String,
         @Body request: ApiUserSyncRequest
