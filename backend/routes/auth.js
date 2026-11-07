@@ -19,7 +19,7 @@ const AppLogger = require('../utils/AppLogger');
 router.post('/sync', verifyFirebaseToken, validate(registerSchema), async (req, res) => {
     try {
         const { uid, email, name: firebaseName } = req.firebaseUser;
-        const { name, phone, countryCode, referralCode, marketingOptIn, termsAccepted, privacyAccepted } = req.body;
+        const { name, phone, gender, countryCode, referralCode, marketingOptIn, termsAccepted, privacyAccepted } = req.body;
 
         // ==== Normalize email & phone ====
         const normalizedEmail = (email || '').trim().toLowerCase();
@@ -36,13 +36,15 @@ router.post('/sync', verifyFirebaseToken, validate(registerSchema), async (req, 
         }
 
         // ==== Validasi format HP (hanya angka, 9-15 digit) ====
-        if (!normalizedPhone || normalizedPhone.length < 9 || normalizedPhone.length > 15) {
+        // Validasi phone (OPSIONAL — wajib nanti saat verifikasi akun)
+        if (normalizedPhone && (normalizedPhone.length < 9 || normalizedPhone.length > 15)) {
             return res.status(400).json({
                 success: false,
-                message: 'Nomor HP wajib diisi (9-15 digit angka).'
+                message: 'Nomor HP harus 9-15 digit angka (atau kosongkan).'
             });
         }
-        if (!/^\d+$/.test(normalizedPhone)) {
+        // Validasi format HP — hanya kalau diisi
+        if (normalizedPhone && !/^\d+$/.test(normalizedPhone)) {
             return res.status(400).json({
                 success: false,
                 message: 'Nomor HP hanya boleh berisi angka.'
@@ -160,6 +162,8 @@ router.post('/sync', verifyFirebaseToken, validate(registerSchema), async (req, 
             name: name || firebaseName || 'User Baru',
             phone: normalizedPhone,
             countryCode: (countryCode || 'ID').toUpperCase(),
+            gender: gender || null,
+            phoneVerified: false,
             tier: 'FREE',
             balance: 0,
             points: 0,
