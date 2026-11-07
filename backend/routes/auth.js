@@ -19,12 +19,12 @@ const AppLogger = require('../utils/AppLogger');
 router.post('/sync', verifyFirebaseToken, validate(registerSchema), async (req, res) => {
     try {
         const { uid, email, name: firebaseName } = req.firebaseUser;
-        const { name, phone, city, referralCode, marketingOptIn, termsAccepted, privacyAccepted } = req.body;
+        const { name, phone, countryCode, referralCode, marketingOptIn, termsAccepted, privacyAccepted } = req.body;
 
         // ==== Normalize email & phone ====
         const normalizedEmail = (email || '').trim().toLowerCase();
         // Normalize: hapus spasi, -, dan +
-        const normalizedPhone = (phone || '').trim().replace(/[\s\-\+]/g, '');
+        const normalizedPhone = (phone || '').trim().replace(/[\s\-\+]/g, '') || null;
 
         // ==== Validasi format email (hanya warning, jangan tolak) ====
         if (normalizedEmail && normalizedEmail.length > 0) {
@@ -159,7 +159,7 @@ router.post('/sync', verifyFirebaseToken, validate(registerSchema), async (req, 
             email: normalizedEmail,
             name: name || firebaseName || 'User Baru',
             phone: normalizedPhone,
-            city: city || '',
+            countryCode: (countryCode || 'ID').toUpperCase(),
             tier: 'FREE',
             balance: 0,
             points: 0,
