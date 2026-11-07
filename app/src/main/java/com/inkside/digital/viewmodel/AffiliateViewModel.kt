@@ -1239,21 +1239,28 @@ class AffiliateViewModel(application: Application) : AndroidViewModel(applicatio
             repository.updateUserProfile(name, email, phone, region)
 
             // 2. Kirim ke backend via /auth/sync (endpoint yang sudah ada)
+            // FIX: fallback ke currentUser kalau parameter kosong
+            val finalName = name.trim().ifEmpty { currentUser.name }
+            val finalEmail = email.trim().ifEmpty { currentUser.email }
+            val finalPhone = phone.trim().ifEmpty { currentUser.phone }
+            val finalCity = region.trim().ifEmpty { currentUser.locationCity }
+            
             val syncReq = com.inkside.digital.data.network.model.ApiUserSyncRequest(
                 id = currentUser.id,
-                name = name,
-                email = email,
-                phone = phone,
-                tier = currentUser.tier,
+                name = finalName,
+                email = finalEmail,
+                phone = finalPhone,
+                tier = currentUser.tier.ifEmpty { "FREE" },
                 balance = currentUser.balance,
                 points = currentUser.points.toInt(),
                 todaySteps = currentUser.todaySteps,
                 referralCode = currentUser.referralCode,
-                city = region,
+                city = finalCity,
                 termsAccepted = true,
                 privacyAccepted = true,
                 marketingOptIn = com.inkside.digital.data.preferences.AppThemePreferences.marketingOptIn
             )
+            com.inkside.digital.util.AppLogger.d("updateProfile", "syncReq: name=$finalName, phone=$finalPhone, city=$finalCity")
 
             ApiClient.syncUserToPortal(syncReq)
                 .onSuccess { response ->
