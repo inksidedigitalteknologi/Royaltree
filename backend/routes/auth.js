@@ -205,15 +205,23 @@ router.post('/sync', verifyFirebaseToken, validate(registerSchema), async (req, 
 
         // Kalau ada referral code -> validasi & simpan
         if (referralCode && referralCode.trim() !== '') {
-            const refQuery = await db.collection('users')
-                .where('referralCode', '==', referralCode.trim().toUpperCase())
-                .limit(1)
-                .get();
+            const code = referralCode.trim().toUpperCase();
+            const alreadyReferred = userDoc.exists && userDoc.data().referredBy;
+            const isSelfReferral = code === newUser.referralCode;
 
-            if (!refQuery.empty) {
-                const referrerDoc = refQuery.docs[0];
-                newUser.referredBy = referrerDoc.id;
-                newUser.referredByCode = referralCode.trim().toUpperCase();
+            if (!alreadyReferred && !isSelfReferral) {
+                const refQuery = await db.collection('users')
+                    .where('referralCode', '==', code)
+                    .limit(1)
+                    .get();
+
+                if (!refQuery.empty) {
+                    const referrerDoc = refQuery.docs[0];
+                    if (referrerDoc.id !== uid) {
+                        newUser.referredBy = referrerDoc.id;
+                        newUser.referredByCode = code;
+                    }
+                }
             }
         }
 
