@@ -319,7 +319,15 @@ object ApiClient {
             val bearer = if (firebaseToken.startsWith("Bearer ")) firebaseToken else "Bearer $firebaseToken"
             val response = apiService.syncUser(bearer, req)
             Result.success(response)
+        } catch (e: retrofit2.HttpException) {
+            // Tangkap body response 400 — untuk tahu field mana yang gagal validasi
+            val body = try {
+                e.response()?.errorBody()?.string() ?: ""
+            } catch (ex: Exception) { "" }
+            android.util.Log.e("ApiClient", "❌ HTTP ${e.code()}: $body")
+            Result.failure(Exception("HTTP ${e.code()}: ${body.take(300)}"))
         } catch (e: Exception) {
+            android.util.Log.e("ApiClient", "❌ syncUserToPortal error: ${e.message}")
             Result.failure(e)
         }
     }
